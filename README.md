@@ -8,9 +8,9 @@ Remplacement libre et open-source de l'application ThermViewer (abandonnée) et 
 
 Fournir un outil permettant de :
 - Capturer le flux vidéo thermique en temps réel
-- Accéder aux **données de température brutes** (mode Y16 via vendor commands USB)
+- Accéder aux **données de température brutes** (données embarquées dans chaque frame)
 - **Verrouiller une plage de température** (min/max fixe) pour des mesures cohérentes et comparables
-- Sélectionner des zones / points de mesure
+- Sélectionner des points de mesure
 - Exporter des images avec overlay de température
 - Comparer des captures entre elles
 
@@ -23,31 +23,76 @@ Fournir un outil permettant de :
 | USB Product ID | 0x0001 |
 | Interface vidéo | UVC standard (driver `uvcvideo`) |
 | Résolution | 384×292 |
-| Format brut | YUYV 4:2:2 @ 25 fps |
-| Format température | Y16 (16-bit raw, via vendor commands) |
+| Format vidéo | YUYV 4:2:2 @ 25 fps |
+| Plage de mesure | -20°C à +400°C |
+| Précision | ±3°C |
+
+## Découvertes clés
+
+### Architecture du flux de données
+
+```
+USB Camera (UVC/YUYV 384×292 @ 25fps)
+  │
+  ├─ Bytes 0-223,741 : Image thermique YUYV
+  │   └─ Y channel (0-255) = intensité thermique par pixel
+  │      └─ Conversion en °C via GetTempEvn() (loi de Stefan-Boltzmann)
+  │
+  └─ Bytes 223,742-224,255 : Paramètres de température (514 bytes)
+      ├─ Température ambiante, émissivité, facteur de distance
+      ├─ Gain auto-adaptatif, facteurs de calibration
+      └─ Température pré-calculée au centre (offset 356)
+```
+
+### Formule de température (GetTempEvn)
+
+Reverse-engineered depuis `libthermometry.so` :
+
+```python
+def get_temp_evn(raw_value, env_temp, correction_factor):
+    """Stefan-Boltzmann radiation law: T⁴ correction"""
+    val = (raw_value + 273.15) ** 4.0 - env_temp
+    val = correction_factor * val
+    return val ** 0.25 - 273.15
+```
+
+### Paramètres embarqués (514 bytes, fin de chaque frame)
+
+| Offset | Exemple | Description |
+|--------|---------|-------------|
+| 4 | 25.0 | Température ambiante (°C) |
+| 8 | 25.0 | Température ambiante 2 (°C) |
+| 12 | 0.45 | Émissivité |
+| 16 | 0.98 | Facteur de distance |
+| 352 | ~0.27 | Gain auto-adaptatif |
+| **356** | **~36.0** | **Température calculée au centre (°C)** |
+| 364 | ~0.006 | Facteur d'offset |
+| 368 | ~0.82 | Facteur de calibration |
 
 ## Plan du projet
 
-- **Phase 1** : USB communication & température → **en cours de validation**
-- [x] Installer `libusb` + bindings Python (`pyusb`)
-- [x] Tester les vendor commands identifiées (protocole InfiRay P2 Pro)
-- [x] Activer le mode `y16_preview` (commande `0x010a`) pour obtenir les données brutes 16-bit
-- [x] Convertir les valeurs Y16 en températures réelles (°C) → `T = uint16/64 - 273.15`
-- [x] Valider la précision avec une source de température connue
-- [x] Découvert que la caméra embarque les températures dans chaque frame
-- [ ] Reverse engineer `thermometryT()` pour conversion exacte par pixel
+### Phase 1 — Communication & température ✅ (quasi-complet)
+- [x] Caméra détectée nativement sur Linux (uvcvideo)
+- [x] Flux YUYV capturable via OpenCV + V4L2
+- [x] APK constructeur décompilé et analysé
+- [x] Architecture du flux de données comprise
+- [x] Paramètres de température extraits des frames
+- [x] `GetTempEvn()` décodé (Stefan-Boltzmann T⁴)
+- [x] `InitTempParam()` décodé
+- [x] Constantes `.rodata` extraites (27 constantes float32/64)
+- [x] Prototype Python fonctionnel (`prototype/thermal_capture.py`)
+- [ ] `CalcFixRaw()` — chaîne complète de correction (partiellement décodé)
 
 ### Phase 2 — Application desktop (MVP)
 - [ ] Interface temps réel avec flux thermique
 - [ ] Affichage de la température pointée (souris)
 - [ ] Verrouillage de plage min/max (fixer la palette de couleur)
 - [ ] Capture d'image avec overlay température
-- [ ] Choix de la palette de couleurs (pseudo_color `0x8409`)
+- [ ] Choix de la palette de couleurs
 
 ### Phase 3 — Outils de mesure
-- [ ] Sélection de zones (rectangle, cercle, polygone)
-- [ ] Mesures min/max/moyenne par zone
 - [ ] Points de mesure multiples
+- [ ] Mesures min/max/moyenne par pixel
 - [ ] Export des données numériques (CSV)
 
 ### Phase 4 — Enregistrement vidéo
@@ -66,19 +111,24 @@ Fournir un outil permettant de :
 - [ ] Interface tactile adaptée
 - [ ] Build & distribution (APK)
 
-## Stack technique (proposée)
+## Stack technique
 
-- **Langage** : Python 3 (prototypage rapide)
-- **Bibliothèques clés** :
-  - `pyusb` — communication USB vendor commands
-  - `opencv-python` — capture vidéo V4L2 + traitement d'image
-  - `numpy` — manipulation des données Y16
-  - `tkinter` ou `PyQt6` — interface graphique (à décider)
+- **Langage** : Python 3 (prototypage Phase 1-2)
+- **Bibliothèques** : `opencv-python`, `numpy`, `pyusb`
 - **OS cible initial** : Linux (Archlinux confirmé fonctionnel)
+- **Cible finale** : Android (Flutter ou Kotlin natif)
+
+## Documentation
+
+- [`docs/HARDWARE.md`](docs/HARDWARE.md) — Documentation technique du matériel
+- [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) — Spécification des fonctionnalités
+- [`docs/APK_ANALYSIS.md`](docs/APK_ANALYSIS.md) — Analyse du reverse engineering de l'APK
+- [`docs/THERMOMETRY_LIB.md`](docs/THERMOMETRY_LIB.md) — Documentation de `libthermometry.so` (formules décodées)
 
 ## Références
 
-- [Protocole InfiRay P2 Pro (reverse-engineered)](https://github.com/nicholasgasior/gopher-p2pro-ir) — commandes vendor USB documentées
+- [Protocole InfiRay P2 Pro (reverse-engineered)](https://github.com/nicholasgasior/gopher-p2pro-ir) — commandes vendor USB documentées (ne s'applique pas directement au HT-301)
+- [ftobler/infiray_p2_pro_python](https://github.com/ftobler/infiray_p2_pro_python) — approche P2 Pro (non compatible HT-301)
 - [ThermViewer](https://thermviewer.com/) — ancienne application (abandonnée)
 - [HTI HT-301](https://hti-instrument.com/collections/infrared-thermal-imager/products/ht-301-mobile-phone-thermal-imager) — matériel
 
