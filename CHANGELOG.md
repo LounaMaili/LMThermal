@@ -13,9 +13,10 @@ All notable changes to LMThermal will be documented in this file.
 - `CHANGELOG.md` — this file
 
 ### Discovered
-- Raw temperature data is directly in the YUYV video stream (no vendor commands needed)
-- Temperature conversion: `T(°C) = uint16_value / 64.0 - 273.15`
-- OpenCV with `CAP_PROP_CONVERT_RGB=0` + `CAP_V4L2` backend gives raw uint16 frame
-- Frame shape: (292, 384, 2) uint8 → reinterpreted as (292, 384) uint16
-- Vendor USB commands (0x41/0x45 write, 0xC1/0x44 read) — writes accepted, reads timeout (may need different params)
+- YUYV stream accessible via OpenCV (`CAP_PROP_CONVERT_RGB=0` + `CAP_V4L2` backend)
+- Frame shape: (292, 384, 2) uint8 — but appears as sensor noise without initialization
+- P2 Pro formula (`uint16/64 - 273.15`) gives unrealistic values on HT-301 (not the same camera)
+- Vendor USB writes accepted (2-4 bytes) but reads always timeout (protocol differs from P2 Pro)
 - Reference project: [ftobler/infiray_p2_pro_python](https://github.com/ftobler/infiray_p2_pro_python)
+- **Key finding**: HT-301 requires vendor command initialization sequence before valid thermal output
+- **Blocker**: need USB traffic capture from Android app to discover initialization commands

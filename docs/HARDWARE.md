@@ -58,34 +58,23 @@ No extended/proprietary V4L2 controls are exposed by the driver.
 
 ### Temperature Data Access
 
-**UPDATE (2026-04-18):** The raw temperature data **IS directly accessible** in the YUYV video stream. No vendor commands needed.
+**UPDATE (2026-04-18):** The P2 Pro approach (YUYV → uint16 reinterpretation) does **NOT** work on the HT-301.
 
-By capturing the stream with `cv2.CAP_PROP_CONVERT_RGB = 0` (disable OpenCV auto-conversion), the YUYV frame can be reinterpreted as uint16 values:
+- The YUYV stream appears to be pure noise when captured without initialization
+- The P2 Pro temperature formula gives unrealistic values (240°C center for ambient)
+- The camera likely requires a vendor command initialization sequence before outputting valid data
 
-```
-Frame shape: (292, 384, 2), dtype: uint8
-→ reinterpret as uint16 → shape (292, 384)
-```
-
-#### Temperature Conversion (P2 Pro formula)
-
-```
-T(°C) = raw_uint16 / 64.0 - 273.15
-```
-
-- Range: approximately **-273°C to 751°C** (full 16-bit dynamic range)
-- Typical ambient temperatures fall in a narrow band of this range
-- Source: [infiray_p2_pro_python](https://github.com/ftobler/infiray_p2_pro_python)
-
-#### How to Read
-
+The raw stream is accessible via OpenCV:
 ```python
 camera = cv2.VideoCapture("/dev/video2", cv2.CAP_V4L2)
 camera.set(cv2.CAP_PROP_CONVERT_RGB, 0)
-ret, frame = camera.read()
-raw16 = frame.view(np.uint16).reshape(292, 384)
-temp_c = raw16.astype(np.float64) / 64.0 - 273.15
+ret, frame = camera.read()  # shape (292, 384, 2) uint8
 ```
+
+But without proper initialization, the data is sensor noise, not thermal readings.
+
+**Next step**: capture USB traffic while the Android app is running to find the initialization sequence.
+This requires either a USB hub for simultaneous phone+PC connection, or analyzing the Android APK directly.
 
 ### Vendor USB Commands (secondary approach)
 
