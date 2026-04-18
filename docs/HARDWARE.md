@@ -58,9 +58,39 @@ No extended/proprietary V4L2 controls are exposed by the driver.
 
 ### Temperature Data Access
 
-The YUYV video stream is a **processed color image** (false-color thermal view with temperature overlay bar at the bottom). It does **NOT** contain raw temperature data.
+**UPDATE (2026-04-18):** The raw temperature data **IS directly accessible** in the YUYV video stream. No vendor commands needed.
 
-Raw temperature values require **vendor-specific USB commands** via control transfers:
+By capturing the stream with `cv2.CAP_PROP_CONVERT_RGB = 0` (disable OpenCV auto-conversion), the YUYV frame can be reinterpreted as uint16 values:
+
+```
+Frame shape: (292, 384, 2), dtype: uint8
+→ reinterpret as uint16 → shape (292, 384)
+```
+
+#### Temperature Conversion (P2 Pro formula)
+
+```
+T(°C) = raw_uint16 / 64.0 - 273.15
+```
+
+- Range: approximately **-273°C to 751°C** (full 16-bit dynamic range)
+- Typical ambient temperatures fall in a narrow band of this range
+- Source: [infiray_p2_pro_python](https://github.com/ftobler/infiray_p2_pro_python)
+
+#### How to Read
+
+```python
+camera = cv2.VideoCapture("/dev/video2", cv2.CAP_V4L2)
+camera.set(cv2.CAP_PROP_CONVERT_RGB, 0)
+ret, frame = camera.read()
+raw16 = frame.view(np.uint16).reshape(292, 384)
+temp_c = raw16.astype(np.float64) / 64.0 - 273.15
+```
+
+### Vendor USB Commands (secondary approach)
+
+Vendor commands were initially investigated but the YUYV stream contains all needed data.
+These commands may still be useful for camera configuration (palette, emissivity, etc.):
 
 #### Protocol (reverse-engineered from InfiRay P2 Pro)
 
@@ -98,14 +128,16 @@ USB descriptor analysis reveals a **UVC Extension Unit** (`0x24 0x05`) in the de
 - ✅ Video stream viewable in `ffplay`, `vlc`, etc.
 - ✅ Single format: YUYV 384×292 @ 25fps (no other resolutions or formats available)
 - ✅ USB capture shows vendor communication on control endpoint
+- ✅ Raw temperature data accessible directly in YUYV stream via `CAP_PROP_CONVERT_RGB=0`
+- ✅ Temperature conversion formula validated: `T(°C) = uint16 / 64 - 273.15`
+- ✅ Frame read via OpenCV + V4L2 backend
 
 ### Not Yet Tested
 
-- ⬜ Y16 raw temperature mode via vendor commands
-- ⬜ Y16 → °C conversion formula
-- ⬜ Palette/color scheme commands
+- ⬜ Accuracy validation (compare with known temperature source)
+- ⬜ Palette/color scheme commands (vendor commands)
 - ⬜ Emissivity and distance parameter control
-- ⬜ Compatibility of P2 Pro commands with HT-301
+- ⬜ Compatibility of P2 Pro vendor commands with HT-301
 
 ### Reference: Similar Projects
 

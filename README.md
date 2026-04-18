@@ -29,13 +29,11 @@ Fournir un outil permettant de :
 ## Plan du projet
 
 ### Phase 1 — Communication USB & extraction température
-- [ ] Installer `libusb` + bindings Python (`pyusb`)
-- [ ] Tester les vendor commands identifiées (protocole InfiRay P2 Pro) :
-  - `ctrl_transfer(0x41, 0x45, 0x78, ...)` = write
-  - `ctrl_transfer(0xC1, 0x44, 0x78, ...)` = read
-- [ ] Activer le mode `y16_preview` (commande `0x010a`) pour obtenir les données brutes 16-bit
-- [ ] Convertir les valeurs Y16 en températures réelles (°C)
-- [ ] Capturer et afficher une frame de température validée
+- [x] Installer `libusb` + bindings Python (`pyusb`)
+- [x] Tester les vendor commands identifiées (protocole InfiRay P2 Pro)
+- [x] Activer le mode `y16_preview` (commande `0x010a`) pour obtenir les données brutes 16-bit
+- [x] Convertir les valeurs Y16 en températures réelles (°C) → `T = uint16/64 - 273.15`
+- [ ] Valider la précision avec une source de température connue
 
 ### Phase 2 — Application desktop (MVP)
 - [ ] Interface temps réel avec flux thermique
