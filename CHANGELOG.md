@@ -20,3 +20,9 @@ All notable changes to LMThermal will be documented in this file.
 - Reference project: [ftobler/infiray_p2_pro_python](https://github.com/ftobler/infiray_p2_pro_python)
 - **Key finding**: HT-301 requires vendor command initialization sequence before valid thermal output
 - **Blocker**: need USB traffic capture from Android app to discover initialization commands
+- **Breakthrough**: decompiled APK (HT-301ThermCameraViewerX V6.4) — temperature is in video stream
+- `libthermometry.so` converts raw pixels to °C via `thermometryT()` (uses exp/pow/sqrt)
+- Temperature thread processes frames: `startTemp()` → `temperature_thread_func` → `do_temperature_callback`
+- Calibration: `GetTempEvn()`, `InitTempParam()`, `CalcFixRaw()`
+- Java conversion: `short = celsius * 10.0 + 2731.0`
+- Created `docs/APK_ANALYSIS.md` with full architecture analysis
