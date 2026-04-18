@@ -50,15 +50,21 @@ Fournir un outil permettant de :
 - [ ] Points de mesure multiples
 - [ ] Export des données numériques (CSV)
 
-### Phase 4 — Comparaison & analyse
-- [ ] Galerie de captures sauvegardées
+### Phase 4 — Enregistrement vidéo
+- [ ] Capture de séquences vidéo thermiques
+- [ ] Embedding des données radiométriques dans chaque frame
+- [ ] Export vidéo (radiométrique + MP4 visuel)
+
+### Phase 5 — Comparaison & analyse
+- [ ] Galerie de captures (photos + vidéos)
 - [ ] Comparaison côte-à-côte (même plage forcée)
 - [ ] Différence de température entre deux captures
-- [ ] Annotations sur les images
+- [ ] Annotations (texte, flèches, zones d'intérêt)
 
-### Phase 5 — Portage Android (futur)
-- [ ] Évaluation de la faisabilité (libusb sur Android via USB host API)
-- [ ] Prototype Android minimal
+### Phase 6 — Portage Android
+- [ ] Prototype Android avec USB Host API
+- [ ] Interface tactile adaptée
+- [ ] Build & distribution (APK)
 
 ## Stack technique (proposée)
 
