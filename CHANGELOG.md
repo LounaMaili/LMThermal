@@ -26,3 +26,20 @@ All notable changes to LMThermal will be documented in this file.
 - Calibration: `GetTempEvn()`, `InitTempParam()`, `CalcFixRaw()`
 - Java conversion: `short = celsius * 10.0 + 2731.0`
 - Created `docs/APK_ANALYSIS.md` with full architecture analysis
+
+### Discovered (Session 2 — 2026-04-18)
+- **Frame structure decoded**: last 514 bytes of each frame contain temperature parameters
+- **Parameters**: env_temp (25°C), emissivity (0.45), distance_factor (0.98), gain, center temperature
+- **Center temperature**: pre-calculated by camera firmware, available at offset 356 in params
+- **GetTempEvn() fully decoded**: uses Stefan-Boltzmann law (T⁴ / ⁴√T) with env_temp correction
+  - Formula: `T = pow(b * (pow(raw + 273.15, 4.0) - env_temp), 0.25) - 273.15`
+- **InitTempParam() decoded**: computes calibration `a = y/(2x)`, `b = (y/2x)²`
+- **CalcFixRaw() partially decoded**: cubic polynomial → exp(), then sqrt/exp correction chain
+  - Uses polynomial: `P(t) = 1.5587 + 0.06939t - 0.000278t² + 6.86e-7t³`
+- **All .rodata constants extracted**: 27 constants decoded (float32 and float64)
+- **Empirical calibration validated**: face ~35°C, wall ~20°C (room at 20°C)
+
+### Added (Session 2 — 2026-04-18)
+- `docs/THERMOMETRY_LIB.md` — complete reverse engineering documentation of libthermometry.so
+- `prototype/thermal_capture.py` — Python prototype with frame capture, param extraction, temp calculation
+- Live view mode with temperature overlay and click-to-measure
