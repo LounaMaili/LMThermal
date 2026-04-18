@@ -62,7 +62,7 @@ Fournir un outil permettant de :
 
 ## Stack technique (proposée)
 
-- **Langage** : Python 3 (prototypage rapide, Erwan connaît un peu)
+- **Langage** : Python 3 (prototypage rapide)
 - **Bibliothèques clés** :
   - `pyusb` — communication USB vendor commands
   - `opencv-python` — capture vidéo V4L2 + traitement d'image
