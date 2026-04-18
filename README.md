@@ -28,12 +28,14 @@ Fournir un outil permettant de :
 
 ## Plan du projet
 
-### Phase 1 — Communication USB & extraction température
+- **Phase 1** : USB communication & température → **en cours de validation**
 - [x] Installer `libusb` + bindings Python (`pyusb`)
 - [x] Tester les vendor commands identifiées (protocole InfiRay P2 Pro)
 - [x] Activer le mode `y16_preview` (commande `0x010a`) pour obtenir les données brutes 16-bit
 - [x] Convertir les valeurs Y16 en températures réelles (°C) → `T = uint16/64 - 273.15`
-- [ ] Valider la précision avec une source de température connue
+- [x] Valider la précision avec une source de température connue
+- [x] Découvert que la caméra embarque les températures dans chaque frame
+- [ ] Reverse engineer `thermometryT()` pour conversion exacte par pixel
 
 ### Phase 2 — Application desktop (MVP)
 - [ ] Interface temps réel avec flux thermique
