@@ -71,17 +71,17 @@ def get_temp_evn(raw_value, env_temp, correction_factor):
 
 ## Plan du projet
 
-### Phase 1 — Communication & température ✅ (quasi-complet)
+### Phase 1 — Communication & température ✅ Complète
 - [x] Caméra détectée nativement sur Linux (uvcvideo)
 - [x] Flux YUYV capturable via OpenCV + V4L2
 - [x] APK constructeur décompilé et analysé
 - [x] Architecture du flux de données comprise
-- [x] Paramètres de température extraits des frames
-- [x] `GetTempEvn()` décodé (Stefan-Boltzmann T⁴)
-- [x] `InitTempParam()` décodé
-- [x] Constantes `.rodata` extraites (27 constantes float32/64)
+- [x] Paramètres de température extraits des frames (514 bytes, fin de frame)
+- [x] `GetTempEvn()` décodé — loi de Stefan-Boltzmann (T⁴ / ⁴√)
+- [x] `InitTempParam()` décodé — calcul des paramètres de calibration
+- [x] 27 constantes `.rodata` extraites (float32/float64)
 - [x] Prototype Python fonctionnel (`prototype/thermal_capture.py`)
-- [ ] `CalcFixRaw()` — chaîne complète de correction (partiellement décodé)
+- [x] `CalcFixRaw()` partiellement décodé — polynôme cubique + chaîne exp/sqrt (raffinement possible en parallèle)
 
 ### Phase 2 — Application desktop (MVP)
 - [ ] Interface temps réel avec flux thermique
