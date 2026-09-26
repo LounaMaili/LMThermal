@@ -49,11 +49,14 @@ Target camera:
 
 Known frame structure:
 
+- thermal image occupies rows 0–287 (384 × 288 pixels);
+- rows 288–291 are non-image trailer;
 - parameter block starts at byte `223742`;
 - parameter block size is `514` bytes;
-- camera-calculated center temperature is stored at parameter offset `356`.
+- field at parameter offset `356` is a candidate center temperature, not validated as a live measurement.
 
-The parameter block occupies the end of the nominal YUYV byte buffer. Do not treat those bytes as valid thermal image pixels in image statistics or extrema.
+The parameter block occupies only part of the four-row trailer. Do not treat
+any trailer bytes as valid thermal image pixels in statistics or extrema.
 
 ## Thermometry status
 
@@ -72,7 +75,10 @@ The current Python approximation used by the desktop prototype must not be docum
 
 Do not introduce arbitrary scale or offset values merely to make calculated values match one observed temperature.
 
-The firmware-provided center temperature is a useful regression reference, but first establish experimentally whether it corresponds to one pixel, a region average, or another internal calculation.
+Field 356 stayed constant across changing captured images. Do not use it as a
+firmware center-temperature regression target until its live meaning is
+established experimentally. See `docs/HARDWARE.md` and the desktop repository's
+`docs/MEASUREMENT_AUDIT.md` for the evidence.
 
 ## Reverse-engineering workflow
 
