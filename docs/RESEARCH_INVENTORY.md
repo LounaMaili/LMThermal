@@ -1,16 +1,26 @@
 # Local HT-301 research inventory (2026-09-26)
 
-This is an inventory of the read-only `LMThermal-Research` folder. No research
-file was moved, edited, or deleted. The APK at
-`apk/HT-301ThermCameraViewerX-V-6.4.20241204-RELEASE.apk` is the only APK
-found. `com.hti.Xtherm.BuildConfig` identifies package `com.hti.Xtherm`,
-version name `6.4.20241204`, version code `641204`. APK SHA-256:
-`9079796632d4dac0733e81594d7bacaeaa912395bb1e84f1b077323106f21c45`.
-No second camera application was available for comparison.
+This is an inventory of the separate `LMThermal-Research` folder. No original
+APK or older research file was moved, edited, or deleted. The new ThermViewer
+APK was extracted only into
+`apk/thermviewer_v2.0.23_extracted/` for this comparison. Neither APK nor any
+extracted binary is tracked in this repository.
+
+| APK | SHA-256 | Package / version | English application label | Camera identities | Research state |
+|---|---|---|---|---|---|
+| `apk/HT-301ThermCameraViewerX-V-6.4.20241204-RELEASE.apk` | `9079796632d4dac0733e81594d7bacaeaa912395bb1e84f1b077323106f21c45` | `com.hti.Xtherm`, `6.4.20241204`, code `641204` | `Hti Image` | USB class `0xef`/subclass `0x02` in filter; HT-301 / Xtherm app path | Already extracted to `apk/extracted/` and decompiled to `apk/decoded/sources/` |
+| `apk/ThermViewer_v2.0.23.apk` | `36e8c667754a17ddcc60042f364024f97ba732a6121ac41e9dc49d230ee6cf7c` | `com.bitera.ThermViewer`, `2.0.23(ot)`, code `73` | `ThermViewer` | Filter includes `0x1514:0x0001` and `0x1772:0x0002`; code also names ThermApp and IR PLUG families | Newly extracted to `apk/thermviewer_v2.0.23_extracted/`; DEX and ELF inspected directly, not fully decompiled |
+
+The official package/version match `com.hti.Xtherm.BuildConfig` and the binary
+manifest. The app labels were resolved from the manifests' string resource IDs
+in `resources.arsc`. ThermViewer's VID/PID filter strings are decimal `5396`
+and `6002`, respectively; its DEX gates temperature startup on
+`0x1514:0x0001`. See [APPLICATION_COMPARISON.md](APPLICATION_COMPARISON.md)
+for the code and hardware comparison.
 
 ## Native libraries
 
-`apk/extracted/lib` contains 52 ELF shared objects. ABI directories and ELF
+The official `apk/extracted/lib` contains 52 ELF shared objects. ABI directories and ELF
 machine types are `arm64-v8a` (AArch64, 11 files), `armeabi` (ARM, 8),
 `armeabi-v7a` (ARM, 11), `x86` (Intel 80386, 11), and `x86_64` (AMD x86-64,
 11). Every checked library lacks a regular `.symtab`; dynamic symbols remain
@@ -21,6 +31,21 @@ names present in every ABI are `libBugly`, `libBugly_Native`, `libUVCCamera`,
 `libusb100`, and `libuvc` (each with `.so` suffix).
 The inventory was checked with `file`, `readelf -h/-d/-Ws`, `nm -D`, and
 `sha256sum` against files in `apk/extracted/lib/<ABI>/`.
+
+ThermViewer packages camera-related native libraries only for `armeabi-v7a`:
+`libUVCCamera.so`, `libUVCCameraIR.so`, `libuvc.so`, `libuvcIR.so`,
+`libthermometry.so`, `libusb100.so`, `libusbthermapp.so`, `libdevapi.so`,
+`libipthermapp.so`, `libirdaSerialPort.so`, `libjpeg-turbo1500.so`,
+`libosburdip.so`, `librgb2yuv.so`, `libthermip.so`,
+`librs.thermappsdk_ipd.so`, `librs.thermappsdk_ipn.so`,
+`librs.thermviewer_ip.so`, `libblasV8.so`, `librsjni.so`, and
+`libRSSupport.so`. The `arm64-v8a` directory has only `librsjni.so` and
+`libRSSupport.so`; `x86` and `mips` have only `librs.thermviewer_ip.so`,
+`libblasV8.so`, `librsjni.so`, and `libRSSupport.so`. Its ARMv7
+`libthermometry.so` SHA-256 is
+`f7c16efd575848f431d0a48218fcdb285d0c292f13d4995ff6914337437603b0`,
+different from the official ARMv7 hash
+`fcfc64a6aa1a5a5f10781e1ce3adffcb5ac4b83d3b6e793192ae819c3a91cdf8`.
 
 | x86_64 library | SHA-256 | Dynamic exports | Relevant dependencies |
 |---|---|---:|---|

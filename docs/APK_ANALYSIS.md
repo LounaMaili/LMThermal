@@ -4,6 +4,16 @@
 
 Downloaded from HTI manufacturer website.
 
+This file describes the official `com.hti.Xtherm` / `Hti Image` APK. A second
+application, `com.bitera.ThermViewer` 2.0.23(ot), has now been inventoried.
+It supports the HT-301 USB identity but has a distinct ARMv7 UVC bridge and
+thermometry binary. Its output-type-zero HT-301 startup sends
+`zoom_absolute=32773`, whereas this official app sends `32772` during preview
+startup. Neither operation alone is proven to enable radiometric pixels; a
+single-command Linux test of `32773` retained display words. The ordered
+comparison and experiment are in
+[APPLICATION_COMPARISON.md](APPLICATION_COMPARISON.md).
+
 ## Architecture
 
 The app uses a layered architecture with native C/C++ libraries:
@@ -122,6 +132,7 @@ validate a Python Celsius matrix remain unobserved.
 **Next steps:**
 - Capture full frames before and after official-app initialization and compare
   image words, trailer indices, and native callback temperatures.
-- Decode the exact zoom-absolute/shutter command effect on radiometric mode.
+- Decode the exact zoom-absolute/shutter command effect on radiometric mode;
+  ThermViewer's `32773` alone was insufficient on Linux.
 - Validate a float32-faithful lookup reconstruction against native outputs
   before implementing desktop Celsius measurements.

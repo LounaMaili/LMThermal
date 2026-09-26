@@ -7,6 +7,14 @@
 > validated. Field 356 is a duplicate calibration coefficient, not an
 > established live center temperature.
 
+> **Second APK scope (2026-09-26):** ThermViewer 2.0.23(ot) packages a
+> different ARMv7 `libthermometry.so`. Its HT-301 UVC bridge imports the same
+> `thermometryT4Line`/`thermometrySearch` names, and its `InitTempParam` ARMv7
+> function is byte-identical to the official version. This document's
+> detailed arithmetic and offsets describe the **official HTI APK**; they
+> have not been validated against ThermViewer's native output. See
+> [APPLICATION_COMPARISON.md](APPLICATION_COMPARISON.md).
+
 ## Overview
 
 Library: `libthermometry.so` (x86_64, Android/Bionic)

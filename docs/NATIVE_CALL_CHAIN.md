@@ -165,14 +165,23 @@ decoded wire protocol. The exact camera mode transition and timing that yield
 14-bit image words remain unknown. The existing `test_y16*.py` scripts tried
 P2 Pro-style vendor commands but do not establish HT-301 compatibility.
 
-The next discriminating experiment requires a working camera and a capture
-before and after the official app's initialization (or a verified replay of
-its controls), recording full frames and the Java/native output for the same
-scene. Check whether image words drop below `0x4000`, whether the trailer
-sensor-temperature word approaches the native calibration branch's expected
-range, and whether lookup predictions agree with native center, high, low,
-and pixel temperatures across multiple targets. Until those observations
-exist, no Python Celsius matrix or measurement-accuracy claim is justified.
-No `/dev/video*` device or `/dev/v4l/by-id` link was present during this
-audit, so no live camera experiment was possible; the two existing sanitized
-frames were used for the input-boundary checks.
+The second APK, ThermViewer 2.0.23(ot), uses its own ARMv7
+`libUVCCameraIR.so` linked against a different `libthermometry.so`. It still
+imports `thermometryT4Line` and `thermometrySearch`. Its HT-301 branch calls
+`startTemperaturing` and maps output type `0` to `zoom_absolute=32773`, while
+type `1` maps to `32772`. It also schedules parameter commands and shutter
+refresh. This is a confirmed Android control path, but the corresponding
+camera-side mode semantics are unresolved. See
+[APPLICATION_COMPARISON.md](APPLICATION_COMPARISON.md) for the ordered trace.
+
+A controlled Linux test sent only ThermViewer's `32773` command after a
+read-only baseline, then discarded 20 frames. All three post-control image
+captures still had 0% of words within `0..16383`; their minimum words were
+32778–32779. The control readback was `32773`. Thus this command alone did
+not expose compatible raw indices. No further control combinations were
+tried. The next discriminating experiment is a frame and USB trace of the
+**full** ThermViewer or official app startup with native center/high/low
+output for the same scene. Determine whether another control, a different
+format, or native preprocessing accounts for the discrepancy. Until those
+observations exist, no Python Celsius matrix or measurement-accuracy claim
+is justified.

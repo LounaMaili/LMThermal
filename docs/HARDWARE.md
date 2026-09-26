@@ -59,6 +59,21 @@ When connected, the kernel creates:
 
 No extended/proprietary V4L2 controls are exposed by the driver.
 
+### Output-type control experiment (2026-09-26)
+
+ThermViewer 2.0.23(ot)'s HT-301 branch maps output type `0` to
+`zoom_absolute=32773` and type `1` to `32772`. Its startup also begins native
+thermometry, sends settings, and refreshes the shutter. The precise firmware
+meaning of either output type is unresolved. A Linux test of **only**
+`zoom_absolute=32773` succeeded at the V4L2 API and read back as `32773`, but
+after 20 settling frames, 0% of the 384 × 288 image words fit the native
+`0..16383` lookup. The post-control image word range across three frames was
+32778–33010, still consistent with `0x8000 + Y` display words. Calibration
+fields and the image's spatial variation remained present. This rules out a
+single-command transition under the tested conditions; it does not rule out
+the full Android startup path. See
+[APPLICATION_COMPARISON.md](APPLICATION_COMPARISON.md).
+
 ### Temperature Data Access
 
 **Measurement audit (2026-09-26):** Live OpenCV/V4L2 captures confirm the
@@ -100,7 +115,8 @@ Recent captures contain a usable 288-row thermal picture without an explicit
 vendor initialization step. Their image words are `0x8000 + Y`; the app's
 thermometry lookup accepts only 14-bit indices (`0..16383`). A usable display
 stream therefore does not demonstrate radiometric input. The controls needed
-to obtain compatible image words remain to be established.
+to obtain compatible image words remain to be established, even after the
+single ThermViewer output-type-zero control experiment above.
 
 Future USB traces may help identify the camera mode controls. Initialization
 is not required for the observed picture, but may be required for the native

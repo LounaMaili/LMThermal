@@ -7,7 +7,10 @@
 > in row 288. Saved Linux image words exceed the app's 14-bit lookup range,
 > so per-pixel Celsius remains unvalidated. See
 > [the native call chain](docs/NATIVE_CALL_CHAIN.md) and
-> [research inventory](docs/RESEARCH_INVENTORY.md). The desktop repository
+> [research inventory](docs/RESEARCH_INVENTORY.md). ThermViewer 2.0.23(ot)
+> now provides a second HT-301 control path; its output-type-zero command
+> `32773` alone left Linux image words outside the 14-bit lookup range. See
+> [application comparison](docs/APPLICATION_COMPARISON.md). The desktop repository
 > holds capture evidence in `docs/MEASUREMENT_AUDIT.md` and `tests/fixtures/`.
 
 Application thermique pour la caméra **Infiray HT-301 (T3-317-13)**.

@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Radiometric-mode comparison — 2026-09-26)
+- Inventoried the newly supplied ThermViewer 2.0.23(ot) APK, its USB filters, ABIs, ARMv7 libraries, and distinct HT-301 UVC/thermometry path.
+- Added `docs/APPLICATION_COMPARISON.md` with ordered startup controls, explicit evidence status, and a controlled Linux before/after experiment.
+- Traced ThermViewer output type 0 to `zoom_absolute=32773`, output type 1 to `32772`, range commands to `32800/32801`, and shutter refresh to `32768` on its HT-301 path.
+- Confirmed experimentally that `32773` alone did not turn current Linux `0x80YY` image words into 14-bit indices; the full app path remains unverified.
+
 ### Added (Native thermometry audit — 2026-09-26)
 - Inventoried the only available HT-301 APK, five ABI sets of native libraries, decompiled Java temperature bridge, and 20 legacy scripts without changing research originals.
 - Traced the Android path through `thermometryT4Line` and `thermometrySearch`, including a 16,384-entry lookup, 384 × 288 pixel array, trailer summary readings, and Java center/high/low positions.
