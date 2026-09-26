@@ -1,5 +1,15 @@
 # libthermometry.so — Reverse Engineering
 
+> **Measurement status (2026-09-26):** The disassembled arithmetic below is
+> useful, but the native caller argument mapping is not established. In
+> particular, there is no evidence yet that `GetTempEvn` receives an 8-bit Y
+> pixel, Celsius environment temperature, or `gain × emissivity`. That desktop
+> hypothesis produced −55.10 °C where frame field 356 was 35.992. Field 356
+> itself stayed constant across changing live images and is not a validated
+> center thermometer. Only transport rows 0–287 are thermal image; rows
+> 288–291 are non-image trailer. Do not use this document as an implemented
+> per-pixel Celsius conversion.
+
 ## Overview
 
 Library: `libthermometry.so` (x86_64, Android/Bionic)
@@ -97,31 +107,35 @@ import math
 
 def GetTempEvn(a: float, env_temp: float, b: float) -> float:
     """
-    Calculate temperature from raw value using Stefan-Boltzmann law.
+    Trace the decoded native arithmetic; input and output semantics unverified.
     
     Parameters:
-        a: Raw sensor value (from video stream Y channel)
-        env_temp: Environment/reflected temperature in °C (from frame params)
-        b: Correction factor (emissivity × distance × gain)
+        a: Native input of currently unknown origin and units
+        env_temp: Native subtraction term of currently unknown units
+        b: Native multiplier of currently unknown composition
     
     Returns:
-        Temperature in °C
+        Native result, not yet validated as a Celsius measurement for Y pixels
     """
-    val = math.pow(a + 273.15, 4.0)    # T⁴ term
-    val = val - env_temp                  # Subtract reflected radiation
-    val = b * val                         # Apply correction factor
-    result = math.pow(val, 0.25)         # 4th root → back to temperature
-    return result - 273.15               # K → °C
+    val = math.pow(a + 273.15, 4.0)    # Native fourth-power term
+    val = val - env_temp                  # Native subtraction term; units unknown
+    val = b * val                         # Native multiplier; composition unknown
+    result = math.pow(val, 0.25)         # Native fourth-root term
+    return result - 273.15               # Native subtraction
 ```
 
-**Physical interpretation:**
-Uses the Stefan-Boltzmann radiation law where radiated power ∝ T⁴. The formula:
-1. Converts raw value to absolute temperature scale
-2. Raises to 4th power (radiation intensity)
-3. Subtracts reflected ambient radiation
-4. Applies correction (emissivity, distance, gain)
-5. Takes 4th root to recover temperature
-6. Converts back to Celsius
+This Python expression shows the algebra. The native function rounds some
+intermediate results to float32, so it is not a bit-exact numerical clone.
+
+**Possible physical interpretation (not yet verified):**
+The fourth power and fourth root resemble Stefan-Boltzmann correction. The
+arithmetic:
+1. Adds 273.15 to its first input
+2. Raises to the fourth power
+3. Subtracts the second input
+4. Multiplies by the third input
+5. Takes the fourth root
+6. Subtracts 273.15
 
 ### InitTempParam(float x, float y, float *out_a, float *out_b)
 
@@ -146,11 +160,11 @@ ret
 ```python
 def InitTempParam(x: float, y: float) -> tuple[float, float]:
     """
-    Initialize temperature calibration parameters.
+    Reproduce decoded parameter arithmetic; caller inputs remain unknown.
     
     Parameters:
-        x: Temperature range parameter
-        y: Calibration coefficient
+        x: Native input of currently unknown role
+        y: Native input of currently unknown role
     
     Returns:
         (a, b) where:
@@ -166,16 +180,10 @@ def InitTempParam(x: float, y: float) -> tuple[float, float]:
 
 This is the most complex function — full multi-parameter calibration.
 
-**Arguments:**
-- `t` (xmm0): Raw pixel value (Y channel)
-- `c` (xmm1): Emissivity correction factor
-- `d` (xmm2): Distance correction factor
-- `e` (xmm3): Additional correction
-- `f` (xmm4): Integer correction (shutter fix)
-- `*out1` (rdi/r13): Corrected raw value
-- `*out2` (rsi/rbx): Intermediate result
-- `*out3` (rdx/r12): Normalization factor
-- `*out4` (rcx/rbp): Final calibrated value
+**Arguments:** Register locations are partially identified, but the source,
+units, and semantic role of `t`, `c`, `d`, `e`, `f` and the four outputs remain
+unverified. Earlier guesses that they correspond to Y, emissivity, distance,
+shutter correction, and calibrated Celsius must not be treated as facts.
 
 **Step 1: Cubic polynomial → exponential**
 ```python
@@ -187,8 +195,7 @@ step1 = c * math.exp(P)
 **Step 2: Complex correction chain with sqrt, exp**
 ```python
 # Multiple sqrt/exp passes with sign-flipped corrections
-# This applies distance, emissivity, and shutter corrections
-# through successive exp() and sqrt() operations
+# The role and ordering of these corrections remain unverified.
 sqrt_out1 = math.sqrt(step1)
 sqrt_d = math.sqrt(d)
 
@@ -201,17 +208,14 @@ corr2 = math.exp((-sqrt_d) * (sqrt_out1 * (-0.00667) + 0.01262))
 # Combined with double constants
 step2 = corr2 * 100.0 + corr1 * 1.9   # approximate, uses 0x29b8 and 0x29c8
 
-# Additional corrections with env_temp, distance, emissivity
-# using pow(x, 4) and pow(x, 0.25) again (Stefan-Boltzmann)
+# Additional terms and their argument mapping require a full register trace.
 ```
 
 **Note:** The full CalcFixRaw involves ~6 exp/sqrt/pow calls with interleaved corrections. The complete Python implementation requires careful tracing of every register. The key insight is:
 
-1. Raw pixel → cubic polynomial → `exp()` (sensor response curve)
-2. Apply emissivity correction via multiplicative factor
-3. Apply distance correction via `sqrt()` + `exp()` chain
-4. Apply reflected temperature correction via Stefan-Boltzmann T⁴/⁴√
-5. Apply shutter/lens correction (integer parameter `f`)
+1. A candidate input enters a cubic polynomial and `exp()`.
+2. Later `sqrt()`, `exp()`, `pow(x,4)`, and `pow(x,0.25)` operations are partially traced.
+3. Their complete ordering, caller inputs, outputs, and physical interpretation remain unknown.
 
 ## Frame Parameter Structure
 
@@ -226,12 +230,12 @@ Offset in params | Value example | Description
 [12]             | 0.45          | Emissivity
 [16]             | 0.98          | Distance factor
 [20]             | 1             | Active flag
-[24-351]         | 0             | Reserved
-[352]            | ~0.27         | Auto-gain value
-[356]            | ~36.0         | Calculated center temperature (°C)
-[360]            | varies        | Additional measurement
-[364]            | ~0.006        | Offset factor
-[368]            | ~0.82         | Calibration factor
+[24-351]         | mixed         | Undecoded; includes device identifier bytes in captured frames
+[352]            | ~0.27         | Candidate gain field; role unverified
+[356]            | ~36.0         | Candidate center-temperature field; live interpretation unverified
+[360]            | ~0.00004     | Undecoded field
+[364]            | ~0.006        | Candidate offset factor; role unverified
+[368]            | ~0.82         | Candidate calibration factor; role unverified
 [376]            | 25.0          | Env temp (repeat)
 [380]            | 25.0          | Env temp (repeat)
 [384]            | 0.45          | Emissivity (repeat)
@@ -250,22 +254,18 @@ For width=384 (0x180), height in field+0x34, width in field+0x38:
 ```
 USB Camera (UVC/YUYV 384×292@25fps)
   │
-  ├─ bytes 0-223,741: YUYV image data
-  │   └─ Y channel = thermal intensity (0-255)
-  │      └─ Per-pixel: CalcFixRaw(Y, emissivity, distance, ...) → °C
-  │
-  └─ bytes 223,742-224,255: Temperature parameters (514 bytes)
+  ├─ bytes 0-221,183: YUYV thermal image data (288 rows)
+  ├─ bytes 221,184-223,741: non-image trailer
+  └─ bytes 223,742-224,255: documented parameter block (514 bytes)
       ├─ Env temperature, emissivity, distance factor
       ├─ Auto-gain, calibration factors
-      └─ Pre-calculated center temperature (offset 356)
+      └─ Field 356: candidate center temperature, not validated live
 ```
 
 ## Practical Usage
 
-For basic temperature reading without `libthermometry.so`:
-
-1. **Center temperature**: Read float32 at frame offset 223,742+356 = 224,098
-2. **Per-pixel approximation**: Use empirical calibration `T ≈ 0.2143 × Y - 3.14` (varies with auto-gain)
-3. **Accurate per-pixel**: Implement `GetTempEvn()` with frame params for `env_temp` and `b`
-
-For full accuracy, the complete `CalcFixRaw()` chain must be implemented with all correction factors from the frame parameters.
+For current diagnostics, decode field 356 at frame offset 224098 while
+labelling it an unverified candidate. The empirical `0.2143 × Y − 3.14`
+mapping and the `GetTempEvn(Y, env_temp, gain × emissivity)` mapping are not
+validated and must not be presented as temperatures. Full per-pixel
+thermometry requires the native call chain and a controlled calibration check.

@@ -7,6 +7,12 @@ All notable changes to LMThermal will be documented in this file.
 ### Changed
 - Added persistent agent workflow instructions requiring documentation/changelog maintenance and pushing completed task branches to GitHub for review.
 
+### Corrected (Measurement audit — 2026-09-26)
+- Confirmed that only the first 288 rows of the 292-row transport are thermal image; 2558 non-image bytes precede the 514-byte parameter block.
+- Reclassified parameter field 356 as an unverified center-temperature candidate after it stayed constant across changing live image data.
+- Rejected the desktop prototype's `gain × emissivity` thermometry input mapping; it gave −55.10 °C at one center while field 356 was 35.992.
+- Corrected the historical claim that the P2 Pro `uint16/64 - 273.15` conversion was validated on HT-301.
+
 ### Added
 - Project repository created
 - README with project plan (6 phases)

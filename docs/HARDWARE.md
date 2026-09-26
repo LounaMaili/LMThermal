@@ -43,6 +43,9 @@ When connected, the kernel creates:
 | Bytes per Line | 768 |
 | Frame Size | 224,256 bytes |
 | Frame Rate | 25 fps |
+| Confirmed thermal image area | 384 × 288 pixels (rows 0–287) |
+| Non-image trailer | 4 transport rows (bytes 221184–224255) |
+| Documented parameter block | Bytes 223742–224255 (last 514 bytes of trailer) |
 | Color Space | sRGB |
 | Transfer Function | sRGB |
 | YCbCr Encoding | ITU-R 601 |
@@ -58,11 +61,29 @@ No extended/proprietary V4L2 controls are exposed by the driver.
 
 ### Temperature Data Access
 
+**Measurement audit (2026-09-26):** Live OpenCV/V4L2 captures confirm the
+transport is `(292, 384, 2)` and 224256 bytes, but only rows 0–287 contain
+the thermal image. Row 288 contains sparse binary data, rows 289–290 are
+zero-filled, and row 291 contains parameters and device identifiers. Excluding
+only the final 514 bytes leaves 2558 bytes of non-image trailer in image
+statistics. The Y value maximum of one complete transport frame was 255 in
+row 291; the true 288-row image maximum was 243. The original claim that all
+bytes before 223742 are image data is incorrect.
+
+The field at parameter offset 356 was 35.99200058 in 158 of 160 live frames
+despite transport-center Y varying from 115 to 125. Two frames had zeroed
+fields. Its interpretation as a live center temperature is therefore not
+validated. See the desktop repository's `docs/MEASUREMENT_AUDIT.md` for the
+capture and arithmetic evidence.
+
+A later end-to-end diagnostic observed transport-center Y = 201 and image
+mean Y = 142.72 with the same field 356 value.
+
 **UPDATE (2026-04-18):** The P2 Pro approach (YUYV → uint16 reinterpretation) does **NOT** work on the HT-301.
 
-- The YUYV stream appears to be pure noise when captured without initialization
+- Earlier captures appeared to be noise; later 2026-09-26 captures produced a recognizable thermal image without a vendor initialization sequence
 - The P2 Pro temperature formula gives unrealistic values (240°C center for ambient)
-- The camera likely requires a vendor command initialization sequence before outputting valid data
+- A vendor initialization requirement is not established by the current captures
 
 The raw stream is accessible via OpenCV:
 ```python
@@ -71,10 +92,11 @@ camera.set(cv2.CAP_PROP_CONVERT_RGB, 0)
 ret, frame = camera.read()  # shape (292, 384, 2) uint8
 ```
 
-But without proper initialization, the data is sensor noise, not thermal readings.
+Recent captures contain a usable 288-row thermal picture without an explicit
+vendor initialization step. The temperature conversion remains unknown.
 
-**Next step**: capture USB traffic while the Android app is running to find the initialization sequence.
-This requires either a USB hub for simultaneous phone+PC connection, or analyzing the Android APK directly.
+Future USB traces may still help identify controls and the thermometry call
+chain, but initialization is not required for the observed image stream.
 
 ### Vendor USB Commands (secondary approach)
 
@@ -102,7 +124,9 @@ These commands may still be useful for camera configuration (palette, emissivity
 
 #### Y16 Mode
 
-When `y16_preview_start` is activated, the camera switches to a 16-bit raw output mode where each pixel represents a temperature value. The conversion from raw Y16 to °C needs to be validated experimentally (likely: `T(°C) = raw_value * scale_factor + offset`, typical for microbolometer sensors).
+The P2 Pro `y16_preview_start` command is documented elsewhere, but its
+behavior on HT-301 has not been tested. No Y16-to-Celsius conversion is
+validated for this camera.
 
 **Status**: Not yet tested on HT-301 — commands identified from P2 Pro reverse engineering. Need to validate compatibility.
 
@@ -117,8 +141,8 @@ USB descriptor analysis reveals a **UVC Extension Unit** (`0x24 0x05`) in the de
 - ✅ Video stream viewable in `ffplay`, `vlc`, etc.
 - ✅ Single format: YUYV 384×292 @ 25fps (no other resolutions or formats available)
 - ✅ USB capture shows vendor communication on control endpoint
-- ✅ Raw temperature data accessible directly in YUYV stream via `CAP_PROP_CONVERT_RGB=0`
-- ✅ Temperature conversion formula validated: `T(°C) = uint16 / 64 - 273.15`
+- ✅ Unconverted YUYV image and parameter-like trailer accessible via `CAP_PROP_CONVERT_RGB=0`; Celsius conversion is not validated
+- ❌ P2 Pro formula `T(°C) = uint16 / 64 - 273.15` produced unrealistic values on HT-301 and is not validated for this camera
 - ✅ Frame read via OpenCV + V4L2 backend
 
 ### Not Yet Tested

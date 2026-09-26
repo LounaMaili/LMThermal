@@ -65,8 +65,13 @@ Total frame size: 224,256 bytes (384 × 292 × 2)
 
 | Offset | Size | Content |
 |--------|------|----------|
-| 0 | 223,742 | Image data (YUYV, 288 usable rows × 384 pixels) |
-| 223,742 | 514 | Temperature parameters |
+| 0 | 221,184 | Thermal image data (YUYV, 288 usable rows × 384 pixels) |
+| 221,184 | 2,558 | Non-image trailer before the documented parameter block |
+| 223,742 | 514 | Documented parameter block, also part of the trailer |
+
+The four final transport rows must not be searched for image extrema. This
+boundary was confirmed with real frames on 2026-09-26. The prior table's
+223742-byte image span included 2558 bytes of non-image data.
 
 ### Temperature Parameters (514 bytes, float32 LE)
 
@@ -78,12 +83,12 @@ Total frame size: 224,256 bytes (384 × 292 × 2)
 | 12 | 0.45 | Emissivity |
 | 16 | 0.98 | Distance factor |
 | 20 | 1 | Flag (active?) |
-| 24-351 | 0 | Reserved / unused |
-| 352 | ~0.27 | Gain value (auto-adaptive) |
-| 356 | ~36.0 | **Measured temperature at center (°C)** |
-| 360 | varies | Additional measurement |
-| 364 | ~0.006 | Offset factor |
-| 368 | ~0.82 | Calibration factor |
+| 24-351 | mixed | Undecoded, including device identifier bytes in captured frames |
+| 352 | ~0.27 | Candidate gain field; interpretation unverified |
+| 356 | ~36.0 | Candidate center-temperature field; observed constant across changing image frames, so its live meaning is unverified |
+| 360 | ~0.00004 | Undecoded field |
+| 364 | ~0.006 | Candidate offset factor; role unverified |
+| 368 | ~0.82 | Candidate calibration factor; role unverified |
 | 376 | 25.0 | Env temp (repeat) |
 | 380 | 25.0 | Env temp (repeat) |
 | 384 | 0.45 | Emissivity (repeat) |
@@ -91,24 +96,26 @@ Total frame size: 224,256 bytes (384 × 292 × 2)
 
 ### Key Discovery
 
-The camera **embeds calculated temperature values in every frame**. Offset [356] contains the center-point temperature in °C. This means:
-- Temperature calculation happens inside the camera firmware
-- No vendor USB commands needed for basic temperature reading
-- Each pixel's Y value maps to a temperature via auto-gain calibration
-- Per-pixel temperature = `thermometryT(Y_value, params)` — the native lib formula
+The camera embeds fields that decode as plausible numeric parameters. Field
+356 was previously identified as center temperature, but it stayed exactly
+35.99200058 through substantially changing image data in the 2026-09-26
+capture. The location of a live center-temperature value, if one exists in
+this stream, is still unknown. The native per-pixel call chain and mapping
+from Y and frame parameters also remain unverified.
 
 ### Per-Pixel Temperature
 
-The Y channel (luminance) of the YUYV frame represents thermal intensity:
-- Y=0 → coldest in scene
-- Y=255 → hottest in scene
-- The camera auto-adjusts gain/offset per scene
-- Empirical calibration: `T ≈ 0.2143 × Y - 3.14` (approximate, varies with auto-gain)
-- For exact per-pixel: need `thermometryT()` from `libthermometry.so` or reverse the formula
+The Y channel in rows 0–287 represents display brightness in the thermal
+picture. Its mapping to Celsius, including any scene-dependent gain or offset,
+has not been validated. The earlier empirical `T ≈ 0.2143 × Y - 3.14`
+formula is only a rough visual guess and must not be used for measurements.
+The complete native `thermometryT()` call chain is still needed.
 
 ## Key Finding
 
-The temperature data is embedded **in the video stream**, not retrieved via separate USB commands. The native library `libthermometry.so` contains the proprietary calibration formula that converts raw pixel values to °C.
+Parameter-like data is embedded in the video stream. The native library
+contains thermometry functions, but their full input mapping and the source
+of any live temperature output remain to be established.
 
 **Next steps:**
 - Reverse engineer `thermometryT()` from `libthermometry.so` (small library, ~2.6KB code)

@@ -1,5 +1,12 @@
 # LMThermal
 
+> **Measurement status (2026-09-26):** Real HT-301 frames confirm 288 thermal
+> image rows followed by four non-image trailer rows. The last 514 bytes are
+> only part of that trailer. The older per-pixel formula and the interpretation
+> of parameter field 356 as a live center temperature are unvalidated. The
+> desktop repository contains the capture evidence and test fixtures in
+> `docs/MEASUREMENT_AUDIT.md` and `tests/fixtures/`.
+
 Application thermique pour la caméra **Infiray HT-301 (T3-317-13)**.
 
 Remplacement libre et open-source de l'application ThermViewer (abandonnée) et de l'app constructeur HTI (limitée).
@@ -34,19 +41,21 @@ Fournir un outil permettant de :
 ```
 USB Camera (UVC/YUYV 384×292 @ 25fps)
   │
-  ├─ Bytes 0-223,741 : Image thermique YUYV
+  ├─ Bytes 0-221,183 : Image thermique YUYV (288 lignes)
   │   └─ Y channel (0-255) = intensité thermique par pixel
-  │      └─ Conversion en °C via GetTempEvn() (loi de Stefan-Boltzmann)
+  │      └─ Conversion en °C : non validée
   │
-  └─ Bytes 223,742-224,255 : Paramètres de température (514 bytes)
+  ├─ Bytes 221,184-223,741 : données non-image
+  └─ Bytes 223,742-224,255 : bloc de paramètres (514 bytes)
       ├─ Température ambiante, émissivité, facteur de distance
       ├─ Gain auto-adaptatif, facteurs de calibration
-      └─ Température pré-calculée au centre (offset 356)
+      └─ Champ 356 : candidat température centrale non validé
 ```
 
 ### Formule de température (GetTempEvn)
 
-Reverse-engineered depuis `libthermometry.so` :
+Arithmétique reverse-engineered depuis `libthermometry.so` ; le mappage des
+arguments natifs n'est pas établi :
 
 ```python
 def get_temp_evn(raw_value, env_temp, correction_factor):
@@ -65,23 +74,24 @@ def get_temp_evn(raw_value, env_temp, correction_factor):
 | 12 | 0.45 | Émissivité |
 | 16 | 0.98 | Facteur de distance |
 | 352 | ~0.27 | Gain auto-adaptatif |
-| **356** | **~36.0** | **Température calculée au centre (°C)** |
+| **356** | **~36.0** | **Candidat température centrale ; signification non validée** |
 | 364 | ~0.006 | Facteur d'offset |
 | 368 | ~0.82 | Facteur de calibration |
 
 ## Plan du projet
 
-### Phase 1 — Communication & température ✅ Complète
+### Phase 1 — Communication & température (mesure à valider)
 - [x] Caméra détectée nativement sur Linux (uvcvideo)
 - [x] Flux YUYV capturable via OpenCV + V4L2
 - [x] APK constructeur décompilé et analysé
-- [x] Architecture du flux de données comprise
+- [ ] Chaîne complète du flux thermique et des paramètres comprise
 - [x] Paramètres de température extraits des frames (514 bytes, fin de frame)
 - [x] `GetTempEvn()` décodé — loi de Stefan-Boltzmann (T⁴ / ⁴√)
 - [x] `InitTempParam()` décodé — calcul des paramètres de calibration
 - [x] 27 constantes `.rodata` extraites (float32/float64)
-- [x] Prototype Python fonctionnel (`prototype/thermal_capture.py`)
+- [x] Prototype Python expérimental (`prototype/thermal_capture.py`), sans mesure par pixel validée
 - [x] `CalcFixRaw()` partiellement décodé — polynôme cubique + chaîne exp/sqrt (raffinement possible en parallèle)
+- [ ] Conversion Y → °C et signification du champ 356 validées expérimentalement
 
 ### Phase 2 — Application desktop (MVP)
 - [ ] Interface temps réel avec flux thermique
