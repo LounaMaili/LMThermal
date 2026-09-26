@@ -258,7 +258,7 @@ USB Camera (UVC/YUYV 384×292@25fps)
   ├─ bytes 221,184-223,741: non-image trailer
   └─ bytes 223,742-224,255: documented parameter block (514 bytes)
       ├─ Env temperature, emissivity, distance factor
-      ├─ Auto-gain, calibration factors
+      ├─ Candidate gain and calibration fields
       └─ Field 356: candidate center temperature, not validated live
 ```
 

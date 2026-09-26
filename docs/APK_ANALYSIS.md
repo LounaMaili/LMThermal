@@ -73,7 +73,7 @@ The four final transport rows must not be searched for image extrema. This
 boundary was confirmed with real frames on 2026-09-26. The prior table's
 223742-byte image span included 2558 bytes of non-image data.
 
-### Temperature Parameters (514 bytes, float32 LE)
+### Temperature Parameters (514 bytes, mixed fields with known float32 LE offsets)
 
 | Byte offset | Value | Description |
 |-------------|-------|-------------|

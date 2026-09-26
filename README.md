@@ -30,9 +30,10 @@ Fournir un outil permettant de :
 | USB Product ID | 0x0001 |
 | Interface vidéo | UVC standard (driver `uvcvideo`) |
 | Résolution | 384×292 |
+| Image thermique exploitable | 384×288 (lignes 0–287) |
 | Format vidéo | YUYV 4:2:2 @ 25 fps |
-| Plage de mesure | -20°C à +400°C |
-| Précision | ±3°C |
+| Plage de mesure annoncée | -20°C à +400°C (non vérifiée ici) |
+| Précision annoncée | ±3°C (non vérifiée ici) |
 
 ## Découvertes clés
 
@@ -48,7 +49,7 @@ USB Camera (UVC/YUYV 384×292 @ 25fps)
   ├─ Bytes 221,184-223,741 : données non-image
   └─ Bytes 223,742-224,255 : bloc de paramètres (514 bytes)
       ├─ Température ambiante, émissivité, facteur de distance
-      ├─ Gain auto-adaptatif, facteurs de calibration
+      ├─ Champs candidats de gain et de calibration (rôle non validé)
       └─ Champ 356 : candidat température centrale non validé
 ```
 
@@ -58,10 +59,10 @@ Arithmétique reverse-engineered depuis `libthermometry.so` ; le mappage des
 arguments natifs n'est pas établi :
 
 ```python
-def get_temp_evn(raw_value, env_temp, correction_factor):
-    """Stefan-Boltzmann radiation law: T⁴ correction"""
-    val = (raw_value + 273.15) ** 4.0 - env_temp
-    val = correction_factor * val
+def get_temp_evn(a, env_term, b):
+    """Decoded arithmetic; native argument mapping is not established."""
+    val = (a + 273.15) ** 4.0 - env_term
+    val = b * val
     return val ** 0.25 - 273.15
 ```
 
@@ -73,10 +74,10 @@ def get_temp_evn(raw_value, env_temp, correction_factor):
 | 8 | 25.0 | Température ambiante 2 (°C) |
 | 12 | 0.45 | Émissivité |
 | 16 | 0.98 | Facteur de distance |
-| 352 | ~0.27 | Gain auto-adaptatif |
+| 352 | ~0.27 | Gain candidat ; rôle non validé |
 | **356** | **~36.0** | **Candidat température centrale ; signification non validée** |
-| 364 | ~0.006 | Facteur d'offset |
-| 368 | ~0.82 | Facteur de calibration |
+| 364 | ~0.006 | Facteur d'offset candidat ; rôle non validé |
+| 368 | ~0.82 | Facteur de calibration candidat ; rôle non validé |
 
 ## Plan du projet
 
@@ -86,7 +87,7 @@ def get_temp_evn(raw_value, env_temp, correction_factor):
 - [x] APK constructeur décompilé et analysé
 - [ ] Chaîne complète du flux thermique et des paramètres comprise
 - [x] Paramètres de température extraits des frames (514 bytes, fin de frame)
-- [x] `GetTempEvn()` décodé — loi de Stefan-Boltzmann (T⁴ / ⁴√)
+- [x] Arithmétique de `GetTempEvn()` décodée (T⁴ / ⁴√), sans mappage des arguments
 - [x] `InitTempParam()` décodé — calcul des paramètres de calibration
 - [x] 27 constantes `.rodata` extraites (float32/float64)
 - [x] Prototype Python expérimental (`prototype/thermal_capture.py`), sans mesure par pixel validée

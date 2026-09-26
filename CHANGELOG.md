@@ -13,6 +13,8 @@ All notable changes to LMThermal will be documented in this file.
 - Rejected the desktop prototype's `gain × emissivity` thermometry input mapping; it gave −55.10 °C at one center while field 356 was 35.992.
 - Corrected the historical claim that the P2 Pro `uint16/64 - 273.15` conversion was validated on HT-301.
 
+Historical discoveries below record earlier conclusions; the corrections above supersede contradictory temperature and initialization claims.
+
 ### Added
 - Project repository created
 - README with project plan (6 phases)
