@@ -106,3 +106,29 @@ For substantial work, use focused branches following `REPO_RULES.md`, for exampl
 - `proto/thermometry-chain`
 - `docs/thermometry-findings`
 - `fix/frame-layout-docs`
+
+
+## End-of-task repository sync
+
+At the end of every completed task, after relevant checks pass:
+
+1. review the final diff and remove accidental or unrelated changes;
+2. update every documentation file affected by confirmed findings or behavior changes;
+3. update `CHANGELOG.md` for every meaningful discovery, correction, protocol/thermometry finding, documentation change, or prototype behavior change;
+4. commit the complete task on its focused working branch with a descriptive English commit message;
+5. push that working branch to GitHub so remote reviewers and other agents can inspect the exact result.
+
+Do not leave completed work only in the local working tree unless the user explicitly asks for that.
+
+Do not merge into `main` automatically. Push the working branch and leave merge or pull-request approval to the user/reviewer.
+
+If the task also changes production desktop code, make the corresponding `LMThermal-Desktop` changes in that repository's own branch, commit, and push. Keep both Git histories independent.
+
+Before reporting a task as complete, include:
+
+- branch name;
+- commit SHA(s);
+- whether the branch was pushed successfully;
+- checks/tests/diagnostics run and their result;
+- documentation/changelog files updated;
+- remaining uncertainty or follow-up work.
