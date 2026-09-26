@@ -53,7 +53,7 @@ Known frame structure:
 - rows 288–291 are non-image trailer;
 - parameter block starts at byte `223742`;
 - parameter block size is `514` bytes;
-- field at parameter offset `356` is a candidate center temperature, not validated as a live measurement.
+- field at parameter offset `356` copies a calibration coefficient from byte `223498`; the app's live center index is elsewhere in the trailer.
 
 The parameter block occupies only part of the four-row trailer. Do not treat
 any trailer bytes as valid thermal image pixels in statistics or extrema.
@@ -68,17 +68,19 @@ Known reverse-engineered components include:
 
 - `GetTempEvn`
 - `InitTempParam`
-- a partial understanding of `CalcFixRaw`
+- the normal-path arithmetic and caller input mapping of `CalcFixRaw`
 - constants extracted from `libthermometry.so`
+- the `thermometryT4Line`/`thermometrySearch` lookup path
 
 The current Python approximation used by the desktop prototype must not be documented as validated thermometry.
 
 Do not introduce arbitrary scale or offset values merely to make calculated values match one observed temperature.
 
-Field 356 stayed constant across changing captured images. Do not use it as a
-firmware center-temperature regression target until its live meaning is
-established experimentally. See `docs/HARDWARE.md` and the desktop repository's
-`docs/MEASUREMENT_AUDIT.md` for the evidence.
+Field 356 stayed constant across changing captured images and is a duplicated
+calibration coefficient. Do not use it as a center-temperature regression
+target. The native app instead maps a 16-bit center index at frame byte
+221208 through its lookup. See `docs/NATIVE_CALL_CHAIN.md`, `docs/HARDWARE.md`,
+and the desktop repository's `docs/MEASUREMENT_AUDIT.md`.
 
 ## Reverse-engineering workflow
 

@@ -1,5 +1,11 @@
 # LMThermal — Application Specification
 
+> Measurement implementation is gated on obtaining 14-bit radiometric image
+> words and validating the reconstructed native lookup against official-app
+> readings. Current Linux fixtures contain display image words above the
+> lookup range. See [NATIVE_CALL_CHAIN.md](NATIVE_CALL_CHAIN.md). Temperature
+> measurements and radiometric exports below are planned features.
+
 ## Target Platform
 
 **Primary**: Android (USB Host API, connected via USB-C OTG)

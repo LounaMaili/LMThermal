@@ -2,10 +2,13 @@
 
 > **Measurement status (2026-09-26):** Real HT-301 frames confirm 288 thermal
 > image rows followed by four non-image trailer rows. The last 514 bytes are
-> only part of that trailer. The older per-pixel formula and the interpretation
-> of parameter field 356 as a live center temperature are unvalidated. The
-> desktop repository contains the capture evidence and test fixtures in
-> `docs/MEASUREMENT_AUDIT.md` and `tests/fixtures/`.
+> only part of that trailer. Native disassembly identifies field 356 as a
+> duplicated calibration coefficient and locates the app's live center index
+> in row 288. Saved Linux image words exceed the app's 14-bit lookup range,
+> so per-pixel Celsius remains unvalidated. See
+> [the native call chain](docs/NATIVE_CALL_CHAIN.md) and
+> [research inventory](docs/RESEARCH_INVENTORY.md). The desktop repository
+> holds capture evidence in `docs/MEASUREMENT_AUDIT.md` and `tests/fixtures/`.
 
 Application thermique pour la caméra **Infiray HT-301 (T3-317-13)**.
 
@@ -43,24 +46,24 @@ Fournir un outil permettant de :
 USB Camera (UVC/YUYV 384×292 @ 25fps)
   │
   ├─ Bytes 0-221,183 : Image thermique YUYV (288 lignes)
-  │   └─ Y channel (0-255) = intensité thermique par pixel
-  │      └─ Conversion en °C : non validée
+  │   └─ Y channel (0-255) = display brightness in saved Linux frames
+  │      └─ Native lookup requires 14-bit-compatible words, not these Y bytes
   │
   ├─ Bytes 221,184-223,741 : données non-image
   └─ Bytes 223,742-224,255 : bloc de paramètres (514 bytes)
-      ├─ Température ambiante, émissivité, facteur de distance
-      ├─ Champs candidats de gain et de calibration (rôle non validé)
-      └─ Champ 356 : candidat température centrale non validé
+      ├─ Correction, reflected and ambient temperatures, humidity, emissivity, distance
+      ├─ Copies of five calibration coefficients from the earlier trailer
+      └─ Field 356: copied calibration coefficient, not live center temperature
 ```
 
 ### Formule de température (GetTempEvn)
 
-Arithmétique reverse-engineered depuis `libthermometry.so` ; le mappage des
-arguments natifs n'est pas établi :
+The native caller provides a lookup-derived value, a radiation term, and an
+inverse correction factor. This formula does not accept an 8-bit Y pixel:
 
 ```python
 def get_temp_evn(a, env_term, b):
-    """Decoded arithmetic; native argument mapping is not established."""
+    """Decoded arithmetic; a is lookup-derived, not a display Y byte."""
     val = (a + 273.15) ** 4.0 - env_term
     val = b * val
     return val ** 0.25 - 273.15
@@ -70,14 +73,15 @@ def get_temp_evn(a, env_term, b):
 
 | Offset | Exemple | Description |
 |--------|---------|-------------|
-| 4 | 25.0 | Température ambiante (°C) |
-| 8 | 25.0 | Température ambiante 2 (°C) |
-| 12 | 0.45 | Émissivité |
-| 16 | 0.98 | Facteur de distance |
-| 352 | ~0.27 | Gain candidat ; rôle non validé |
-| **356** | **~36.0** | **Candidat température centrale ; signification non validée** |
-| 364 | ~0.006 | Facteur d'offset candidat ; rôle non validé |
-| 368 | ~0.82 | Facteur de calibration candidat ; rôle non validé |
+| 4 | 25.0 | Reflected temperature |
+| 8 | 25.0 | Ambient temperature |
+| 12 | 0.45 | Humidity |
+| 16 | 0.98 | Emissivity |
+| 20 | 1 | Distance (uint16) |
+| 352 | ~0.27 | Copy of calibration coefficient at byte 223494 |
+| **356** | **~36.0** | **Copy of calibration coefficient at byte 223498** |
+| 364 | ~0.006 | Copy of calibration coefficient at byte 223506 |
+| 368 | ~0.82 | Copy of calibration coefficient at byte 223510 |
 
 ## Plan du projet
 
@@ -85,14 +89,16 @@ def get_temp_evn(a, env_term, b):
 - [x] Caméra détectée nativement sur Linux (uvcvideo)
 - [x] Flux YUYV capturable via OpenCV + V4L2
 - [x] APK constructeur décompilé et analysé
-- [ ] Chaîne complète du flux thermique et des paramètres comprise
+- [x] Java/JNI/native lookup path and source of its parameters traced
+- [ ] Camera mode transition to 14-bit radiometric image words validated
 - [x] Paramètres de température extraits des frames (514 bytes, fin de frame)
-- [x] Arithmétique de `GetTempEvn()` décodée (T⁴ / ⁴√), sans mappage des arguments
+- [x] `GetTempEvn()` arithmetic and native caller arguments traced
 - [x] `InitTempParam()` décodé — calcul des paramètres de calibration
 - [x] 27 constantes `.rodata` extraites (float32/float64)
 - [x] Prototype Python expérimental (`prototype/thermal_capture.py`), sans mesure par pixel validée
-- [x] `CalcFixRaw()` partiellement décodé — polynôme cubique + chaîne exp/sqrt (raffinement possible en parallèle)
-- [ ] Conversion Y → °C et signification du champ 356 validées expérimentalement
+- [x] `CalcFixRaw()` normal-path arithmetic and five caller inputs traced
+- [x] Field 356 identified as a copied calibration coefficient in saved frames
+- [ ] Native lookup outputs compared with controlled camera/app readings
 
 ### Phase 2 — Application desktop (MVP)
 - [ ] Interface temps réel avec flux thermique

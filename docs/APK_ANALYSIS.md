@@ -32,9 +32,9 @@ The app uses a layered architecture with native C/C++ libraries:
 3. Thread waits on `pthread_cond_wait` for new frames
 4. Raw frame bytes passed to `do_temperature_callback(JNIEnv*, byte[])`
 5. **`libthermometry.so`** processes raw pixel data:
-   - `thermometryT()` — main temperature calculation (uses `exp`, `pow`, `sqrt` → complex calibration curve)
-   - `thermometrySearch()` — search for temperature points
-   - `thermometryT4Line()` — line measurement
+   - `thermometryT4Line()` — the app's 16,384-entry Celsius lookup builder
+   - `thermometrySearch()` — maps trailer summary indices and image words through that lookup
+   - `thermometryT()` — alternate exported builder, not imported by another APK library
    - `GetTempEvn()` — get environment temperature
    - `InitTempParam()` — initialize parameters
    - `CalcFixRaw()` — raw data correction
@@ -51,7 +51,7 @@ fahrenheit = celsius * 1.8f + 32.0f;
 ```
 
 ### Temperature Parameters
-- `nativeGetByteArrayTemperaturePara(nativePtr, index)` — reads calibration parameters from device via USB
+- `nativeGetByteArrayTemperaturePara(nativePtr, length)` — copies 128 bytes from the frame trailer in the observed app call, with its last 16 bytes replaced from an earlier trailer location
 - `nativeSetTempRange(nativePtr, range)` — sets temperature range (120°C or 400°C)
 - `nativeWhenChangeTempPara()` — refresh after parameter change
 - `nativeSetShutterFix(nativePtr, float)` — shutter correction
@@ -77,47 +77,51 @@ boundary was confirmed with real frames on 2026-09-26. The prior table's
 
 | Byte offset | Value | Description |
 |-------------|-------|-------------|
-| 0 | 0.0 | Unknown (mode?) |
-| 4 | 25.0 | Environment temperature 1 |
-| 8 | 25.0 | Environment temperature 2 |
-| 12 | 0.45 | Emissivity |
-| 16 | 0.98 | Distance factor |
-| 20 | 1 | Flag (active?) |
+| 0 | 0.0 | Correction setting |
+| 4 | 25.0 | Reflected temperature |
+| 8 | 25.0 | Ambient temperature |
+| 12 | 0.45 | Humidity |
+| 16 | 0.98 | Emissivity |
+| 20 | 1 | Distance (uint16) |
 | 24-351 | mixed | Undecoded, including device identifier bytes in captured frames |
-| 352 | ~0.27 | Candidate gain field; interpretation unverified |
-| 356 | ~36.0 | Candidate center-temperature field; observed constant across changing image frames, so its live meaning is unverified |
-| 360 | ~0.00004 | Undecoded field |
-| 364 | ~0.006 | Candidate offset factor; role unverified |
-| 368 | ~0.82 | Candidate calibration factor; role unverified |
-| 376 | 25.0 | Env temp (repeat) |
-| 380 | 25.0 | Env temp (repeat) |
-| 384 | 0.45 | Emissivity (repeat) |
-| 388 | 0.98 | Distance factor (repeat) |
+| 352 | ~0.27 | Copy of calibration coefficient at byte 223494 |
+| 356 | ~36.0 | Copy of calibration coefficient at byte 223498; not the live center |
+| 360 | ~0.00004 | Copy of calibration coefficient at byte 223502 |
+| 364 | ~0.006 | Copy of calibration coefficient at byte 223506 |
+| 368 | ~0.82 | Copy of calibration coefficient at byte 223510 |
+| 376 | 25.0 | Reflected temperature (repeat) |
+| 380 | 25.0 | Ambient temperature (repeat) |
+| 384 | 0.45 | Humidity (repeat) |
+| 388 | 0.98 | Emissivity (repeat) |
 
 ### Key Discovery
 
-The camera embeds fields that decode as plausible numeric parameters. Field
-356 was previously identified as center temperature, but it stayed exactly
-35.99200058 through substantially changing image data in the 2026-09-26
-capture. The location of a live center-temperature value, if one exists in
-this stream, is still unknown. The native per-pixel call chain and mapping
-from Y and frame parameters also remain unverified.
+The app's Java code identifies the six user settings at block offsets 0–20.
+Native code reads five calibration coefficients earlier in the trailer, at
+223494–223513; the saved frames duplicate these at block offsets 352–371.
+Thus field 356 is a calibration coefficient copy, not a live center reading.
+`thermometrySearch` obtains a live center raw index at byte 221208 and maps it
+through a native lookup. See [NATIVE_CALL_CHAIN.md](NATIVE_CALL_CHAIN.md).
 
 ### Per-Pixel Temperature
 
-The Y channel in rows 0–287 represents display brightness in the thermal
-picture. Its mapping to Celsius, including any scene-dependent gain or offset,
-has not been validated. The earlier empirical `T ≈ 0.2143 × Y - 3.14`
-formula is only a rough visual guess and must not be used for measurements.
-The complete native `thermometryT()` call chain is still needed.
+The saved image words are `0x8000 + Y`, exceeding the native lookup's 14-bit
+index range. They are display brightness, not directly usable radiometric
+indices. The earlier empirical `T ≈ 0.2143 × Y - 3.14` formula is invalid.
+The official app calls `thermometryT4Line`, then `thermometrySearch`; a
+controlled capture after app initialization is needed to determine how the
+stream becomes compatible with that path.
 
 ## Key Finding
 
-Parameter-like data is embedded in the video stream. The native library
-contains thermometry functions, but their full input mapping and the source
-of any live temperature output remain to be established.
+Parameter and calibration data are embedded in the video trailer. The native
+functions' input mapping is now traced, and the app's center/high/low output
+layout is known. The camera control sequence and native outputs needed to
+validate a Python Celsius matrix remain unobserved.
 
 **Next steps:**
-- Reverse engineer `thermometryT()` from `libthermometry.so` (small library, ~2.6KB code)
-- Or: use the library directly via JNI/FFI on Linux
-- Or: capture USB traffic while app runs to identify `SetParameter` commands for calibration data
+- Capture full frames before and after official-app initialization and compare
+  image words, trailer indices, and native callback temperatures.
+- Decode the exact zoom-absolute/shutter command effect on radiometric mode.
+- Validate a float32-faithful lookup reconstruction against native outputs
+  before implementing desktop Celsius measurements.

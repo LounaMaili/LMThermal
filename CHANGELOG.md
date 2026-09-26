@@ -4,6 +4,18 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Native thermometry audit — 2026-09-26)
+- Inventoried the only available HT-301 APK, five ABI sets of native libraries, decompiled Java temperature bridge, and 20 legacy scripts without changing research originals.
+- Traced the Android path through `thermometryT4Line` and `thermometrySearch`, including a 16,384-entry lookup, 384 × 288 pixel array, trailer summary readings, and Java center/high/low positions.
+- Reconstructed `CalcFixRaw` normal-path arithmetic and mapped its five inputs to the app's ambient, humidity, distance, emissivity, and reflected-temperature settings.
+- Added `docs/NATIVE_CALL_CHAIN.md` and `docs/RESEARCH_INVENTORY.md` with binary hashes, evidence, and remaining initialization questions.
+
+### Corrected (Native thermometry audit — 2026-09-26)
+- Identified block fields 352–371 as copies of five preceding trailer calibration floats; field 356 is a calibration coefficient copy, while the app maps a live center index at frame byte 221208 through its lookup.
+- Corrected parameter labels: offsets 4/8/12/16/20 are reflected temperature, ambient temperature, humidity, emissivity, and uint16 distance.
+- Corrected the historical `CalcFixRaw` expression: its second exponential has a negative ~0.9 multiplier, not 100.0.
+- Found that the saved V4L2 image words are `0x8000 + Y` and exceed the native 14-bit lookup range; a visible image does not establish radiometric input or validated Celsius measurements.
+
 ### Changed
 - Added persistent agent workflow instructions requiring documentation/changelog maintenance and pushing completed task branches to GitHub for review.
 

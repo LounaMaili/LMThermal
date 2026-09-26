@@ -72,9 +72,13 @@ bytes before 223742 are image data is incorrect.
 
 The field at parameter offset 356 was 35.99200058 in 158 of 160 live frames
 despite transport-center Y varying from 115 to 125. Two frames had zeroed
-fields. Its interpretation as a live center temperature is therefore not
-validated. See the desktop repository's `docs/MEASUREMENT_AUDIT.md` for the
-capture and arithmetic evidence.
+fields. The native lookup builder reads an identical coefficient at frame
+byte 223498; both saved fixtures duplicate all five coefficients from
+223494–223513 at parameter offsets 352–371. Thus field 356 is a copied
+calibration coefficient, not the app's live center output. The app instead
+maps a 16-bit center index at frame byte 221208 through its lookup. See
+[NATIVE_CALL_CHAIN.md](NATIVE_CALL_CHAIN.md) and the desktop repository's
+`docs/MEASUREMENT_AUDIT.md`.
 
 A later end-to-end diagnostic observed transport-center Y = 201 and image
 mean Y = 142.72 with the same field 356 value.
@@ -93,15 +97,22 @@ ret, frame = camera.read()  # shape (292, 384, 2) uint8
 ```
 
 Recent captures contain a usable 288-row thermal picture without an explicit
-vendor initialization step. The temperature conversion remains unknown.
+vendor initialization step. Their image words are `0x8000 + Y`; the app's
+thermometry lookup accepts only 14-bit indices (`0..16383`). A usable display
+stream therefore does not demonstrate radiometric input. The controls needed
+to obtain compatible image words remain to be established.
 
-Future USB traces may still help identify controls and the thermometry call
-chain, but initialization is not required for the observed image stream.
+Future USB traces may help identify the camera mode controls. Initialization
+is not required for the observed picture, but may be required for the native
+radiometric calculation.
 
 ### Vendor USB Commands (secondary approach)
 
-Vendor commands were initially investigated but the YUYV stream contains all needed data.
-These commands may still be useful for camera configuration (palette, emissivity, etc.):
+Vendor commands were initially investigated. The default Linux YUYV stream
+contains a visible image and trailer settings, but its image words exceed the
+native thermometry lookup range. Camera configuration may therefore be needed
+to obtain radiometric image words. The commands below remain unverified on
+HT-301:
 
 #### Protocol (reverse-engineered from InfiRay P2 Pro)
 
