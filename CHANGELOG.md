@@ -4,6 +4,9 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- Added persistent agent workflow instructions requiring documentation/changelog maintenance and pushing completed task branches to GitHub for review.
+
 ### Added
 - Project repository created
 - README with project plan (6 phases)
