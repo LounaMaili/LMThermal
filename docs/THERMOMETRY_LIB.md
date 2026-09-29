@@ -2,10 +2,12 @@
 
 > **Measurement status (2026-09-26):** The x86_64 APK caller now establishes
 > the native input mapping and the 16,384-entry raw-index lookup; see
-> [NATIVE_CALL_CHAIN.md](NATIVE_CALL_CHAIN.md). The saved Linux image words
-> exceed the lookup's 14-bit limit, so a Python Celsius matrix is still not
-> validated. Field 356 is a duplicate calibration coefficient, not an
-> established live center temperature.
+> [NATIVE_CALL_CHAIN.md](NATIVE_CALL_CHAIN.md). A staged Linux replay now yields
+> true 14-bit image words,
+> and the standalone desktop lookup matches execution of the official x86_64
+> native library. Physical temperature accuracy remains unvalidated; see
+> [RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md). Field 356 is
+> a duplicate calibration coefficient, not an established live center temperature.
 
 > **Second APK scope (2026-09-26):** ThermViewer 2.0.23(ot) packages a
 > different ARMv7 `libthermometry.so`. Its HT-301 UVC bridge imports the same
@@ -185,7 +187,8 @@ def InitTempParam(x: float, y: float) -> tuple[float, float]:
 
 The x86_64 register trace is complete for the normal finite-number path.
 `thermometryT4Line` loads `t=ambient temperature` (block offset 8),
-`c=humidity` (12), `d=distance` (uint16 at 20), `e=emissivity` (16), and
+`c=humidity` (12), `d=effective distance` (default host lens 68 multiplies the
+uint16 at 20 by three), `e=emissivity` (16), and
 `f=reflected temperature` (4). These names come from the Java setting
 decoder. The native code uses float32 intermediates, double `exp`/`pow`, and
 fallback `sqrtf` calls for exceptional inputs; the pseudocode is algebraic,
@@ -249,7 +252,7 @@ For width=384 (0x180), height in field+0x34, width in field+0x38:
 ```
 USB Camera (UVC/YUYV 384×292@25fps)
   │
-  ├─ bytes 0-221,183: YUYV thermal image data (288 rows)
+  ├─ bytes 0-221,183: display YUYV or raw14 image words after 32772 (288 rows)
   ├─ bytes 221,184-223,741: non-image trailer
   └─ bytes 223,742-224,255: documented parameter block (514 bytes)
       ├─ Correction, reflected and ambient temperatures, humidity, emissivity, distance
@@ -262,6 +265,17 @@ USB Camera (UVC/YUYV 384×292@25fps)
 For current diagnostics, decode field 356 at frame offset 224098 as a copied
 calibration coefficient. The empirical `0.2143 × Y − 3.14` mapping and
 `GetTempEvn(Y, env_temp, gain × emissivity)` mapping are invalidated. The
-native call chain is documented, but the saved image words exceed its lookup
-range. Full per-pixel thermometry still requires a controlled capture of
-14-bit input frames and matching native results.
+native call chain is documented, and the staged raw fixtures now fit its lookup
+range. `experimental_thermometry.py` in the desktop repository reproduces the
+16384-entry range-120/lens-68/shutter-fix-1.5 branch with explicit float32
+rounding. Its native reference harness binds the inspected official x86_64
+ELF to host libm without Android initialization. Saved reference tables let
+ordinary tests compare every entry without bundling the APK.
+
+The corrected lookup inputs are byte **221186** for the FPA transform and
+byte **223490** for `word/10-273.15`; these are separate quantities. See the
+corrected equation in [NATIVE_CALL_CHAIN.md](NATIVE_CALL_CHAIN.md). LUT entries
+outside the function's real domain remain NaN, just as native code produces;
+selected image/summary indices must map to finite entries. Matching APK
+arithmetic does not establish calibrated temperature accuracy, Android ARM
+bit identity, or support for untested ranges/lenses.

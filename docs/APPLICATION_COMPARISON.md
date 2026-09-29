@@ -6,6 +6,10 @@ the separate `LMThermal-Research/apk/` folder. The ThermViewer extraction is
 "Confirmed in code" below means Android DEX, decoded Java, ELF imports, or
 binary resource data. It does not imply that the camera responded as intended.
 
+The later full investigation is in
+[RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md), including ARM
+addresses, parameter bytes, host/device separation and staged Linux results.
+
 ## Identity and camera selection
 
 | | Official HTI application | ThermViewer |
@@ -37,8 +41,8 @@ must not be attributed to the HT-301 branch.
 | `InitTempParam` | ARMv7 function is 48 bytes | ARMv7 function is byte-identical to official | Confirmed binary comparison; other stages not proven equal |
 | Raw USB path | UVC/libusb stack | A separate ThermApp path also uses `libusbthermapp.so`, `libthermip.so`, and related libraries | Confirmed packaging; applicability to HT-301 is **not** established |
 | UVC extension units / vendor control transfers | Device has an extension unit; no required HT-301 XU operation reconstructed | `libuvcIR.so` can parse extension units; no HT-301 XU or raw vendor request is identified in the traced startup path | Unresolved; do not replay legacy vendor commands |
-| Frame format | Linux exposes YUYV 384 × 292; native callback uses four-row trailer | Java UVC bridge starts preview and native thermometry; no explicit alternate Y16 format request found in the traced DEX calls | Confirmed calls; native format negotiation and trailer offsets need further analysis |
-| Center/high/low | Official `thermometrySearch` maps trailer indices through a 16,384-entry lookup | Imports `thermometrySearch`; exact ARMv7 output layout and trailer offsets are not independently verified | Official confirmed, ThermViewer unresolved |
+| Frame format | Linux exposes YUYV 384 × 292; native callback uses four-row trailer | Java UVC bridge starts preview and native thermometry; no explicit alternate Y16 format request found in the traced DEX calls | Confirmed calls; raw words obtained without changing advertised YUYV; offsets traced below |
+| Center/high/low | Official `thermometrySearch` maps trailer indices through a 16,384-entry lookup | Same high/low indices; overwrites Java center with spot-0 lookup from byte 221210; adds correction from 223514 | Confirmed ARM disassembly |
 
 Only the ARMv7 ThermViewer APK contains the HT-301 UVC bridge and thermometry
 libraries. Its `arm64-v8a`, `x86`, and `mips` directories contain only
@@ -56,28 +60,29 @@ from caller names, not decoded firmware behavior.
 
 | Event | Official application | ThermViewer HT-301 branch |
 |---|---|---|
-| Open/preview | Open UVC and start preview | `MainActivity.WellcomOnNext` selects `XthermAPI`, sets output type `0`, opens UVC and starts preview |
+| Open/preview | Open UVC and start preview | `MainActivity.WellcomOnNext` selects `XthermAPI`, chooses type `0` if `images_form_camera`, otherwise type `1`, opens UVC and starts preview |
 | Temperature startup | `HomeActivity.startTemperaturing` calls `nativeStartStopTemp(1)` through `UVCCamera.startTemp` when measurement is selected | `XthermAPI$2.onStartPreview` checks `0x1514:0x0001`, then calls `startTemperaturing`; `CameraThread.handleStartPreview` also contains a conditional `startTemp` call |
 | Output command | At +500 ms: `32772` | Output type `0` maps to `32773`; type `1` maps to `32772`. After preview, a runnable sends the selected value at about +20 ms |
-| Default range | Native `setTempRange(120)` and `setShutterFix(1.5)`; at +1100 ms send `32800` | Range is handled by `setTempRange`; `HighTempRange` sets `400`, then a delayed runnable sends `32801` for high range or `32800` for the other branch. Default range setup still needs full call tracing |
+| Default range | Native `setTempRange(120)` and `setShutterFix(1.5)`; at +1100 ms send `32800` | Host `setTempRange(120/400)` is separate. Optional `HighTempRange` sends `32800/32801` at +10 ms then refreshes; no range call found in HT-301 startup |
 | Shutter/NUC | At +1600 ms send `32768`; `whenShutRefresh` scheduled +2500 ms. Measurement start schedules another refresh and `32768` at +400 ms | `Refresh` reaches `whenShutRefresh`, which sends `32768`; first startup posts a refresh at about +40 ms. Range change also calls refresh |
-| Settings | UI/native correction, reflection, ambient, humidity, emissivity, distance | HT-301 startup posts emissivity `1.0` at about +30 ms and correction `0` at about +40 ms. Its `sendFloatCommand` splits float bytes into several `setValue` operations; full byte encoding is not yet decoded |
-| Range change | 400: `setTempRange(400)`, shutter fix `1.2`, `32801`; 120: `setTempRange(120)`, shutter fix `1.5`, `32800`; then repeated `32768` and refresh | `HighTempRange` and its runnable send corresponding range command and refresh; exact UI condition and timing beyond the traced runnable remain under investigation |
+| Settings | UI/native correction, reflection, ambient, humidity, emissivity, distance | HT-301 startup posts emissivity `1.0` at about +30 ms and correction `0` at about +40 ms. Its `sendFloatCommand` splits float bytes into several `setValue` operations; exact byte encoding and overlapping scheduling are now decoded; see initialization document |
+| Range change | 400: `setTempRange(400)`, shutter fix `1.2`, `32801`; 120: `setTempRange(120)`, shutter fix `1.5`, `32800`; then repeated `32768` and refresh | `HighTempRange` sets host 120/400, sends the corresponding device range at +10 ms, refreshes, then schedules another refresh +2500 ms |
 
 ThermViewer's four post-preview runnables are posted at approximately 20, 30,
 40, and 40 ms according to DEX integer additions and `postDelayed` calls.
-The two 40 ms callbacks may race; their actual USB order was not observed.
-The `32772/32773` output-type distinction is a stronger lead than the earlier
-assumption that official `32772` necessarily enabled 14-bit output. Neither
-value is proven to select radiometric words.
+These callbacks run serially on the same Looper; insertion order and nested
+setter posting determine the order at shared deadlines. The decoded byte
+commands do not wait for each setting to finish before the +40 ms refresh.
 
-**Minimum sequence status:** No sequence has yet been shown to produce
-14-bit image words on HT-301. The confirmed *application* startup paths above
-include more than one zoom control and native thermometry/settings calls. The
-single tested `32773` subset is insufficient; the minimum effective sequence
-therefore cannot be reduced from code alone.
+**Minimum observed transition:** `32772` after opening the default stream
+produced true 14-bit words on the tested Linux camera. The full type-0 path
+(`32773`, emissivity 1.0, correction 0.0 and refresh) retained `0x80YY` words.
+This agrees with type 0's native Java array length of ten summaries and type
+1's full temperature matrix. Both ARM searches reject high pixel bits rather
+than masking them. See the staged evidence in
+[RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md).
 
-## Linux experiment
+## Earlier single-command Linux experiment (historical)
 
 Hypothesis: ThermViewer's HT-301 output-type-zero command `32773` alone might
 change the 384 × 288 image words from `0x80YY` display values to 14-bit raw
@@ -105,17 +110,14 @@ attributed to the command without a controlled scene. **Experimentally
 observed:** `32773` alone did not yield true `0..16383` image words. No other
 control combination was tried,
 no raw vendor request was sent, and no fixture or native Celsius output was
-generated. Whether the full Android initialization path, another control,
-native preprocessing, or a different stream format is required remains open.
-The current V4L2 control readback is `32773`; a device-side reset sequence has
-not been established.
+generated. That earlier experiment left the full startup question open. The subsequent
+staged replay above resolved the mode transition using `32772` and decoded
+the remaining parameter writes; it required no raw vendor requests.
 
-## Next evidence needed
+## Remaining evidence needed
 
-Trace ThermViewer's HT-301 `sendFloatCommand` byte encoding and the ARMv7
-`libUVCCameraIR.so` frame callback. Observe its actual USB control traffic
-and native temperature callback for one stable scene. Compare transport frames
-captured before and after the **full** application startup, including the
-range and shutter operations. Only then test a complete Linux replay. The
-16384-entry lookup and center/high/low validation remain gated on compatible
-raw indices and an observed Android reference reading.
+An independently observed Android callback or calibrated target measurement
+for the same scene is still needed for temperature accuracy. The official
+x86_64 native arithmetic can now be reproduced offline against saved raw
+frames, but that comparison does not validate physical calibration or prove
+ThermViewer's extra correction and spot semantics equivalent.

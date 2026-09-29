@@ -4,14 +4,15 @@
 > image rows followed by four non-image trailer rows. The last 514 bytes are
 > only part of that trailer. Native disassembly identifies field 356 as a
 > duplicated calibration coefficient and locates the app's live center index
-> in row 288. Saved Linux image words exceed the app's 14-bit lookup range,
-> so per-pixel Celsius remains unvalidated. See
-> [the native call chain](docs/NATIVE_CALL_CHAIN.md) and
-> [research inventory](docs/RESEARCH_INVENTORY.md). ThermViewer 2.0.23(ot)
-> now provides a second HT-301 control path; its output-type-zero command
-> `32773` alone left Linux image words outside the 14-bit lookup range. See
-> [application comparison](docs/APPLICATION_COMPARISON.md). The desktop repository
-> holds capture evidence in `docs/MEASUREMENT_AUDIT.md` and `tests/fixtures/`.
+> in row 288. A clean official sequence produces true 14-bit image words
+> starting with `zoom_absolute=32772`; full ThermViewer type-0 startup keeps
+> display words. The reconstructed lookup matches executed official x86_64
+> native arithmetic on raw fixtures. Independent temperature accuracy remains
+> unvalidated, and GUI Celsius integration is deferred. See
+> [initialization evidence](docs/RADIOMETRIC_INITIALIZATION.md),
+> [native call chain](docs/NATIVE_CALL_CHAIN.md), and
+> [application comparison](docs/APPLICATION_COMPARISON.md). Desktop capture
+> reports, sanitized fixtures and regression tables are maintained separately.
 
 Application thermique pour la caméra **Infiray HT-301 (T3-317-13)**.
 
@@ -48,9 +49,9 @@ Fournir un outil permettant de :
 ```
 USB Camera (UVC/YUYV 384×292 @ 25fps)
   │
-  ├─ Bytes 0-221,183 : Image thermique YUYV (288 lignes)
-  │   └─ Y channel (0-255) = display brightness in saved Linux frames
-  │      └─ Native lookup requires 14-bit-compatible words, not these Y bytes
+  ├─ Bytes 0-221,183 : Thermal image (288 rows)
+  │   ├─ Default/type 0: YUYV display bytes, words 0x80YY
+  │   └─ After 32772/type 1: full uint16 native lookup indices (<16384)
   │
   ├─ Bytes 221,184-223,741 : données non-image
   └─ Bytes 223,742-224,255 : bloc de paramètres (514 bytes)
@@ -93,7 +94,8 @@ def get_temp_evn(a, env_term, b):
 - [x] Flux YUYV capturable via OpenCV + V4L2
 - [x] APK constructeur décompilé et analysé
 - [x] Java/JNI/native lookup path and source of its parameters traced
-- [ ] Camera mode transition to 14-bit radiometric image words validated
+- [x] Camera mode transition to 14-bit image words observed with `32772`
+- [x] Standalone lookup compared with executed official x86_64 native arithmetic
 - [x] Paramètres de température extraits des frames (514 bytes, fin de frame)
 - [x] `GetTempEvn()` arithmetic and native caller arguments traced
 - [x] `InitTempParam()` décodé — calcul des paramètres de calibration
@@ -133,12 +135,18 @@ def get_temp_evn(a, env_term, b):
 
 ## Stack technique
 
+Analysis-only tools used for the follow-up: Capstone 5.0.9, pyelftools 0.33,
+and Androguard 4.1.4 in an isolated temporary environment. They are not desktop
+runtime dependencies. The optional native reference harness needs pyelftools.
+
 - **Langage** : Python 3 (prototypage Phase 1-2)
 - **Bibliothèques** : `opencv-python`, `numpy`, `pyusb`
 - **OS cible initial** : Linux (Archlinux confirmé fonctionnel)
 - **Cible finale** : Android (Flutter ou Kotlin natif)
 
 ## Documentation
+
+- [`docs/RADIOMETRIC_INITIALIZATION.md`](docs/RADIOMETRIC_INITIALIZATION.md) — Staged replay, byte encoding, ARM frame path and evidence limits
 
 - [`docs/HARDWARE.md`](docs/HARDWARE.md) — Documentation technique du matériel
 - [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) — Spécification des fonctionnalités

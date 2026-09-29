@@ -59,20 +59,37 @@ When connected, the kernel creates:
 
 No extended/proprietary V4L2 controls are exposed by the driver.
 
-### Output-type control experiment (2026-09-26)
+### Radiometric output selection (2026-09-26, continued 2026-09-27)
 
-ThermViewer 2.0.23(ot)'s HT-301 branch maps output type `0` to
-`zoom_absolute=32773` and type `1` to `32772`. Its startup also begins native
-thermometry, sends settings, and refreshes the shutter. The precise firmware
-meaning of either output type is unresolved. A Linux test of **only**
-`zoom_absolute=32773` succeeded at the V4L2 API and read back as `32773`, but
-after 20 settling frames, 0% of the 384 × 288 image words fit the native
-`0..16383` lookup. The post-control image word range across three frames was
-32778–33010, still consistent with `0x8000 + Y` display words. Calibration
-fields and the image's spatial variation remained present. This rules out a
-single-command transition under the tested conditions; it does not rule out
-the full Android startup path. See
-[APPLICATION_COMPARISON.md](APPLICATION_COMPARISON.md).
+A physical reconnect followed by unconverted capture and standard
+`zoom_absolute=32772` (`0x8004`) changed every sampled image word from
+`0x80YY` display structure into a full uint16 value below `0x4000`.
+The first raw stage spanned 5213–5266. Subsequent official normal-range
+`32800` (`0x8020`) and shutter/refresh `32768` (`0x8000`) retained raw14
+representation, spanning 4715–4864 in the first run. The advertised transport
+remains YUYV 384 × 292, 224256 bytes; no Y16 negotiation, extension-unit or
+raw vendor request is needed for this observed transition.
+
+ThermViewer output type 0 sends `32773` (`0x8005`). Both its earlier isolated
+command test and a separately reconnected full startup retained display
+words. The full startup's parameter writes did change emissivity from about
+0.98 to 1.0. Type 1 sends `32772`. Both native searches reject full words
+>=0x4000; masking `0x80YY` is unsupported by the APK code.
+
+The official device sequence is `32772 -> 32800 -> 32768`. Host range 120,
+shutter fix 1.5 and LUT-refresh flags are separate from camera control
+writes. The minimum observed word-mode transition is the first command;
+this does not establish calibrated temperature accuracy. Exact encoding,
+APK timing, Linux readbacks and evidence limits are in
+[RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md).
+
+A later official replay observed a roughly 1.3-second held/repeated interval
+after `32768`. The current experimental diagnostic discards at least 75
+post-shutter frames (approximately three seconds) before selecting a steady
+candidate; 15 frames were insufficient in that run. A later 75-frame
+read-only window contained 75 distinct raw14 images with spatially consistent
+trailer extrema. Short-term stability does not establish absolute accuracy
+or long-term calibration equilibrium.
 
 ### Temperature Data Access
 
@@ -106,28 +123,25 @@ mean Y = 142.72 with the same field 356 value.
 
 The raw stream is accessible via OpenCV:
 ```python
-camera = cv2.VideoCapture("/dev/video2", cv2.CAP_V4L2)
+from ht301_camera import discover_device  # LMThermal-Desktop helper
+camera = cv2.VideoCapture(str(discover_device()), cv2.CAP_V4L2)
 camera.set(cv2.CAP_PROP_CONVERT_RGB, 0)
 ret, frame = camera.read()  # shape (292, 384, 2) uint8
 ```
 
-Recent captures contain a usable 288-row thermal picture without an explicit
-vendor initialization step. Their image words are `0x8000 + Y`; the app's
-thermometry lookup accepts only 14-bit indices (`0..16383`). A usable display
-stream therefore does not demonstrate radiometric input. The controls needed
-to obtain compatible image words remain to be established, even after the
-single ThermViewer output-type-zero control experiment above.
-
-Future USB traces may help identify the camera mode controls. Initialization
-is not required for the observed picture, but may be required for the native
-radiometric calculation.
+Default captures contain a 288-row display image with words `0x8000 + Y`.
+After `32772`, interpret the first 288 rows as little-endian uint16 native
+lookup indices. Exclude all four trailer rows in either mode. Byte **221186**
+feeds `20-(word-7800)/36`; byte **223490** independently feeds
+`word/10-273.15`. The earlier notes conflated these FPA and calibration inputs.
+The standalone range-120 lookup now agrees with executed official x86_64 APK
+arithmetic; independent surface-temperature accuracy is still unvalidated.
 
 ### Vendor USB Commands (secondary approach)
 
 Vendor commands were initially investigated. The default Linux YUYV stream
 contains a visible image and trailer settings, but its image words exceed the
-native thermometry lookup range. Camera configuration may therefore be needed
-to obtain radiometric image words. The commands below remain unverified on
+native thermometry lookup range. The standard zoom controls above now provide a demonstrated raw-mode transition. The commands below remain unverified on
 HT-301:
 
 #### Protocol (reverse-engineered from InfiRay P2 Pro)
@@ -159,7 +173,7 @@ validated for this camera.
 
 ### UVC Extension Unit
 
-USB descriptor analysis reveals a **UVC Extension Unit** (`0x24 0x05`) in the device descriptor. This is the standard mechanism for vendor-specific functionality within the UVC framework. The extension unit handles proprietary commands (temperature data, configuration).
+USB descriptor analysis reveals a **UVC Extension Unit** (`0x24 0x05`) in the device descriptor. This is the standard mechanism for vendor-specific functionality within the UVC framework. The presence of an extension unit alone does not establish its function. The traced and tested HT-301 startup uses standard zoom-absolute controls.
 
 ### Tested & Confirmed
 
@@ -176,7 +190,8 @@ USB descriptor analysis reveals a **UVC Extension Unit** (`0x24 0x05`) in the de
 
 - ⬜ Accuracy validation (compare with known temperature source)
 - ⬜ Palette/color scheme commands (vendor commands)
-- ⬜ Emissivity and distance parameter control
+- ✅ Emissivity 1.0 and correction 0.0 byte writes replayed through zoom absolute
+- ⬜ Distance parameter control (official uint16 and ThermViewer float encodings differ)
 - ⬜ Compatibility of P2 Pro vendor commands with HT-301
 
 ### Reference: Similar Projects

@@ -1,10 +1,11 @@
 # LMThermal — Application Specification
 
-> Measurement implementation is gated on obtaining 14-bit radiometric image
-> words and validating the reconstructed native lookup against official-app
-> readings. Current Linux fixtures contain display image words above the
-> lookup range. See [NATIVE_CALL_CHAIN.md](NATIVE_CALL_CHAIN.md). Temperature
-> measurements and radiometric exports below are planned features.
+> Staged Linux capture now produces native 14-bit indices and the standalone
+> lookup matches execution of official x86_64 APK arithmetic. GUI temperature
+> measurement remains gated on independent same-scene reference validation,
+> supported settings and shutter/stability handling. See
+> [RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md). The features
+> below remain planned; experimental offline output is not a calibrated API.
 
 ## Target Platform
 

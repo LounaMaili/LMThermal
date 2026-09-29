@@ -62,7 +62,11 @@ any trailer bytes as valid thermal image pixels in statistics or extrema.
 
 The embedded parameter parser is producing plausible values from real hardware.
 
-The complete per-pixel thermometry chain is **not yet validated**.
+The complete per-pixel thermometry chain is **not yet accuracy-validated**.
+A clean `zoom_absolute=32772` transition yields 14-bit indices; the standalone
+desktop lookup matches executed official x86_64 arithmetic for the tested
+range-120/lens-68 branch. Read `docs/RADIOMETRIC_INITIALIZATION.md` before
+new hardware or thermometry changes. Independent accuracy remains unresolved.
 
 Known reverse-engineered components include:
 

@@ -115,24 +115,21 @@ through a native lookup. See [NATIVE_CALL_CHAIN.md](NATIVE_CALL_CHAIN.md).
 
 ### Per-Pixel Temperature
 
-The saved image words are `0x8000 + Y`, exceeding the native lookup's 14-bit
-index range. They are display brightness, not directly usable radiometric
-indices. The earlier empirical `T ≈ 0.2143 × Y - 3.14` formula is invalid.
-The official app calls `thermometryT4Line`, then `thermometrySearch`; a
-controlled capture after app initialization is needed to determine how the
-stream becomes compatible with that path.
+Default Linux image words are `0x8000 + Y`, exceeding the native lookup's
+14-bit range. A staged official initialization now switches those words to
+true indices at `zoom_absolute=32772`; the advertised UVC format stays YUYV.
+Both official and ThermViewer ARM searches reject full words >=0x4000 without
+masking. ThermViewer type 0 uses display words and summary-only Java output.
+The earlier empirical `T ≈ 0.2143 × Y - 3.14` formula remains invalid.
 
-## Key Finding
+## Current findings and boundary
 
-Parameter and calibration data are embedded in the video trailer. The native
-functions' input mapping is now traced, and the app's center/high/low output
-layout is known. The camera control sequence and native outputs needed to
-validate a Python Celsius matrix remain unobserved.
-
-**Next steps:**
-- Capture full frames before and after official-app initialization and compare
-  image words, trailer indices, and native callback temperatures.
-- Decode the exact zoom-absolute/shutter command effect on radiometric mode;
-  ThermViewer's `32773` alone was insufficient on Linux.
-- Validate a float32-faithful lookup reconstruction against native outputs
-  before implementing desktop Celsius measurements.
+The official `thermometryT4Line`/`thermometrySearch` arithmetic is reproduced
+in a standalone desktop module and compared against execution of the original
+x86_64 library on sanitized raw frames. Corrected lookup source offsets,
+ThermViewer's additional correction/spot semantics, parameter command bytes,
+and host/device distinctions are documented in
+[RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md) and
+[NATIVE_CALL_CHAIN.md](NATIVE_CALL_CHAIN.md). Neither matching library output
+nor obtaining raw indices alone validates absolute temperature accuracy.
+An independent same-scene Android or calibrated target reference is still needed.

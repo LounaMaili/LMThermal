@@ -7,8 +7,9 @@ The offsets below are x86_64 virtual addresses in `libthermometry.so` (SHA-256
 and `libUVCCamera.so` (SHA-256
 `fd86345f99fd3a922c020a6f5eed4464b1b7f890713ee43ef035f933fcdbdf81`).
 The saved frame observations use the desktop repository's `scene-a.raw` and
-`scene-b.raw`. Other ABIs are present but their instruction-level equivalence
-has not been checked.
+`scene-b.raw`. The ARMv7 search paths were subsequently checked in both APKs; see
+[RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md). The full
+lookup arithmetic below is the official x86_64 implementation.
 
 ## Confirmed call path
 
@@ -58,8 +59,9 @@ not called in this thermometry path.
 
 | Relative to row 288 | Absolute byte | Native use | Saved-frame value |
 |---:|---:|---|---:|
+| `0x002` | 221186 | uint16 FPA-transform input | See new raw fixture |
 | `0x900` | 223488 | 16-bit lookup base | 6000 |
-| `0x902` | 223490 | 16-bit input to a range-specific temperature transform | 3076 / 3117 |
+| `0x902` | 223490 | uint16 calibration temperature, decoded as word/10 - 273.15 | 3076 / 3117 |
 | `0x906` | 223494 | float calibration coefficient passed to `InitTempParam` | 0.2705 |
 | `0x90a` | 223498 | float calibration coefficient passed to `InitTempParam` | 35.992 |
 | `0x90e`, `0x912`, `0x916` | 223502–223513 | three float polynomial coefficients | 0.00004, 0.0057, 0.8234 |
@@ -81,8 +83,10 @@ It does not return the 514-byte trailing region in full.
 
 `InitTempParam(x, y)` receives coefficients at 223494 and 223498, producing
 `a = y/(2x)` and `b = y²/(4x²)`. `CalcFixRaw(t,c,d,e,f)` receives ambient
-temperature, humidity, distance, emissivity, and reflected temperature in that
-order. All five source mappings are confirmed by register tracing at
+temperature, humidity, effective distance, emissivity, and reflected
+temperature in that order. The default host lens value 68 multiplies the
+stored uint16 distance by three before this call (x86_64 0x1bb0); it is not
+always passed unchanged. All five source mappings are confirmed by register tracing at
 `thermometryT4Line+0x2a0` through `+0x2d8`; the physical units are inferred
 from Java setting names, not from the arithmetic alone. `GetTempEvn` receives
 a lookup-derived Celsius-like value, the radiation correction output of
@@ -107,15 +111,17 @@ indices**, not a conversion of 8-bit display brightness.
 
 The 384-wide finite-value branch can be written algebraically (native float32
 rounding is omitted here). Let `u0/u1` be the 16-bit values at `0x900/0x902`,
+`fpa_word` the word at trailer `0x002` (frame 221186),
 `c0..c4` the floats at `0x906..0x916`, and `s` the native shutter-fix input:
 
 ```text
-sensor_term = 20 - (u1 - 7800) / 36
-fix = GetFix(range, 384, sensor_term)
+fpa_term = 20 - (fpa_word - 7800) / 36
+calibration_temperature = u1 / 10 - 273.15
+fix = GetFix(range, 384, fpa_term)
 base = uint16(u0 - fix)
 init_a, init_b = InitTempParam(c0, c1)
-linear = c2*sensor_term² + c3*sensor_term + c4
-constant = c0*(sensor_term+s)² + c1*(sensor_term+s)
+linear = c2*fpa_term² + c3*fpa_term + c4
+constant = c0*(calibration_temperature+s)² + c1*(calibration_temperature+s)
 calibrated(i) = sqrt(((i-base)*linear + constant)/c0 + init_b) - init_a
 corrected(i) = GetTempEvn(calibrated(i), CalcFixRaw.out4, CalcFixRaw.out3)
 ```
@@ -123,10 +129,20 @@ corrected(i) = GetTempEvn(calibrated(i), CalcFixRaw.out4, CalcFixRaw.out3)
 `GetFix(120,384,x)` returns `max(0,trunc(390-7.05*x))`; other range/width
 combinations take different branches. After `corrected(i)`, native code adds
 a further correction based on camera mode, distance, and ambient temperature.
-For one branch with distance at most 60, that term is
-`(corrected(i)-ambient)*(0.85*distance+1.125)/100`. This branch has not been
-matched to an official-app setting or independently checked against its
-output; the expression is a disassembly trace, not a calibrated API.
+For the default host lens **68**, let `d = 3 * stored_distance`. For `d < 60`,
+that term is `(corrected(i)-ambient)*(float32(0.85*d)+1.125)/100`,
+with the final multiply/divide/add performed in double and stored as float32.
+For `d >= 60`, the factor becomes `52.125/100`. Other lens branches use
+other thresholds and, for short distance, a **minus** 1.125 term. The desktop
+experimental module deliberately implements only the observed default lens,
+range 120 and shutter fix 1.5. The official native constructor initializes
+lens 68 at `libUVCCamera.so:0x163cb`; no Java caller of `setCameraLens` was
+found in the inspected app.
+
+The two temperature terms above correct an earlier documentation error:
+`0x15aa/0x1968` reads **trailer+2** for the FPA transform, whereas
+`0x165a..0x16a2` separately reads **trailer+0x902** and divides by 10. Using
+the latter word in the former transform wrongly suggested ~150 °C.
 
 `thermometrySearch` reads selected 16-bit summary values at bytes
 `221188..221212`. Specifically, the raw index at byte `221208` becomes
@@ -143,9 +159,10 @@ scene A, 32854–32910 in scene B), above the native lookup's `0x3fff` limit.
 The old P2 Pro `uint16/64-273.15` mapping and direct `GetTempEvn(Y,...)`
 mapping therefore use the wrong input representation. The trailer summary
 indices are in range (`221208` is 5165 / 5255), but the calibration input at
-`223490` is 3076 / 3117, which the 384-wide native transform maps to about
-151.22 / 150.08 °C before shutter correction. This does not establish a
-credible native reading for these uninitialized/default-mode fixtures.
+`223490` is 3076 / 3117, which decodes to calibration temperatures about 34.45 / 38.55 °C.
+The earlier ~150 °C interpretation incorrectly conflated this with the FPA
+input at byte 221186. These display fixtures still cannot validate pixel
+thermometry because their full image words are outside the lookup.
 
 The two frames duplicate all five coefficient floats at 223494–223513 in the
 last 514-byte block at offsets 352–371. In particular, block field 356 is
@@ -155,33 +172,24 @@ lookup builder reads the earlier copy as an `InitTempParam` input. The Java
 that field 356 is a calibration coefficient copy, not a live center
 thermometer. The live center path uses byte 221208 and the lookup table.
 
-## Initialization and remaining evidence
+## Initialization, ARM comparison and native replay
 
-`HomeActivity.startDevicePreview` schedules zoom-absolute control values
-`32772`, `32800`, and `32768`; it also sets temperature range 120 and shutter
-fix 1.5. Measurement start calls `nativeStartStopTemp(1)`, schedules a shutter
-refresh and another `32768` control. These are confirmed Java calls, not a
-decoded wire protocol. The exact camera mode transition and timing that yield
-14-bit image words remain unknown. The existing `test_y16*.py` scripts tried
-P2 Pro-style vendor commands but do not establish HT-301 compatibility.
+The follow-up [initialization investigation](RADIOMETRIC_INITIALIZATION.md)
+traces ThermViewer ARMv7 from the UVC `memcpy` through both thermometry calls.
+Both ARM searches load full unsigned 16-bit words and reject values >=0x4000;
+no mask or flag stripping occurs. ThermViewer differs by copying spot-0 output
+(index at 221210) over Java center output[0], and by adding a second trailer
+correction at 223514. Its type-0 Java output contains only ten summary floats.
 
-The second APK, ThermViewer 2.0.23(ot), uses its own ARMv7
-`libUVCCameraIR.so` linked against a different `libthermometry.so`. It still
-imports `thermometryT4Line` and `thermometrySearch`. Its HT-301 branch calls
-`startTemperaturing` and maps output type `0` to `zoom_absolute=32773`, while
-type `1` maps to `32772`. It also schedules parameter commands and shutter
-refresh. This is a confirmed Android control path, but the corresponding
-camera-side mode semantics are unresolved. See
-[APPLICATION_COMPARISON.md](APPLICATION_COMPARISON.md) for the ordered trace.
+A clean Linux replay of official `32772 -> 32800 -> 32768` produced compatible
+raw words at the **first** control. Separate full ThermViewer type-0 startup
+kept display words while changing emissivity to 1.0. Host `setTempRange`,
+`setShutterFix`, and native `whenShutRefresh` do not send camera controls.
+See the dedicated document for byte encoding, exact scheduling and readbacks.
 
-A controlled Linux test sent only ThermViewer's `32773` command after a
-read-only baseline, then discarded 20 frames. All three post-control image
-captures still had 0% of words within `0..16383`; their minimum words were
-32778–32779. The control readback was `32773`. Thus this command alone did
-not expose compatible raw indices. No further control combinations were
-tried. The next discriminating experiment is a frame and USB trace of the
-**full** ThermViewer or official app startup with native center/high/low
-output for the same scene. Determine whether another control, a different
-format, or native preprocessing accounts for the discrepancy. Until those
-observations exist, no Python Celsius matrix or measurement-accuracy claim
-is justified.
+The desktop experimental 16,384-entry lookup now matches execution of the
+original official x86_64 ELF on sanitized radiometric fixtures. This resolves
+the raw-mode and arithmetic-reconstruction blockers for the tested branch.
+It does not replace an independent camera/app or calibrated target reading,
+prove cross-ABI bit identity, or validate all ranges and lenses. GUI Celsius
+integration remains deferred.

@@ -4,6 +4,23 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Shutter and matrix validation — 2026-09-29)
+- Documented the roughly 1.3-second held-frame shutter interval, a setup-specific minimum 75-frame post-shutter discard, and a later 75-frame window of distinct raw14 images with spatially consistent trailer extrema.
+- Recorded the experimental full temperature-matrix interface and the boundary between native arithmetic equivalence, relative scene discrimination, and independent physical accuracy.
+
+### Added (Full radiometric initialization — 2026-09-27)
+- Traced the ThermViewer ARMv7 UVC copy through the temperature callback and confirmed that both native searches reject full uint16 words >=0x4000 without pixel masking or flag stripping.
+- Decoded all thermometry parameter byte commands and Handler delays; separated native host range/shutter/LUT state from device writes through standard UVC zoom absolute.
+- Documented the observed `32772` raw14 transition and complete official replay, plus the separately reset ThermViewer type-0 replay that changed emissivity but kept display words.
+- Documented the standalone desktop lookup and execution against the official x86_64 ELF, with matching full reference tables and center/high/low outputs. Independent physical accuracy remains unresolved.
+- Added `docs/RADIOMETRIC_INITIALIZATION.md`, updated both APK comparisons and maintained original interrupted-session evidence without treating lost temporary reports as surviving artifacts.
+
+### Corrected (Native interpretation — 2026-09-27)
+- Distinguished byte 221186's FPA transform from byte 223490's `word/10-273.15` calibration input, correcting the former erroneous ~150 °C interpretation.
+- Identified default native lens 68, its threefold stored-distance multiplier and its specific final correction branch.
+- Identified ThermViewer's spot-0 center override, extra correction at byte 223514 and ten-float output in type 0; output type depends on `images_form_camera`.
+- Corrected host-only refresh versus SDK device shutter naming, ThermViewer's float distance versus official uint16 distance, and stale hardware/specification/measurement-status statements. End-of-task workflow requirements remain intact.
+
 ### Added (Radiometric-mode comparison — 2026-09-26)
 - Inventoried the newly supplied ThermViewer 2.0.23(ot) APK, its USB filters, ABIs, ARMv7 libraries, and distinct HT-301 UVC/thermometry path.
 - Added `docs/APPLICATION_COMPARISON.md` with ordered startup controls, explicit evidence status, and a controlled Linux before/after experiment.
