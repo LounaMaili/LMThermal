@@ -289,3 +289,40 @@ three, matte high-emissivity targets against a contact/reference instrument.
 Record surface readings and uncertainty, emissivity, ambient/reflected
 temperature, distance, the raw14 frame and the reconstructed temperature;
 avoid fitting a correction to a single scene.
+
+## Operator-confirmed hand discrimination (2026-09-29)
+
+A read-only preview showed an operator-confirmed hand in the center against a
+cooler background. Initial zoom readback was 0 and the display image spanned
+32777–33008. The previously validated official `32772 -> 32800 -> 32768`
+sequence again yielded raw14 output. After `32768`, 75 frames were discarded.
+The following stage nevertheless held an identical image for another 31
+frames (frames 4–34), and frame 58 was malformed. Those frames were retained
+as capture evidence but excluded from discrimination and stability analysis.
+This observation makes the 75-frame discard a minimum; verify distinct live
+images and calibration/trailer validity after it.
+
+The selected later window, frames 35–57, contained **23 distinct** raw14
+images with full image indices 5338–5786 and reconstructed matrix values
+27.702–37.442 °C. A fixed central 32 × 32 palm ROI averaged 36.587 °C
+(frame-to-frame standard deviation 0.0083 °C); a 32 × 32 cooler-background
+ROI averaged 27.991 °C (0.0065 °C). The mean difference was **8.596 °C**,
+positive in all 23 frames. Reported highs landed on the visible hand near the
+thumb base, and lows on dark background. Their trailer indices equaled image
+extrema and the raw words at reported coordinates in every selected frame.
+Only 5 of 23 trailer center indices equaled the literal `(192,144)` pixel;
+its selection algorithm remains unknown.
+
+The selected sanitized frame is `warm-hand-settled.raw` in the desktop
+repository (SHA-256
+`c31fda649ec08740e6ec2744dec037006c87b96ccfa685ca44d453615e50f4ae`).
+Its spatial structure is retained and the two known identifier spans are
+cleared. On that frame, trailer center index 5740 maps to 36.483 °C while
+literal center pixel index 5742 maps to 36.525 °C. High index 5783 at
+`(191,211)` maps to 37.379 °C; low index 5340 at `(329,83)` maps to
+27.748 °C. Full provenance, ROI plan, calibration values and persistent run
+paths are in the desktop repository's
+`docs/diagnostics/2026-09-29-hand-discrimination.json`. The result establishes
+relative discrimination and internal consistency for this scene. A hand has
+no assumed reference temperature, and independent absolute accuracy remains
+unmeasured.

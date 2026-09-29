@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Operator-confirmed hand discrimination — 2026-09-29)
+- Documented 23 distinct live raw14 hand/background frames with an 8.596 °C mean ROI difference, consistent extrema coordinates, and the observed trailer/literal-center mismatch; no physical accuracy claim is made.
+- Recorded a second 31-frame held image interval after the initial 75-frame post-shutter discard and one malformed frame, requiring liveness checks beyond a fixed settling count.
+
 ### Added (Shutter and matrix validation — 2026-09-29)
 - Documented the roughly 1.3-second held-frame shutter interval, a setup-specific minimum 75-frame post-shutter discard, and a later 75-frame window of distinct raw14 images with spatially consistent trailer extrema.
 - Recorded the experimental full temperature-matrix interface and the boundary between native arithmetic equivalence, relative scene discrimination, and independent physical accuracy.

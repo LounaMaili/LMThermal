@@ -91,6 +91,12 @@ read-only window contained 75 distinct raw14 images with spatially consistent
 trailer extrema. Short-term stability does not establish absolute accuracy
 or long-term calibration equilibrium.
 
+In the 2026-09-29 hand scene, an additional 31-frame identical-image interval
+occurred after the 75-frame post-shutter discard. A later 23-frame live window
+was used for relative discrimination. A fixed discard count must therefore
+be paired with liveness and trailer checks before selecting measurement frames;
+see [RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md).
+
 ### Temperature Data Access
 
 **Measurement audit (2026-09-26):** Live OpenCV/V4L2 captures confirm the
