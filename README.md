@@ -103,6 +103,7 @@ def get_temp_evn(a, env_term, b):
 - [x] Prototype Python expérimental (`prototype/thermal_capture.py`), sans mesure par pixel validée
 - [x] `CalcFixRaw()` normal-path arithmetic and five caller inputs traced
 - [x] Field 356 identified as a copied calibration coefficient in saved frames
+- [x] Desktop native-equivalent normal-range measurement session and diagnostic OpenCV aiming preview implemented with fixture-based validity tests
 - [ ] Native lookup outputs compared with controlled camera/app readings
 
 ### Phase 2 — Application desktop (MVP)

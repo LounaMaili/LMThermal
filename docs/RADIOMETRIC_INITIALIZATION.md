@@ -32,6 +32,19 @@ settling time. No XU, raw vendor request, Y16 negotiation, or image mask was
 needed on this camera. Control readback confirms API state; the captured
 word distribution provides the separate evidence of device effect.
 
+The desktop measurement-session implementation now treats these as three
+verified stages. It discards 15 frames after each of the first two writes,
+checks two distinct valid raw14 frames before proceeding, then discards at
+least 75 valid post-shutter frames. Five subsequent distinct frames must have
+usable calibration, consistent trailer extrema and defined native-equivalent
+lookup outputs before readiness. A held or malformed later frame demotes
+readiness. These are conservative **software acceptance rules** informed by
+the captured shutter and held-frame evidence, not newly discovered firmware
+requirements. The separate OpenCV operator preview visualizes Y in display
+mode or normalizes raw14 for display only; the lookup still receives full
+unchanged raw14 words. Live-camera verification of this new software path is
+pending; its fixture-based tests do not establish physical accuracy.
+
 ## ARM frame path: no hidden pixel conversion
 
 Addresses are virtual addresses, with the Thumb mode bit removed.

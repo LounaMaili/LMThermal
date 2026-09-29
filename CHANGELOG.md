@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Desktop measurement foundation — 2026-09-29)
+- Documented the reusable normal-range radiometric session, evidence-gated post-shutter readiness and read-only handling of raw14 streams with unknown host state. These are software acceptance rules built on the completed camera findings, not a new hardware protocol claim.
+- Specified the separate OpenCV diagnostic aiming preview, display-only raw14 normalization and strict separation from native-equivalent thermometry. Independent physical accuracy validation remains outstanding.
+
 ### Added (Operator-confirmed hand discrimination — 2026-09-29)
 - Documented 23 distinct live raw14 hand/background frames with an 8.596 °C mean ROI difference, consistent extrema coordinates, and the observed trailer/literal-center mismatch; no physical accuracy claim is made.
 - Recorded a second 31-frame held image interval after the initial 75-frame post-shutter discard and one malformed frame, requiring liveness checks beyond a fixed settling count.
