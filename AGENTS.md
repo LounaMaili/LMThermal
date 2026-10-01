@@ -86,6 +86,38 @@ target. The native app instead maps a 16-bit center index at frame byte
 221208 through its lookup. See `docs/NATIVE_CALL_CHAIN.md`, `docs/HARDWARE.md`,
 and the desktop repository's `docs/MEASUREMENT_AUDIT.md`.
 
+## Code readability and human maintainability
+
+Research utilities, prototypes, reference implementations, and future platform ports must remain understandable to a human developer who did not participate in the original reverse engineering. Prefer clarity over cleverness.
+
+### Comments and documentation
+
+Add meaningful comments or docstrings when code or examples encode:
+
+- non-obvious HT-301 protocol behavior or camera-specific invariants;
+- binary offsets, trailer fields, UVC controls, timing requirements, or state transitions;
+- measurement-validity and frame-rejection rules;
+- threading, synchronization, buffering, or lifecycle decisions;
+- coordinate transforms or native-vs-presentation semantics;
+- thermometry formulas, floating-point behavior, or compatibility details;
+- device/platform workarounds whose rationale would otherwise be lost.
+
+Comments should explain **why** a behavior exists, what evidence it comes from, and what must not be simplified casually. Do not add comments that merely restate obvious syntax.
+
+### Named protocol constants
+
+Do not leave unexplained magic numbers in implementation or reference code. Frame dimensions, byte offsets, control values, trailer locations, thresholds, and timing requirements should use descriptive constants where practical.
+
+For reverse-engineered values, include a short rationale/source comment or reference the relevant documentation. Values such as the validated radiometric initialization controls `32772`, `32800`, and `32768` must not be propagated into Desktop or Android code as unexplained literals.
+
+### Structure and future ports
+
+Prefer descriptive names and focused responsibilities. Camera I/O, parsing, session logic, thermometry, measurement, storage, and presentation should remain separable.
+
+When behavior is ported to another repository or platform, including the Android target application, preserve the rationale and invariants in code comments/KDoc/docstrings instead of relying on tribal knowledge or requiring maintainers to repeat the reverse engineering.
+
+A future maintainer should be able to distinguish confirmed facts, inferred behavior, presentation-only choices, and unresolved uncertainty without reverse engineering the project again.
+
 ## Reverse-engineering workflow
 
 For each new thermometry or protocol claim:
