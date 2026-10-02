@@ -60,6 +60,13 @@ class MainActivity : ComponentActivity() {
                         Button(onClick = { model.camera.initializeRadiometric() }, enabled = state.session.canInitialize) {
                             Text("Initialize radiometric")
                         }
+                        if (BuildConfig.DEBUG) {
+                            OutlinedButton(onClick = { model.camera.readZoomInventory() },
+                                enabled = state.usb.phase == org.lmthermal.core.UsbPhase.STREAMING && !state.session.active) {
+                                Text("Read zoom inventory")
+                            }
+                            Text(state.inventory)
+                        }
                         Text("Session: ${state.session.state} · ${state.session.stage}")
                         Text("Baseline ${state.session.baseline}/${RadiometricSession.BASELINE_FRAMES} · discarded ${state.session.discarded} · shutter ${state.session.shutterFrames}/${RadiometricSession.SHUTTER_DISCARD} · live ${state.session.live}/${RadiometricSession.READY_LIVE}")
                         state.session.reason?.let { Text("Session evidence: $it") }

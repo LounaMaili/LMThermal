@@ -34,6 +34,7 @@ data class CameraSnapshot(
     val malformed: Long = 0,
     val bitmap: Bitmap? = null,
     val session: SessionSnapshot = SessionSnapshot(),
+    val inventory: String = "Not requested",
 )
 
 /** Owns discovery, permission and transport lifetime. Explicit session controls remain separate from parsing/rendering; no thermometry.
@@ -50,6 +51,7 @@ class CameraController(private val context: Context) {
     private var foreground = false
     @Volatile private var generation = 0L
     private val initializeRequest = AtomicLong(-1L)
+    private val inventoryRequest = AtomicLong(-1L)
     private val permissionAction = "${context.packageName}.USB_PERMISSION"
     private var wantedDevice: String? = null
 
@@ -127,6 +129,12 @@ class CameraController(private val context: Context) {
             it.copy(session = it.session.copy(canInitialize = false))
         }
     }
+    /** Explicit diagnostic request uses a GET-only interface; no initialization is requested. */
+    fun readZoomInventory() {
+        val current = mutableState.value
+        if (current.usb.phase != UsbPhase.STREAMING || current.session.active) return
+        inventoryRequest.compareAndSet(-1L, generation)
+    }
     /** Worker owns transport and finally-release; stale work from an earlier connection cannot update UI. */
     private fun open(device: UsbDevice) {
         val token = ++generation
@@ -146,6 +154,24 @@ class CameraController(private val context: Context) {
                     var lastFrameAt = cadenceStart
                     var lastLog = cadenceStart
                     while (isActive && token == generation) {
+                        if (inventoryRequest.getAndSet(-1L) == token && !session.snapshot().active) {
+                            try {
+                                // Persist only this explicit control inventory: logcat may rotate during ADB loss.
+                                // The bounded file contains no scene payloads, serials or frame hashes.
+                                val inventoryFile = java.io.File(context.filesDir, "zoom-inventory.jsonl")
+                                inventoryFile.bufferedWriter().use { writer ->
+                                    ZoomInventory(transport, { token == generation && isActive }, SystemClock::elapsedRealtime,
+                                        {
+                                            val json = JSONObject(it).toString()
+                                            Log.i("LMThermalZoom", json)
+                                            writer.write(json); writer.newLine(); writer.flush()
+                                        }).run()
+                                }
+                                mutableState.updateIf({ token == generation }) { it.copy(inventory = "Read-only inventory logged") }
+                            } catch (failure: Exception) {
+                                mutableState.updateIf({ token == generation }) { it.copy(inventory = "Inventory: ${failure.message}") }
+                            }
+                        }
                         val request = initializeRequest.getAndSet(-1L)
                         if (request == token) session.initialize(request)
                         session.tick()
@@ -194,6 +220,7 @@ class CameraController(private val context: Context) {
     fun close(message: String = "Closed") {
         generation++
         initializeRequest.set(-1L)
+        inventoryRequest.set(-1L)
         Log.i("LMThermalSession", JSONObject(mapOf("event" to "connection_cancelled", "monotonic_ms" to SystemClock.elapsedRealtime(), "generation" to generation, "reason" to message)).toString())
         streamJob?.cancel(); streamJob = null
         wantedDevice = null

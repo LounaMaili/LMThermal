@@ -184,3 +184,50 @@ Java_org_lmthermal_app_NativeUvc_zoom(JNIEnv* env, jobject, jlong handle, jint o
     }
     return static_cast<jint>(data[0] | (static_cast<uint16_t>(data[1]) << 8));
 }
+
+/** Read existing descriptors; bcdUVC lives in ctrl_if (the public device field is reserved/zero). */
+extern "C" JNIEXPORT jlongArray JNICALL
+Java_org_lmthermal_app_NativeUvc_zoomDescriptor(JNIEnv* env, jobject, jlong handle) {
+    auto* stream = reinterpret_cast<Stream*>(handle);
+    const auto* terminal = uvc_get_camera_terminal(stream->device);
+    if (!terminal) {
+        env->ThrowNew(env->FindClass("java/io/IOException"), "Missing camera terminal");
+        return nullptr;
+    }
+    jlong values[] = {stream->device->info->ctrl_if.bcdUVC, terminal->bTerminalID,
+        stream->device->info->ctrl_if.bInterfaceNumber, static_cast<jlong>(terminal->bmControls),
+        terminal->wTerminalType, terminal->wObjectiveFocalLengthMin,
+        terminal->wObjectiveFocalLengthMax, terminal->wOcularFocalLength};
+    auto result = env->NewLongArray(8);
+    if (result) env->SetLongArrayRegion(result, 0, 8, values);
+    return result;
+}
+
+/** Seven fixed GET requests only. Preserve transfer error/short length instead of inventing a value. */
+extern "C" JNIEXPORT jintArray JNICALL
+Java_org_lmthermal_app_NativeUvc_zoomQuery(JNIEnv* env, jobject, jlong handle, jint query) {
+    constexpr uint8_t kQueries[] = {UVC_GET_INFO, UVC_GET_LEN, UVC_GET_MIN, UVC_GET_MAX,
+                                  UVC_GET_RES, UVC_GET_DEF, UVC_GET_CUR};
+    constexpr uint16_t kLengths[] = {1, 2, 2, 2, 2, 2, 2};
+    if (query < 0 || query >= 7) {
+        env->ThrowNew(env->FindClass("java/lang/IllegalArgumentException"), "Unsupported zoom query");
+        return nullptr;
+    }
+    auto* stream = reinterpret_cast<Stream*>(handle);
+    const auto* terminal = uvc_get_camera_terminal(stream->device);
+    if (!terminal) {
+        env->ThrowNew(env->FindClass("java/io/IOException"), "Missing camera terminal");
+        return nullptr;
+    }
+    uint8_t data[2]{};
+    int transferred = libusb_control_transfer(stream->device->usb_devh, kUvcGetRequest, kQueries[query],
+        UVC_CT_ZOOM_ABSOLUTE_CONTROL << 8,
+        terminal->bTerminalID << 8 | stream->device->info->ctrl_if.bInterfaceNumber,
+        data, kLengths[query], kControlTimeoutMs);
+    // First element is actual transfer length or libusb error, followed only by returned bytes.
+    int returned = transferred > 0 ? std::min(transferred, 2) : 0;
+    jint values[] = {transferred, data[0], data[1]};
+    auto result = env->NewIntArray(1 + returned);
+    if (result) env->SetIntArrayRegion(result, 0, 1 + returned, values);
+    return result;
+}

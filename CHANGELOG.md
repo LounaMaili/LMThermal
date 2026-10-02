@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Zoom control semantics investigation — 2026-10-02)
+- Added an explicit debug GET-only Zoom inventory with descriptor-derived IDs, exact transfer evidence and CURRENT observations around capability/range queries; no arbitrary selector or modifying control is exposed. The bounded control-only inventory is persisted privately to survive logcat rotation.
+- Recorded query-dependent Android CURRENT replies: 1 after stream open, 3 after INFO, 65535 after MAX, and zero after zero-valued GETs. Fresh Linux V4L2/Desktop reads return zero; direct libusb access failed without driver detach. Session gates are unchanged and no Zoom SET was sent.
+- Audited matching upstream Linux UVC source and traced one repeated V4L2 GET returning zero without a Zoom USB transaction. Direct USBFS submit was rejected with EBUSY while uvcvideo owned the interface; no detach was forced. A V4L2 SET/GET pair alone is not proof of a fresh firmware readback.
+
 ### Added (Android explicit radiometric session — 2026-10-02)
 - Added a plain-JVM evidence-gated session with explicit initialization, fresh display baseline, exact zoom readbacks, transition discards, shutter settling and image-only liveness; pre-existing raw14 remains conservatively unsettled.
 - Added restricted semantic controls on the existing UVC handle with exact two-byte transfers and bounded timeout, generation-bound cancellation and minimal Compose session/progress/retry presentation.

@@ -1,0 +1,825 @@
+{
+  "date": "2026-10-02",
+  "scope": "Zoom Absolute control evidence only; no image payloads or SET transfers",
+  "android_inventory_1": {
+    "descriptor": {
+      "uvc_version": 256,
+      "terminal_id": 1,
+      "control_interface": 0,
+      "bmControls": 544,
+      "zoom_advertised": true,
+      "terminal_type": 513,
+      "focal_minimum": 0,
+      "focal_maximum": 0,
+      "ocular_focal_length": 0
+    },
+    "queries": [
+      {
+        "query": "INFO",
+        "monotonic_ms": 534245607,
+        "bmRequestType": 161,
+        "bRequest": 134,
+        "selector": 11,
+        "terminal_id": 1,
+        "interface": 0,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested_length": 1,
+        "actual_length": 1,
+        "bytes": [
+          3
+        ],
+        "decoded": 3
+      },
+      {
+        "query": "LENGTH",
+        "monotonic_ms": 534245609,
+        "bmRequestType": 161,
+        "bRequest": 133,
+        "selector": 11,
+        "terminal_id": 1,
+        "interface": 0,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested_length": 2,
+        "actual_length": 2,
+        "bytes": [
+          0,
+          0
+        ],
+        "decoded": 0
+      },
+      {
+        "query": "MINIMUM",
+        "monotonic_ms": 534245609,
+        "bmRequestType": 161,
+        "bRequest": 130,
+        "selector": 11,
+        "terminal_id": 1,
+        "interface": 0,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested_length": 2,
+        "actual_length": 2,
+        "bytes": [
+          0,
+          0
+        ],
+        "decoded": 0
+      },
+      {
+        "query": "MAXIMUM",
+        "monotonic_ms": 534245611,
+        "bmRequestType": 161,
+        "bRequest": 131,
+        "selector": 11,
+        "terminal_id": 1,
+        "interface": 0,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested_length": 2,
+        "actual_length": 2,
+        "bytes": [
+          255,
+          255
+        ],
+        "decoded": 65535
+      },
+      {
+        "query": "RESOLUTION",
+        "monotonic_ms": 534245612,
+        "bmRequestType": 161,
+        "bRequest": 132,
+        "selector": 11,
+        "terminal_id": 1,
+        "interface": 0,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested_length": 2,
+        "actual_length": 2,
+        "bytes": [
+          0,
+          0
+        ],
+        "decoded": 0
+      },
+      {
+        "query": "DEFAULT",
+        "monotonic_ms": 534245613,
+        "bmRequestType": 161,
+        "bRequest": 135,
+        "selector": 11,
+        "terminal_id": 1,
+        "interface": 0,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested_length": 2,
+        "actual_length": 2,
+        "bytes": [
+          0,
+          0
+        ],
+        "decoded": 0
+      },
+      {
+        "query": "CURRENT",
+        "monotonic_ms": 534245614,
+        "bmRequestType": 161,
+        "bRequest": 129,
+        "selector": 11,
+        "terminal_id": 1,
+        "interface": 0,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested_length": 2,
+        "actual_length": 2,
+        "bytes": [
+          0,
+          0
+        ],
+        "decoded": 0
+      }
+    ]
+  },
+  "prior_android_current": {
+    "bytes": [
+      1,
+      0
+    ],
+    "decoded": 1,
+    "reference": "2026-10-02-android-radiometric-session.json"
+  },
+  "linux_comparison": {
+    "kernel": "7.2.7-200.fc44.x86_64",
+    "fresh_connection": true,
+    "vid": 5396,
+    "pid": 1,
+    "v4l2_zoom": 0,
+    "desktop_zoom_get": 0,
+    "v4l2_zoom_range": {
+      "min": 0,
+      "max": 65535,
+      "step": 0,
+      "default": 0
+    },
+    "direct_get_cur": {
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "wValue": 2816,
+      "wIndex": 256,
+      "terminal_id": 1,
+      "interface": 0,
+      "requested_length": 2,
+      "actual_length": -1,
+      "bytes": [],
+      "decoded": null,
+      "claimed_interface": false,
+      "detached_driver": false,
+      "status": "USBFS submit rejected while uvcvideo owns the interface; no device response",
+      "submit_errno": 16,
+      "submit_errno_name": "EBUSY"
+    },
+    "physical_v4l2_get_proven": false,
+    "trace": {
+      "trace_open": true,
+      "v4l2_exit": 0,
+      "v4l2_output": "zoom_absolute: 0",
+      "zoom_control_transactions": [],
+      "scope": "one repeated G_CTRL on already-loaded control; not first read after attachment or a post-SET trace",
+      "source": "operator-run privileged helper, control metadata only"
+    }
+  },
+  "set_cur_performed": false,
+  "session_gates_changed": false,
+  "observation": "CURRENT echoes INFO=3 and MAX=65535 immediately after those queries; current is not a reliable command-state acknowledgment on the tested Android path.",
+  "followup_inventories": [
+    {
+      "event": "zoom_descriptor",
+      "monotonic_ms": 536217378,
+      "uvc_version": 256,
+      "terminal_id": 1,
+      "control_interface": 0,
+      "bmControls": 544,
+      "zoom_advertised": true,
+      "terminal_type": 513,
+      "focal_minimum": 0,
+      "focal_maximum": 0,
+      "ocular_focal_length": 0
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217381,
+      "query": "CURRENT",
+      "ordinal": 0,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        1,
+        0
+      ],
+      "decoded": 1,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217382,
+      "query": "INFO",
+      "ordinal": 1,
+      "bmRequestType": 161,
+      "bRequest": 134,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 1,
+      "actual_length": 1,
+      "bytes": [
+        3
+      ],
+      "decoded": 3,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217383,
+      "query": "CURRENT",
+      "ordinal": 2,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        3,
+        0
+      ],
+      "decoded": 3,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217385,
+      "query": "LENGTH",
+      "ordinal": 3,
+      "bmRequestType": 161,
+      "bRequest": 133,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217386,
+      "query": "CURRENT",
+      "ordinal": 4,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217387,
+      "query": "MINIMUM",
+      "ordinal": 5,
+      "bmRequestType": 161,
+      "bRequest": 130,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217388,
+      "query": "CURRENT",
+      "ordinal": 6,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217389,
+      "query": "MAXIMUM",
+      "ordinal": 7,
+      "bmRequestType": 161,
+      "bRequest": 131,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        255,
+        255
+      ],
+      "decoded": 65535,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217390,
+      "query": "CURRENT",
+      "ordinal": 8,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        255,
+        255
+      ],
+      "decoded": 65535,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217391,
+      "query": "RESOLUTION",
+      "ordinal": 9,
+      "bmRequestType": 161,
+      "bRequest": 132,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217392,
+      "query": "CURRENT",
+      "ordinal": 10,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217393,
+      "query": "DEFAULT",
+      "ordinal": 11,
+      "bmRequestType": 161,
+      "bRequest": 135,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217393,
+      "query": "CURRENT",
+      "ordinal": 12,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536217394,
+      "query": "CURRENT",
+      "ordinal": 13,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_inventory_complete",
+      "monotonic_ms": 536217395
+    },
+    {
+      "event": "zoom_descriptor",
+      "monotonic_ms": 536232903,
+      "uvc_version": 256,
+      "terminal_id": 1,
+      "control_interface": 0,
+      "bmControls": 544,
+      "zoom_advertised": true,
+      "terminal_type": 513,
+      "focal_minimum": 0,
+      "focal_maximum": 0,
+      "ocular_focal_length": 0
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232904,
+      "query": "CURRENT",
+      "ordinal": 0,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232905,
+      "query": "INFO",
+      "ordinal": 1,
+      "bmRequestType": 161,
+      "bRequest": 134,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 1,
+      "actual_length": 1,
+      "bytes": [
+        3
+      ],
+      "decoded": 3,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232906,
+      "query": "CURRENT",
+      "ordinal": 2,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        3,
+        0
+      ],
+      "decoded": 3,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232907,
+      "query": "LENGTH",
+      "ordinal": 3,
+      "bmRequestType": 161,
+      "bRequest": 133,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232909,
+      "query": "CURRENT",
+      "ordinal": 4,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232910,
+      "query": "MINIMUM",
+      "ordinal": 5,
+      "bmRequestType": 161,
+      "bRequest": 130,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232911,
+      "query": "CURRENT",
+      "ordinal": 6,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232912,
+      "query": "MAXIMUM",
+      "ordinal": 7,
+      "bmRequestType": 161,
+      "bRequest": 131,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        255,
+        255
+      ],
+      "decoded": 65535,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232913,
+      "query": "CURRENT",
+      "ordinal": 8,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        255,
+        255
+      ],
+      "decoded": 65535,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232914,
+      "query": "RESOLUTION",
+      "ordinal": 9,
+      "bmRequestType": 161,
+      "bRequest": 132,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232915,
+      "query": "CURRENT",
+      "ordinal": 10,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232917,
+      "query": "DEFAULT",
+      "ordinal": 11,
+      "bmRequestType": 161,
+      "bRequest": 135,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232918,
+      "query": "CURRENT",
+      "ordinal": 12,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_query",
+      "monotonic_ms": 536232920,
+      "query": "CURRENT",
+      "ordinal": 13,
+      "bmRequestType": 161,
+      "bRequest": 129,
+      "selector": 11,
+      "terminal_id": 1,
+      "interface": 0,
+      "wValue": 2816,
+      "wIndex": 256,
+      "requested_length": 2,
+      "actual_length": 2,
+      "bytes": [
+        0,
+        0
+      ],
+      "decoded": 0,
+      "exact_length": true
+    },
+    {
+      "event": "zoom_inventory_complete",
+      "monotonic_ms": 536232920
+    }
+  ],
+  "android_result": "Two complete ordered inventories were retrieved; first CURRENT after stream open was 1, second 0; both echo 3 after INFO and 65535 after MAX.",
+  "conclusion": {
+    "android_request": "Matches descriptor-derived standard camera-terminal Zoom mapping; direct Linux equivalence blocked by EBUSY",
+    "v4l2_read": "No physical Zoom GET observed for traced repeated G_CTRL; source supports cache interpretation",
+    "current_ack": "Android CURRENT echoes previous INFO/MAX replies, so it is not dependable command state on this tested path",
+    "initial_zero_vs_one": "Query-history/open-state dependence established on Android and cached V4L2 read established on Linux; exact firmware mechanism and origin of initial one not proven",
+    "next_boundary": "No SET experiment or gate relaxation; controlled Android first-command acceptance remains outstanding"
+  }
+}

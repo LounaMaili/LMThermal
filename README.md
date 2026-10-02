@@ -43,6 +43,10 @@ tap **Initialize radiometric** to qualify the baseline and run the validated seq
 Readiness requires structural/liveness evidence; it does not establish Celsius support. **Close** releases the stream; backgrounding
 also releases it. Reopening remains explicit. Wireless ADB follows AGENTS.md.
 
+Debug builds also provide **Read zoom inventory**, a GET-only diagnostic independent
+of initialization. Request/descriptor evidence and unresolved semantics are documented
+in [the Zoom audit](docs/ZOOM_CONTROL_SEMANTICS.md).
+
 ## Supported camera contract
 
 | Property | Value |

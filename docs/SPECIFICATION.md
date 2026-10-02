@@ -138,3 +138,10 @@ Architecture, timings and cancellation limits: [ANDROID_RADIOMETRIC_SESSION.md](
 Hardware acceptance is pending: Android's direct GET_CUR returned 1 at baseline, causing
 a safe abort before writes. This is implemented session behavior, not a completed hardware
 readiness milestone. See ANDROID_VALIDATION.md for the unresolved readback boundary.
+
+### Debug Zoom inventory
+
+An explicit GET-only diagnostic on the existing worker/handle records descriptor-selected
+Zoom queries and exact response lengths. It cannot select arbitrary controls or request SET.
+Inventory results do not qualify readiness or change session gates. See
+[ZOOM_CONTROL_SEMANTICS.md](ZOOM_CONTROL_SEMANTICS.md).

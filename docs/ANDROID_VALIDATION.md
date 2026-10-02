@@ -159,3 +159,16 @@ by this milestone. No Celsius, LUT, measurement or accuracy support is claimed.
 Next required step: resolve direct USB GET_CUR versus Desktop V4L2 baseline/readback semantics
 with read-only evidence before revising either policy or testing the modifying sequence.
 Only then complete radiometric hardware acceptance; LUT/thermometry porting follows later.
+
+## Zoom control semantics diagnostic (2026-10-02)
+
+The GET-only Android inventory and Linux cache audit are recorded in
+[ZOOM_CONTROL_SEMANTICS.md](ZOOM_CONTROL_SEMANTICS.md). Ordered Android queries show CURRENT=1 after stream open, 3 after INFO,
+65535 after MAX, and 0 after zero-valued queries. CURRENT is not a reliable
+command-state acknowledgment on this tested path. Fresh Linux V4L2 and Desktop
+reads both return 0; the privileged direct transfer failed with libusb ERROR_IO
+(USBFS EBUSY) without claiming an interface or detaching uvcvideo. A control-only
+trace found no physical Zoom transaction for one repeated V4L2 GET returning zero.
+No Zoom SET was sent and
+the existing session gates remain unchanged. V4L2 control state must be
+distinguished from a proven physical USB response.
