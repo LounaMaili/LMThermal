@@ -1,6 +1,6 @@
 # LMThermal
 
-> **Measurement status (2026-09-26):** Real HT-301 frames confirm 288 thermal
+> **Measurement status (2026-10-02):** Real HT-301 frames confirm 288 thermal
 > image rows followed by four non-image trailer rows. The last 514 bytes are
 > only part of that trailer. Native disassembly identifies field 356 as a
 > duplicated calibration coefficient and locates the app's live center index
@@ -9,7 +9,8 @@
 > display words. The reconstructed lookup matches executed official x86_64
 > native arithmetic on raw fixtures. Independent temperature accuracy remains
 > unvalidated. Desktop now exposes native-equivalent values; this Android foundation
-> remains a read-only aiming preview. See
+> implements explicit radiometric initialization, blocked in hardware validation at
+> baseline readback; no Celsius is exposed. See
 > [initialization evidence](docs/RADIOMETRIC_INITIALIZATION.md),
 > [native call chain](docs/NATIVE_CALL_CHAIN.md), and
 > [application comparison](docs/APPLICATION_COMPARISON.md). Desktop capture
@@ -24,8 +25,10 @@ Python/PyQt reference, diagnostic tool and fixture generator, not the final prod
 
 The first mobile foundation is a small Kotlin/Compose application in this repository:
 USB Host authorization → native unconverted UVC acquisition → exact frame inspection
-→ latest-frame grayscale aiming preview. No radiometric controls or Celsius values
-are exposed in this milestone. See [architecture](docs/ANDROID_FOUNDATION.md),
+→ latest-frame grayscale aiming preview. The explicit radiometric session is implemented;
+hardware acceptance is blocked by baseline zoom readback 1 versus required 0. Celsius/LUT
+conversion remains deferred. See [session architecture](docs/ANDROID_RADIOMETRIC_SESSION.md),
+[foundation architecture](docs/ANDROID_FOUNDATION.md),
 [build configuration](docs/CONFIGURATION.md), and [real-device results](docs/ANDROID_VALIDATION.md).
 
 ```bash
@@ -35,7 +38,9 @@ adb -s <paired-wireless-serial> install -r app/build/outputs/apk/debug/app-debug
 
 JDK 17 and the SDK/NDK packages documented in CONFIGURATION.md are required.
 Connect the HT-301 through USB Host/OTG, launch LMThermal, tap **Connect / Open**,
-and grant Android camera/USB permissions. **Close** releases the stream; backgrounding
+and grant Android camera/USB permissions. Opening is read-only. From a display stream,
+tap **Initialize radiometric** to qualify the baseline and run the validated sequence.
+Readiness requires structural/liveness evidence; it does not establish Celsius support. **Close** releases the stream; backgrounding
 also releases it. Reopening remains explicit. Wireless ADB follows AGENTS.md.
 
 ## Supported camera contract
@@ -112,7 +117,7 @@ def get_temp_evn(a, env_term, b):
 
 - [x] Kotlin/Compose project, Android USB permission and original UVC payload transport.
 - [x] JVM parser/golden fixtures, bounded preview architecture and basic diagnostics.
-- [ ] Evidence-gated radiometric controls/session port (next milestone).
+- [ ] Evidence-gated radiometric session: implementation and JVM parity tests complete; real-device acceptance blocked by direct zoom GET_CUR=1 versus the required baseline 0.
 - [ ] Float32/native-equivalent LUT and measurement parity port.
 - [ ] Touch measurements, Celsius palette/range lock and ROI.
 - [ ] Still export, time series, recording/playback and comparison.

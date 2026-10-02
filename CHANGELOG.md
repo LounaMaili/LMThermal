@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Android explicit radiometric session — 2026-10-02)
+- Added a plain-JVM evidence-gated session with explicit initialization, fresh display baseline, exact zoom readbacks, transition discards, shutter settling and image-only liveness; pre-existing raw14 remains conservatively unsettled.
+- Added restricted semantic controls on the existing UVC handle with exact two-byte transfers and bounded timeout, generation-bound cancellation and minimal Compose session/progress/retry presentation.
+- Added scripted session/cancellation regressions and an executed Desktop shutter-trace oracle. Documented the deferred finite-LUT gate: Android readiness is structural/liveness only, with no Celsius or accuracy claim.
+- Added structured numeric session diagnostics; removed automatic debug raw-frame saving. Acquisition payload and native coordinates remain unchanged.
+- Recorded a real-device acceptance blocker: direct Zoom Absolute GET_CUR returns 1 after reconnect, while the unchanged Desktop-derived baseline requires zero. Initialization aborts before any write; hardware readiness remains unvalidated.
+
 ### Added (Android USB/UVC foundation — 2026-10-02)
 - Added the native Kotlin/Compose Android product in this repository, with a plain JVM core and pinned Gradle wrapper/toolchain.
 - Added Android camera/USB authorization, VID/PID-specific discovery, a read-only NDK libusb/libuvc transport with unconverted full-payload callbacks, and explicit close/reopen lifecycle handling.

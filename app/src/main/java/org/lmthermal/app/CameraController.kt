@@ -12,6 +12,8 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.SystemClock
 import android.util.Log
+import org.json.JSONObject
+import java.util.concurrent.atomic.AtomicLong
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
 import org.lmthermal.core.*
@@ -31,9 +33,10 @@ data class CameraSnapshot(
     val replaced: Long = 0,
     val malformed: Long = 0,
     val bitmap: Bitmap? = null,
+    val session: SessionSnapshot = SessionSnapshot(),
 )
 
-/** Owns discovery, permission and transport lifetime. No camera mode controls or thermometry.
+/** Owns discovery, permission and transport lifetime. Explicit session controls remain separate from parsing/rendering; no thermometry.
  * Native read/close run on one dispatcher: cancellation cannot free a handle during a JNI read.
  * StateFlow has one current snapshot; the native callback also has a one-frame replacement slot.
  */
@@ -46,6 +49,7 @@ class CameraController(private val context: Context) {
     private var streamJob: Job? = null
     private var foreground = false
     @Volatile private var generation = 0L
+    private val initializeRequest = AtomicLong(-1L)
     private val permissionAction = "${context.packageName}.USB_PERMISSION"
     private var wantedDevice: String? = null
 
@@ -114,6 +118,15 @@ class CameraController(private val context: Context) {
     fun cameraPermissionDenied() {
         mutableState.value = mutableState.value.copy(usb = UsbState(UsbPhase.PERMISSION_DENIED, "Camera permission denied"), permission = "Denied")
     }
+    /** UI requests an operation, never executes USB controls or queues duplicate sequences. */
+    fun initializeRadiometric() {
+        val current = mutableState.value
+        if (!current.session.canInitialize || current.usb.phase != UsbPhase.STREAMING) return
+        initializeRequest.compareAndSet(-1L, generation)
+        mutableState.updateIf({ initializeRequest.get() == generation }) {
+            it.copy(session = it.session.copy(canInitialize = false))
+        }
+    }
     /** Worker owns transport and finally-release; stale work from an earlier connection cannot update UI. */
     private fun open(device: UsbDevice) {
         val token = ++generation
@@ -123,7 +136,9 @@ class CameraController(private val context: Context) {
             try {
                 val connection = manager.openDevice(device) ?: error("UsbManager.openDevice returned null")
                 NativeUvcTransport(connection).use { transport ->
-                    var validationSaved = false
+                    val session = RadiometricSession(transport, token, SystemClock::elapsedRealtime,
+                        ownsConnection = { token == generation && isActive },
+                        event = { Log.i("LMThermalSession", JSONObject(it).toString()) })
                     var invalid = 0L
                     var previousCount = 0L
                     var fps = 0.0
@@ -131,6 +146,9 @@ class CameraController(private val context: Context) {
                     var lastFrameAt = cadenceStart
                     var lastLog = cadenceStart
                     while (isActive && token == generation) {
+                        val request = initializeRequest.getAndSet(-1L)
+                        if (request == token) session.initialize(request)
+                        session.tick()
                         val bytes = transport.read()
                         ensureActive()
                         val now = SystemClock.elapsedRealtime()
@@ -146,24 +164,18 @@ class CameraController(private val context: Context) {
                         }
                         val frame = if (bytes.size == Ht301Layout.FRAME_BYTES) Ht301Frame.parse(bytes) else null
                         val inspection = frame?.inspect() ?: FrameInspection(FrameMode.INVALID, "transport_size", null, null)
-                        // One app-private debug payload permits byte-for-byte host verification of trailer preservation.
-                        // Never write these unsanitized camera bytes to Git or shared storage.
-                        if (BuildConfig.DEBUG && frame != null && inspection.mode != FrameMode.INVALID &&
-                            inspection.reason == null && !validationSaved) {
-                            context.filesDir.resolve("validation-frame.raw").writeBytes(frame.transportBytes())
-                            validationSaved = true
-                        }
+                        session.observe(frame, inspection, counters[4], token)
                         if (inspection.mode == FrameMode.INVALID || inspection.reason != null) invalid++
                         val image = if (frame != null && inspection.mode != FrameMode.INVALID) Bitmap.createBitmap(
                             PreviewRenderer.grayscale(frame, inspection), Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT, Bitmap.Config.ARGB_8888) else null
                         mutableState.updateIf({ token == generation }) { previous -> previous.copy(
-                            usb = UsbState(UsbPhase.STREAMING, "Streaming · no radiometric readiness claimed"),
+                            usb = UsbState(UsbPhase.STREAMING, "Streaming · explicit radiometric session"),
                             mode = inspection.mode, reason = inspection.reason, size = bytes.size,
                             range = "${inspection.minimum ?: "—"}..${inspection.maximum ?: "—"}",
-                            fps = fps, received = counters[0], invalid = invalid, replaced = counters[1], malformed = counters[2], bitmap = image) }
+                            fps = fps, received = counters[0], invalid = invalid, replaced = counters[1], malformed = counters[2], bitmap = image, session = session.snapshot()) }
                         if (now - lastLog >= 2000) {
                             // Numeric diagnostics only: no camera serial or private scene is written to logs.
-                            Log.i("LMThermal", "frame size=${bytes.size} image=${frame?.imageBytes()?.size} trailer=${frame?.trailerBytes()?.size} mode=${inspection.mode} reason=${inspection.reason} summary=${inspection.summaryValid} words=${inspection.minimum}..${inspection.maximum} fps=$fps received=${counters[0]} replaced=${counters[1]} malformed=${counters[2]}")
+                            Log.i("LMThermal", "frame size=${bytes.size} image=${frame?.imageBytes()?.size} trailer=${frame?.trailerBytes()?.size} mode=${inspection.mode} reason=${inspection.reason} summary=${inspection.summaryValid} words=${inspection.minimum}..${inspection.maximum} fps=$fps received=${counters[0]} replaced=${counters[1]} malformed=${counters[2]} session=${session.snapshot().state} live=${session.snapshot().live} held=${session.snapshot().held} rejected=${session.snapshot().rejected}")
                             lastLog = now
                         }
                     }
@@ -172,13 +184,17 @@ class CameraController(private val context: Context) {
             catch (error: Exception) {
                 Log.e("LMThermal", "Transport failed", error)
                 mutableState.updateIf({ token == generation }) { previous -> previous.copy(
-                    usb = UsbState(UsbPhase.ERROR, error.message ?: "Transport error"), bitmap = null) }
+                    usb = UsbState(UsbPhase.ERROR, error.message ?: "Transport error"), bitmap = null,
+                    session = previous.session.copy(state = SessionState.ERROR, active = false,
+                        canInitialize = false, live = 0, reason = error.message ?: "Transport error")) }
             } finally { Log.i("LMThermal", "Stream released generation=$token") }
         }
     }
     /** Immediately clear stale presentation; worker cancellation releases the native handle asynchronously. */
     fun close(message: String = "Closed") {
         generation++
+        initializeRequest.set(-1L)
+        Log.i("LMThermalSession", JSONObject(mapOf("event" to "connection_cancelled", "monotonic_ms" to SystemClock.elapsedRealtime(), "generation" to generation, "reason" to message)).toString())
         streamJob?.cancel(); streamJob = null
         wantedDevice = null
         // Closing the stream does not revoke USB authorization or physically detach the device.

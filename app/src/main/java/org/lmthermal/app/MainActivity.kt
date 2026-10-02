@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.lmthermal.core.Ht301Layout
+import org.lmthermal.core.RadiometricSession
 
 /** Keeps USB ownership out of Compose; background and recreation release instead of retaining stale fd. */
 class CameraViewModel(application: Application) : AndroidViewModel(application) {
@@ -56,6 +57,12 @@ class MainActivity : ComponentActivity() {
                             Button(onClick = { connect() }) { Text("Connect / Open") }
                             OutlinedButton(onClick = { model.camera.close() }) { Text("Close") }
                         }
+                        Button(onClick = { model.camera.initializeRadiometric() }, enabled = state.session.canInitialize) {
+                            Text("Initialize radiometric")
+                        }
+                        Text("Session: ${state.session.state} · ${state.session.stage}")
+                        Text("Baseline ${state.session.baseline}/${RadiometricSession.BASELINE_FRAMES} · discarded ${state.session.discarded} · shutter ${state.session.shutterFrames}/${RadiometricSession.SHUTTER_DISCARD} · live ${state.session.live}/${RadiometricSession.READY_LIVE}")
+                        state.session.reason?.let { Text("Session evidence: $it") }
                         state.bitmap?.let { Image(it.asImageBitmap(), "Native thermal aiming preview",
                             Modifier.fillMaxWidth().aspectRatio(Ht301Layout.WIDTH.toFloat() / Ht301Layout.IMAGE_HEIGHT)) }
                         if (state.bitmap == null) Text("No valid preview frame")
@@ -63,7 +70,7 @@ class MainActivity : ComponentActivity() {
                         Text("Acquisition %.1f FPS · received %d · parser rejected %d · replaced %d · malformed payloads %d".format(state.fps, state.received, state.invalid, state.replaced, state.malformed))
                         state.reason?.let { Text("Frame evidence: $it") }
                         Text("Transport 384×292 · image 384×288 · four trailer rows retained")
-                        Text("Read-only aiming preview. No Celsius or radiometric session readiness.")
+                        Text("Aiming preview. Readiness qualifies structural/live raw14 only. No Celsius or physical accuracy claim.")
                     }
                 }
             }

@@ -123,3 +123,18 @@ Simple spreadsheet-compatible format: one row per pixel line, temperature values
 - Cloud storage / sync
 - Multi-camera support
 - Real-time streaming over network
+
+## Android explicit radiometric session (2026-10-02)
+
+Connect/Open remains read-only. Explicit Initialize radiometric qualifies three fresh display
+frames and zoom=0, then executes the validated raw14/normal-range/shutter sequence with exact
+readbacks. Fifteen-receipt transition discards, two-image stage evidence, 75 valid shutter
+discards and five changing valid summary-consistent images gate structural readiness.
+Unknown pre-existing raw14 remains unsettled. Lifecycle cancellation stops later controls;
+reopen never replays initialization. No Celsius/LUT or measurement UI is introduced.
+Desktop's extra finite-LUT measurement gate will be required in the future thermometry layer.
+Architecture, timings and cancellation limits: [ANDROID_RADIOMETRIC_SESSION.md](ANDROID_RADIOMETRIC_SESSION.md).
+
+Hardware acceptance is pending: Android's direct GET_CUR returned 1 at baseline, causing
+a safe abort before writes. This is implemented session behavior, not a completed hardware
+readiness milestone. See ANDROID_VALIDATION.md for the unresolved readback boundary.

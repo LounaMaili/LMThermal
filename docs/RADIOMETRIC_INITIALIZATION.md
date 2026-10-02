@@ -339,3 +339,13 @@ paths are in the desktop repository's
 relative discrimination and internal consistency for this scene. A hand has
 no assumed reference temperature, and independent absolute accuracy remains
 unmeasured.
+
+## Android session-port readback blocker (2026-10-02)
+
+The evidence-gated Android port fails safely before `32772`: after three display frames,
+standard direct USB zoom GET_CUR returns uint16 1, including after physical reconnect.
+The Desktop baseline remains zero; its `ZoomControl.get` uses Linux VIDIOC_G_CTRL.
+The different observed readback paths must be reconciled before claiming Android sequence
+parity. No mode control was sent in this validation and no initialization gate was weakened.
+Exact request/response and numeric frame evidence: ANDROID_VALIDATION.md and
+`docs/diagnostics/2026-10-02-android-radiometric-session.json`.

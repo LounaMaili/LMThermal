@@ -2,6 +2,7 @@
 // libuvc exposes uvc_wrap only after the libusb API version macro is visible.
 #include <libusb.h>
 #include <libuvc/libuvc.h>
+#include <libuvc/libuvc_internal.h>
 #include <android/log.h>
 #include <condition_variable>
 #include <mutex>
@@ -18,6 +19,14 @@ constexpr int kFps = 25;
 constexpr size_t kFrameBytes = kWidth * kTransportHeight * 2;
 constexpr size_t kMaximumPayload = kFrameBytes * 2;
 constexpr int kPollMilliseconds = 250;
+// Upstream zoom helpers use an unlimited timeout and conflate a zero-byte transfer with success.
+// Use their exact standard UVC request on the same handle, with bounded timeout/exact byte count.
+constexpr unsigned int kControlTimeoutMs = 1000;
+constexpr uint8_t kUvcGetRequest = LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE;
+constexpr uint8_t kUvcSetRequest = LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE;
+constexpr uint16_t kSelectRaw14 = 32772;
+constexpr uint16_t kSelectNormalRange = 32800;
+constexpr uint16_t kShutterRefresh = 32768;
 constexpr uint16_t kVendorId = 0x1514;
 constexpr uint16_t kProductId = 0x0001;
 
@@ -32,6 +41,7 @@ struct Stream {
     uint64_t replaced = 0;
     uint64_t malformed = 0;
     uint64_t sequence = 0;
+    uint64_t consumedSequence = 0;
 };
 
 /** Copy callback-owned payload before libuvc recycles it; at most one pending frame. */
@@ -112,6 +122,7 @@ Java_org_lmthermal_app_NativeUvc_read(JNIEnv* env, jobject, jlong handle) {
     auto result = env->NewByteArray(static_cast<jsize>(stream->latest.size()));
     if (result) env->SetByteArrayRegion(result, 0, static_cast<jsize>(stream->latest.size()),
                                        reinterpret_cast<const jbyte*>(stream->latest.data()));
+    stream->consumedSequence = stream->sequence;
     stream->latest.clear();
     return result;
 }
@@ -122,9 +133,9 @@ Java_org_lmthermal_app_NativeUvc_stats(JNIEnv* env, jobject, jlong handle) {
     auto* stream = reinterpret_cast<Stream*>(handle);
     std::lock_guard<std::mutex> guard(stream->mutex);
     jlong values[] = {static_cast<jlong>(stream->received), static_cast<jlong>(stream->replaced),
-                      static_cast<jlong>(stream->malformed), static_cast<jlong>(stream->sequence)};
-    auto result = env->NewLongArray(4);
-    if (result) env->SetLongArrayRegion(result, 0, 4, values);
+                      static_cast<jlong>(stream->malformed), static_cast<jlong>(stream->sequence), static_cast<jlong>(stream->consumedSequence)};
+    auto result = env->NewLongArray(5);
+    if (result) env->SetLongArrayRegion(result, 0, 5, values);
     return result;
 }
 
@@ -132,4 +143,44 @@ Java_org_lmthermal_app_NativeUvc_stats(JNIEnv* env, jobject, jlong handle) {
 extern "C" JNIEXPORT void JNICALL
 Java_org_lmthermal_app_NativeUvc_close(JNIEnv*, jobject, jlong handle) {
     release(reinterpret_cast<Stream*>(handle));
+}
+
+/** Restricted camera-terminal zoom operation, serialized with reads/close by the Kotlin owner.
+ * libusb's event thread continues asynchronous streaming while this worker waits for a control.
+ * Descriptors supply terminal/interface IDs; no second handle or guessed extension unit is opened.
+ */
+extern "C" JNIEXPORT jint JNICALL
+Java_org_lmthermal_app_NativeUvc_zoom(JNIEnv* env, jobject, jlong handle, jint operation) {
+    auto* stream = reinterpret_cast<Stream*>(handle);
+    if (operation < -1 || operation > 2) {
+        env->ThrowNew(env->FindClass("java/lang/IllegalArgumentException"), "Unsupported HT301 operation");
+        return -1;
+    }
+    const auto* terminal = uvc_get_camera_terminal(stream->device);
+    if (!terminal) {
+        env->ThrowNew(env->FindClass("java/io/IOException"), "Missing UVC camera terminal");
+        return -1;
+    }
+    uint16_t value = operation == 0 ? kSelectRaw14 : operation == 1 ? kSelectNormalRange : kShutterRefresh;
+    uint8_t data[2] = {static_cast<uint8_t>(value & 0xff), static_cast<uint8_t>(value >> 8)};
+    const bool reading = operation == -1;
+    int transferred = libusb_control_transfer(stream->device->usb_devh,
+        reading ? kUvcGetRequest : kUvcSetRequest, reading ? UVC_GET_CUR : UVC_SET_CUR,
+        UVC_CT_ZOOM_ABSOLUTE_CONTROL << 8,
+        terminal->bTerminalID << 8 | stream->device->info->ctrl_if.bInterfaceNumber,
+        data, sizeof(data), kControlTimeoutMs);
+    __android_log_print(ANDROID_LOG_INFO, "LMThermal", "zoom request reading=%d terminal=%u interface=%u selector=%u transferred=%d bytes=%02x,%02x",
+        reading, terminal->bTerminalID, stream->device->info->ctrl_if.bInterfaceNumber,
+        UVC_CT_ZOOM_ABSOLUTE_CONTROL, transferred, data[0], data[1]);
+    if (transferred != sizeof(data)) {
+        std::string message = "zoom absolute transfer bytes/error: " + std::to_string(transferred);
+        env->ThrowNew(env->FindClass("java/io/IOException"), message.c_str());
+        return -1;
+    }
+    if (!reading) {
+        // Drop a pending pre-control payload. Fifteen further receipts are still discarded by session.
+        std::lock_guard<std::mutex> guard(stream->mutex);
+        stream->latest.clear();
+    }
+    return static_cast<jint>(data[0] | (static_cast<uint16_t>(data[1]) << 8));
 }

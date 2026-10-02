@@ -113,3 +113,49 @@ Next: a focused explicit radiometric control/session port with standard UVC zoom
 readbacks, Desktop-equivalent stage/discard/liveness gates, and fixture tests.
 Thermometry/LUT parity is a subsequent separate step; absolute physical accuracy remains
 unvalidated. Release licensing for project-authored code remains an owner decision.
+
+## Radiometric-session validation attempt — 2026-10-02
+
+Branch `feat/android-radiometric-session`, base `f6d19db`.
+See [session architecture](ANDROID_RADIOMETRIC_SESSION.md) and the sanitized
+[session report](diagnostics/2026-10-02-android-radiometric-session.json).
+
+**Hardware acceptance is blocked at the baseline readback; no radiometric control was sent.**
+The operator reconnected the camera, opened the app read-only and confirmed a usable display
+preview. DISPLAY_STREAM was observed with exact 224256-byte frames, 221184-byte image and
+3072-byte trailer. Explicit Initialize qualified three fresh consecutive display frames.
+The standard direct USB Zoom Absolute GET_CUR returned **1**, while Desktop's required
+baseline is **0**. ERROR followed immediately, before `32772`. A complete five-second physical
+unplug/reconnect and explicit retry produced the same result. Repeated explicit retries were
+read-only failures; no cached result was fabricated and the baseline requirement remains zero.
+
+The final diagnostic build confirmed terminal **1**, control interface **0**, selector **11**,
+request type **0xa1**, request **0x81**, wValue **0x0b00**, wIndex **0x0100**,
+transferred length **2**, returned bytes **01 00**. This matches the pinned upstream libuvc
+zoom request and unsigned little-endian decoding. It establishes this Android readback
+observation; it does not establish why earlier Linux V4L2 readbacks were zero. Desktop uses
+VIDIOC_G_CTRL, not a raw USB response. Different driver/device/session semantics remain an
+investigation boundary. Do not replace actual GET_CUR with software-cached zero/sent values.
+
+The latest recorded display connection had **1922 callbacks**, **1 replaced pending frame**,
+**2 malformed payloads** and **2 parser rejections** at its last periodic snapshot. FPS before
+and after the rejected request remained near 25 (exact aggregate statistics are in the JSON).
+There was no control-induced stream starvation because no SET_CUR occurred. No during/after
+radiometric-transition FPS, shutter transient or time-to-ready can be reported. The operator
+confirmed display usability; raw14 session preview acceptance was not reached.
+
+Normal Home/background released the final stream about **125 ms** after cancellation was
+logged. Reopen/reconnect observed display and did not replay initialization. Early-stage
+cancellation after a modifying command and existing-raw14 Test B are **not hardware-validated
+in this task**, because the baseline prevents any modifying stage; their scripted regressions
+pass. Foundation pre-existing-raw14 observations remain historical evidence only.
+
+Checks: **51 JVM tests**, including 31 session regressions and the 111-observation executed
+Desktop shutter oracle; debug build and lint pass. Lint retains the foundation's seven
+nonfatal warnings, zero errors. The final review also clears session readiness on transport
+errors; that exceptional UI path was not physically forced. No raw scene/payload was saved
+by this milestone. No Celsius, LUT, measurement or accuracy support is claimed.
+
+Next required step: resolve direct USB GET_CUR versus Desktop V4L2 baseline/readback semantics
+with read-only evidence before revising either policy or testing the modifying sequence.
+Only then complete radiometric hardware acceptance; LUT/thermometry porting follows later.

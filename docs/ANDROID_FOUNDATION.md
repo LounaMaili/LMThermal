@@ -20,8 +20,10 @@ Android UsbManager permission → authorized UsbDeviceConnection descriptor
 - `core/src/test/resources/fixtures/`: two deliberate, unchanged sanitized Desktop frames.
 
 Future camera-control, session, thermometry and measurement components must remain
-separate from the source/renderer. The current transport interface has **no setting
-write API**. Opening performs standard UVC probe/commit and interface negotiation;
+separate from the source/renderer. The foundation transport initially had no setting write API. The subsequent
+[explicit session milestone](ANDROID_RADIOMETRIC_SESSION.md) adds a separate restricted
+control interface on the same handle. Opening remains read-only, performing standard
+UVC probe/commit and interface negotiation;
 it never sends radiometric initialization or manufacturer/vendor settings.
 
 ## Acquisition decision
@@ -117,22 +119,24 @@ Use the wireless discovery/reconnection procedure in AGENTS.md, not a fixed port
 
 ## Exact-payload validation evidence
 
-Debug builds save the first valid exact payload of each connection to app-private
+The original foundation debug builds saved the first valid exact payload of each connection to app-private
 `files/validation-frame.raw` solely to verify acquisition on the host. It may contain
 camera identifiers/private scene content: never commit it or copy it into shared
 storage as a fixture without deliberate sanitization. This is not a still export UI.
 Retrieve with `adb exec-out run-as org.lmthermal.app cat files/validation-frame.raw`
 into ignored/local storage, inspect against the Desktop parser, then remove it when
-finished. Release builds do not save it.
+finished. Release builds did not save it. The radiometric-session milestone removes automatic
+debug saving as well; its diagnostics contain numeric evidence only.
 
 Real-device results are recorded in [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md).
 Fixture success alone does not prove Android transport preservation.
 
-## Immediate next milestone
+## Radiometric continuation
 
-Port the explicit evidence-gated normal-range radiometric session behind a dedicated
-control interface, with UVC zoom readbacks and every Desktop timing/liveness rejection
-rule. This branch does not expose those writes or shutter/readiness behavior.
+The explicit session implementation and tests are documented in
+[ANDROID_RADIOMETRIC_SESSION.md](ANDROID_RADIOMETRIC_SESSION.md). Hardware acceptance is
+blocked by a direct zoom GET_CUR baseline of 1 versus the required Desktop zero. Resolve
+that readback boundary before declaring session parity or proceeding to thermometry.
 
 Then port thermometry separately: extract the same offsets, preserve Float versus
 Double operations/rounding and the 16384-entry LUT including undefined entries;

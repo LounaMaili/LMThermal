@@ -204,3 +204,15 @@ USB descriptor analysis reveals a **UVC Extension Unit** (`0x24 0x05`) in the de
 
 - [gopher-p2pro-ir](https://github.com/nicholasgasior/gopher-p2pro-ir) — Go library for InfiRay P2 Pro, documents the vendor command protocol
 - [thermviewer.com](https://thermviewer.com/) — Original (abandoned) Android app for HT-301
+
+### Android direct zoom readback boundary (2026-10-02)
+
+On the Pixel 8 USB Host path, explicit session baseline qualification observed three valid
+display frames but a direct two-byte Zoom Absolute GET_CUR response `01 00` (value 1).
+Terminal 1/interface 0/selector 0x0b matches the pinned libuvc request. A full physical
+reconnect reproduced it. The Android port retains Desktop's required baseline zero and
+aborts before any mode write. This differs from earlier recorded Linux VIDIOC_G_CTRL zero;
+the cause and equivalence of those readback paths are unresolved. No new radiometric
+transition, shutter behavior or firmware-wide rule is inferred. See ANDROID_VALIDATION.md
+and its sanitized numeric session report. Actual USB replies must not be replaced by cached
+sent-command values to manufacture exact readback success.
