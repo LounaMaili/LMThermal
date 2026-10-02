@@ -4,6 +4,22 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Android USB/UVC foundation — 2026-10-02)
+- Added the native Kotlin/Compose Android product in this repository, with a plain JVM core and pinned Gradle wrapper/toolchain.
+- Added Android camera/USB authorization, VID/PID-specific discovery, a read-only NDK libusb/libuvc transport with unconverted full-payload callbacks, and explicit close/reopen lifecycle handling.
+- Ported Desktop's exact frame/image/trailer boundaries and display/raw14 candidate inspection without high-bit masking or thermometry. Preview normalization is independent and display-only.
+- Added sanitized Desktop golden fixtures, ownership/classification tests and bounded latest-value tests; documented architecture, acquisition choices, dependency licenses and configuration.
+- Added app-private debug payload evidence capture for verifying trailer preservation; unsanitized camera bytes are excluded from Git. Real-device acceptance is recorded in docs/ANDROID_VALIDATION.md.
+
+### Fixed (Android foundation review — 2026-10-02)
+- Kept attached device identity/authorization in diagnostics across normal stream close.
+- Serialized frame publication with close/reset so an in-flight worker cannot restore a stale preview after release; added a concurrent regression.
+- Selected the first valid exact debug payload for acquisition evidence, excluding size-correct mixed startup frames.
+
+### Changed (Android product direction — 2026-10-02)
+- Updated the README roadmap and specification to identify Android as the product and Desktop as the executable reference, diagnostic and fixture source.
+- Deferred camera setting writes, radiometric readiness and Celsius/LUT porting to later focused milestones.
+
 ### Added (Desktop measurement foundation — 2026-09-29)
 - Documented the reusable normal-range radiometric session, evidence-gated post-shutter readiness and read-only handling of raw14 streams with unknown host state. These are software acceptance rules built on the completed camera findings, not a new hardware protocol claim.
 - Specified the separate OpenCV diagnostic aiming preview, display-only raw14 normalization and strict separation from native-equivalent thermometry. Independent physical accuracy validation remains outstanding.

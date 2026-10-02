@@ -1,0 +1,17 @@
+# Golden fixture provenance
+
+Copied byte-for-byte from sibling LMThermal-Desktop `tests/fixtures/` at playback
+commit `ac720f3cc65ace528742d6cddd0f4111707396a2`, under the operator's explicit
+cross-platform fixture reuse instruction. No private/temp captures were copied.
+
+- `display-room-baseline.raw`: SHA-256 `d9daecccb563d15386b32f290c33caf564661f0fd3f3581077dfec4129a0248b`.
+- `radiometric-room-settled.raw`: SHA-256 `fde6a4b803b68fcea07ab7b428f4769d22e896f01055969f43102bdc9270f5d6`.
+
+Both are 224256-byte sanitized real HT-301 captures from the room/ceiling
+sequence on 2026-09-27. Spatial layout and all calibration/summary values remain;
+the two known camera identifier spans were cleared in Desktop. No hand target or
+independently measured physical temperature was present. See Desktop fixture README
+and `docs/diagnostics/2026-09-27-fixtures.json` for original provenance.
+
+Golden tests protect full transport preservation, 288+4 row separation, complete-word
+classification and trailer consistency. These are not physical calibration standards.

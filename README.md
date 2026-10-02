@@ -8,39 +8,48 @@
 > starting with `zoom_absolute=32772`; full ThermViewer type-0 startup keeps
 > display words. The reconstructed lookup matches executed official x86_64
 > native arithmetic on raw fixtures. Independent temperature accuracy remains
-> unvalidated, and GUI Celsius integration is deferred. See
+> unvalidated. Desktop now exposes native-equivalent values; this Android foundation
+> remains a read-only aiming preview. See
 > [initialization evidence](docs/RADIOMETRIC_INITIALIZATION.md),
 > [native call chain](docs/NATIVE_CALL_CHAIN.md), and
 > [application comparison](docs/APPLICATION_COMPARISON.md). Desktop capture
 > reports, sanitized fixtures and regression tables are maintained separately.
 
-Application thermique pour la caméra **Infiray HT-301 (T3-317-13)**.
+LMThermal is the native Android application for the **Infiray HT-301 / T3-317-13**.
+It also preserves the authoritative protocol and thermometry research.
+[LMThermal-Desktop](https://github.com/LounaMaili/LMThermal-Desktop) is the executable
+Python/PyQt reference, diagnostic tool and fixture generator, not the final product.
 
-Remplacement libre et open-source de l'application ThermViewer (abandonnée) et de l'app constructeur HTI (limitée).
+## Android milestone
 
-## Objectif
+The first mobile foundation is a small Kotlin/Compose application in this repository:
+USB Host authorization → native unconverted UVC acquisition → exact frame inspection
+→ latest-frame grayscale aiming preview. No radiometric controls or Celsius values
+are exposed in this milestone. See [architecture](docs/ANDROID_FOUNDATION.md),
+[build configuration](docs/CONFIGURATION.md), and [real-device results](docs/ANDROID_VALIDATION.md).
 
-Fournir un outil permettant de :
-- Capturer le flux vidéo thermique en temps réel
-- Accéder aux **données de température brutes** (données embarquées dans chaque frame)
-- **Verrouiller une plage de température** (min/max fixe) pour des mesures cohérentes et comparables
-- Sélectionner des points de mesure
-- Exporter des images avec overlay de température
-- Comparer des captures entre elles
+```bash
+./gradlew :core:test :app:assembleDebug :app:lintDebug
+adb -s <paired-wireless-serial> install -r app/build/outputs/apk/debug/app-debug.apk
+```
 
-## Matériel supporté
+JDK 17 and the SDK/NDK packages documented in CONFIGURATION.md are required.
+Connect the HT-301 through USB Host/OTG, launch LMThermal, tap **Connect / Open**,
+and grant Android camera/USB permissions. **Close** releases the stream; backgrounding
+also releases it. Reopening remains explicit. Wireless ADB follows AGENTS.md.
 
-| Info | Valeur |
-|------|--------|
-| Caméra | Infiray HT-301 (T3-317-13) |
-| USB Vendor ID | 0x1514 (Infiray) |
-| USB Product ID | 0x0001 |
-| Interface vidéo | UVC standard (driver `uvcvideo`) |
-| Résolution | 384×292 |
-| Image thermique exploitable | 384×288 (lignes 0–287) |
-| Format vidéo | YUYV 4:2:2 @ 25 fps |
-| Plage de mesure annoncée | -20°C à +400°C (non vérifiée ici) |
-| Précision annoncée | ±3°C (non vérifiée ici) |
+## Supported camera contract
+
+| Property | Value |
+|---|---|
+| Camera | Infiray HT-301 / T3-317-13 |
+| USB identity | VID 0x1514, PID 0x0001 |
+| Transport | UVC YUYV 384×292 at 25 FPS, exactly 224256 bytes |
+| Native image | 384×288, first 221184 bytes |
+| Non-image trailer | Last four rows, 3072 bytes retained intact |
+| Native coordinates | x 0..383, y 0..287, unaffected by phone orientation |
+| Display words | 0x80YY; aiming brightness only |
+| Raw14 words | Complete uint16 values below 0x4000, never high-bit masked |
 
 ## Découvertes clés
 
@@ -87,63 +96,41 @@ def get_temp_evn(a, env_term, b):
 | 364 | ~0.006 | Copy of calibration coefficient at byte 223506 |
 | 368 | ~0.82 | Copy of calibration coefficient at byte 223510 |
 
-## Plan du projet
+## Product roadmap
 
-### Phase 1 — Communication & température (mesure à valider)
-- [x] Caméra détectée nativement sur Linux (uvcvideo)
-- [x] Flux YUYV capturable via OpenCV + V4L2
-- [x] APK constructeur décompilé et analysé
-- [x] Java/JNI/native lookup path and source of its parameters traced
-- [x] Camera mode transition to 14-bit image words observed with `32772`
-- [x] Standalone lookup compared with executed official x86_64 native arithmetic
-- [x] Paramètres de température extraits des frames (514 bytes, fin de frame)
-- [x] `GetTempEvn()` arithmetic and native caller arguments traced
-- [x] `InitTempParam()` décodé — calcul des paramètres de calibration
-- [x] 27 constantes `.rodata` extraites (float32/float64)
-- [x] Prototype Python expérimental (`prototype/thermal_capture.py`), sans mesure par pixel validée
-- [x] `CalcFixRaw()` normal-path arithmetic and five caller inputs traced
-- [x] Field 356 identified as a copied calibration coefficient in saved frames
-- [x] Desktop native-equivalent normal-range measurement session and diagnostic OpenCV aiming preview implemented with fixture-based validity tests
-- [ ] Native lookup outputs compared with controlled camera/app readings
+### Completed research/reference work
 
-### Phase 2 — Application desktop (MVP)
-- [ ] Interface temps réel avec flux thermique
-- [ ] Affichage de la température pointée (souris)
-- [ ] Verrouillage de plage min/max (fixer la palette de couleur)
-- [ ] Capture d'image avec overlay température
-- [ ] Choix de la palette de couleurs
+- [x] Linux discovery, unconverted capture, image/trailer separation and parameter extraction.
+- [x] Official/ThermViewer APK comparisons and normal-path native arithmetic reconstruction.
+- [x] Observed raw14 transition and evidence-gated Desktop radiometric session.
+- [x] Desktop preview, native-equivalent matrix/cursor readings, Celsius palettes/range lock,
+  still capture, ROI, offline inspection, time-series logging, bounded sequence recording/playback.
+- [x] Wireless ADB plus Pixel 8 USB Host/HT-301 development path validated.
+- [ ] Independent physical temperature calibration accuracy validation.
 
-### Phase 3 — Outils de mesure
-- [ ] Points de mesure multiples
-- [ ] Mesures min/max/moyenne par pixel
-- [ ] Export des données numériques (CSV)
+### Mobile product milestones
 
-### Phase 4 — Enregistrement vidéo
-- [ ] Capture de séquences vidéo thermiques
-- [ ] Embedding des données radiométriques dans chaque frame
-- [ ] Export vidéo (radiométrique + MP4 visuel)
+- [x] Kotlin/Compose project, Android USB permission and original UVC payload transport.
+- [x] JVM parser/golden fixtures, bounded preview architecture and basic diagnostics.
+- [ ] Evidence-gated radiometric controls/session port (next milestone).
+- [ ] Float32/native-equivalent LUT and measurement parity port.
+- [ ] Touch measurements, Celsius palette/range lock and ROI.
+- [ ] Still export, time series, recording/playback and comparison.
+- [ ] Release licensing, packaging and distribution.
 
-### Phase 5 — Comparaison & analyse
-- [ ] Galerie de captures (photos + vidéos)
-- [ ] Comparaison côte-à-côte (même plage forcée)
-- [ ] Différence de température entre deux captures
-- [ ] Annotations (texte, flèches, zones d'intérêt)
+Real-device acceptance evidence for the first foundation is tracked separately in
+[ANDROID_VALIDATION.md](docs/ANDROID_VALIDATION.md). No fixture-only result can substitute
+for the original full-payload Android camera test.
 
-### Phase 6 — Portage Android
-- [ ] Prototype Android avec USB Host API
-- [ ] Interface tactile adaptée
-- [ ] Build & distribution (APK)
+## Stack
 
-## Stack technique
-
-Analysis-only tools used for the follow-up: Capstone 5.0.9, pyelftools 0.33,
-and Androguard 4.1.4 in an isolated temporary environment. They are not desktop
-runtime dependencies. The optional native reference harness needs pyelftools.
-
-- **Langage** : Python 3 (prototypage Phase 1-2)
-- **Bibliothèques** : `opencv-python`, `numpy`, `pyusb`
-- **OS cible initial** : Linux (Archlinux confirmé fonctionnel)
-- **Cible finale** : Android (Flutter ou Kotlin natif)
+- Android Kotlin 2.1.20, Compose/AndroidX, Gradle wrapper 8.11.1, AGP 8.9.2, JDK 17.
+- compileSdk/targetSdk 35, minSdk 26; initial arm64-v8a APK supports the test Pixel 8.
+- Native libusb 1.0.29 (LGPL-2.1-or-later), pinned libuvc 0.0.8 snapshot (BSD-3-Clause), NDK 28.
+- Plain JVM `core/` holds immutable frame/parser and preview logic; no Python embedded.
+- Third-party licenses and exact source pins: [third_party/README.md](third_party/README.md).
+- Python analysis tools and historical prototypes remain research/reference material;
+  Capstone 5.0.9, pyelftools 0.33 and Androguard 4.1.4 are analysis-only dependencies.
 
 ## Documentation
 

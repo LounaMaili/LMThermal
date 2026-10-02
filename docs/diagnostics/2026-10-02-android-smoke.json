@@ -1,0 +1,163 @@
+{
+  "date": "2026-10-02",
+  "scope": "Read-only Android USB/UVC foundation; no mode controls or thermometry",
+  "device": {
+    "model": "Pixel 8",
+    "android_release": "17",
+    "api": 37,
+    "abi": "arm64-v8a",
+    "debugging": "already-paired wireless ADB"
+  },
+  "usb": {
+    "vid": "1514",
+    "pid": "0001",
+    "manufacturer": "Infiray",
+    "product": "T3-317-13"
+  },
+  "raw14_observed_run": {
+    "provenance": "numeric LMThermal runtime logs before final diagnostic evidence-selection refinement; camera already raw14, no controlled transition",
+    "sample_count": 29,
+    "fps_mean": 25.00371245146933,
+    "fps_min": 24.900398406374503,
+    "fps_max": 25.07232401157184,
+    "last_sample": {
+      "mode": "RAW14",
+      "size": 224256,
+      "image_bytes": 221184,
+      "trailer_bytes": 3072,
+      "reason": "null",
+      "summary_valid": true,
+      "min": 5280,
+      "max": 5331,
+      "fps": 25.0,
+      "received": 1471,
+      "replaced": 5,
+      "malformed": 8
+    }
+  },
+  "display_payload_evidence": {
+    "source": "first valid Android debug payload retrieved via run-as into ignored local storage; inspected by the Desktop executable parser",
+    "bytes": 224256,
+    "image_bytes": 221184,
+    "trailer_bytes": 3072,
+    "trailer_nonzero_bytes": 324,
+    "sha256": "e07767b0a64aa70678989140c3321354f9fb06d17400af4bfc92be24f788573e",
+    "desktop_mode": "display",
+    "image_min": 32793,
+    "image_max": 32993,
+    "settings": {
+      "correction": 0.0,
+      "reflected": 25.0,
+      "ambient": 25.0,
+      "humidity": 0.44999998807907104,
+      "emissivity": 0.9800000190734863,
+      "distance": 1,
+      "calibration": [
+        0.2705000042915344,
+        35.992000579833984,
+        3.9999998989515007e-05,
+        0.00570000009611249,
+        0.8234000205993652
+      ]
+    }
+  },
+  "operator_checks": {
+    "preview_motion_responsiveness": "operator completed raw14 check and confirmed display usable",
+    "physical_unplug": "operator confirmed; active USB host entry disappeared, No HT-301 UI, preview cleared, native release logged, process survived",
+    "physical_replug": "operator confirmed preview returned; display logs resumed near 25 FPS",
+    "wireless_adb": "shell commands succeeded during stream and physical detach",
+    "background_foreground": "Home released generation 4; return showed attached/granted with no frame; explicit reopen worked"
+  },
+  "build": {
+    "gradle": "8.11.1",
+    "agp": "8.9.2",
+    "kotlin": "2.1.20",
+    "compileSdk": 35,
+    "targetSdk": 35,
+    "minSdk": 26,
+    "tests": 20,
+    "test_failures": 0,
+    "assembleDebug": "passed",
+    "lintDebug": "passed with 7 warnings, 0 errors",
+    "apk_sha256": "6df78aa9222cc18ad0c19eeef183360e0623d1a14de99a53fd611c32c91b3d47"
+  },
+  "limitations": [
+    "Only Pixel 8 arm64 tested",
+    "No app-controlled raw14 transition or radiometric readiness",
+    "No Celsius or physical accuracy claim",
+    "Manual permission-denial and screen-rotation cases not specifically operator-tested",
+    "Unsanitized payloads/screenshots are local only and excluded from Git"
+  ],
+  "final_display_payload_evidence": {
+    "size": 224256,
+    "image_bytes": 221184,
+    "trailer_bytes": 3072,
+    "trailer_nonzero_bytes": 324,
+    "sha256": "c3d5adc46912a28ec8880159f76d97ea9217fef3ec8788b1d23eb981bcceb6c4",
+    "inspection": {
+      "mode": "display",
+      "reason": null,
+      "word_min": 32817,
+      "word_max": 32924,
+      "image_digest": "8cd4bafa46da4ecd1bc6d9e7f91e3cbaa01f13f075a2503f7564b52a0ca71704",
+      "summary_valid": false
+    },
+    "parameters": {
+      "correction": 0.0,
+      "reflected_temp": 25.0,
+      "ambient_temp": 25.0,
+      "humidity": 0.44999998807907104,
+      "emissivity": 0.9800000190734863,
+      "distance": 1,
+      "calibration_0": 0.2705000042915344,
+      "calibration_1": 35.992000579833984,
+      "calibration_2": 3.9999998989515007e-05,
+      "calibration_3": 0.00570000009611249,
+      "calibration_4": 0.8234000205993652,
+      "field_372": 0.0,
+      "reflected_temp_repeat": 25.0,
+      "ambient_temp_repeat": 25.0,
+      "humidity_repeat": 0.44999998807907104,
+      "emissivity_repeat": 0.9800000190734863
+    }
+  },
+  "final_installed_build_run": {
+    "sample_count": 39,
+    "fps_mean": 25.008123981066486,
+    "fps_min": 24.826216484607745,
+    "fps_max": 25.145067698259187,
+    "all_logged_frames_exact": true,
+    "last_sample": {
+      "size": 224256,
+      "image_bytes": 221184,
+      "trailer_bytes": 3072,
+      "mode": "DISPLAY",
+      "word_min": 32773,
+      "word_max": 33010,
+      "fps": 25.145067698259187,
+      "received": 1971,
+      "replaced": 1,
+      "malformed": 2
+    },
+    "clean_release_logged": true,
+    "wireless_adb_echo": "lmthermal-final-stream-adb-ok",
+    "apk_sha256": "543b760f42f10ca5091562dd1c1db0d6bf6d1683084d76534aafe24deb0ed817"
+  },
+  "publication_race_fix": "Serialized source ownership check/publication with close/reset; concurrent JVM regression protects against stale final frame",
+  "race_fixed_build_smoke": {
+    "apk_sha256": "8c71a2fb26955a15d817d9a868f87c488aaf6da70f242e9d238a87e8a2254afa",
+    "sample_count": 27,
+    "fps_mean": 25.01295568542367,
+    "fps_min": 24.900398406374503,
+    "fps_max": 25.515210991167812,
+    "last_sample": {
+      "mode": "DISPLAY",
+      "received": 1363,
+      "replaced": 0,
+      "malformed": 2
+    },
+    "normal_close": "Close button used; release generation 1 logged, image/counters cleared",
+    "ui_parser_rejected_at_observed_snapshot": 3
+  },
+  "final_label_correction": "Normal Close retains attached identity/USB permission; rebuilt, linted and installed after preceding hardware smoke; no transport/parsing/control behavior changed"
+}

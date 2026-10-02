@@ -1,0 +1,5 @@
+<data-extraction-rules>
+    <!-- Debug validation payloads can contain private scenes and camera identifiers. -->
+    <cloud-backup><exclude domain="root" path="." /></cloud-backup>
+    <device-transfer><exclude domain="root" path="." /></device-transfer>
+</data-extraction-rules>

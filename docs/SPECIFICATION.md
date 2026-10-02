@@ -7,6 +7,20 @@
 > [RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md). The features
 > below remain planned; experimental offline output is not a calibrated API.
 
+## Android foundation milestone
+
+The Android product lives in this repository (`app/` + JVM `core/`). The first
+milestone implements VID/PID-filtered Android USB authorization, unconverted
+384×292 YUYV acquisition through native libusb/libuvc, exact frame validation,
+288+4 image/trailer separation, Desktop-equivalent display/raw14 inspection and
+a latest-frame grayscale aiming preview. Acquisition/parsing run off the UI thread.
+No camera setting writes or Celsius measurement are exposed. Background/detach
+release the stream; foreground/replug allow explicit reopen.
+
+See [ANDROID_FOUNDATION.md](ANDROID_FOUNDATION.md) for ownership, lifecycle,
+interfaces and future session/thermometry boundaries, and
+[ANDROID_VALIDATION.md](ANDROID_VALIDATION.md) for real-device evidence.
+
 ## Current Linux measurement foundation
 
 The sibling desktop repository now has a PyQt-independent
