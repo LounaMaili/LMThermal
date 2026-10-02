@@ -340,7 +340,7 @@ relative discrimination and internal consistency for this scene. A hand has
 no assumed reference temperature, and independent absolute accuracy remains
 unmeasured.
 
-## Android session-port readback blocker (2026-10-02)
+## Earlier Android session-port readback blocker (2026-10-02)
 
 The evidence-gated Android port fails safely before `32772`: after three display frames,
 standard direct USB zoom GET_CUR returns uint16 1, including after physical reconnect.
@@ -362,3 +362,21 @@ trace found no physical Zoom transaction for one repeated V4L2 GET returning zer
 No Zoom SET was sent and
 the existing session gates remain unchanged. V4L2 control state must be
 distinguished from a proven physical USB response.
+
+## Android cross-platform frame confirmation (2026-10-02)
+
+A restricted Pixel 8 experiment reproduced the established Linux DISPLAY→raw14
+transition with one exact Zoom `32772` SET and no GET acceptance criterion. Fifteen
+receipts and two distinct structurally valid raw14 images qualified the response.
+The subsequent fresh-display full `32772→32800→32768` sequence reached structural/live
+RADIOMETRIC_READY in 6.312 s: 15/15 stage discards, 75 shutter frames and five changing
+summary-consistent frames. Full image/trailer layout was preserved. This is
+cross-platform confirmation, not a new command discovery or temperature validation.
+
+Android portable gates now separate **control transfer completed** from
+**frame-observed camera response**. Query-dependent direct GET_CUR and potentially
+cached V4L2 control state are not firmware acknowledgments. The Desktop timing/frame
+oracle remains the reference; its control-state equality checks are not copied as
+physical acknowledgment assumptions. Details and numeric evidence are in
+[ANDROID_VALIDATION.md](ANDROID_VALIDATION.md). Native-equivalent thermometry and
+independent physical accuracy remain outside this Android session milestone.

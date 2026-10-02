@@ -229,3 +229,12 @@ trace found no physical Zoom transaction for one repeated V4L2 GET returning zer
 No Zoom SET was sent and
 the existing session gates remain unchanged. V4L2 control state must be
 distinguished from a proven physical USB response.
+
+### Pixel 8 cross-platform initialization confirmation (2026-10-02)
+
+A single explicit exact-length UVC Zoom `32772` SET reproduced Linux's DISPLAY→raw14
+transition on Android, with unchanged 224256-byte transport and 3072-byte trailer.
+The full staged sequence reached structural/live ready using frame evidence rather
+than direct GET equality. No new command or calibrated-temperature claim follows.
+See [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md) for observed ranges, counters,
+shutter/liveness gates and existing-raw14 reopen policy.

@@ -57,15 +57,21 @@ class MainActivity : ComponentActivity() {
                             Button(onClick = { connect() }) { Text("Connect / Open") }
                             OutlinedButton(onClick = { model.camera.close() }) { Text("Close") }
                         }
-                        Button(onClick = { model.camera.initializeRadiometric() }, enabled = state.session.canInitialize) {
+                        Button(onClick = { model.camera.initializeRadiometric() }, enabled = state.session.canInitialize && !state.transition.active) {
                             Text("Initialize radiometric")
                         }
                         if (BuildConfig.DEBUG) {
                             OutlinedButton(onClick = { model.camera.readZoomInventory() },
-                                enabled = state.usb.phase == org.lmthermal.core.UsbPhase.STREAMING && !state.session.active) {
+                                enabled = state.usb.phase == org.lmthermal.core.UsbPhase.STREAMING && !state.session.active && !state.transition.active) {
                                 Text("Read zoom inventory")
                             }
                             Text(state.inventory)
+                            OutlinedButton(onClick = { model.camera.testRaw14Transition() },
+                                enabled = state.transition.canStart && !state.session.active) {
+                                Text("Test raw14 transition (32772)")
+                            }
+                            Text("Single test: ${state.transition.stage} · discarded ${state.transition.discarded} · distinct ${state.transition.distinct}")
+                            state.transition.reason?.let { Text("Single test evidence: $it") }
                         }
                         Text("Session: ${state.session.state} · ${state.session.stage}")
                         Text("Baseline ${state.session.baseline}/${RadiometricSession.BASELINE_FRAMES} · discarded ${state.session.discarded} · shutter ${state.session.shutterFrames}/${RadiometricSession.SHUTTER_DISCARD} · live ${state.session.live}/${RadiometricSession.READY_LIVE}")

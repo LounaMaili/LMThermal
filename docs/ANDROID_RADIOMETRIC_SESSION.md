@@ -1,14 +1,16 @@
 # Android evidence-gated radiometric session
 
 Milestone: `feat/android-radiometric-session`, based on foundation main
-`f6d19dbde4d031991691cfbc6cb1d757e00f1556`.
+`f6d19dbde4d031991691cfbc6cb1d757e00f1556`. Current frame-acceptance child:
+`fix/android-radiometric-frame-acceptance`, based on Zoom audit tip `3df0766`.
 
 ## Hardware acceptance status
 
-**Blocked:** direct USB Zoom Absolute GET_CUR is 1 after a physical reconnect; the
-Desktop-derived baseline requires 0. The app fails before any write. Structural/session
-logic and Desktop trace parity pass on fixtures, but hardware transition/readiness is not
-validated. See ANDROID_VALIDATION.md. Do not merge as a completed radiometric milestone.
+The original port's readback blocker is superseded by the frame-acceptance child branch.
+A deliberately single-command Pixel 8 test reproduced DISPLAY→raw14 after an exact
+32772 transfer, without GET_CUR. The subsequent fresh-display full sequence reached RADIOMETRIC_READY in 6.312 seconds.
+See ANDROID_VALIDATION.md for per-stage counters and operator confirmation.
+No LUT, Celsius or independent physical-accuracy claim is made.
 
 ## Ownership and explicit action
 
@@ -22,7 +24,7 @@ I/O worker. The native callback and StateFlow still each retain only the latest 
 setting writes. Only **Initialize radiometric** submits a generation-bound request; duplicate
 requests cannot restart an active sequence. The button is available only for an observed
 display stream outside an active sequence. An error can be explicitly retried if display
-returns, but the fresh baseline/readback gates still apply. Otherwise close/reconnect and
+returns, but the fresh baseline/frame-evidence gates still apply. Otherwise close/reconnect and
 observe actual camera state. There is no reset command or assumed rollback.
 
 ## Native camera controls
@@ -40,7 +42,10 @@ JNI uses the **same authorized `uvc_device_handle_t`** as streaming. The standar
 terminal zoom selector is `UVC_CT_ZOOM_ABSOLUTE_CONTROL` (0x0b), `wValue=0x0b00`;
 `wIndex=(descriptor terminal ID << 8) | descriptor control-interface number`.
 SET_CUR uses 0x21/0x01, GET_CUR uses 0xa1/0x81. Two-byte unsigned values retain bit 15.
-Every write is followed by exact readback; failure/mismatch stops all later commands.
+Every write must complete with exactly two transferred bytes. This establishes **control
+transfer completed**, not firmware acknowledgment. The portable `RadiometricControl`
+interface has no GET method. Direct GET_CUR observations remain available only through
+the separate debug inventory. Invalid/short/failed SET results stop all later commands.
 
 This reproduces pinned libuvc `ctrl-gen.c` zoom requests using `libusb_control_transfer`.
 The bridge checks an **exact two-byte** transfer and uses a **1000 ms** timeout. Upstream
@@ -59,16 +64,17 @@ camera effect. Source bytes and all four trailer rows remain unchanged.
 ## Desktop-derived stages
 
 Oracle: `LMThermal-Desktop/radiometric_session.py::HT301RadiometricSession`, plus its tests.
-The exact current implementation, rather than approximate APK timeline wording, defines:
+Desktop supplies the timing and frame-gate oracle below. Android intentionally replaces
+its V4L2 control-value checks with exact SET completion plus frame-observed response:
 
 1. On explicit request, qualify **three fresh consecutive DISPLAY frames** within 150 receipts.
-   Invalid frames reset baseline; any raw14 baseline aborts. Read current zoom and require **0**.
-2. Wait at least **500 ms after baseline qualification**, then write/readback **32772**.
+   Invalid frames reset baseline; any raw14 baseline aborts. No control-value baseline is required.
+2. Wait at least **500 ms after baseline qualification**, then complete an exact SET **32772**.
 3. Discard **15 receipts**, then require **two consecutive distinct valid raw14 images** within
    another 150 receipts. Settings/calibration/index rejection blocks the stage.
-4. Wait at least **600 ms after stage verification**, then write/readback **32800**.
+4. Wait at least **600 ms after stage verification**, then complete an exact SET **32800**.
    Repeat the same 15-receipt/two-image gate and establish known normal-range host state.
-5. Wait at least **500 ms after range verification**, then write/readback **32768**.
+5. Wait at least **500 ms after range verification**, then complete an exact SET **32768**.
 6. Enter SHUTTER_TRANSIENT; discard **75 structurally valid raw14 frames**. Invalid/display
    frames do not advance this count. The 75th accepted discard is still transient evidence.
 7. Require **five consecutive changing valid raw14 frames with consistent summary extrema**.
@@ -108,12 +114,12 @@ not a statement that all structurally valid indices necessarily have defined tem
 Each source has an immutable generation and ownership predicate. Close/background/detach
 invalidates ownership immediately, clears the request and presentation, cancels the worker,
 and releases the UVC handle before the Android descriptor. Checks around every control
-prevent later commands/readbacks once cancellation is observed. A transfer already in flight
+prevent later commands once cancellation is observed. A transfer already in flight
 may finish within its timeout; cancellation neither rewinds camera state nor replays controls.
 Reopen creates a new session and observes actual frames. Old generations cannot qualify it.
 
 `LMThermalSession` emits structured JSON with monotonic times, generation, state/stage,
-mode, consumed sequence, requested/readback values, baseline/discard/shutter/live/rejection/
+mode, consumed sequence, requested commands/actual transfer lengths, baseline/discard/shutter/live/rejection/
 held/malformed counts and image word ranges. Held counts include structurally valid repeated
 images during stages and shutter, not only held rejections after settling. `LMThermal` keeps
 periodic callback FPS/replacement/size diagnostics. Neither logs raw payloads, image digests,
@@ -137,6 +143,50 @@ command-state acknowledgment on this tested path. Fresh Linux V4L2 and Desktop
 reads both return 0; the privileged direct transfer failed with libusb ERROR_IO
 (USBFS EBUSY) without claiming an interface or detaching uvcvideo. A control-only
 trace found no physical Zoom transaction for one repeated V4L2 GET returning zero.
-No Zoom SET was sent and
-the existing session gates remain unchanged. V4L2 control state must be
-distinguished from a proven physical USB response.
+Those observations were GET-only. This child branch removes baseline-zero and
+post-write GET equality gates following a controlled single-32772 confirmation.
+V4L2 control state is distinct from a physical USB response; expected frame evidence
+still gates each later command.
+
+## Restricted single-command diagnostic
+
+Debug builds offer **Test raw14 transition (32772)** on an open DISPLAY stream.
+It requalifies three fresh frames, waits the existing first-stage minimum, issues
+only `04 80`, validates exact SET length, clears the pending pre-control payload,
+discards 15 receipts and requires two distinct structurally valid raw14 images.
+It has no GET/range/shutter operation. One instance accepts only one explicit request;
+concurrent full-session/inventory work is excluded. Failures/cancellation never replay.
+Successful completion leaves the ordinary session **RAW14_UNSETTLED**, not ready.
+
+Bounded debug-only numeric evidence survives ADB/logcat loss in app-private
+`files/raw14-transition.jsonl` and `files/radiometric-session.jsonl`. Each explicit
+experiment replaces its own report. These are developer diagnostics, not a user
+recording/export feature; no image payloads, hashes or private scene structure are saved.
+
+```bash
+adb shell run-as org.lmthermal.app cat files/raw14-transition.jsonl
+adb shell run-as org.lmthermal.app cat files/radiometric-session.jsonl
+```
+
+Single-command evidence: baseline sequences 125–127, words 32803–32985;
+SET `0x21/0x01`, `0x0b00/0x0100`, `04 80`, exact 2 bytes. First valid raw14:
+sequence 142, 111 ms after transfer completion, words 5311–5825. After 15 receipts,
+sequences 156–157 qualified two distinct valid images (final 5312–5828). All complete
+frames retained 224256 / 221184 / 3072 bytes. No 32800/32768 or GET was issued.
+This is cross-platform confirmation of the existing command, not a new discovery.
+
+## Full Pixel 8 acceptance
+
+A fresh display connection qualified sequences 2385–2387 (32777–33008).
+All three SETs completed with exactly two bytes. First valid raw14 after 32772:
+sequence 2402, 116 ms after the logged transfer return, 5355–5834. The first stage
+verified sequences 2416–2417 after 15 receipt discards. The normal-range stage
+verified 2448–2449 after another 15; transient malformed/mixed frames were rejected.
+Shutter then discarded 75 valid frames, followed by five changing summary-consistent
+frames. Ready event: sequence 2542, **6.312 s** after initialization request.
+Final layout 224256 / 221184 / 3072; ready image words 5421–5819; callback FPS 25.
+
+The operator confirmed readiness, responsive recognizable preview, and Close/Open
+into existing raw14 returning **RAW14_UNSETTLED** without initialization. No Zoom GET
+controlled this run. The separate native-equivalent LUT validity gate remains deferred.
+Host receipt/event timings are not sensor exposure timestamps or physical calibration.

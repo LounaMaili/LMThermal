@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (Android frame-observed radiometric acceptance — 2026-10-02)
+- Confirmed the existing 32772 DISPLAY→raw14 transition on Pixel 8 with a restricted one-shot diagnostic: exact two-byte SET, 15 receipt discards and two distinct valid raw14 images; no GET, range or shutter operation was used.
+- Removed baseline-zero and post-write GET_CUR equality gates. The control interface now returns actual SET length/error and exposes no GET; frame evidence remains mandatory before subsequent commands and readiness.
+- Preserved stage timings, bounded frame/discard rules, shutter/liveness gates, lifecycle cancellation, unknown-raw14 startup policy and executed Desktop shutter-trace parity. No thermometry/Celsius work was added.
+- Added bounded debug-only numeric evidence persistence for deliberate hardware validation, excluding scene payloads and image hashes.
+- Validated the full Pixel 8 sequence: exact SETs, 15/15 stage discards, 75 shutter frames and five live images reached structural RADIOMETRIC_READY in 6.312 s near 25 FPS; existing-raw14 reopen remained unsettled without automatic controls.
+
 ### Added (Zoom control semantics investigation — 2026-10-02)
 - Added an explicit debug GET-only Zoom inventory with descriptor-derived IDs, exact transfer evidence and CURRENT observations around capability/range queries; no arbitrary selector or modifying control is exposed. The bounded control-only inventory is persisted privately to survive logcat rotation.
 - Recorded query-dependent Android CURRENT replies: 1 after stream open, 3 after INFO, 65535 after MAX, and zero after zero-valued GETs. Fresh Linux V4L2/Desktop reads return zero; direct libusb access failed without driver detach. Session gates are unchanged and no Zoom SET was sent.

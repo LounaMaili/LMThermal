@@ -127,17 +127,18 @@ Simple spreadsheet-compatible format: one row per pixel line, temperature values
 ## Android explicit radiometric session (2026-10-02)
 
 Connect/Open remains read-only. Explicit Initialize radiometric qualifies three fresh display
-frames and zoom=0, then executes the validated raw14/normal-range/shutter sequence with exact
-readbacks. Fifteen-receipt transition discards, two-image stage evidence, 75 valid shutter
+frames, then executes the validated raw14/normal-range/shutter sequence with exact
+SET transfer completion and observed frame evidence. GET_CUR does not control progression. Fifteen-receipt transition discards, two-image stage evidence, 75 valid shutter
 discards and five changing valid summary-consistent images gate structural readiness.
 Unknown pre-existing raw14 remains unsettled. Lifecycle cancellation stops later controls;
 reopen never replays initialization. No Celsius/LUT or measurement UI is introduced.
 Desktop's extra finite-LUT measurement gate will be required in the future thermometry layer.
 Architecture, timings and cancellation limits: [ANDROID_RADIOMETRIC_SESSION.md](ANDROID_RADIOMETRIC_SESSION.md).
 
-Hardware acceptance is pending: Android's direct GET_CUR returned 1 at baseline, causing
-a safe abort before writes. This is implemented session behavior, not a completed hardware
-readiness milestone. See ANDROID_VALIDATION.md for the unresolved readback boundary.
+The previous GET_CUR blocker is superseded following a controlled single-32772 Pixel 8
+confirmation. Full-sequence structural/live hardware acceptance passed on Pixel 8; see ANDROID_VALIDATION.md.
+Debug **Test raw14 transition (32772)** is a one-shot developer experiment, separate from
+full initialization; it has no range/shutter/readback operation or readiness claim.
 
 ### Debug Zoom inventory
 

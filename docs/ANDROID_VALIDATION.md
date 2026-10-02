@@ -156,7 +156,7 @@ nonfatal warnings, zero errors. The final review also clears session readiness o
 errors; that exceptional UI path was not physically forced. No raw scene/payload was saved
 by this milestone. No Celsius, LUT, measurement or accuracy support is claimed.
 
-Next required step: resolve direct USB GET_CUR versus Desktop V4L2 baseline/readback semantics
+For that original milestone, the next required step was to resolve direct USB GET_CUR versus Desktop V4L2 baseline/readback semantics
 with read-only evidence before revising either policy or testing the modifying sequence.
 Only then complete radiometric hardware acceptance; LUT/thermometry porting follows later.
 
@@ -172,3 +172,83 @@ trace found no physical Zoom transaction for one repeated V4L2 GET returning zer
 No Zoom SET was sent and
 the existing session gates remain unchanged. V4L2 control state must be
 distinguished from a proven physical USB response.
+
+## Frame-observed radiometric acceptance — 2026-10-02
+
+Child branch `fix/android-radiometric-frame-acceptance` continues from Zoom-audit tip
+`3df07666fca5047aaea3136559f7163b973ac643`. This supersedes the original readback blocker.
+Wireless ADB, Pixel 8 USB Host and the same HT-301 were used; no private frames were saved.
+Numeric evidence: [sanitized report](diagnostics/2026-10-02-android-frame-acceptance.json).
+The compact `frame_columns`/`frame_trace` arrays preserve all recorded numeric observations.
+
+### Single-32772 experiment
+
+The debug one-shot required a fresh three-DISPLAY-frame baseline (125, 126, 127),
+32803–32985 image words, and issued only `32772`, bytes `04 80`.
+Request `0x21/0x01`, selector 0x0b, terminal 1/interface 0, `0x0b00/0x0100`, exact
+2 bytes. First valid raw14 was sequence 142, 111 ms after the core completion point,
+5311–5825. Fifteen consumed receipts were discarded; distinct valid raw14 frames
+156/157 qualified success, final 5312–5828. All complete frames retained the full
+224256 / 221184 / 3072 layout. No 32800, 32768 or Zoom GET occurred. Native malformed
+count was 2 before/after, diagnostic rejected/malformed/held were zero. Baseline FPS
+25.024; the short completion window reported 23.928, then periodic callbacks returned
+near 25. Operator confirmed success. This confirms existing Linux behavior across
+platforms; it is not a new command discovery or radiometric-ready session.
+
+### Revised acceptance contract
+
+Baseline-zero and post-write GET equality requirements are removed, without
+substituting 1 or another expected value. The session's control interface contains
+SET completion only. Every SET must return exactly 2 bytes under current ownership.
+Frame behavior separately gates each next command. Timings remain 500/600/500 ms;
+transition discard 15, stage limit 150, two distinct valid images, 75 valid shutter
+frames and five changing summary-consistent frames are retained. Unknown raw14
+startup remains unsettled. Desktop's additional finite-LUT gate stays deferred.
+
+### Full explicit sequence
+
+DISPLAY baseline sequences **2385–2387**, words **32777–33008**, callback FPS **24.952**.
+Exact control transfers (monotonic host milliseconds):
+
+| Command | Bytes | Start / completion ms | Actual bytes |
+|---|---|---|---:|
+| 32772 | 04 80 | 538143222 / 538143224 | 2 |
+| 32800 | 20 80 | 538144537 / 538144558 | 2 |
+| 32768 | 00 80 | 538145699 / 538145700 | 2 |
+
+- First valid raw14: sequence **2402**, **116 ms** after 32772 transfer return,
+  words **5355–5834**. After 15 discards, 2416/2417 verified the first stage.
+- First new structurally valid raw14 after range was **2437**; after 15 receipt
+  discards, **2448/2449** verified the range stage (final **5145–5428**).
+- Shutter: **75 valid settling frames**, then **five changing summary-consistent
+  frames**; **30 held images** occurred within settling. Seventy-five alone did
+  not establish readiness.
+- Ready event: sequence **2542**, **6.312 s** after request. Ready raw range
+  **5421–5819**, callback FPS **25**, full 224256 / 221184 / 3072 bytes preserved.
+- Native malformed payloads **5 total** (**+3** during initialization); parser
+  rejections **6 total** (**+4**). Session rejection counter **85 total** includes
+  deliberate shutter settling and four awaiting-live observations. These counters
+  overlap; they must not be added as independent dropped-frame totals. One pending
+  frame replacement was already present at baseline and remained one at ready.
+
+Frame events report processing outcome state; a deadline control can complete during
+processing of the last pre-command observation. Post-command interpretation must use
+sequences **after** the corresponding `control` event's sequence, plus discard counts,
+rather than only event timestamp/state labels. No pre-command frame qualified a stage.
+`state` is the core outcome; supplemental `session_state` is the last published UI
+snapshot and can lag that outcome by one observation.
+No private image/payload or digest is logged. Timing refers to host receipt/processing,
+not sensor exposure or USB hardware timestamp precision.
+
+The operator confirmed ready and recognizable/responsive preview. A normal Close/Open
+without physical reconnect observed existing raw14 and stayed RAW14_UNSETTLED near
+25 FPS, with no automatic initialization. Lifecycle interruption regression tests
+stop future commands; no unsafe USB fault or mid-write physical detach was forced.
+
+The final checks retain all frame regressions and the executed Desktop shutter-trace
+oracle. Structural/live radiometric session acceptance now passes on this Pixel 8 /
+HT-301 combination. No Celsius/LUT, numerical temperature parity or independent
+physical accuracy is established by these tests.
+
+Final checks: **66 JVM tests passed**, debug build passed, lint passed with zero
+errors and seven inherited warnings, and `git diff --check` passed.

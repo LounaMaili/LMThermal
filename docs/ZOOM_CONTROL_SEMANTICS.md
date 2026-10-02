@@ -1,7 +1,8 @@
 # Zoom Absolute control semantics investigation
 
 Diagnostic child branch: `fix/android-zoom-control-semantics`, based on Android
-session tip `21cf1551b22dd45bb9510096da9bdfe89f61194d`. No session gate is changed.
+session tip `21cf1551b22dd45bb9510096da9bdfe89f61194d`. This historical GET-only investigation did not change session gates; the subsequent
+frame-acceptance update is documented at the end.
 No Zoom SET has been sent by this investigation. Standard UVC streaming negotiation
 remains the existing probe/commit path; its SET requests are not radiometric commands. Full radiometric acceptance remains pending.
 
@@ -127,7 +128,7 @@ Only after the discrepancy has a defensible explanation may the optional single
 32772 experiment proceed. No automatic range/shutter replay, baseline substitution,
 thermometry or Celsius work is authorized by the inventory result alone.
 
-## Disposition and checks
+## Historical disposition and checks
 
 The 0-versus-1 comparison was comparing different abstractions: the observed repeated
 Linux read used driver state, whereas Android CURRENT varied with GET history. The
@@ -135,11 +136,11 @@ initial 1 is not evidence of a different camera mode or of an incorrect selector
 The exact firmware mechanism behind the echo, and whether the 1 comes from stream
 probe contents, are unresolved. No empirical 0→1 substitution is justified.
 
-No session gate was relaxed. The existing baseline-zero and post-write equality checks
-remain in the inherited implementation; they are preserved pending a separately
+No session gate was relaxed in the GET-only task. The baseline-zero and post-write equality checks
+remained in that inherited implementation pending a separately
 controlled first-command experiment and portable acceptance-gate validation. They must
 not be described as portable/proven physical acknowledgments. Full radiometric hardware
-acceptance cannot resume as a validated milestone on this branch alone. No Zoom SET,
+acceptance could not resume as a validated milestone on that audit branch alone. No Zoom SET,
 32772 experiment, range/shutter replay, LUT or Celsius work occurred in this task.
 
 Checks: **58 JVM tests passed** (51 inherited plus seven diagnostic regressions), debug
@@ -148,3 +149,24 @@ descriptor-derived IDs, unsigned decoding, exact lengths, ownership cancellation
 preservation of query-dependent replies. Existing frame/stage gates and fixture tests
 are unchanged. Read-only inventory was run on the Pixel 8; Linux reads/tracing were
 performed on the same freshly attached camera. No private thermal fixture was created.
+
+## Subsequent frame-acceptance confirmation
+
+`fix/android-radiometric-frame-acceptance` continued from this audit with a restricted,
+explicit single-32772 Pixel 8 test. An exact two-byte SET produced genuine raw14;
+15 receipts and two distinct structurally valid images confirmed the transition.
+No GET_CUR criterion or range/shutter command was used in that experiment.
+
+The Android session now removes both baseline-zero and post-write GET equality gates.
+It requires explicit ownership, three fresh DISPLAY frames, exact SET completion and
+then the existing distinct-valid-frame/shutter/liveness evidence before progression.
+The prior Disposition section records this audit's historical boundary; it no longer
+describes the current Android gate implementation. The endpoint-zero echo mechanism
+remains unresolved and is not needed as a command acknowledgment.
+See [current session](ANDROID_RADIOMETRIC_SESSION.md) and
+[numeric hardware report](diagnostics/2026-10-02-android-frame-acceptance.json).
+
+The subsequent full Pixel 8 run also passed: 15/15/75 discards and five changing
+summary-consistent frames reached RADIOMETRIC_READY in 6.312 s. Close/Open into raw14
+stayed conservatively unsettled. The exact firmware echo mechanism remains unresolved;
+no GET-based acknowledgment heuristic is used by the current Android session.

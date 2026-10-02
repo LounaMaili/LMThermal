@@ -9,8 +9,8 @@
 > display words. The reconstructed lookup matches executed official x86_64
 > native arithmetic on raw fixtures. Independent temperature accuracy remains
 > unvalidated. Desktop now exposes native-equivalent values; this Android foundation
-> implements explicit radiometric initialization, blocked in hardware validation at
-> baseline readback; no Celsius is exposed. See
+> implements explicit radiometric initialization using exact SET completion and observed
+> frame behavior; structural/live hardware acceptance passed on Pixel 8. No Celsius is exposed. See
 > [initialization evidence](docs/RADIOMETRIC_INITIALIZATION.md),
 > [native call chain](docs/NATIVE_CALL_CHAIN.md), and
 > [application comparison](docs/APPLICATION_COMPARISON.md). Desktop capture
@@ -26,7 +26,7 @@ Python/PyQt reference, diagnostic tool and fixture generator, not the final prod
 The first mobile foundation is a small Kotlin/Compose application in this repository:
 USB Host authorization → native unconverted UVC acquisition → exact frame inspection
 → latest-frame grayscale aiming preview. The explicit radiometric session is implemented;
-hardware acceptance is blocked by baseline zoom readback 1 versus required 0. Celsius/LUT
+acceptance uses frame evidence rather than unreliable Zoom reads. Celsius/LUT
 conversion remains deferred. See [session architecture](docs/ANDROID_RADIOMETRIC_SESSION.md),
 [foundation architecture](docs/ANDROID_FOUNDATION.md),
 [build configuration](docs/CONFIGURATION.md), and [real-device results](docs/ANDROID_VALIDATION.md).
@@ -43,7 +43,9 @@ tap **Initialize radiometric** to qualify the baseline and run the validated seq
 Readiness requires structural/liveness evidence; it does not establish Celsius support. **Close** releases the stream; backgrounding
 also releases it. Reopening remains explicit. Wireless ADB follows AGENTS.md.
 
-Debug builds also provide **Read zoom inventory**, a GET-only diagnostic independent
+Debug builds also provide **Test raw14 transition (32772)**, a one-shot frame-gated
+experiment that cannot send range/shutter or claim readiness, and **Read zoom inventory**,
+a GET-only diagnostic independent
 of initialization. Request/descriptor evidence and unresolved semantics are documented
 in [the Zoom audit](docs/ZOOM_CONTROL_SEMANTICS.md).
 
@@ -121,7 +123,7 @@ def get_temp_evn(a, env_term, b):
 
 - [x] Kotlin/Compose project, Android USB permission and original UVC payload transport.
 - [x] JVM parser/golden fixtures, bounded preview architecture and basic diagnostics.
-- [ ] Evidence-gated radiometric session: implementation and JVM parity tests complete; real-device acceptance blocked by direct zoom GET_CUR=1 versus the required baseline 0.
+- [x] Evidence-gated radiometric session: exact SET completion plus frame evidence; single-32772 and full Pixel 8 sequence passed, including conservative raw14 reopen.
 - [ ] Float32/native-equivalent LUT and measurement parity port.
 - [ ] Touch measurements, Celsius palette/range lock and ROI.
 - [ ] Still export, time series, recording/playback and comparison.

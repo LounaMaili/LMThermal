@@ -15,19 +15,21 @@ class RadiometricSessionTest {
     private class Control : RadiometricControl {
         var reads = 0
         var value = 0
+        var diagnosticValue = 0
         var mismatch = false
         var throwOnWrite = false
         var throwOnRead = false
         var afterWrite: () -> Unit = {}
+        var transferred = 2
         val writes = mutableListOf<Int>()
-        override fun readZoom(): Int {
+        fun readZoom(): Int {
             reads++
             check(!throwOnRead) { "read failed" }
-            return if (mismatch && writes.isNotEmpty()) 1 else value
+            return if (mismatch && writes.isNotEmpty()) 1 else diagnosticValue
         }
-        override fun execute(command: RadiometricCommand) {
+        override fun execute(command: RadiometricCommand): Int {
             check(!throwOnWrite) { "write failed" }
-            value = command.zoomAbsolute; writes += value; afterWrite()
+            value = command.zoomAbsolute; writes += value; afterWrite(); return transferred
         }
     }
     private inner class Harness {
@@ -72,16 +74,21 @@ class RadiometricSessionTest {
         val h = Harness(); h.start(); repeat(150) { h.frame(byteArrayOf(1)) }
         assertEquals(SessionState.ERROR, h.session.snapshot().state); assertTrue(h.control.writes.isEmpty())
     }
-    @Test fun unknownInitialZoomAbortsWithoutWrite() {
-        val h = Harness(); h.start(); h.control.value = 32773
-        repeat(3) { h.frame(display) }; assertEquals(SessionState.ERROR, h.session.snapshot().state)
-        assertTrue(h.control.writes.isEmpty())
+    @Test fun baselineAndFullSequenceNeverDependOnDiagnosticGets() {
+        for (value in listOf(0,1,3,65535)) {
+            val h=Harness(); h.control.mismatch=true; h.control.throwOnRead=true
+            h.start(); h.control.diagnosticValue=value; repeat(3) { h.frame(display) }; h.readyFromStarted()
+            assertEquals(0,h.control.reads)
+            assertEquals(listOf(32772,32800,32768),h.control.writes)
+        }
+        assertFalse(RadiometricControl::class.java.methods.any { it.name == "readZoom" })
     }
-    @Test fun exactCommandOrderAndReadbacksMatchDesktop() {
+    @Test fun exactCommandOrderAndTransferCompletionPreserveDesktopTimings() {
         val h = Harness(); h.ready(); assertEquals(listOf(32772, 32800, 32768), h.control.writes)
         val controls = h.events.filter { it["event"] == "control" }
         assertEquals(h.control.writes, controls.map { it["requested"] })
-        assertTrue(controls.all { it["requested"] == it["readback"] })
+        assertTrue(controls.all { it["actual_length"] == 2 && it["control_transfer_completed"] == true })
+        assertFalse(controls.any { it.containsKey("readback") })
         val times = controls.map { it["monotonic_ms"] as Long }
         assertTrue(times[1] - times[0] >= 600); assertTrue(times[2] - times[1] >= 500)
     }
@@ -90,17 +97,22 @@ class RadiometricSessionTest {
         repeat(16) { h.frame(display) }; assertEquals(listOf(32772), h.control.writes)
         assertNotEquals(SessionState.RADIOMETRIC_READY, h.session.snapshot().state)
     }
-    @Test fun readbackMismatchStopsBeforeRangeAndShutter() {
-        val h = Harness(); h.control.mismatch = true; h.start(); h.until { h.session.snapshot().state == SessionState.ERROR }
-        repeat(40) { h.frame() }; assertEquals(listOf(32772), h.control.writes)
+    @Test fun shortZeroNegativeAndOversizedSetTransfersStopBeforeNextCommand() {
+        for (length in listOf(-9,0,1,3)) {
+            val h=Harness(); h.control.transferred=length; h.start()
+            h.until { h.session.snapshot().state == SessionState.ERROR }
+            repeat(40) { h.frame() }; assertEquals(listOf(32772),h.control.writes)
+        }
     }
     @Test fun writeFailureAbortsSequence() {
         val h = Harness(); h.control.throwOnWrite = true; h.start(); h.until { h.session.snapshot().state == SessionState.ERROR }
         assertTrue(h.control.writes.isEmpty())
     }
-    @Test fun baselineReadFailureAbortsSequence() {
-        val h = Harness(); h.control.throwOnRead = true; h.start(); h.until { h.session.snapshot().state == SessionState.ERROR }
-        assertTrue(h.control.writes.isEmpty())
+    @Test fun successfulTransferAndElapsedTimeAloneNeverSendRange() {
+        val h=Harness(); h.start(); h.until { h.control.writes.isNotEmpty() }
+        h.now+=10000; h.session.tick(); assertEquals(listOf(32772),h.control.writes)
+        repeat(165) { h.frame(display) }; assertEquals(SessionState.ERROR,h.session.snapshot().state)
+        assertEquals(listOf(32772),h.control.writes)
     }
     @Test fun fifteenReceiptsAreDiscardedBeforeTwoDistinctStageFrames() {
         val h = Harness(); h.start(); h.until { h.control.writes.isNotEmpty() }
@@ -192,7 +204,7 @@ class RadiometricSessionTest {
         assertEquals(SessionState.DISCONNECTED, h.session.snapshot().state); assertFalse(h.session.initialize(0))
         h.start(); repeat(200) { h.frame(display, generation = 0) }; assertTrue(h.control.writes.isEmpty())
     }
-    @Test fun cancellationDuringControlStopsReadbackAndLaterCommands() {
+    @Test fun cancellationDuringControlStopsProgressionAndLaterCommands() {
         val h = Harness(); h.control.afterWrite = { h.owned = false }; h.start()
         h.until { h.control.writes.isNotEmpty() }; repeat(100) { h.frame() }
         assertEquals(listOf(32772), h.control.writes)
@@ -211,18 +223,20 @@ class RadiometricSessionTest {
         }
     }
 
-    @Test fun baselineOneAbortsAndPreservesErrorAcrossLaterFrames() {
-        val h = Harness(); h.start(); h.control.value = 1
-        repeat(3) { h.frame(display) }
-        val error = h.session.snapshot().reason
-        h.frame(display); assertEquals(error, h.session.snapshot().reason)
-        assertTrue(error!!.contains("got 1")); assertTrue(h.control.writes.isEmpty())
+    @Test fun failedStagePreservesErrorAndExplicitDisplayRetryRequalifiesBaseline() {
+        val h=Harness(); h.start(); h.control.transferred=1
+        h.until { h.session.snapshot().state == SessionState.ERROR }
+        val error=h.session.snapshot().reason
+        h.frame(display); assertEquals(error,h.session.snapshot().reason)
+        assertTrue(h.session.initialize(1)); assertEquals(SessionState.DISPLAY_STREAM,h.session.snapshot().state)
+        h.control.transferred=2; h.control.value=0; repeat(2) { h.frame(display) }
+        assertEquals(1,h.control.writes.size); h.until { h.session.snapshot().state == SessionState.RADIOMETRIC_READY }
+        assertEquals(listOf(32772,32772,32800,32768),h.control.writes)
     }
-    @Test fun explicitRetryRequalifiesBaselineAndDoesNotRetainErrorState() {
-        val h = Harness(); h.start(); h.control.value = 1; repeat(3) { h.frame(display) }
-        assertTrue(h.session.initialize(1)); assertEquals(SessionState.DISPLAY_STREAM, h.session.snapshot().state)
-        h.control.value = 0; repeat(2) { h.frame(display) }
-        assertTrue(h.control.writes.isEmpty()); h.readyFromStarted()
+    @Test fun shutterCannotFollowRangeWithoutFreshDistinctStageEvidence() {
+        val h=Harness(); h.start(); h.until { h.control.writes.size==2 }
+        repeat(165) { h.frame(raw) }; assertEquals(listOf(32772,32800),h.control.writes)
+        assertEquals(SessionState.ERROR,h.session.snapshot().state)
     }
 
 }

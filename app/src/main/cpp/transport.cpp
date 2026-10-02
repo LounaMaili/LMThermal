@@ -152,7 +152,7 @@ Java_org_lmthermal_app_NativeUvc_close(JNIEnv*, jobject, jlong handle) {
 extern "C" JNIEXPORT jint JNICALL
 Java_org_lmthermal_app_NativeUvc_zoom(JNIEnv* env, jobject, jlong handle, jint operation) {
     auto* stream = reinterpret_cast<Stream*>(handle);
-    if (operation < -1 || operation > 2) {
+    if (operation < 0 || operation > 2) {
         env->ThrowNew(env->FindClass("java/lang/IllegalArgumentException"), "Unsupported HT301 operation");
         return -1;
     }
@@ -163,26 +163,21 @@ Java_org_lmthermal_app_NativeUvc_zoom(JNIEnv* env, jobject, jlong handle, jint o
     }
     uint16_t value = operation == 0 ? kSelectRaw14 : operation == 1 ? kSelectNormalRange : kShutterRefresh;
     uint8_t data[2] = {static_cast<uint8_t>(value & 0xff), static_cast<uint8_t>(value >> 8)};
-    const bool reading = operation == -1;
     int transferred = libusb_control_transfer(stream->device->usb_devh,
-        reading ? kUvcGetRequest : kUvcSetRequest, reading ? UVC_GET_CUR : UVC_SET_CUR,
+        kUvcSetRequest, UVC_SET_CUR,
         UVC_CT_ZOOM_ABSOLUTE_CONTROL << 8,
         terminal->bTerminalID << 8 | stream->device->info->ctrl_if.bInterfaceNumber,
         data, sizeof(data), kControlTimeoutMs);
-    __android_log_print(ANDROID_LOG_INFO, "LMThermal", "zoom request reading=%d terminal=%u interface=%u selector=%u transferred=%d bytes=%02x,%02x",
-        reading, terminal->bTerminalID, stream->device->info->ctrl_if.bInterfaceNumber,
+    __android_log_print(ANDROID_LOG_INFO, "LMThermal", "zoom SET terminal=%u interface=%u selector=%u transferred=%d bytes=%02x,%02x",
+        terminal->bTerminalID, stream->device->info->ctrl_if.bInterfaceNumber,
         UVC_CT_ZOOM_ABSOLUTE_CONTROL, transferred, data[0], data[1]);
-    if (transferred != sizeof(data)) {
-        std::string message = "zoom absolute transfer bytes/error: " + std::to_string(transferred);
-        env->ThrowNew(env->FindClass("java/io/IOException"), message.c_str());
-        return -1;
-    }
-    if (!reading) {
+    if (transferred == sizeof(data)) {
         // Drop a pending pre-control payload. Fifteen further receipts are still discarded by session.
         std::lock_guard<std::mutex> guard(stream->mutex);
         stream->latest.clear();
     }
-    return static_cast<jint>(data[0] | (static_cast<uint16_t>(data[1]) << 8));
+    // SET reports transfer completion only, never a fabricated device acknowledgment.
+    return transferred;
 }
 
 /** Read existing descriptors; bcdUVC lives in ctrl_if (the public device field is reserved/zero). */

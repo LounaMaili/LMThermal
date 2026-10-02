@@ -35,6 +35,7 @@ data class CameraSnapshot(
     val bitmap: Bitmap? = null,
     val session: SessionSnapshot = SessionSnapshot(),
     val inventory: String = "Not requested",
+    val transition: TransitionSnapshot = TransitionSnapshot(),
 )
 
 /** Owns discovery, permission and transport lifetime. Explicit session controls remain separate from parsing/rendering; no thermometry.
@@ -52,6 +53,7 @@ class CameraController(private val context: Context) {
     @Volatile private var generation = 0L
     private val initializeRequest = AtomicLong(-1L)
     private val inventoryRequest = AtomicLong(-1L)
+    private val transitionRequest = AtomicLong(-1L)
     private val permissionAction = "${context.packageName}.USB_PERMISSION"
     private var wantedDevice: String? = null
 
@@ -123,7 +125,8 @@ class CameraController(private val context: Context) {
     /** UI requests an operation, never executes USB controls or queues duplicate sequences. */
     fun initializeRadiometric() {
         val current = mutableState.value
-        if (!current.session.canInitialize || current.usb.phase != UsbPhase.STREAMING) return
+        if (!current.session.canInitialize || current.usb.phase != UsbPhase.STREAMING ||
+            current.transition.active || transitionRequest.get() != -1L) return
         initializeRequest.compareAndSet(-1L, generation)
         mutableState.updateIf({ initializeRequest.get() == generation }) {
             it.copy(session = it.session.copy(canInitialize = false))
@@ -132,8 +135,17 @@ class CameraController(private val context: Context) {
     /** Explicit diagnostic request uses a GET-only interface; no initialization is requested. */
     fun readZoomInventory() {
         val current = mutableState.value
-        if (current.usb.phase != UsbPhase.STREAMING || current.session.active) return
+        if (current.usb.phase != UsbPhase.STREAMING || current.session.active || current.transition.active) return
         inventoryRequest.compareAndSet(-1L, generation)
+    }
+    /** Debug-only one-shot action, mutually exclusive with the full session and inventory. */
+    fun testRaw14Transition() {
+        val current = mutableState.value
+        if (!BuildConfig.DEBUG || current.usb.phase != UsbPhase.STREAMING || !current.transition.canStart ||
+            current.session.active || initializeRequest.get() != -1L || inventoryRequest.get() != -1L) return
+        if (transitionRequest.compareAndSet(-1L, generation)) mutableState.updateIf({ transitionRequest.get() == generation }) {
+            it.copy(transition = it.transition.copy(canStart = false))
+        }
     }
     /** Worker owns transport and finally-release; stale work from an earlier connection cannot update UI. */
     private fun open(device: UsbDevice) {
@@ -143,67 +155,88 @@ class CameraController(private val context: Context) {
         streamJob = scope.launch {
             try {
                 val connection = manager.openDevice(device) ?: error("UsbManager.openDevice returned null")
-                NativeUvcTransport(connection).use { transport ->
+                val singleEvidence = NumericEvidence(context, "raw14-transition.jsonl", "LMThermalRaw14")
+                val sessionEvidence = NumericEvidence(context, "radiometric-session.jsonl", "LMThermalSession")
+                var collectingSingle = false
+                NativeUvcTransport(connection, { evidence ->
+                    if (collectingSingle) singleEvidence.record(evidence) else sessionEvidence.record(evidence)
+                }).use { transport ->
                     val session = RadiometricSession(transport, token, SystemClock::elapsedRealtime,
                         ownsConnection = { token == generation && isActive },
-                        event = { Log.i("LMThermalSession", JSONObject(it).toString()) })
+                        event = { sessionEvidence.record(it + numericContext(transport)) })
+                    val transition = Raw14TransitionDiagnostic(transport, token, SystemClock::elapsedRealtime,
+                        { token == generation && isActive }, { singleEvidence.record(it + numericContext(transport)) })
                     var invalid = 0L
                     var previousCount = 0L
                     var fps = 0.0
                     var cadenceStart = SystemClock.elapsedRealtime()
                     var lastFrameAt = cadenceStart
                     var lastLog = cadenceStart
-                    while (isActive && token == generation) {
-                        if (inventoryRequest.getAndSet(-1L) == token && !session.snapshot().active) {
-                            try {
-                                // Persist only this explicit control inventory: logcat may rotate during ADB loss.
-                                // The bounded file contains no scene payloads, serials or frame hashes.
-                                val inventoryFile = java.io.File(context.filesDir, "zoom-inventory.jsonl")
-                                inventoryFile.bufferedWriter().use { writer ->
-                                    ZoomInventory(transport, { token == generation && isActive }, SystemClock::elapsedRealtime,
-                                        {
-                                            val json = JSONObject(it).toString()
-                                            Log.i("LMThermalZoom", json)
-                                            writer.write(json); writer.newLine(); writer.flush()
-                                        }).run()
+                    try {
+                        while (isActive && token == generation) {
+                            if (inventoryRequest.getAndSet(-1L) == token && !session.snapshot().active && !transition.snapshot().active) {
+                                try {
+                                    // Persist only this explicit control inventory: logcat may rotate during ADB loss.
+                                    // The bounded file contains no scene payloads, serials or frame hashes.
+                                    val inventoryFile = java.io.File(context.filesDir, "zoom-inventory.jsonl")
+                                    inventoryFile.bufferedWriter().use { writer ->
+                                        ZoomInventory(transport, { token == generation && isActive }, SystemClock::elapsedRealtime,
+                                            {
+                                                val json = JSONObject(it).toString()
+                                                Log.i("LMThermalZoom", json)
+                                                writer.write(json); writer.newLine(); writer.flush()
+                                            }).run()
+                                    }
+                                    mutableState.updateIf({ token == generation }) { it.copy(inventory = "Read-only inventory logged") }
+                                } catch (failure: Exception) {
+                                    mutableState.updateIf({ token == generation }) { it.copy(inventory = "Inventory: ${failure.message}") }
                                 }
-                                mutableState.updateIf({ token == generation }) { it.copy(inventory = "Read-only inventory logged") }
-                            } catch (failure: Exception) {
-                                mutableState.updateIf({ token == generation }) { it.copy(inventory = "Inventory: ${failure.message}") }
+                            }
+                            val singleRequest = transitionRequest.getAndSet(-1L)
+                            if (singleRequest == token && !session.snapshot().active) {
+                                singleEvidence.reset(); collectingSingle = true
+                                transition.request(singleRequest)
+                            }
+                            val request = initializeRequest.getAndSet(-1L)
+                            if (request == token && !transition.snapshot().active) {
+                                sessionEvidence.reset(); collectingSingle = false; session.initialize(request)
+                            }
+                            transition.tick()
+                            session.tick()
+                            val bytes = transport.read()
+                            ensureActive()
+                            val now = SystemClock.elapsedRealtime()
+                            if (bytes == null) {
+                                if (now - lastFrameAt > 5000) error("No UVC payload for 5 seconds; close/reconnect")
+                                continue
+                            }
+                            lastFrameAt = now
+                            val counters = transport.statistics()
+                            if (now - cadenceStart >= 1000) {
+                                fps = (counters[0] - previousCount) * 1000.0 / (now - cadenceStart)
+                                previousCount = counters[0]; cadenceStart = now
+                            }
+                            val frame = if (bytes.size == Ht301Layout.FRAME_BYTES) Ht301Frame.parse(bytes) else null
+                            val inspection = frame?.inspect() ?: FrameInspection(FrameMode.INVALID, "transport_size", null, null)
+                            transition.observe(frame, inspection, counters[4], token)
+                            session.observe(frame, inspection, counters[4], token)
+                            if (inspection.mode == FrameMode.INVALID || inspection.reason != null) invalid++
+                            val image = if (frame != null && inspection.mode != FrameMode.INVALID) Bitmap.createBitmap(
+                                PreviewRenderer.grayscale(frame, inspection), Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT, Bitmap.Config.ARGB_8888) else null
+                            mutableState.updateIf({ token == generation }) { previous -> previous.copy(
+                                usb = UsbState(UsbPhase.STREAMING, "Streaming · explicit radiometric session"),
+                                mode = inspection.mode, reason = inspection.reason, size = bytes.size,
+                                range = "${inspection.minimum ?: "—"}..${inspection.maximum ?: "—"}",
+                                fps = fps, received = counters[0], invalid = invalid, replaced = counters[1], malformed = counters[2], bitmap = image, session = session.snapshot(), transition = transition.snapshot()) }
+                            if (now - lastLog >= 2000) {
+                                // Numeric diagnostics only: no camera serial or private scene is written to logs.
+                                Log.i("LMThermal", "frame size=${bytes.size} image=${frame?.imageBytes()?.size} trailer=${frame?.trailerBytes()?.size} mode=${inspection.mode} reason=${inspection.reason} summary=${inspection.summaryValid} words=${inspection.minimum}..${inspection.maximum} fps=$fps received=${counters[0]} replaced=${counters[1]} malformed=${counters[2]} session=${session.snapshot().state} live=${session.snapshot().live} held=${session.snapshot().held} rejected=${session.snapshot().rejected}")
+                                lastLog = now
                             }
                         }
-                        val request = initializeRequest.getAndSet(-1L)
-                        if (request == token) session.initialize(request)
-                        session.tick()
-                        val bytes = transport.read()
-                        ensureActive()
-                        val now = SystemClock.elapsedRealtime()
-                        if (bytes == null) {
-                            if (now - lastFrameAt > 5000) error("No UVC payload for 5 seconds; close/reconnect")
-                            continue
-                        }
-                        lastFrameAt = now
-                        val counters = transport.statistics()
-                        if (now - cadenceStart >= 1000) {
-                            fps = (counters[0] - previousCount) * 1000.0 / (now - cadenceStart)
-                            previousCount = counters[0]; cadenceStart = now
-                        }
-                        val frame = if (bytes.size == Ht301Layout.FRAME_BYTES) Ht301Frame.parse(bytes) else null
-                        val inspection = frame?.inspect() ?: FrameInspection(FrameMode.INVALID, "transport_size", null, null)
-                        session.observe(frame, inspection, counters[4], token)
-                        if (inspection.mode == FrameMode.INVALID || inspection.reason != null) invalid++
-                        val image = if (frame != null && inspection.mode != FrameMode.INVALID) Bitmap.createBitmap(
-                            PreviewRenderer.grayscale(frame, inspection), Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT, Bitmap.Config.ARGB_8888) else null
-                        mutableState.updateIf({ token == generation }) { previous -> previous.copy(
-                            usb = UsbState(UsbPhase.STREAMING, "Streaming · explicit radiometric session"),
-                            mode = inspection.mode, reason = inspection.reason, size = bytes.size,
-                            range = "${inspection.minimum ?: "—"}..${inspection.maximum ?: "—"}",
-                            fps = fps, received = counters[0], invalid = invalid, replaced = counters[1], malformed = counters[2], bitmap = image, session = session.snapshot()) }
-                        if (now - lastLog >= 2000) {
-                            // Numeric diagnostics only: no camera serial or private scene is written to logs.
-                            Log.i("LMThermal", "frame size=${bytes.size} image=${frame?.imageBytes()?.size} trailer=${frame?.trailerBytes()?.size} mode=${inspection.mode} reason=${inspection.reason} summary=${inspection.summaryValid} words=${inspection.minimum}..${inspection.maximum} fps=$fps received=${counters[0]} replaced=${counters[1]} malformed=${counters[2]} session=${session.snapshot().state} live=${session.snapshot().live} held=${session.snapshot().held} rejected=${session.snapshot().rejected}")
-                            lastLog = now
-                        }
+                    } finally {
+                        transition.cancel()
+                        if (session.snapshot().active) session.cancel()
                     }
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
@@ -216,11 +249,21 @@ class CameraController(private val context: Context) {
             } finally { Log.i("LMThermal", "Stream released generation=$token") }
         }
     }
+    /** Acquisition-only counters and current UI state; no scene content enters developer reports. */
+    private fun numericContext(transport: UvcTransport): Map<String, Any?> {
+        val counters = transport.statistics()
+        val current = mutableState.value
+        return mapOf("callback_count" to counters[0], "replaced_count" to counters[1],
+            "native_malformed" to counters[2], "parser_rejected" to current.invalid,
+            "callback_fps" to current.fps,
+            "session_state" to current.session.state.name)
+    }
     /** Immediately clear stale presentation; worker cancellation releases the native handle asynchronously. */
     fun close(message: String = "Closed") {
         generation++
         initializeRequest.set(-1L)
         inventoryRequest.set(-1L)
+        transitionRequest.set(-1L)
         Log.i("LMThermalSession", JSONObject(mapOf("event" to "connection_cancelled", "monotonic_ms" to SystemClock.elapsedRealtime(), "generation" to generation, "reason" to message)).toString())
         streamJob?.cancel(); streamJob = null
         wantedDevice = null

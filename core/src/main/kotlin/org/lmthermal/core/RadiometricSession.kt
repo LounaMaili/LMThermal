@@ -9,8 +9,8 @@ enum class RadiometricCommand(val zoomAbsolute: Int) {
 
 /** Serialized by the camera worker, sharing the streaming device and its lifetime. */
 interface RadiometricControl {
-    fun readZoom(): Int
-    fun execute(command: RadiometricCommand)
+    /** Return actual transferred bytes/error; completion alone never proves camera effect. */
+    fun execute(command: RadiometricCommand): Int
 }
 
 enum class SessionState {
@@ -67,6 +67,7 @@ class RadiometricSession(
     private var mode = FrameMode.INVALID
     private var sequence = 0L
     private var baseline = 0
+    private val baselineFrames = mutableListOf<Map<String, Any?>>()
     private var attempts = 0
     private var discarded = 0
     private var stageDiscarded = 0
@@ -92,7 +93,7 @@ class RadiometricSession(
     fun initialize(requestGeneration: Long): Boolean {
         if (requestGeneration != generation || !ownsConnection() || !snapshot().canInitialize) return false
         step = Step.BASELINE; state = SessionState.DISPLAY_STREAM; baseline = 0; attempts = 0; started = clockMs(); readyAt = null
-        normalRangeConfirmed = false; live = 0; previousDigest = null; reason = null
+        normalRangeConfirmed = false; live = 0; previousDigest = null; reason = null; baselineFrames.clear()
         emit("initialize_requested")
         return true
     }
@@ -130,7 +131,9 @@ class RadiometricSession(
         if (step == Step.SETTLING && ++attempts >= STAGE_LIMIT + SHUTTER_DISCARD)
             fail("No valid live post-shutter stream within frame limit")
         advanceDueCommand()
-        if (wasActive || snapshot().active) emit("frame", inspection, mapOf("repeated_image" to repeated, "summary_valid" to inspection.summaryValid))
+        if (wasActive || snapshot().active) emit("frame", inspection, mapOf("repeated_image" to repeated, "summary_valid" to inspection.summaryValid,
+            "inspection_reason" to inspection.reason, "frame_bytes" to frame?.size,
+            "image_bytes" to frame?.imageBytes()?.size, "trailer_bytes" to frame?.trailerBytes()?.size))
     }
 
     /** Timeouts with no payload do not advance evidence; the transport owner handles acquisition failure. */
@@ -139,18 +142,19 @@ class RadiometricSession(
         advanceDueCommand()
     }
 
-    /** Desktop qualifies three consecutive display frames, rejects any existing raw14, then reads zoom=0. */
+    /** Portable baseline is three fresh display frames; direct GET_CUR is query-dependent on HT-301. */
     private fun qualifyBaseline(inspection: FrameInspection) {
         if (mode == FrameMode.RAW14) { fail("Existing raw14 requires a known session; reconnect for display baseline"); return }
         attempts++
-        baseline = if (mode == FrameMode.DISPLAY && inspection.reason == null) baseline + 1 else 0
+        if (mode == FrameMode.DISPLAY && inspection.reason == null) {
+            baseline++
+            baselineFrames += mapOf("sequence" to sequence, "minimum" to inspection.minimum,
+                "maximum" to inspection.maximum, "monotonic_ms" to clockMs())
+        } else { baseline = 0; baselineFrames.clear() }
         if (baseline >= BASELINE_FRAMES) {
             try {
                 checkOwnership()
-                val readback = control.readZoom()
-                checkOwnership()
-                emit("display_baseline", extra = mapOf("readback" to readback))
-                if (readback != 0) { fail("Display baseline requires zoom readback 0; got $readback"); return }
+                emit("display_baseline", inspection, mapOf("frames" to baselineFrames.toList()))
                 step = Step.WAIT_RAW; deadline = clockMs() + FIRST_DELAY_MS
             } catch (failure: Exception) { controlFailure(failure) }
         } else if (attempts >= STAGE_LIMIT) fail("Three consecutive display baseline frames not obtained")
@@ -217,12 +221,11 @@ class RadiometricSession(
         }
         try {
             checkOwnership()
-            control.execute(command)
+            val transferred = control.execute(command)
             checkOwnership()
-            val readback = control.readZoom()
-            checkOwnership()
-            emit("control", extra = mapOf("requested" to command.zoomAbsolute, "readback" to readback))
-            if (readback != command.zoomAbsolute) { fail("Zoom readback $readback differs from ${command.zoomAbsolute}"); return }
+            check(transferred == Ht301Layout.BYTES_PER_WORD) { "SET transfer length/error: $transferred" }
+            emit("control", extra = mapOf("requested" to command.zoomAbsolute, "actual_length" to transferred,
+                "control_transfer_completed" to true))
             attempts = 0; stageLive = 0; stageDiscarded = 0; stageDigest = null
             when (command) {
                 RadiometricCommand.SELECT_RAW14 -> { step = Step.RAW_STAGE; state = SessionState.SWITCHING_TO_RAW14 }
