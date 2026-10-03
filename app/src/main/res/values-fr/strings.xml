@@ -87,4 +87,16 @@
     <string name="camera_ht301_inventory_not_requested">Inventaire du zoom non demandé</string>
     <string name="camera_ht301_inventory_logged">Inventaire en lecture seule enregistré</string>
     <string name="camera_ht301_inventory_failed">Échec de l’inventaire : voir les journaux techniques</string>
+    <string name="measurement_mode_point">Point</string>
+    <string name="measurement_mode_roi">Zone (ROI)</string>
+    <string name="measurement_roi_clear">Effacer la zone</string>
+    <string name="measurement_roi_size">Zone %1$d × %2$d</string>
+    <string name="measurement_roi_statistics">Min %1$.2f °C · Max %2$.2f °C · Moyenne %3$.2f °C</string>
+    <string name="measurement_roi_unavailable">Températures de la zone indisponibles</string>
+    <string name="measurement_roi_hint">Faites glisser sur l’image pour sélectionner un rectangle.</string>
+    <plurals name="measurement_roi_valid_pixels">
+        <item quantity="one">%1$d pixel valide sur %2$d</item>
+        <item quantity="many">%1$d pixels valides sur %2$d</item>
+        <item quantity="other">%1$d pixels valides sur %2$d</item>
+    </plurals>
 </resources>

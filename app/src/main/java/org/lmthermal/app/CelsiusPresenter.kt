@@ -35,6 +35,7 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
     val pixel = mutablePixel.asStateFlow()
     private val latest = LatestFrameState(CelsiusPresentationSnapshot())
     val state = latest.asStateFlow()
+    val roi = RoiPresenter(context, camera, state)
     private val evidence = NumericEvidence(context, "presentation.jsonl", "LMThermalPresentation")
     private var recording = false
     private var lastLog = 0L
@@ -130,5 +131,5 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
             "sample" to it.sample?.let { sample -> mapOf("encoding_id" to sample.encodingId, "value" to sample.value) }) +
             cursorEvidence(moduleId, it)
     }
-    fun dispose() { scope.cancel(); latest.value = CelsiusPresentationSnapshot() }
+    fun dispose() { roi.dispose(); scope.cancel(); latest.value = CelsiusPresentationSnapshot() }
 }

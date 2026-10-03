@@ -64,11 +64,15 @@ def audit(default: dict[str, ET.Element], translation: dict[str, ET.Element]) ->
             item.attrib['quantity']: ''.join(item.itertext()) for item in en}
         fr_text = {'string': ''.join(fr.itertext())} if fr.tag == 'string' else {
             item.attrib['quantity']: ''.join(item.itertext()) for item in fr}
-        if en_text.keys() != fr_text.keys():
+        if not en_text.keys() <= fr_text.keys():
             errors.append(f'{key}: plural quantity mismatch')
-        for quantity in en_text.keys() & fr_text.keys():
+        # Languages may need additional CLDR forms (French many); check their fallback argument contract too.
+        for quantity in fr_text.keys():
+            reference = en_text.get(quantity, en_text.get('other'))
+            if reference is None or quantity not in {'string', 'zero', 'one', 'two', 'few', 'many', 'other'}:
+                errors.append(f'{key}: invalid plural quantity {quantity}'); continue
             try:
-                if parameters(en_text[quantity]) != parameters(fr_text[quantity]):
+                if parameters(reference) != parameters(fr_text[quantity]):
                     errors.append(f'{key}/{quantity}: argument mismatch')
             except ValueError as failure:
                 errors.append(f'{key}/{quantity}: {failure}')
@@ -110,6 +114,19 @@ class AuditTest(unittest.TestCase):
                            '<item quantity="other">%1$d samples</item></plurals>')
         self.assertFalse(audit(en, en))
         fr = self.resource('<plurals name="camera_samples"><item quantity="other">%1$s</item></plurals>')
+        self.assertTrue(audit(en, fr))
+
+    def test_additional_language_plural_form_uses_default_fallback_contract(self):
+        en = self.resource('<plurals name="measurement_pixels"><item quantity="one">%1$d pixel</item>'
+                           '<item quantity="other">%1$d pixels</item></plurals>')
+        fr = self.resource('<plurals name="measurement_pixels"><item quantity="one">%1$d pixel</item>'
+                           '<item quantity="many">%1$d pixels</item><item quantity="other">%1$d pixels</item></plurals>')
+        self.assertFalse(audit(en, fr))
+
+    def test_additional_plural_form_with_wrong_arguments_is_rejected(self):
+        en = self.resource('<plurals name="measurement_pixels"><item quantity="other">%1$d pixels</item></plurals>')
+        fr = self.resource('<plurals name="measurement_pixels"><item quantity="other">%1$d pixels</item>'
+                           '<item quantity="many">%1$s pixels</item></plurals>')
         self.assertTrue(audit(en, fr))
 
 

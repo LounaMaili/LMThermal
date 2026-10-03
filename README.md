@@ -50,6 +50,10 @@ tap **Initialize radiometric** to qualify the baseline and run the validated seq
 Readiness requires structural/liveness evidence. Measurement additionally requires valid current-frame thermometry.
 Tap/drag the image to inspect native pixel/raw14/Celsius. Choose **Palette**, **Auto** or
 **Locked**, and **Set range** (default 25–45 °C); these controls affect colors only.
+Choose **Point** for cursor inspection or **ROI** to drag a native rectangle containing
+both touched pixel cells. **Clear ROI** removes it. Min/Max/Mean and valid/total counts
+use the current authoritative Celsius matrix, independently of colors/range; unavailable
+frames clear readings. See [native ROI semantics](docs/ANDROID_CELSIUS_PRESENTATION.md#native-rectangular-roi).
 Display/unsettled previews expose no Celsius legend. Optional **Diagnostics** retains
 separate trailer/literal center and debug controls. **Close** releases the stream; backgrounding
 also releases it. Reopening remains explicit. **Language** offers System, French and
@@ -156,7 +160,7 @@ def get_temp_evn(a, env_term, b):
   presentation and 160×120 preview-only simulator (see camera architecture and validation).
 - [x] French/English localization, persisted System/app-language selection, fallback and locale regression (issue #2; see localization/validation documents).
 - [ ] Additional real camera models, each requiring protocol research and hardware validation.
-- [ ] ROI drawing/statistics.
+- [x] Generic native rectangular ROI drawing and deterministic valid-only statistics compatible with LMTX v1; no exchange export yet.
 - [ ] Still export, time series, recording/playback and comparison.
 - [ ] Release licensing, packaging and distribution.
 

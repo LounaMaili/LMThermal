@@ -120,6 +120,12 @@ the current preview; a retained previous snapshot remains safe to read.
 - explicit high/low points in that geometry;
 - optional namespaced native sample evidence, with **no required raw encoding**.
 
+`ThermalMeasurement.validityMask()` optionally supplies a copied native 0/1 byte mask;
+its default null preserves today's all-valid modules. Generic rectangular ROI analysis
+uses this seam and the authoritative Celsius plane, with strict half-open native bounds,
+valid-only statistics and no protocol/color dependency. Source identity/dimensions gate
+selection compatibility. See [ROI architecture](ANDROID_CELSIUS_PRESENTATION.md#native-rectangular-roi).
+
 `OwnedThermalMeasurement` owns a finite matrix matching `geometry.pixelCount` and
 computes its actual extrema. `Ht301ThermalMeasurement` adapts the existing immutable
 `RadiometricMeasurement`, retaining the original richer evidence object. The owner

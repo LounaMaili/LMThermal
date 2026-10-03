@@ -121,8 +121,74 @@ The module foundation adds alternate-resolution mapping/rendering tests and Andr
 stable IDs, while Android resource bindings supply visible labels. Diagnostic palette
 aliases remain stable and reports add module/model/geometry/capability metadata.
 
-ROI, export, logging, recording, alternate lens/range support and independently
+Export, logging, recording, alternate lens/range support and independently
 measured physical validation remain later milestones.
+
+## Native rectangular ROI
+
+`NativeRect` and `RoiStatistics` in JVM core depend on module-provided
+`NativeImageGeometry`, not a camera protocol or bitmap. Bounds are strictly
+`[x1,x2) × [y1,y2)`; empty/negative/overflowing/out-of-bounds model geometry is
+rejected, never silently clamped. Drag endpoint conversion includes both native
+pixel cells and normalizes reversed drags. Initial letterbox touches do nothing;
+only an active drag starting inside may limit its endpoint to the image edge.
+The fitted mapper maps ROI **cell edges**, while point/extrema markers map centers.
+
+The statistics engine takes a Celsius `FloatArray`, geometry, rectangle and optional
+`ByteArray` validity mask. Null means all valid; only 0/1 bytes are accepted. It checks
+the whole plane/mask and rejects nonfinite valid values. Invalid internal values are
+ignored, including filler; the exact serialized positive-zero rule remains future
+export's responsibility. Min/max retain source Float32 values, ties retain the first
+valid native row-major pixel, and the mean uses a positive-zero Float64 accumulator
+with sequential row-major additions/division and no internal presentation rounding.
+No-valid regions have counts only, with absent min/max/mean/extrema coordinates.
+The method matches `finite-valid-row-major-f64-v1` in [LMTX v1 §7](LMTX_FORMAT_V1.md).
+
+Existing HT-301 measurements retain their all-valid representation. The generic
+`ThermalMeasurement.validityMask()` seam defaults to null and allows a future module
+to supply an owned 0/1 mask for ROI analysis. The engine/worker are tested with masks;
+this does not claim a new partial-valid real camera or mask-aware export implementation.
+
+**Point** keeps the persistent cursor and its current-frame reading. **ROI** enables
+create/replace by drag; **Clear ROI** removes it. There are no resize handles or
+annotation editor. ROI geometry is separate from transient gesture state and temperature
+results, and its outline uses a display-only black/yellow stroke. A compatible selection
+can remain visible on an unsettled aiming preview, but its readings are unavailable.
+ROI mode reserves font-scaled size/readings/count slots before drawing starts. Legend
+space is also reserved during ROI inspection; unavailable frames show neither old
+numbers nor an old legend. Text slots allow bounded wrapping, so new selections,
+changing values, clear and temporary gaps do not reflow the viewport or nearby controls
+during a gesture. Longer text can ellipsize while its complete content remains in text
+semantics. This prevents the original readout insertion from moving controls and
+resizing/cancelling a landscape drag.
+Replacement module/model/device identity or dimensions clears the rectangle. Language
+recreation retains the existing camera-release/explicit-reopen policy; preserving a
+selection never retains USB ownership or readiness.
+In-progress gestures carry their original source identity and geometry, so replacement
+before recomposition cannot select a rectangle on the successor source.
+
+`CelsiusPresenter.roi` owns `RoiPresenter`, a separate single-worker `collectLatest`
+analysis path. Inputs are source compatibility, the displayed authoritative measurement
+and selection; palette/range are absent. A re-render of the same measurement reuses
+analysis. Each new measurement refreshes it off the UI/acquisition threads, with one
+matrix copy and no per-pixel object allocation. Publication rejects superseded results;
+the screen also checks current measurement availability and exact displayed-frame/result
+identity. Close/detach/invalid/transient states cannot display a last-good ROI temperature.
+Preview-only modules cannot select/publish Celsius ROI statistics.
+
+Min/Max/Mean, rectangle size and valid/total counts use English/French resources and
+locale formatting/plurals. ROI values inherit measurement provenance and HT-301's
+unchanged warning: **Native-equivalent temperatures; absolute physical accuracy not yet
+independently validated.** No measurement comes from palette levels, legend or screenshots.
+The model maps deliberately to LMTX native half-open rectangles/statistics; this milestone
+adds no LMTX serializer/export, capture or fixtures and changes no accepted format semantics.
+
+Debug-only bounded `roi.jsonl` records native bounds, counts/statistics, frame sequence,
+provenance kind, calculation time and callback FPS. It contains no scene payloads.
+JVM tests cover three geometries, drag/mapping, masks/counts/ties/Double means and
+presentation independence. Pixel tests exercise the actual worker lifecycle, source
+replacement, masks, gesture controls in all locale/orientation layouts and representative
+small/full-frame engine timings. Real-device evidence is in ANDROID_VALIDATION.md.
 
 ## Localized presentation
 

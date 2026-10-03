@@ -20,8 +20,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.lmthermal.camera.*
@@ -32,6 +36,8 @@ import org.lmthermal.core.CursorInspection
 import org.lmthermal.core.DisplayPosition
 import org.lmthermal.core.ImageCoordinateMapper
 import org.lmthermal.core.NativePixel
+import org.lmthermal.core.NativeRect
+import org.lmthermal.core.RoiStatistics
 
 /** Shared camera presentation consumes capabilities/geometry; no protocol, raw encoding or model branch is needed. */
 @Composable
@@ -40,19 +46,32 @@ fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter,
     val rendered by presenter.state.collectAsState()
     val settings by presenter.settings.collectAsState()
     val pixel by presenter.pixel.collectAsState()
+    val roiSelection by presenter.roi.selection.collectAsState()
+    val roiFrame by presenter.roi.state.collectAsState()
+    val mode by presenter.roi.mode.collectAsState()
     val ui = camera.uiFor(source.module?.id)
     val measurement = rendered.measurement?.takeIf {
         source.measurement != null && it.geometry == source.geometry && it.provenance.moduleId == source.module?.id
     }
+    val roi = roiSelection.rect?.takeIf { roiSelection.geometry == source.geometry &&
+        roiSelection.source?.moduleId == source.module?.id && roiSelection.source?.modelId == source.module?.modelId &&
+        roiSelection.source?.deviceKey == source.device?.key }
+    val roiStatistics = roiFrame.statistics?.takeIf { measurement != null &&
+        roiFrame.measurement === measurement && roiFrame.selection == roiSelection && roi != null }
+    val roiPanelVisible = roi != null || (mode == InspectionMode.ROI && source.capabilities?.touchInspection == true &&
+        source.capabilities?.temperatureMeasurement == true)
+    val selectRoi: (NativeRect) -> Unit = { presenter.roi.select(it, roiSourceKey(source), source.geometry) }
     MaterialTheme {
         Surface(Modifier.fillMaxSize()) {
             BoxWithConstraints(Modifier.safeDrawingPadding().padding(12.dp)) {
                 if (maxWidth > maxHeight) {
                     Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Column(Modifier.weight(2f).fillMaxHeight()) {
-                            ThermalImage(source, rendered, measurement, pixel, presenter::select, Modifier.weight(1f).fillMaxWidth())
-                            CelsiusLegend(if (measurement != null) rendered else null)
-                            Readings(measurement, pixel, ui, source.capabilities?.touchInspection == true)
+                            ThermalImage(source, rendered, measurement, pixel, presenter::select, mode, roi,
+                                selectRoi, Modifier.weight(1f).fillMaxWidth())
+                            CelsiusLegend(if (measurement != null) rendered else null, roiPanelVisible)
+                            Readings(measurement, pixel, ui, mode == InspectionMode.POINT && source.capabilities?.touchInspection == true)
+                            RoiReadings(roi, roiStatistics, roiPanelVisible)
                         }
                         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                             ScreenControls(source, settings, camera, presenter, connect, ui)
@@ -63,9 +82,10 @@ fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter,
                         Text(stringResource(R.string.app_title_status, cameraStatusText(source, ui)), style = MaterialTheme.typography.titleLarge)
                         val imageModifier = source.geometry?.let { Modifier.fillMaxWidth().aspectRatio(it.width.toFloat() / it.height) }
                             ?: Modifier.fillMaxWidth().height(220.dp)
-                        ThermalImage(source, rendered, measurement, pixel, presenter::select, imageModifier)
-                        CelsiusLegend(if (measurement != null) rendered else null)
-                        Readings(measurement, pixel, ui, source.capabilities?.touchInspection == true)
+                        ThermalImage(source, rendered, measurement, pixel, presenter::select, mode, roi, selectRoi, imageModifier)
+                        CelsiusLegend(if (measurement != null) rendered else null, roiPanelVisible)
+                        Readings(measurement, pixel, ui, mode == InspectionMode.POINT && source.capabilities?.touchInspection == true)
+                        RoiReadings(roi, roiStatistics, roiPanelVisible)
                         ScreenControls(source, settings, camera, presenter, connect, ui)
                     }
                 }
@@ -77,25 +97,33 @@ fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter,
 /** Touch and every marker use the same supplied native geometry and centered Fit rectangle. */
 @Composable
 private fun ThermalImage(source: CameraSessionState<Bitmap>, rendered: CelsiusPresentationSnapshot,
-    measurement: ThermalMeasurement?, pixel: NativePixel?, select: (NativePixel) -> Unit, modifier: Modifier) {
+    measurement: ThermalMeasurement?, pixel: NativePixel?, select: (NativePixel) -> Unit,
+    mode: InspectionMode, roi: NativeRect?, selectRoi: (NativeRect) -> Unit, modifier: Modifier) {
     var viewport by remember { mutableStateOf(IntSize.Zero) }
     val geometry = source.geometry
     val mapper = remember(viewport, geometry) { if (geometry != null && viewport.width > 0 && viewport.height > 0)
         ImageCoordinateMapper(geometry, viewport.width.toDouble(), viewport.height.toDouble()) else null }
     val bitmap = if (measurement != null) rendered.bitmap else source.preview?.image
     val inspectionEnabled = CameraUiPolicy.canInspect(source) && measurement != null
-    Box(modifier.onSizeChanged { viewport = it }.pointerInput(mapper, inspectionEnabled) {
+    // The mode/geometry keys cancel obsolete drags; live frame arrivals do not restart the gesture.
+    Box(modifier.testTag("thermal-image").onSizeChanged { viewport = it }.pointerInput(mapper, inspectionEnabled, mode,
+        roiSourceKey(source)) {
         if (!inspectionEnabled) return@pointerInput
         awaitEachGesture {
             val down = awaitFirstDown(requireUnconsumed = false)
+            val first = mapper?.toNative(DisplayPosition(down.position.x.toDouble(), down.position.y.toDouble()))
             fun inspect(position: Offset) {
-                mapper?.toNative(DisplayPosition(position.x.toDouble(), position.y.toDouble()))?.let(select)
+                val display = DisplayPosition(position.x.toDouble(), position.y.toDouble())
+                if (mode == InspectionMode.POINT) mapper?.toNative(display)?.let(select)
+                else if (first != null) mapper?.toNativeClamped(display)?.let { last ->
+                    selectRoi(NativeRect.fromDrag(first, last, mapper.geometry))
+                }
             }
             inspect(down.position); down.consume()
             var pressed = true
             while (pressed) {
                 val change = awaitPointerEvent().changes.firstOrNull { it.id == down.id } ?: break
-                if (change.pressed) inspect(change.position)
+                if (change.pressed || mode == InspectionMode.ROI) inspect(change.position)
                 change.consume(); pressed = change.pressed
             }
         }
@@ -110,7 +138,7 @@ private fun ThermalImage(source: CameraSessionState<Bitmap>, rendered: CelsiusPr
                 drawCircle(Color.Black, 6.dp.toPx(), center, style = Stroke(4.dp.toPx()))
                 drawCircle(color, 6.dp.toPx(), center, style = Stroke(2.dp.toPx()))
             }
-            pixel?.takeIf { geometry!!.contains(it) }?.let {
+            pixel?.takeIf { mode == InspectionMode.POINT && geometry!!.contains(it) }?.let {
                 val position = mapper.toDisplay(it); val center = Offset(position.x.toFloat(), position.y.toFloat())
                 val arm = 9.dp.toPx()
                 for (stroke in listOf(4.dp.toPx() to Color.Black, 2.dp.toPx() to Color.White)) {
@@ -119,19 +147,69 @@ private fun ThermalImage(source: CameraSessionState<Bitmap>, rendered: CelsiusPr
                 }
             }
         }
+        if (roi != null && mapper != null && bitmap != null) Canvas(Modifier.fillMaxSize()) {
+            val edges = mapper.toDisplay(roi)
+            val topLeft = Offset(edges.left.toFloat(), edges.top.toFloat())
+            val rectSize = androidx.compose.ui.geometry.Size(edges.width.toFloat(), edges.height.toFloat())
+            drawRect(Color.Black, topLeft, rectSize, style = Stroke(3.dp.toPx()))
+            drawRect(Color.Yellow, topLeft, rectSize, style = Stroke(1.dp.toPx()))
+        }
+    }
+}
+
+/** Font-scaled fixed slots exist before pointer-down and through gaps/clear.
+ * Inserting/wrapping readouts during a drag otherwise moves controls and resizes the landscape viewport,
+ * cancelling the mapper-keyed gesture. Only a coherent current result supplies numbers.
+ */
+@Composable
+private fun RoiReadings(rect: NativeRect?, statistics: RoiStatistics?, visible: Boolean) {
+    if (!visible) return
+    val body = MaterialTheme.typography.bodyLarge
+    val lineHeight = with(LocalDensity.current) { body.lineHeight.toDp() }
+    Column(Modifier.testTag("roi-readings")) {
+        Text(if (rect == null) stringResource(R.string.measurement_mode_roi)
+            else stringResource(R.string.measurement_roi_size, rect.width, rect.height),
+            Modifier.height(lineHeight), style = MaterialTheme.typography.titleMedium,
+            maxLines = 1, overflow = TextOverflow.Ellipsis)
+        val readings = when {
+            rect == null -> stringResource(R.string.measurement_roi_hint)
+            statistics != null && statistics.validPixelCount > 0 -> stringResource(R.string.measurement_roi_statistics,
+                statistics.minC!!, statistics.maxC!!, statistics.meanC!!)
+            else -> stringResource(R.string.measurement_roi_unavailable)
+        }
+        Text(readings, Modifier.height(lineHeight * 2), style = body, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        Box(Modifier.height(lineHeight * 2)) {
+            statistics?.let {
+                Text(pluralStringResource(R.plurals.measurement_roi_valid_pixels, it.validPixelCount,
+                    it.validPixelCount, it.pixelCount), style = body, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            }
+        }
     }
 }
 
 @Composable
-private fun CelsiusLegend(rendered: CelsiusPresentationSnapshot?) {
-    if (rendered?.range == null || rendered.legend == null) return
-    Image(rendered.legend.asImageBitmap(), stringResource(R.string.measurement_celsius_scale_description),
-        Modifier.fillMaxWidth().height(12.dp), contentScale = ContentScale.FillBounds)
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        rendered.range.ticks().forEach { Text(stringResource(R.string.measurement_legend_tick, it), style = MaterialTheme.typography.labelSmall) }
+private fun CelsiusLegend(rendered: CelsiusPresentationSnapshot?, reserveSpace: Boolean = false) {
+    val tickHeight = with(LocalDensity.current) { MaterialTheme.typography.labelSmall.lineHeight.toDp() }
+    val labelHeight = with(LocalDensity.current) { MaterialTheme.typography.labelMedium.lineHeight.toDp() } * 2
+    val content: @Composable () -> Unit = {
+        if (rendered?.range != null && rendered.legend != null) {
+            Image(rendered.legend.asImageBitmap(), stringResource(R.string.measurement_celsius_scale_description),
+                Modifier.fillMaxWidth().height(12.dp), contentScale = ContentScale.FillBounds)
+            Row(Modifier.fillMaxWidth().then(if (reserveSpace) Modifier.height(tickHeight) else Modifier),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                rendered.range.ticks().forEach { Text(stringResource(R.string.measurement_legend_tick, it), style = MaterialTheme.typography.labelSmall) }
+            }
+            Text(stringResource(R.string.measurement_range_label, stringResource(PaletteResources.label(rendered.palette!!)),
+                rendered.range.lower, rendered.range.upper),
+                if (reserveSpace) Modifier.height(labelHeight) else Modifier,
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = if (reserveSpace) 2 else Int.MAX_VALUE, overflow = TextOverflow.Ellipsis)
+        }
     }
-    Text(stringResource(R.string.measurement_range_label, stringResource(PaletteResources.label(rendered.palette!!)),
-        rendered.range.lower, rendered.range.upper), style = MaterialTheme.typography.labelMedium)
+    // Keep a single parent slot on gaps too; varying sibling counts also changes the portrait Column's spacing.
+    // Empty space replaces unavailable content, never a stale Celsius legend.
+    if (reserveSpace) Column(Modifier.height(12.dp + tickHeight + labelHeight)) { content() }
+    else content()
 }
 
 @Composable
@@ -160,6 +238,19 @@ private fun ScreenControls(source: CameraSessionState<Bitmap>, settings: Celsius
     var rangeOpen by remember { mutableStateOf(false) }
     var diagnosticsOpen by remember { mutableStateOf(false) }
     if (CameraUiPolicy.showTemperatureControls(source)) {
+        if (source.capabilities?.touchInspection == true) {
+            val mode by presenter.roi.mode.collectAsState()
+            val selection by presenter.roi.selection.collectAsState()
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(selected = mode == InspectionMode.POINT, onClick = { presenter.roi.setMode(InspectionMode.POINT) },
+                    label = { Text(stringResource(R.string.measurement_mode_point)) })
+                FilterChip(selected = mode == InspectionMode.ROI, onClick = { presenter.roi.setMode(InspectionMode.ROI) },
+                    label = { Text(stringResource(R.string.measurement_mode_roi)) })
+                TextButton(onClick = presenter.roi::clear, enabled = selection.rect != null) {
+                    Text(stringResource(R.string.measurement_roi_clear))
+                }
+            }
+        }
         Box {
             OutlinedButton(onClick = { palettesOpen = true }) { Text(stringResource(R.string.measurement_palette,
                 stringResource(PaletteResources.label(settings.palette)))) }

@@ -184,7 +184,7 @@ outputs. Numeric developer evidence is bounded and contains no scene payloads.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
-ROI, exports and recording remain future milestones. Touch/Celsius presentation is
+Exports and recording remain future milestones. Native rectangular ROI analysis and touch/Celsius presentation are
 implemented separately below. See
 [ANDROID_THERMOMETRY.md](ANDROID_THERMOMETRY.md) and [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md).
 
@@ -233,6 +233,35 @@ Android resource bindings map stable status/error/palette identities to labels;
 complete English/French common/module namespaces implement the localization boundary.
 Contracts, deferred legacy file moves, ownership/data lifetime, supported-model limits
 and module addition procedure: [CAMERA_MODULE_ARCHITECTURE.md](CAMERA_MODULE_ARCHITECTURE.md).
+
+## Android native rectangular ROI
+
+**Point** preserves native tap/drag cursor inspection. **ROI** creates/replaces one
+rectangle by dragging; the first and last touched pixel cells are both included,
+with a minimum 1×1 selection. Model bounds are strict native half-open
+`[x1,x2) × [y1,y2)` and must fit `NativeImageGeometry`. Initial outside/letterbox
+touches are ignored; a drag starting inside limits its departing endpoint to the
+image edge. **Clear ROI** removes the selection. Outline edges use the same fitted
+native mapper as cursor/extrema, without rotating/resampling source measurements.
+ROI inspection reserves readout/legend space before drawing; changing statistics or
+temporarily unavailable values do not move the viewport/controls during the gesture.
+
+Min/Max/Mean and valid/total counts come from the current authoritative Float32
+Celsius plane. Optional validity bytes are exactly 0 (invalid) / 1 (valid), with
+no mask meaning all valid. Invalid cells never contribute; valid cells must be
+finite. Native row-major traversal chooses the first extrema tie and accumulates
+the unrounded mean in Float64. Zero-valid regions have counts without numbers or
+coordinates. These are [LMTX v1 §§7/10](LMTX_FORMAT_V1.md) semantics; no serializer,
+capture/export or persistence interface is implemented.
+
+The compatible module/device/geometry selection persists across frames, but a gap,
+close or detach clears numerical results. Source or geometry replacement clears
+the selection instead of reinterpreting coordinates. Analysis runs in a separate
+bounded latest-request worker; palette/range never supply measurement values.
+English/French labels, locale-aware readings and valid-count plurals are complete.
+HT-301 ROI values inherit the existing native-equivalent physical-accuracy warning.
+See [presentation architecture](ANDROID_CELSIUS_PRESENTATION.md#native-rectangular-roi)
+and [validation evidence](ANDROID_VALIDATION.md).
 
 ## Android internationalization (2026-10-03)
 

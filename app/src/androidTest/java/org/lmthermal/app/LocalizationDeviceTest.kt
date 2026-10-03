@@ -119,6 +119,13 @@ class LocalizationDeviceTest {
         assertEquals("2 trames", fr.resources.getQuantityString(org.lmthermal.app.test.R.plurals.count_probe, 2, 2))
         assertEquals("1 sample", en.resources.getQuantityString(org.lmthermal.app.test.R.plurals.count_probe, 1, 1))
         assertEquals("2 samples", en.resources.getQuantityString(org.lmthermal.app.test.R.plurals.count_probe, 2, 2))
+        val productFr = localized("fr")
+        val productEn = localized("en")
+        assertEquals("1 pixel valide sur 10", productFr.resources.getQuantityString(R.plurals.measurement_roi_valid_pixels, 1, 1, 10))
+        assertEquals("2 pixels valides sur 10", productFr.resources.getQuantityString(R.plurals.measurement_roi_valid_pixels, 2, 2, 10))
+        assertEquals("1000000 pixels valides sur 1000000", productFr.resources.getQuantityString(
+            R.plurals.measurement_roi_valid_pixels, 1_000_000, 1_000_000, 1_000_000))
+        assertEquals("1 valid pixel out of 10", productEn.resources.getQuantityString(R.plurals.measurement_roi_valid_pixels, 1, 1, 10))
     }
 
     @Test fun systemFrenchEnglishRoundTripThroughRealLocaleLists() {

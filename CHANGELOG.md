@@ -4,6 +4,14 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Android native rectangular ROI — 2026-10-03)
+
+- Added generic strict native half-open rectangles, inclusive touched-cell drag conversion and fitted cell-edge overlays without camera dimensions/protocol dependencies.
+- Added LMTX-v1-compatible valid-only Float32 extrema, first row-major ties, Float64 means and exact valid/total counts; optional 0/1 masks and zero-valid regions are supported without changing HT-301's all-valid representation.
+- Added explicit localized Point/ROI modes, create/replace/clear interaction and current-frame readings in a bounded analysis worker independent of palette/range. Compatible geometry persists across gaps; readings clear on unavailable/closed/detached frames and replacement source/geometry clears the selection.
+- Added comprehensive JVM, ART worker/lifecycle/mask, locale/orientation gesture and performance checks; documented ROI architecture, validity, LMTX mapping and unchanged native-equivalent physical-accuracy uncertainty. No LMTX serializer/export, camera control/session or thermometry semantics changed.
+- Fixed operator-reported ROI layout reflow by reserving font-scaled readout/legend slots before drawing and through unavailable frames; regression checks hold a pointer across rendered frames and compare viewport/control positions in both orientations and all four test locales.
+
 ### Added (Accepted LMTX v1.0 specification — 2026-10-03)
 
 - Added `docs/LMTX_FORMAT_V1.md` as the canonical implementation specification, preserving all 14 normative sections of the owner-accepted issue #4 contract, the masked example and conformance plan without changing the schema.

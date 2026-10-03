@@ -716,3 +716,119 @@ Physical older-OS testing remains additional coverage, rather than an unimplemen
 storage mechanism. Future product screens/modules/languages must follow the documented
 resource/parameter/accessibility checks. No ROI/export/recording work is included.
 Independent absolute temperature accuracy remains unresolved and unchanged by localization.
+
+## Android native rectangular ROI — 2026-10-03
+
+### Generic numerical and lifecycle coverage
+
+The core engine uses module-provided geometry and strict native half-open rectangles,
+`[x1,x2) × [y1,y2)`. Drag conversion includes both touched cells; model bounds are
+rejected rather than clamped. Statistics use authoritative Float32 Celsius values,
+first valid row-major extrema ties and sequential Float64 accumulation. Optional 0/1
+validity masks exclude invalid filler; zero-valid regions expose counts with no numbers
+or extrema coordinates. These match the accepted LMTX v1 statistics/rectangle semantics.
+No serializer, exchange export, capture or new fixture is implemented.
+
+- **186 core JVM tests passed**, including 39 new ROI regressions. Geometry coverage
+  includes 384×288, 160×120 and 7×19; tests cover strict bounds, cell-edge mapping,
+  reversed/edge drags, all/partial/single/zero-valid data, invalid masks, nonfinite valid
+  values, ignored filler, Float64 accumulation, ties and the canonical masked LMTX example.
+- **Eight compatibility unit tests passed** on simulated API 26/32.
+- **30 Pixel 8 / Android 17 instrumentation tests passed**, with zero failures/errors/
+  skips. Eight new ART tests cover current-frame refresh, unavailable/closed/detached
+  data, source/device/geometry replacement, superseded gestures/results, disposal,
+  zero-valid masks, preview-only restrictions and palette/range independence.
+- English, French, expanded `en-XA` and RTL `ar-XB` gesture/layout checks passed in
+  portrait and landscape. The actual screen selected `[40,121) × [30,91)` on synthetic
+  160×120 data: 4941 valid pixels, min 24.25 °C, max 36.5 °C, mean approximately
+  30.450617 °C. Point selection `(80,60)` survived ROI mode/clear. Reviewed screenshots
+  show aligned outlines, readings and enabled Clear actions; wrapping/scrolling keeps
+  controls reachable. Screenshots await Compose's completed draw after worker completion.
+- Localization parity passed for **95 English / 95 French keys**, with **10 checker
+  self-tests**. French's additional `many` plural form retains the default `other`
+  argument contract. The generic camera-boundary checker passed for **14 shared sources**.
+- Core tests, compatibility tests, debug build, lint and connected instrumentation
+  passed. Lint has **zero errors / 11 existing warnings** (dependency updates and
+  existing Chrome OS ABI/data-extraction/icon categories). `git diff --check` passed.
+
+An earlier locked-screen run timed out on Activity locale/orientation changes. After
+unlocking, the complete suite passed. A test also initially sampled the intermediate
+1×1 pointer-down result; it now awaits the final rectangle/result identity and actual
+Compose UI state. No production wake-lock, orientation or camera behavior was changed.
+The debug app is reinstalled after Gradle's test-package cleanup.
+
+The operator found a real layout reflow during ROI creation, rather than a temperature
+jump. A held-pointer regression reproduced a **205-screen-pixel** downward shift of
+the ROI control in English portrait. Readout insertion changed layout height; in
+landscape it could also resize the mapper-keyed viewport and cancel a drag. Font-scaled
+fixed text/count/legend slots now exist before selection and through unavailable data.
+The regression holds pointer-down across a completed Compose draw, compares viewport
+and control bounds before/after, completes the drag, and repeats those bounds checks
+through a synthetic measurement gap in all eight locale/orientation combinations.
+After reinstalling the final APK, the operator repeated live small/large, reversed
+and edge drags and confirmed the image/controls remained fixed with responsive readings.
+Palette and Auto/Locked checks, Clear ROI and return to aligned Point tap/drag inspection
+also passed. Saved final-run presentation events include both Auto and Locked states;
+same-frame numerical independence is separately asserted by the JVM/ART tests.
+
+For the final conservative lifecycle check, the operator selected
+`[111,244) × [86,200)` (133×114), closed and reopened without unplugging or
+initializing. Logs and the reviewed screen confirmed RAW14_UNSETTLED, a grayscale
+aiming preview and the retained rectangle, with null ROI statistics, no Celsius
+legend and no temperature/extrema readings. Reopening did not request initialization.
+The operator's final Close was followed by `Stream released` about 61 ms later;
+wireless ADB remained available. Retaining geometry without temperatures is the
+expected behavior until a new explicit session supplies valid measurements.
+
+### ROI calculation cost
+
+On Pixel 8 ART, a synthetic 384×288 Float32 plane was warmed for 100 calculations,
+then measured for 500 calculations per rectangle:
+
+| Rectangle | Median | 95th percentile |
+|---|---:|---:|
+| 64×48 | 6.086 ms | 6.145 ms |
+| Full 384×288 | 6.666 ms | 6.716 ms |
+
+These engine measurements include validation of the whole supplied plane, so small
+regions still incur that scan. They exclude the worker's owned matrix copy and UI
+rendering. Analysis runs on a separate bounded latest-request worker, without blocking
+USB acquisition or the UI thread. Same-measurement palette/range changes reuse analysis;
+new frames recompute it. No performance-based numerical approximation is introduced.
+
+### Live HT-301 numerical checks
+
+Wireless ADB remained available with the HT-301 attached through USB Host/OTG.
+Read-only Connect/Open produced DISPLAY_STREAM near 25 FPS with no Celsius readings
+or initialization writes. Explicit operator initialization completed the unchanged
+32772 → 32800 → 32768 sequence, including shutter settling and changing-frame
+qualification, reaching RADIOMETRIC_READY in **6.312 seconds** in the saved first run.
+No ROI interaction sends a camera action.
+
+Separate live samples showed the expected relative scene response:
+
+| Region | Half-open native bounds | Valid/total | Min | Max | Mean |
+|---|---|---:|---:|---:|---:|
+| Visible palm | `[209,323) × [92,194)` | 11628/11628 | 32.60563 °C | 37.96377 °C | 37.202964 °C |
+| Cooler background | `[50,95) × [44,69)` | 1125/1125 | 27.039772 °C | 27.342623 °C | 27.199540 °C |
+
+The approximately **10.003 °C** mean difference is between separate frames/regions,
+not an absolute-accuracy reference. The palm screenshot visibly contains a hand;
+the later background screenshot contains cooler room pixels beside a warmer face.
+No hand is claimed in that later screenshot. A live transient also produced null ROI
+statistics before subsequent valid measurements restored them, retaining the rectangle.
+
+The operator confirmed usable edge/corner containment and responsive large-region
+interaction. A 96,460-pixel selection `[20,384) × [0,265)` produced nine saved stable
+worker samples with median **17.697 ms**, while median acquisition callback cadence
+remained **25 FPS**. Live small background samples had median **6.553 ms**. Worker
+times include the owned matrix copy and concurrent rendering/scheduling, unlike the
+isolated engine benchmark above. Callback cadence is acquisition evidence, not a
+claim that every camera frame was displayed; the presentation retains bounded
+superseded-frame handling. Numeric evidence is kept locally outside Git, with no
+new scene fixture or export format.
+
+All ROI values retain the warning: **Native-equivalent temperatures; absolute
+physical accuracy not yet independently validated.** HT-301 acquisition, parsing,
+session/control and thermometry implementations and the accepted LMTX specification
+are unchanged.

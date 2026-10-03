@@ -6,8 +6,8 @@ The application follows the system language by default. Its in-app **Language**
 selector offers **System**, **French** and **English**. System clears the
 application-specific locale list; it does not install an English override.
 
-- `app/src/main/res/values/strings.xml`: complete English fallback, 87 keys.
-- `app/src/main/res/values-fr/strings.xml`: all 87 French translations.
+- `app/src/main/res/values/strings.xml`: complete English fallback, 95 keys (including ROI plurals and drag hint).
+- `app/src/main/res/values-fr/strings.xml`: all 95 French translations.
 - No redundant `values-en` directory.
 - Unsupported locales resolve through Android's normal resource fallback. Machine
   identifiers are never a replacement for missing product prose.
@@ -102,8 +102,10 @@ the same finite/minimum-less-than-maximum validation. No measurement or JSON num
 localized/mutated. There are currently no product dates to format.
 
 Current count labels are grammatical for any count (for example “Received 1” / “Reçues 1”),
-so no product plural sentence is invented. Test-only quantity resources verify Android
-singular/plural behavior. Add `plurals` when an actual future sentence requires it.
+so those counter labels do not need plurals. ROI valid-pixel counts use product `plurals`
+selected by valid count, with matching English/French positional arguments. Point/ROI,
+Clear ROI, size, Min/Max/Mean and unavailable readings share the measurement namespace.
+Test-only quantity resources additionally verify Android singular/plural behavior.
 
 Connect/Close and Auto/Locked use wrapping FlowRows. Portrait content and landscape
 controls remain scrollable. Long French or pseudolocalized text can wrap without losing
@@ -123,8 +125,10 @@ git diff --check
 
 The resource checker detects missing/extra French keys, wrong namespaces, translated
 nontranslatable/machine-only keys, unpositioned/conflicting or incompatible parameters,
-and plural quantity/type differences. Eight deliberate broken-resource tests protect
+and plural quantity/type differences. Ten resource-contract regression tests protect
 its failure behavior. Future locale files can be checked with `--locale <qualifier>`.
+Additional locale-specific plural forms (French `many`) use the default `other` form's
+argument contract; missing default forms and mismatched extra-form arguments still fail.
 
 Pixel tests cover exhaustive common/module/debug mappings, language-list conversion,
 French decimals/coordinates/counts/accents/special characters, unsupported `de-DE`

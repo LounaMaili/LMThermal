@@ -12,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.*
@@ -32,6 +33,7 @@ class LocalizationLayoutDeviceTest {
     /** Test data has native geometry/provenance and no protocol/control implementation. */
     private class LayoutModule : CameraModule<Bitmap> {
         private val geometry = NativeImageGeometry(160, 120)
+        lateinit var openedState: MutableStateFlow<CameraSessionState<Bitmap>>
         override val metadata = CameraModuleMetadata(CameraModuleId("layout-test"), "synthetic-layout",
             CameraCapabilities(true, true, true, true))
         override fun probe(device: CameraDeviceIdentity) = CameraProbeResult.SUPPORTED
@@ -39,12 +41,13 @@ class LocalizationLayoutDeviceTest {
             val measurement = OwnedThermalMeasurement(geometry,
                 FloatArray(geometry.pixelCount) { if (it % geometry.width in 60..100) 36.5f else 24.25f },
                 1, 1, MeasurementProvenance(metadata.id, metadata.modelId, TemperatureProvenanceKind.SIMULATED))
-            return object : CameraSession<Bitmap> {
-                override val state = MutableStateFlow(CameraSessionState(module = metadata, device = device,
+            openedState = MutableStateFlow(CameraSessionState(module = metadata, device = device,
                     lifecycle = CameraLifecycle.STREAMING, capabilities = metadata.capabilities, geometry = geometry,
                     status = CameraStatus(CameraStatusCode.MEASUREMENT_READY), measurement = measurement,
                     preview = CameraPreview(geometry, 1, 1, Bitmap.createBitmap(160, 120, Bitmap.Config.ARGB_8888)),
                     actions = setOf(CameraAction.CLOSE, CameraAction.INITIALIZE_MEASUREMENT)))
+            return object : CameraSession<Bitmap> {
+                override val state = openedState
                 override suspend fun perform(action: CameraAction) = Unit
                 override suspend fun close(reason: CameraCloseReason) { state.value = state.value.copy(preview = null, measurement = null) }
             }
@@ -91,7 +94,9 @@ class LocalizationLayoutDeviceTest {
                         activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                         labels = listOf(R.string.camera_connect, R.string.camera_close, R.string.camera_ht301_initialize_radiometric,
                             R.string.measurement_auto, R.string.measurement_locked, R.string.camera_diagnostics,
-                            R.string.measurement_range_dialog, R.string.measurement_cancel).associateWith { activity.getString(it) }
+                            R.string.measurement_range_dialog, R.string.measurement_cancel,
+                            R.string.measurement_mode_point, R.string.measurement_mode_roi,
+                            R.string.measurement_roi_clear).associateWith { activity.getString(it) }
                         val registration = AndroidModuleRegistration(module, Ht301UiBindings)
                         coordinator = AndroidCameraCoordinator(activity.applicationContext, listOf(registration), devices = {
                             listOf(object : CameraDeviceIdentity { override val key = "synthetic-layout" }) })
@@ -102,12 +107,62 @@ class LocalizationLayoutDeviceTest {
                     }
                     try {
                         withTimeout(5000) { while (presenter!!.state.value.bitmap == null) delay(10) }
+                        presenter!!.select(NativePixel(80, 60))
                         compose.waitForIdle()
                         val initialScreenshot = instrumentation.uiAutomation.takeScreenshot()
                         File(instrumentation.targetContext.cacheDir, "locale-layout-$tag-$orientationName-top.png").outputStream().use {
                             initialScreenshot.compress(Bitmap.CompressFormat.PNG, 100, it)
                         }
                         initialScreenshot.recycle()
+                        // The real ROI mode/gesture path uses native cells in every locale and viewport.
+                        compose.onNode(hasText(labels.getValue(R.string.measurement_mode_roi)) and hasClickAction()).performScrollTo().performClick()
+                        val image = compose.onNodeWithTag("thermal-image")
+                        if (orientationName == "portrait") image.performScrollTo()
+                        val viewport = image.fetchSemanticsNode().boundsInRoot
+                        val controlsBeforeDrag = compose.onNode(hasText(labels.getValue(R.string.measurement_mode_roi)) and hasClickAction())
+                            .fetchSemanticsNode().boundsInRoot
+                        val mapper = ImageCoordinateMapper(NativeImageGeometry(160, 120),
+                            viewport.width.toDouble(), viewport.height.toDouble())
+                        val first = mapper.toDisplay(NativePixel(40, 30))
+                        image.performTouchInput { down(Offset(first.x.toFloat(), first.y.toFloat())) }
+                        // Real drags span rendered frames: adding readings must not cancel a held pointer.
+                        withTimeout(5000) { while (presenter!!.roi.state.value.selection.rect !=
+                            NativeRect(40, 30, 41, 31)) delay(10) }
+                        compose.waitForIdle()
+                        val draggedViewport = image.fetchSemanticsNode().boundsInRoot
+                        assertEquals("ROI readouts must not move the viewport during a held gesture", viewport, draggedViewport)
+                        assertEquals("ROI readouts must not move surrounding controls during a held gesture", controlsBeforeDrag,
+                            compose.onNode(hasText(labels.getValue(R.string.measurement_mode_roi)) and hasClickAction()).fetchSemanticsNode().boundsInRoot)
+                        val last = ImageCoordinateMapper(NativeImageGeometry(160, 120),
+                            draggedViewport.width.toDouble(), draggedViewport.height.toDouble()).toDisplay(NativePixel(120, 90))
+                        image.performTouchInput { moveTo(Offset(last.x.toFloat(), last.y.toFloat())); up() }
+                        withTimeout(5000) { while (presenter!!.roi.state.value.statistics == null ||
+                            presenter!!.roi.state.value.selection.rect != NativeRect(40, 30, 121, 91)) delay(10) }
+                        assertEquals(NativeRect(40, 30, 121, 91), presenter!!.roi.selection.value.rect)
+                        val roiStatistics = presenter!!.roi.state.value.statistics!!
+                        assertEquals(24.25f, roiStatistics.minC); assertEquals(36.5f, roiStatistics.maxC)
+                        assertEquals(81 * 61, roiStatistics.validPixelCount)
+                        // Worker completion precedes Compose's next draw; verify the visible state before taking evidence.
+                        compose.waitForIdle()
+                        compose.onNodeWithTag("roi-readings").assertExists()
+                        compose.onNodeWithText(labels.getValue(R.string.measurement_roi_clear)).assertIsEnabled()
+                        val roiScreenshot = instrumentation.uiAutomation.takeScreenshot()
+                        File(instrumentation.targetContext.cacheDir, "locale-roi-$tag-$orientationName.png").outputStream().use {
+                            roiScreenshot.compress(Bitmap.CompressFormat.PNG, 100, it)
+                        }
+                        roiScreenshot.recycle()
+                        // A transient must remove numbers/legend without changing the inspection layout.
+                        val currentSource = module.openedState.value
+                        module.openedState.value = currentSource.copy(measurement = null)
+                        withTimeout(5000) { while (presenter!!.state.value.measurement != null ||
+                            presenter!!.roi.state.value.statistics != null) delay(10) }
+                        compose.waitForIdle()
+                        assertEquals(viewport, image.fetchSemanticsNode().boundsInRoot)
+                        assertEquals(controlsBeforeDrag, compose.onNode(hasText(labels.getValue(R.string.measurement_mode_roi)) and hasClickAction())
+                            .fetchSemanticsNode().boundsInRoot)
+                        module.openedState.value = currentSource
+                        withTimeout(5000) { while (presenter!!.state.value.measurement == null ||
+                            presenter!!.roi.state.value.statistics != roiStatistics) delay(10) }
                         // Localized controls can wrap/scroll; assert visibility after bringing each into view.
                         for (id in listOf(R.string.camera_connect, R.string.camera_close,
                             R.string.camera_ht301_initialize_radiometric, R.string.camera_diagnostics)) {
@@ -120,6 +175,12 @@ class LocalizationLayoutDeviceTest {
                         compose.onNodeWithText(labels.getValue(R.string.measurement_range_dialog)).assertIsDisplayed()
                         compose.onNodeWithText(labels.getValue(R.string.measurement_cancel)).performClick()
                         compose.onNodeWithText(labels.getValue(R.string.measurement_auto)).performScrollTo().performClick()
+                        assertEquals(roiStatistics, presenter!!.roi.state.value.statistics)
+                        compose.onNodeWithText(labels.getValue(R.string.measurement_roi_clear)).performScrollTo().performClick()
+                        withTimeout(5000) { while (presenter!!.roi.selection.value.rect != null ||
+                            presenter!!.roi.state.value.statistics != null) delay(10) }
+                        compose.onNodeWithText(labels.getValue(R.string.measurement_mode_point)).performScrollTo().performClick()
+                        assertEquals(NativePixel(80, 60), presenter!!.pixel.value)
                         lateinit var languageLabel: String
                         scenario.onActivity { activity -> languageLabel = activity.getString(R.string.language_label,
                             AppLanguage.selected(AppCompatDelegate.getApplicationLocales())?.let { activity.getString(it.label) }

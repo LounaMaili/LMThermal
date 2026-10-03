@@ -133,6 +133,10 @@ interface ThermalMeasurement {
     val matrixMinimum: Float
     val matrixMaximum: Float
     fun matrix(): FloatArray
+    /** Optional owned copy of per-pixel validity: 0 unavailable, 1 valid, null all valid (LMTX v1).
+     * Existing fully valid modules need no representation change; ROI never interprets invalid filler as Celsius.
+     */
+    fun validityMask(): ByteArray? = null
     fun temperature(pixel: NativePixel): Float
     fun sample(pixel: NativePixel): NativeSample? = null
 }

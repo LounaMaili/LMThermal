@@ -40,6 +40,22 @@ class ImageCoordinateMapper(val geometry: NativeImageGeometry, viewWidth: Double
         return geometry.pixel((x / content.width * geometry.width).toInt().coerceAtMost(geometry.width - 1),
             (y / content.height * geometry.height).toInt().coerceAtMost(geometry.height - 1))
     }
+    /** Live ROI endpoint only: after an interior pointer-down, limit a departing pointer to the image edge.
+     * Do not use for persisted geometry or initial touches; those continue to reject outside coordinates.
+     */
+    fun toNativeClamped(position: DisplayPosition): NativePixel? {
+        if (!position.x.isFinite() || !position.y.isFinite()) return null
+        val x = ((position.x - content.left) / content.width * geometry.width).coerceIn(0.0, geometry.width.toDouble())
+        val y = ((position.y - content.top) / content.height * geometry.height).coerceIn(0.0, geometry.height.toDouble())
+        return geometry.pixel(x.toInt().coerceAtMost(geometry.width - 1), y.toInt().coerceAtMost(geometry.height - 1))
+    }
+    /** ROI edges map cell boundaries, not marker centers; the outline encloses exactly the selected cells. */
+    fun toDisplay(rect: NativeRect): ImageContentRect {
+        rect.validate(geometry)
+        return ImageContentRect(content.left + rect.x1 * content.width / geometry.width,
+            content.top + rect.y1 * content.height / geometry.height,
+            rect.width * content.width / geometry.width, rect.height * content.height / geometry.height)
+    }
     /** Validate against this image and map the native pixel center through exactly the touch rectangle. */
     fun toDisplay(pixel: NativePixel): DisplayPosition {
         require(geometry.contains(pixel))

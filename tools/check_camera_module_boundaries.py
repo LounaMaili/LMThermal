@@ -13,9 +13,11 @@ ROOT = Path(__file__).resolve().parents[1]
 SHARED_FILES = [
     "core/src/main/kotlin/org/lmthermal/core/CelsiusPresentation.kt",
     "core/src/main/kotlin/org/lmthermal/core/ImageCoordinates.kt",
+    "core/src/main/kotlin/org/lmthermal/core/NativeRoi.kt",
     "core/src/main/kotlin/org/lmthermal/core/LatestFrameState.kt",
     "app/src/main/java/org/lmthermal/app/CameraText.kt",
     "app/src/main/java/org/lmthermal/app/CelsiusPresenter.kt",
+    "app/src/main/java/org/lmthermal/app/RoiPresenter.kt",
     "app/src/main/java/org/lmthermal/app/MainActivity.kt",
     "app/src/main/java/org/lmthermal/app/ThermalScreen.kt",
     "app/src/main/java/org/lmthermal/camera/AndroidCameraCoordinator.kt",
