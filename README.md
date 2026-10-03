@@ -16,7 +16,8 @@
 > [application comparison](docs/APPLICATION_COMPARISON.md). Desktop capture
 > reports, sanitized fixtures and regression tables are maintained separately.
 
-LMThermal is the native Android application for the **Infiray HT-301 / T3-317-13**.
+LMThermal is a native Android application with integrated camera modules; its first
+validated real camera is the **Infiray HT-301 / T3-317-13**.
 It also preserves the authoritative protocol and thermometry research.
 [LMThermal-Desktop](https://github.com/LounaMaili/LMThermal-Desktop) is the executable
 Python/PyQt reference, diagnostic tool and fixture generator, not the final product.
@@ -30,6 +31,7 @@ acceptance uses frame evidence rather than unreliable Zoom reads. The plain-JVM 
 engine has full golden LUT/matrix parity; a current ready frame must also pass finite-LUT
 validation before Celsius rendering, touch readings and high/low markers are shown.
 Presentation uses five Desktop-equivalent palettes and Auto/Locked Celsius bounds. See
+[integrated camera architecture](docs/CAMERA_MODULE_ARCHITECTURE.md),
 [presentation and touch architecture](docs/ANDROID_CELSIUS_PRESENTATION.md),
 [thermometry design and parity](docs/ANDROID_THERMOMETRY.md), [session architecture](docs/ANDROID_RADIOMETRIC_SESSION.md),
 [foundation architecture](docs/ANDROID_FOUNDATION.md),
@@ -64,6 +66,12 @@ Android test-only parity uses AndroidX Test runner 1.6.2 / JUnit extension 1.2.1
 without opening USB. No golden data or test dependencies ship in the product APK.
 
 ## Supported camera contract
+
+Support for multiple camera models is an application goal; simultaneous acquisition
+from multiple cameras is out of scope. The current registry opens only one unambiguous
+supported device/module pair, never an unknown-device fallback. A generated 160×120
+preview-only module tests generic geometry/capabilities; it is not another supported
+commercial camera. The following transport/measurement facts are HT-301-specific.
 
 | Property | Value |
 |---|---|
@@ -140,6 +148,10 @@ def get_temp_evn(a, env_term, b):
 - [x] Evidence-gated radiometric session: exact SET completion plus frame evidence; single-32772 and full Pixel 8 sequence passed, including conservative raw14 reopen.
 - [x] Float32/native-equivalent LUT and measurement parity port for width 384/range 120/lens 68/shutter fix 1.5.
 - [x] Native-coordinate tap/drag inspection, five Celsius palettes, Auto/Locked range and legend.
+- [x] Integrated module contract/registry, one-session ownership, geometry-driven shared
+  presentation and 160×120 preview-only simulator (see camera architecture and validation).
+- [ ] French/English localization, language selection and complete locale regression (issue #2).
+- [ ] Additional real camera models, each requiring protocol research and hardware validation.
 - [ ] ROI drawing/statistics.
 - [ ] Still export, time series, recording/playback and comparison.
 - [ ] Release licensing, packaging and distribution.
@@ -154,11 +166,15 @@ for the original full-payload Android camera test.
 - compileSdk/targetSdk 35, minSdk 26; initial arm64-v8a APK supports the test Pixel 8.
 - Native libusb 1.0.29 (LGPL-2.1-or-later), pinned libuvc 0.0.8 snapshot (BSD-3-Clause), NDK 28.
 - Plain JVM `core/` holds immutable frame/parser and preview logic; no Python embedded.
+- Shared camera contracts/presentation consume module-provided geometry and optional
+  measurements; HT-301 transport/session/thermometry remain module internals.
 - Third-party licenses and exact source pins: [third_party/README.md](third_party/README.md).
 - Python analysis tools and historical prototypes remain research/reference material;
   Capstone 5.0.9, pyelftools 0.33 and Androguard 4.1.4 are analysis-only dependencies.
 
 ## Documentation
+
+- [`docs/CAMERA_MODULE_ARCHITECTURE.md`](docs/CAMERA_MODULE_ARCHITECTURE.md) — Contracts, registry, ownership, capabilities, resources and future module guide
 
 - [`docs/RADIOMETRIC_INITIALIZATION.md`](docs/RADIOMETRIC_INITIALIZATION.md) — Staged replay, byte encoding, ARM frame path and evidence limits
 

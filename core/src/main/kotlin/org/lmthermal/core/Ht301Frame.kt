@@ -3,9 +3,6 @@ package org.lmthermal.core
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.roundToInt
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 /** Native camera invariants from docs/HARDWARE.md; the trailer is never an image. */
 object Ht301Layout {
@@ -159,24 +156,6 @@ object PreviewRenderer {
         val lower = rank.toInt()
         return sorted[lower] + (sorted[minOf(lower + 1, sorted.lastIndex)] - sorted[lower]) * (rank - lower)
     }
-}
-
-/** A conflated latest snapshot, used by the Android controller: never queues presentation frames. */
-class LatestFrameState<T>(initial: T) {
-    private val latest = MutableStateFlow(initial)
-    private val publicationLock = Any()
-    /** Publishing replaces the current value; slow consumers observe the newest available snapshot. */
-    var value: T
-        get() = latest.value
-        set(value) { synchronized(publicationLock) { latest.value = value } }
-    /** Serialize the ownership check and publication with close/reset, preventing a stale final frame. */
-    fun updateIf(ownsSource: () -> Boolean, transform: (T) -> T) {
-        synchronized(publicationLock) {
-            if (ownsSource()) latest.value = transform(latest.value)
-        }
-    }
-    /** Consumers cannot mutate the producer's state or ask it to replay an obsolete queue. */
-    fun asStateFlow(): StateFlow<T> = latest.asStateFlow()
 }
 
 /** Platform-independent USB status. A raw14 candidate never implies session readiness. */

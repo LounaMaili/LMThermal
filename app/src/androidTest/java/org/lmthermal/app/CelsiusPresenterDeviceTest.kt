@@ -8,16 +8,21 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.lmthermal.core.*
+import android.graphics.Bitmap
+import org.lmthermal.camera.*
+import org.lmthermal.camera.ht301.*
 
 /** Exercise the actual bounded Android renderer and close/cancellation races without opening USB or a window. */
 @RunWith(AndroidJUnit4::class)
 class CelsiusPresenterDeviceTest {
-    private fun camera(): MutableStateFlow<CameraSnapshot> {
+    private fun camera(): MutableStateFlow<CameraSessionState<Bitmap>> {
         val context = InstrumentationRegistry.getInstrumentation().context
         val raw = context.assets.open("thermometry/warm-hand-settled.raw").use { it.readBytes() }
-        return MutableStateFlow(CameraSnapshot(usb = UsbState(UsbPhase.STREAMING, "test"),
-            measurement = NativeEquivalentThermometry.measure(Ht301Frame.parse(raw)),
-            session = SessionSnapshot(state = SessionState.RADIOMETRIC_READY)))
+        return MutableStateFlow(CameraSessionState(module = Ht301ModuleProfile.metadata,
+            device = UsbCameraIdentity("test", Ht301Layout.VID, Ht301Layout.PID),
+            lifecycle = CameraLifecycle.STREAMING, geometry = Ht301ModuleProfile.GEOMETRY,
+            measurement = Ht301ThermalMeasurement(NativeEquivalentThermometry.measure(Ht301Frame.parse(raw))),
+            status = CameraStatus(CameraStatusCode.MEASUREMENT_READY, Ht301SessionStatus.RADIOMETRIC_READY)))
     }
     private suspend fun waitUntil(condition: () -> Boolean) = withTimeout(5000) {
         while (!condition()) delay(10)
@@ -39,7 +44,7 @@ class CelsiusPresenterDeviceTest {
         try {
             waitUntil { presenter.state.value.measurement != null }
             presenter.setPalette(CelsiusPalette.BLACK_HOT)
-            source.value = CameraSnapshot(usb = UsbState(UsbPhase.CLOSED, "test close"))
+            source.value = CameraSessionState(lifecycle = CameraLifecycle.CLOSED, status = CameraStatus(CameraStatusCode.CLOSED))
             waitUntil { presenter.state.value.measurement == null }
             delay(100)
             assertNull(presenter.state.value.bitmap); assertNull(presenter.state.value.legend); assertNull(presenter.state.value.range)

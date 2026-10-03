@@ -4,6 +4,16 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (Integrated camera-module foundation — 2026-10-03)
+- Added transport-independent camera contracts, stable IDs/capabilities, pure none/unique/ambiguous registry selection, structured status/errors and one-session ownership with awaited replacement release and generation-bound publication.
+- Adapted the targeted HT-301 controller behind module/session/resource bindings while retaining native transport, parsing, control sequence, shutter/liveness gates, thermometry arithmetic and richer raw/calibration/trailer evidence.
+- Removed HT-301 geometry and raw-plane requirements from shared screen, coordinate mapping, cursor, Celsius renderer and presenter; added optional validity/provenance-qualified measurements and a generated 160×120 preview-only module with no camera controls.
+- Moved shared visible labels into default-English Android resources and kept palette/module/status identities untranslated. Defined common/module namespaces for issue #2; full French/English selection and locale validation remain separate.
+- Preserved machine diagnostic keys and added module/model/geometry/capability metadata. Documented deferred legacy file moves, future module validation requirements and multiple-model support versus excluded simultaneous acquisition.
+- Added registry, alternate-geometry, ownership/cancellation/provenance/error, simulation/capability regressions, Android generic-module tests and a shared-boundary dependency check. Existing numerical/color fixtures are unchanged.
+- Passed 147 JVM and nine Pixel instrumentation tests with exact numerical/color parity, debug/test builds, lint and diff checks. Preserved Pixel HT-301 evidence: explicit readiness in 6.271/6.354 s, usable Celsius/touch/palettes and conservative raw14 reopen without controls. Recorded one transient native range-transition burst with unresolved cause; it did not recur in the later accepted run.
+- Completed the seven issue #1 acceptance criteria for review, preserving the existing work and accepted hardware evidence on resume. Issue #1 is not closed automatically; full localization issue #2 remains open.
+
 ### Added (Android Celsius presentation — 2026-10-03)
 - Added JVM-testable Desktop-equivalent White hot, Black hot, Inferno, Iron-like/HOT and Turbo palettes with exact 2nd/98th percentile Auto range, centered minimum 1 °C span, finite exact Locked bounds and five-tick Celsius legend.
 - Added native-coordinate tap/drag inspection and persistent selected pixel with current raw14/Celsius, plus a shared fitted-image/letterbox mapper for touch, cursor and high/low overlays. Native matrices and orientation are unchanged.

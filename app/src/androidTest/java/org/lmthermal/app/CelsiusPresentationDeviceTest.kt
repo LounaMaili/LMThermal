@@ -9,6 +9,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.lmthermal.core.*
+import org.lmthermal.camera.ht301.Ht301ModuleProfile
 
 /** Camera-free Android runtime regressions for color/coordinate presentation, not brittle window automation. */
 @RunWith(AndroidJUnit4::class)
@@ -23,16 +24,16 @@ class CelsiusPresentationDeviceTest {
             for (automatic in listOf(true, false)) {
                 val levels = bytes("presentation/$name.${if (automatic) "auto" else "locked"}.levels")
                 for ((paletteIndex, palette) in CelsiusPalette.entries.withIndex()) {
-                    val pixels = CelsiusRenderer.render(matrix, CelsiusPresentationSettings(palette, automatic)).argb()
+                    val pixels = CelsiusRenderer.render(matrix, Ht301ModuleProfile.GEOMETRY, CelsiusPresentationSettings(palette, automatic)).argb()
                     for (i in pixels.indices) assertEquals(tables[paletteIndex][levels[i].toInt() and 255], pixels[i])
-                    Log.i("LMThermalPresentationParity", "$name auto=$automatic palette=${palette.label} pixels=110592 differences=0")
+                    Log.i("LMThermalPresentationParity", "$name auto=$automatic palette=${palette.name} pixels=110592 differences=0")
                 }
             }
         }
     }
     @Test fun coordinateMappingRoundTripsPortraitLandscapeAndLetterboxedImages() {
         for ((width, height) in listOf(1080.0 to 2000.0, 2400.0 to 1080.0, 413.0 to 277.0)) {
-            val mapper = ImageCoordinateMapper(width, height)
+            val mapper = ImageCoordinateMapper(Ht301ModuleProfile.GEOMETRY, width, height)
             for (pixel in listOf(NativePixel(0,0), NativePixel(383,287), NativePixel(192,144), NativePixel(191,211)))
                 assertEquals(pixel, mapper.toNative(mapper.toDisplay(pixel)))
             assertNull(mapper.toNative(DisplayPosition(-1.0, 0.0)))

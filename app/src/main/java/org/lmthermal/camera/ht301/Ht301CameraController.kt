@@ -1,4 +1,11 @@
-package org.lmthermal.app
+package org.lmthermal.camera.ht301
+
+import org.lmthermal.app.BuildConfig
+import org.lmthermal.app.UvcTransport
+import org.lmthermal.app.NativeUvcTransport
+import org.lmthermal.app.NumericEvidence
+import org.lmthermal.app.ThermometryDiagnostics
+import org.lmthermal.camera.CameraCloseReason
 
 import android.Manifest
 import android.app.PendingIntent
@@ -19,7 +26,7 @@ import kotlinx.coroutines.*
 import org.lmthermal.core.*
 
 /** Immutable UI snapshot; bitmap is created once on the worker and never mutated thereafter. */
-data class CameraSnapshot(
+data class Ht301CameraSnapshot(
     val usb: UsbState = UsbState(),
     val identity: String = "1514:0001 — not attached",
     val permission: String = "Not requested",
@@ -28,6 +35,8 @@ data class CameraSnapshot(
     val size: Int = 0,
     val range: String = "—",
     val fps: Double = 0.0,
+    val sequence: Long = 0,
+    val receivedMonotonicMs: Long = 0,
     val received: Long = 0,
     val invalid: Long = 0,
     val replaced: Long = 0,
@@ -44,13 +53,14 @@ data class CameraSnapshot(
  * Native read/close run on one dispatcher: cancellation cannot free a handle during a JNI read.
  * StateFlow has one current snapshot; the native callback also has a one-frame replacement slot.
  */
-class CameraController(private val context: Context) {
+class Ht301CameraController(private val context: Context, private val target: UsbDevice) {
     private val manager = context.getSystemService(UsbManager::class.java)
     private val worker = Dispatchers.IO.limitedParallelism(1)
     private val scope = CoroutineScope(SupervisorJob() + worker)
-    private val mutableState = LatestFrameState(CameraSnapshot())
+    private val mutableState = LatestFrameState(Ht301CameraSnapshot())
     val state = mutableState.asStateFlow()
     private var streamJob: Job? = null
+    private var releasingJob: Job? = null
     private var foreground = false
     @Volatile private var generation = 0L
     private val initializeRequest = AtomicLong(-1L)
@@ -89,7 +99,7 @@ class CameraController(private val context: Context) {
         ContextCompat.registerReceiver(context, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
     /** Enumerate only the validated VID/PID; avoid opening unrelated webcams. */
-    private fun camera(): UsbDevice? = manager.deviceList.values.firstOrNull {
+    private fun camera(): UsbDevice? = manager.deviceList[target.deviceName]?.takeIf {
         it.vendorId == Ht301Layout.VID && it.productId == Ht301Layout.PID
     }
     /** Recheck already-attached devices on foreground/recreation without taking ownership automatically. */
@@ -100,7 +110,7 @@ class CameraController(private val context: Context) {
     fun discover() {
         if (streamJob?.isActive == true) return
         val device = camera()
-        mutableState.value = if (device == null) CameraSnapshot() else CameraSnapshot(
+        mutableState.value = if (device == null) Ht301CameraSnapshot() else Ht301CameraSnapshot(
             usb = UsbState().attached(), identity = "${device.manufacturerName ?: "Infiray"} ${device.productName ?: "HT-301"} · 1514:0001",
             permission = if (manager.hasPermission(device)) "Granted" else "Not requested")
     }
@@ -245,7 +255,7 @@ class CameraController(private val context: Context) {
                                 usb = UsbState(UsbPhase.STREAMING, "Streaming · explicit radiometric session"),
                                 mode = inspection.mode, reason = inspection.reason, size = bytes.size,
                                 range = "${inspection.minimum ?: "—"}..${inspection.maximum ?: "—"}",
-                                fps = fps, received = counters[0], invalid = invalid, replaced = counters[1], malformed = counters[2], bitmap = image, session = session.snapshot(), transition = transition.snapshot(),
+                                fps = fps, sequence = counters[4], receivedMonotonicMs = now, received = counters[0], invalid = invalid, replaced = counters[1], malformed = counters[2], bitmap = image, session = session.snapshot(), transition = transition.snapshot(),
                                 measurement = measurement.measurement, measurementReason = measurement.reason) }
                             if (now - lastLog >= 2000) {
                                 // Numeric diagnostics only: no camera serial or private scene is written to logs.
@@ -276,7 +286,9 @@ class CameraController(private val context: Context) {
         return mapOf("callback_count" to counters[0], "replaced_count" to counters[1],
             "native_malformed" to counters[2], "parser_rejected" to current.invalid,
             "callback_fps" to current.fps,
-            "session_state" to current.session.state.name)
+            "session_state" to current.session.state.name, "module_id" to Ht301ModuleProfile.ID.value,
+            "camera_model" to Ht301ModuleProfile.metadata.modelId,
+            "native_width" to Ht301Layout.WIDTH, "native_height" to Ht301Layout.IMAGE_HEIGHT)
     }
     /** Immediately clear stale presentation; worker cancellation releases the native handle asynchronously. */
     fun close(message: String = "Closed") {
@@ -285,14 +297,25 @@ class CameraController(private val context: Context) {
         inventoryRequest.set(-1L)
         transitionRequest.set(-1L)
         Log.i("LMThermalSession", JSONObject(mapOf("event" to "connection_cancelled", "monotonic_ms" to SystemClock.elapsedRealtime(), "generation" to generation, "reason" to message)).toString())
-        streamJob?.cancel(); streamJob = null
+        streamJob?.let { releasingJob = it; it.cancel() }; streamJob = null
         wantedDevice = null
         // Closing the stream does not revoke USB authorization or physically detach the device.
         // A detach notification calls discover() afterward to clear its identity/permission.
         val previous = mutableState.value
-        mutableState.value = CameraSnapshot(usb = UsbState(UsbPhase.CLOSED, message),
+        mutableState.value = Ht301CameraSnapshot(usb = UsbState(UsbPhase.CLOSED, message),
             identity = previous.identity, permission = previous.permission)
     }
-    /** Final ViewModel release unregisters discovery and cancels work without blocking the UI thread. */
-    fun dispose() { close(); context.unregisterReceiver(receiver); scope.cancel() }
+    /** Module ownership awaits the same serialized native finally-release before replacing this source. */
+    suspend fun shutdown(reason: CameraCloseReason) {
+        val previousJob = streamJob ?: releasingJob
+        foreground = false
+        close(when (reason) {
+            CameraCloseReason.DETACHED -> "Camera unplugged"
+            CameraCloseReason.BACKGROUND -> "Closed in background"
+            else -> "Closed"
+        })
+        previousJob?.join()
+        context.unregisterReceiver(receiver)
+        scope.cancel()
+    }
 }

@@ -122,8 +122,13 @@ Simple spreadsheet-compatible format: one row per pixel line, temperature values
 ## Non-Goals (for now)
 - iOS support (no USB Host)
 - Cloud storage / sync
-- Multi-camera support
+- Simultaneous acquisition from multiple cameras
 - Real-time streaming over network
+
+Support for multiple camera models is an application goal, using integrated modules
+in one APK and one active session. Only HT-301 is validated real hardware today;
+the 160×120 preview-only simulator demonstrates the architecture, not compatibility
+with another camera. Dynamic externally installed plugins are out of scope.
 
 ## Android explicit radiometric session (2026-10-02)
 
@@ -194,3 +199,25 @@ No UVC/session/thermometry behavior or LUT cache is added. Architecture, exact D
 references, worker counters and device results:
 [ANDROID_CELSIUS_PRESENTATION.md](ANDROID_CELSIUS_PRESENTATION.md),
 [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md). Absolute physical accuracy remains unvalidated.
+
+## Integrated camera-module foundation (2026-10-03)
+
+Discovery, pure identification/registry, explicit opening, single-session ownership
+and shared presentation are separate. Unknown or ambiguous identities produce
+structured errors without opening any driver. Module detection sends no controls.
+Replacement awaits prior release; detach/background clear current data. Lifecycle
+recreation cannot initialize radiometry automatically.
+
+The common contract provides stable module/model identity, capabilities, lifecycle,
+structured statuses, actual native geometry, optional preview/measurement and
+supported actions. It requires no USB, UVC, raw14, trailer or calibration format.
+Matrix size, bitmaps, fitted-image mapping, aspect ratio, cursor and high/low follow
+supplied geometry. Temperature controls/initialization/inspection are capability-gated.
+HT-301's immutable richer evidence and validated protocol/numerical implementation
+are adapted behind its module boundary; no numerical or camera-coordinate changes.
+
+The 160×120 simulated module is preview-only and never matches real USB hardware.
+Android resource bindings map stable status/error/palette identities to labels;
+default-English common/module namespaces prepare the separate localization milestone.
+Contracts, deferred legacy file moves, ownership/data lifetime, supported-model limits
+and module addition procedure: [CAMERA_MODULE_ARCHITECTURE.md](CAMERA_MODULE_ARCHITECTURE.md).

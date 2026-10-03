@@ -1,10 +1,14 @@
 package org.lmthermal.core
 
+import org.lmthermal.camera.ht301.Ht301ModuleProfile
+import org.lmthermal.camera.ht301.Ht301ThermalMeasurement
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.Properties
 import org.junit.Assert.*
 import org.junit.Test
+
+private val referenceGeometry = Ht301ModuleProfile.GEOMETRY
 
 /** Desktop exports are independent expected values, including every normalized pixel and palette entry. */
 class CelsiusPresentationTest {
@@ -16,7 +20,7 @@ class CelsiusPresentationTest {
     private fun measurement() = NativeEquivalentThermometry.measure(Ht301Frame.parse(resource("/thermometry/warm-hand-settled.raw")))
     private val ranges get() = Properties().apply { load(resource("/presentation/ranges.properties").inputStream()) }
     private fun rangeParity(name: String, matrix: FloatArray) {
-        val range = CelsiusRenderer.autoRange(matrix)
+        val range = CelsiusRenderer.autoRange(matrix, referenceGeometry)
         assertEquals(name, ranges.getProperty("$name.lower").toDouble().toRawBits(), range.lower.toRawBits())
         assertEquals(name, ranges.getProperty("$name.upper").toDouble().toRawBits(), range.upper.toRawBits())
     }
@@ -30,21 +34,21 @@ class CelsiusPresentationTest {
     @Test fun isolatedOutliersDoNotDetermineAutoBounds() {
         val values = linear().apply { this[0] = -1000f; this[1] = 1000f }
         rangeParity("outliers", values)
-        val bounds = CelsiusRenderer.autoRange(values)
+        val bounds = CelsiusRenderer.autoRange(values, referenceGeometry)
         assertTrue(bounds.lower > 10); assertTrue(bounds.upper < 40)
     }
     @Test fun nonfiniteOrWrongSizeMatrixRejectedEvenWithLockedScale() {
         val settings = CelsiusPresentationSettings(automatic = false)
         for (bad in listOf(Float.NaN, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY)) {
             val values = linear().apply { this[0] = bad }
-            assertThrows(IllegalArgumentException::class.java) { CelsiusRenderer.render(values, settings) }
-            assertThrows(IllegalArgumentException::class.java) { CelsiusRenderer.autoRange(values) }
+            assertThrows(IllegalArgumentException::class.java) { CelsiusRenderer.render(values, referenceGeometry, settings) }
+            assertThrows(IllegalArgumentException::class.java) { CelsiusRenderer.autoRange(values, referenceGeometry) }
         }
-        assertThrows(IllegalArgumentException::class.java) { CelsiusRenderer.render(FloatArray(384 * 292), settings) }
+        assertThrows(IllegalArgumentException::class.java) { CelsiusRenderer.render(FloatArray(384 * 292), referenceGeometry, settings) }
     }
     @Test fun lockedBoundsAreExactAndIgnoreSceneExtrema() {
         val bounds = CelsiusRange(-5.5, 35.25)
-        assertEquals(bounds, CelsiusRenderer.effectiveRange(linear(), CelsiusPresentationSettings(automatic = false, locked = bounds)))
+        assertEquals(bounds, CelsiusRenderer.effectiveRange(linear(), referenceGeometry, CelsiusPresentationSettings(automatic = false, locked = bounds)))
         assertEquals(0, CelsiusRenderer.level(-100.0, bounds)); assertEquals(255, CelsiusRenderer.level(100.0, bounds))
         assertEquals(0, CelsiusRenderer.level(bounds.lower, bounds)); assertEquals(255, CelsiusRenderer.level(bounds.upper, bounds))
     }
@@ -60,7 +64,7 @@ class CelsiusPresentationTest {
     }
     @Test fun everyColorOfAllFivePalettesMatchesDesktopRgbReference() {
         val buffer = ByteBuffer.wrap(resource("/presentation/palettes.argb")).order(ByteOrder.LITTLE_ENDIAN)
-        for (palette in CelsiusPalette.entries) for (level in 0..255) assertEquals("${palette.label}[$level]", buffer.int, palette.argb(level))
+        for (palette in CelsiusPalette.entries) for (level in 0..255) assertEquals("${palette.name}[$level]", buffer.int, palette.argb(level))
     }
     @Test fun allRenderedPixelsMatchDesktopNormalizationAndPaletteForBothFixturesAndModes() {
         val colors = ByteBuffer.wrap(resource("/presentation/palettes.argb")).order(ByteOrder.LITTLE_ENDIAN)
@@ -69,14 +73,14 @@ class CelsiusPresentationTest {
             val values = matrix(name)
             val levels = resource("/presentation/$name.${if (automatic) "auto" else "locked"}.levels")
             for ((paletteIndex, palette) in CelsiusPalette.entries.withIndex()) {
-                val actual = CelsiusRenderer.render(values, CelsiusPresentationSettings(palette, automatic)).argb()
+                val actual = CelsiusRenderer.render(values, referenceGeometry, CelsiusPresentationSettings(palette, automatic)).argb()
                 for (index in actual.indices) assertEquals("$name auto=$automatic $palette pixel=$index",
                     expectedPalettes[paletteIndex][levels[index].toInt() and 255], actual[index])
             }
         }
     }
     @Test fun legendEndpointsAndFiveLabelsMatchRenderedRange() {
-        val result = CelsiusRenderer.render(linear(), CelsiusPresentationSettings(automatic = false, locked = CelsiusRange(25.0, 45.0)))
+        val result = CelsiusRenderer.render(linear(), referenceGeometry, CelsiusPresentationSettings(automatic = false, locked = CelsiusRange(25.0, 45.0)))
         val legend = result.legend()
         assertEquals(CelsiusPalette.INFERNO.argb(0), legend.first()); assertEquals(CelsiusPalette.INFERNO.argb(255), legend.last())
         assertEquals(listOf(25.0, 30.0, 35.0, 40.0, 45.0), result.range.ticks())
@@ -85,7 +89,7 @@ class CelsiusPresentationTest {
         val m = measurement(); val raw = m.raw14(); val temperatures = m.matrix(); val source = m.source.transportBytes()
         val high = m.high; val low = m.low; val trailer = m.trailerCenter
         for (palette in CelsiusPalette.entries) {
-            val result = CelsiusRenderer.render(m, CelsiusPresentationSettings(palette))
+            val result = CelsiusRenderer.render(Ht301ThermalMeasurement(m), CelsiusPresentationSettings(palette))
             result.argb().fill(0); result.legend().fill(0)
         }
         assertArrayEquals(raw, m.raw14()); assertArrayEquals(temperatures, m.matrix(), 0f); assertArrayEquals(source, m.source.transportBytes())
@@ -97,30 +101,30 @@ class CelsiusPresentationTest {
         ByteBuffer.wrap(raw).order(ByteOrder.LITTLE_ENDIAN).putShort((100 * 384 + 100) * 2, 5328)
         val next = NativeEquivalentThermometry.measure(Ht301Frame.parse(raw), 2)
         val pixel = NativePixel(100, 100)
-        assertEquals(first.source.pixel(100, 100), CursorInspection.read(pixel, first)!!.raw14)
-        assertEquals(5328, CursorInspection.read(pixel, next)!!.raw14)
-        assertEquals(next.temperature(100, 100), CursorInspection.read(pixel, next)!!.celsius, 0f)
-        assertNull(CursorInspection.read(pixel, null)); assertNull(CursorInspection.read(null, next))
+        assertEquals(first.source.pixel(100, 100), CursorInspection.read(pixel, Ht301ThermalMeasurement(first))!!.sample!!.value)
+        assertEquals(5328, CursorInspection.read(pixel, Ht301ThermalMeasurement(next))!!.sample!!.value)
+        assertEquals(next.temperature(100, 100), CursorInspection.read(pixel, Ht301ThermalMeasurement(next))!!.celsius, 0f)
+        assertNull(CursorInspection.read(pixel, null)); assertNull(CursorInspection.read(null, Ht301ThermalMeasurement(next)))
     }
 }
 
 /** All presentation overlays and inspection use the same fitted rectangle and native pixel centers. */
 class ImageCoordinateMapperTest {
     @Test fun cornersCenterAndFarInteriorEdgesSelectCorrectPixels() {
-        val mapper = ImageCoordinateMapper(384.0, 288.0)
+        val mapper = ImageCoordinateMapper(referenceGeometry, 384.0, 288.0)
         assertEquals(NativePixel(0, 0), mapper.toNative(DisplayPosition(0.0, 0.0)))
         assertEquals(NativePixel(383, 287), mapper.toNative(DisplayPosition(Math.nextDown(384.0), Math.nextDown(288.0))))
         assertEquals(NativePixel(192, 144), mapper.toNative(DisplayPosition(192.0, 144.0)))
         assertNull(mapper.toNative(DisplayPosition(384.0, 288.0)))
     }
     @Test fun boundaryRoundingUsesPixelCellsNotNearestPixel() {
-        val mapper = ImageCoordinateMapper(768.0, 576.0)
+        val mapper = ImageCoordinateMapper(referenceGeometry, 768.0, 576.0)
         assertEquals(NativePixel(0, 0), mapper.toNative(DisplayPosition(1.999, 1.999)))
         assertEquals(NativePixel(1, 1), mapper.toNative(DisplayPosition(2.0, 2.0)))
         assertEquals(NativePixel(383, 287), mapper.toNative(DisplayPosition(767.999, 575.999)))
     }
     @Test fun portraitLetterboxRejectsTouchesAboveAndBelowContent() {
-        val mapper = ImageCoordinateMapper(384.0, 1000.0)
+        val mapper = ImageCoordinateMapper(referenceGeometry, 384.0, 1000.0)
         assertEquals(356.0, mapper.content.top, 0.0)
         assertNull(mapper.toNative(DisplayPosition(100.0, 355.0)))
         assertNull(mapper.toNative(DisplayPosition(100.0, 644.0)))
@@ -128,7 +132,7 @@ class ImageCoordinateMapperTest {
         assertEquals(NativePixel(192, 144), mapper.toNative(DisplayPosition(192.0, 500.0)))
     }
     @Test fun landscapeLetterboxRejectsSideTouches() {
-        val mapper = ImageCoordinateMapper(1000.0, 288.0)
+        val mapper = ImageCoordinateMapper(referenceGeometry, 1000.0, 288.0)
         assertEquals(308.0, mapper.content.left, 0.0)
         assertNull(mapper.toNative(DisplayPosition(307.0, 100.0)))
         assertNull(mapper.toNative(DisplayPosition(692.0, 100.0)))
@@ -136,7 +140,7 @@ class ImageCoordinateMapperTest {
     }
     @Test fun everyNativePixelRoundTripsThroughMarkersAcrossResizedViewports() {
         for ((width, height) in listOf(384.0 to 288.0, 1080.0 to 2000.0, 2400.0 to 1080.0, 413.0 to 277.0)) {
-            val mapper = ImageCoordinateMapper(width, height)
+            val mapper = ImageCoordinateMapper(referenceGeometry, width, height)
             for (y in 0..287) for (x in 0..383) {
                 val pixel = NativePixel(x, y)
                 assertEquals(pixel, mapper.toNative(mapper.toDisplay(pixel)))
@@ -144,10 +148,10 @@ class ImageCoordinateMapperTest {
         }
     }
     @Test fun invalidAndOutsidePositionsNeverSilentlyClampToEdges() {
-        val mapper = ImageCoordinateMapper(384.0, 288.0)
+        val mapper = ImageCoordinateMapper(referenceGeometry, 384.0, 288.0)
         for (position in listOf(DisplayPosition(-.001, 0.0), DisplayPosition(0.0, -.001),
             DisplayPosition(384.0, 1.0), DisplayPosition(1.0, 288.0), DisplayPosition(Double.NaN, 1.0))) assertNull(mapper.toNative(position))
-        assertThrows(IllegalArgumentException::class.java) { ImageCoordinateMapper(0.0, 10.0) }
-        assertThrows(IllegalArgumentException::class.java) { NativePixel(384, 0) }
+        assertThrows(IllegalArgumentException::class.java) { ImageCoordinateMapper(referenceGeometry, 0.0, 10.0) }
+        assertThrows(IllegalArgumentException::class.java) { referenceGeometry.pixel(384, 0) }
     }
 }

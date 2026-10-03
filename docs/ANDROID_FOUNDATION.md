@@ -6,6 +6,10 @@
 > Session controls, timings and liveness criteria are unchanged. See
 > [ANDROID_THERMOMETRY.md](ANDROID_THERMOMETRY.md) and
 > [ANDROID_CELSIUS_PRESENTATION.md](ANDROID_CELSIUS_PRESENTATION.md).
+>
+> Current ownership is now the [integrated module architecture](CAMERA_MODULE_ARCHITECTURE.md).
+> The original USB/UVC pipeline below is the HT-301 implementation, not a mandatory
+> transport or image geometry for common UI/core. The module adapter preserves it.
 
 ## Scope and architecture
 

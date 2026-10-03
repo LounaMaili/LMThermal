@@ -4,6 +4,12 @@
 
 ## Scope and architecture
 
+This engine is HT-301-specific. Its original numerical implementation remains in
+place and is adapted by `Ht301ThermalMeasurement` for the generic optional
+`ThermalMeasurement` contract. Rich raw/calibration/trailer evidence is retained;
+common UI no longer consumes `RadiometricMeasurement` directly. See
+[CAMERA_MODULE_ARCHITECTURE.md](CAMERA_MODULE_ARCHITECTURE.md).
+
 The Kotlin `core/` engine ports the existing Desktop
 `native_equivalent_thermometry.py` operation-for-operation. It supports only native
 width 384, host range 120, lens 68, shutter fix 1.5 and full raw indices 0..16383.

@@ -3,20 +3,31 @@ package org.lmthermal.app
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.SystemClock
+import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import org.lmthermal.core.*
+import org.lmthermal.camera.*
+import org.lmthermal.core.CelsiusPalette
+import org.lmthermal.core.CelsiusPresentationSettings
+import org.lmthermal.core.CelsiusRange
+import org.lmthermal.core.CelsiusRenderer
+import org.lmthermal.core.CursorInspection
+import org.lmthermal.core.CursorReading
+import org.lmthermal.core.LatestFrameState
+import org.lmthermal.core.NativePixel
 
-/** One completed render and its source measurement are published together, never mixed between frames. */
-data class CelsiusPresentationSnapshot(val measurement: RadiometricMeasurement? = null,
+/** A completed render and its generic source measurement are published together; no protocol data is required. */
+data class CelsiusPresentationSnapshot(val measurement: ThermalMeasurement? = null,
     val bitmap: Bitmap? = null, val legend: Bitmap? = null,
-    val range: CelsiusRange? = null, val palette: CelsiusPalette? = null, val renderMs: Double = 0.0)
+    val range: CelsiusRange? = null, val palette: CelsiusPalette? = null, val renderMs: Double = 0.0,
+    val error: CameraErrorCode? = null)
 
-/** Presentation-only, cancellable latest-request worker; never executes transport or thermometry.
- * combine/collectLatest keep one in-flight render and replace obsolete pending inputs.
- * A generation/source check rejects work completed after a camera/settings change.
+/** Cancellable latest-request presentation worker, independent of transport/session/thermometry.
+ * Geometry comes from measurement data. Registered module callbacks preserve optional numerical diagnostics.
  */
-class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSnapshot>) {
+class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSessionState<Bitmap>>,
+    private val measurementEvidence: (ThermalMeasurement) -> Map<String, Any?> = { emptyMap() },
+    private val cursorEvidence: (CameraModuleId?, CursorReading) -> Map<String, Any?> = { _, _ -> emptyMap() }) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default.limitedParallelism(1))
     private val mutableSettings = MutableStateFlow(CelsiusPresentationSettings())
     val settings = mutableSettings.asStateFlow()
@@ -29,30 +40,43 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSna
     private var lastLog = 0L
     private var previousAvailable = false
     private var previousSettings = mutableSettings.value
+    private var selectedModule: CameraModuleId? = null
     private var skipped = 0L
 
     init {
         scope.launch {
             combine(camera, mutableSettings) { source, settings -> source to settings }.collectLatest { (source, settings) ->
+                source.module?.id?.let { id ->
+                    if (selectedModule != null && id != selectedModule) mutablePixel.value = null
+                    selectedModule = id
+                }
                 val measurement = source.measurement
                 if (measurement == null) {
                     latest.value = CelsiusPresentationSnapshot()
                     if (previousAvailable) evidence.record(mapOf("event" to "presentation_unavailable",
-                        "session_state" to source.session.state.name, "reason" to source.measurementReason,
+                        "session_state" to (source.status.detail?.machineCode ?: source.lifecycle.name),
+                        "reason" to "Session not ready", "reason_code" to source.status.code.name,
+                        "module_id" to source.module?.id?.value,
                         "monotonic_ms" to SystemClock.elapsedRealtime(), "celsius_legend" to false, "cursor_celsius" to null))
                     previousAvailable = false
                     return@collectLatest
                 }
                 val start = SystemClock.elapsedRealtimeNanos()
-                val rendered = withContext(Dispatchers.Default) {
-                    val colors = CelsiusRenderer.render(measurement, settings)
-                    ensureActive()
-                    val bitmap = Bitmap.createBitmap(colors.argb(), Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT, Bitmap.Config.ARGB_8888)
-                    val legend = Bitmap.createBitmap(colors.legend(), 256, 1, Bitmap.Config.ARGB_8888)
-                    CelsiusPresentationSnapshot(measurement, bitmap, legend, colors.range, colors.palette,
-                        (SystemClock.elapsedRealtimeNanos() - start) / 1e6)
+                val rendered = try {
+                    withContext(Dispatchers.Default) {
+                        val colors = CelsiusRenderer.render(measurement, settings)
+                        ensureActive()
+                        val bitmap = Bitmap.createBitmap(colors.argb(), measurement.geometry.width, measurement.geometry.height, Bitmap.Config.ARGB_8888)
+                        val legend = Bitmap.createBitmap(colors.legend(), 256, 1, Bitmap.Config.ARGB_8888)
+                        CelsiusPresentationSnapshot(measurement, bitmap, legend, colors.range, colors.palette,
+                            (SystemClock.elapsedRealtimeNanos() - start) / 1e6)
+                    }
+                } catch (cancelled: CancellationException) { throw cancelled }
+                catch (failure: Exception) {
+                    Log.e("LMThermalPresentation", "Module presentation data rejected", failure)
+                    latest.value = CelsiusPresentationSnapshot(error = CameraErrorCode.MODULE_DATA_INVALID)
+                    return@collectLatest
                 }
-                // Rendering cannot restore stale Celsius after invalid/detached/closed state.
                 if (!scope.isActive || camera.value !== source || mutableSettings.value != settings) { skipped++; return@collectLatest }
                 var published = false
                 latest.updateIf({ scope.isActive && camera.value === source && mutableSettings.value == settings }) {
@@ -64,42 +88,47 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSna
                 if (!previousAvailable || previousSettings != settings || now - lastLog >= 2000) {
                     evidence.record(mapOf("event" to "render", "sequence" to measurement.sequence,
                         "monotonic_ms" to now, "render_ms" to rendered.renderMs,
-                        "palette" to settings.palette.label, "automatic" to settings.automatic,
-                        "range" to listOf(rendered.range!!.lower, rendered.range.upper),
+                        "palette" to PaletteResources.evidenceName(settings.palette), "palette_id" to settings.palette.name,
+                        "automatic" to settings.automatic, "range" to listOf(rendered.range!!.lower, rendered.range.upper),
                         "matrix_range" to listOf(measurement.matrixMinimum, measurement.matrixMaximum),
-                        "trailer_center_c" to measurement.trailerCenter.celsius,
-                        "literal_center_c" to measurement.literalCenter.celsius,
-                        "high_c" to measurement.high.celsius, "high_xy" to listOf(measurement.high.x, measurement.high.y),
-                        "low_c" to measurement.low.celsius, "low_xy" to listOf(measurement.low.x, measurement.low.y),
-                        "cursor" to cursorFields(CursorInspection.read(mutablePixel.value, measurement)),
-                        "callback_fps" to source.fps, "replaced" to source.replaced,
-                        "malformed" to source.malformed, "superseded_completed_renders" to skipped,
-                        "warning" to NativeEquivalentThermometry.WARNING))
+                        "high_c" to measurement.high.celsius, "high_xy" to listOf(measurement.high.pixel.x, measurement.high.pixel.y),
+                        "low_c" to measurement.low.celsius, "low_xy" to listOf(measurement.low.pixel.x, measurement.low.pixel.y),
+                        "cursor" to cursorFields(CursorInspection.read(mutablePixel.value, measurement), measurement.provenance.moduleId),
+                        "module_id" to measurement.provenance.moduleId.value, "camera_model" to measurement.provenance.modelId,
+                        "native_width" to measurement.geometry.width, "native_height" to measurement.geometry.height,
+                        "capabilities" to mapOf("preview" to source.capabilities?.preview,
+                            "temperature_measurement" to source.capabilities?.temperatureMeasurement,
+                            "explicit_measurement_initialization" to source.capabilities?.explicitMeasurementInitialization,
+                            "touch_inspection" to source.capabilities?.touchInspection),
+                        "callback_fps" to source.statistics.callbackFps, "replaced" to source.statistics.replaced,
+                        "malformed" to source.statistics.malformed, "superseded_completed_renders" to skipped) +
+                        measurementEvidence(measurement))
                     lastLog = now
                 }
                 previousAvailable = true; previousSettings = settings
             }
         }
     }
-    /** Changing palette/range only changes a render request, never the measurement/camera. */
+    /** These methods alter presentation only; no module action or measurement input is touched. */
     fun setPalette(palette: CelsiusPalette) { mutableSettings.value = mutableSettings.value.copy(palette = palette) }
     fun setAutomatic(automatic: Boolean) { mutableSettings.value = mutableSettings.value.copy(automatic = automatic) }
-    /** Caller must construct validated finite bounds before applying; invalid text does not affect current rendering. */
     fun setLocked(range: CelsiusRange) { mutableSettings.value = mutableSettings.value.copy(locked = range, automatic = false) }
-    /** Store native coordinates. Displayed readings are recalculated from the latest completed measurement. */
+    /** Retain a geometry-validated pixel while current readings follow completed live measurements. */
     fun select(pixel: NativePixel) {
-        if (mutablePixel.value == pixel) return
+        val geometry = camera.value.geometry ?: return
+        if (!geometry.contains(pixel) || mutablePixel.value == pixel) return
         mutablePixel.value = pixel
         val selectedAt = SystemClock.elapsedRealtime()
         val displayed = if (camera.value.measurement != null) state.value.measurement else null
         val cursor = CursorInspection.read(pixel, displayed)
         scope.launch { evidence.record(mapOf("event" to "touch", "sequence" to displayed?.sequence,
-            "monotonic_ms" to selectedAt, "native_xy" to listOf(pixel.x, pixel.y),
-            "reading" to cursorFields(cursor))) }
+            "module_id" to displayed?.provenance?.moduleId?.value, "monotonic_ms" to selectedAt,
+            "native_xy" to listOf(pixel.x, pixel.y), "reading" to cursorFields(cursor, displayed?.provenance?.moduleId))) }
     }
-    private fun cursorFields(reading: CursorReading?): Map<String, Any>? = reading?.let {
-        mapOf("x" to it.pixel.x, "y" to it.pixel.y, "raw14" to it.raw14, "celsius" to it.celsius)
+    private fun cursorFields(reading: CursorReading?, moduleId: CameraModuleId?): Map<String, Any?>? = reading?.let {
+        mapOf("x" to it.pixel.x, "y" to it.pixel.y, "celsius" to it.celsius,
+            "sample" to it.sample?.let { sample -> mapOf("encoding_id" to sample.encodingId, "value" to sample.value) }) +
+            cursorEvidence(moduleId, it)
     }
-    /** The camera ViewModel owns this worker; it cannot outlive the source or revive a closed frame. */
     fun dispose() { scope.cancel(); latest.value = CelsiusPresentationSnapshot() }
 }

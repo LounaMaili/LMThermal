@@ -4,6 +4,12 @@
 
 ## Data path and validity
 
+The shared renderer/presenter now consumes the optional generic `ThermalMeasurement`
+contract and its explicit `NativeImageGeometry`. The following native raw14/trailer
+facts describe the unchanged HT-301 adapter. Other modules need neither raw samples
+nor thermometry. Architecture and ownership:
+[CAMERA_MODULE_ARCHITECTURE.md](CAMERA_MODULE_ARCHITECTURE.md).
+
 The measurement path remains full native raw14 → native-equivalent LUT → Celsius
 matrix. Presentation consumes an owned matrix copy; it cannot change image words,
 calibration, the LUT, session gates, controls or measurement extrema.
@@ -37,7 +43,8 @@ The pinned oracle used OpenCV 5.0.0 and NumPy 2.5.3. Android embeds only the num
 color tables and has no Python/OpenCV runtime dependency. BGR-to-RGB conversion is
 performed during export, before packing ARGB.
 
-Auto uses NumPy linear 2nd/98th percentiles of all 384×288 finite Celsius values.
+Auto uses NumPy linear 2nd/98th percentiles of all finite Celsius values in the supplied
+geometry (384×288 for HT-301).
 Float32 endpoint subtraction and Double interpolation preserve the Desktop rounding
 boundaries. If the percentile span is below 1 °C, bounds expand symmetrically to 1 °C
 around their midpoint. Outliers remain measurements even when their colors clip.
@@ -66,7 +73,8 @@ sample. Red high and cyan low markers use measurement trailer extrema coordinate
 and this same mapper. Trailer center remains separate from literal `(192,144)` in
 optional diagnostics; no center-region calculation is inferred.
 
-The immutable matrix remains `temperature[y*384+x]`, x 0..383/y 0..287. No transpose,
+Generic indexing is `temperature[y*geometry.width+x]`; the immutable HT-301 matrix
+remains `temperature[y*384+x]`, x 0..383/y 0..287. No transpose,
 rotation or mirroring is applied. Portrait and landscape use different layouts,
 with one mapping implementation. Preferred final viewing orientation remains a
 presentation decision; changing phone orientation retains the existing lifecycle
@@ -107,6 +115,11 @@ palette and all full-image pixels for two matrices × two range modes × five pa
 Pixel instrumentation repeats full color parity/mapping and exercises the actual
 latest render worker's settings replacement and unavailable/disposal cancellation.
 Test fixtures/dependencies are excluded from the product APK.
+
+The module foundation adds alternate-resolution mapping/rendering tests and Android
+160×120 simulation/optional-sample presentation tests. Core palette enums contain
+stable IDs, while Android resource bindings supply visible labels. Diagnostic palette
+aliases remain stable and reports add module/model/geometry/capability metadata.
 
 ROI, export, logging, recording, alternate lens/range support and independently
 measured physical validation remain later milestones.

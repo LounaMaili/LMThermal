@@ -459,3 +459,127 @@ A hand/background check validates relative response and interaction only. Indepe
 measured surface targets remain necessary for absolute-accuracy assessment. Recommended
 next product milestone is native-coordinate ROI statistics, retaining these mapping and
 measurement-validity rules; exports/recording and final orientation presentation remain later work.
+
+## Integrated camera-module regression — 2026-10-03
+
+Branch: `refactor/camera-module-foundation`, based on
+`3b743baaad8bbf5c3977b92de53a4b366300cddd`. Contracts and ownership are documented
+in [CAMERA_MODULE_ARCHITECTURE.md](CAMERA_MODULE_ARCHITECTURE.md). Numeric-only
+evidence, APK hash, settings/calibration, stages and comparison with the previous
+accepted run are saved in
+[2026-10-03-camera-module-foundation.json](diagnostics/2026-10-03-camera-module-foundation.json).
+
+The existing partial module refactor, resource migration, tests and hardware reports
+were preserved when resuming. No transport/session/thermometry implementation changed
+after the accepted live regression. The **6.354-second run remains valid**; completing
+documentation/checklist and rerunning automated tests did not require another physical
+capture or initialization. No new image/raw fixture or scene hash was saved.
+
+### Automated checks
+
+- **147 JVM tests passed**: the original 116 regressions plus 31 registry, geometry,
+  capabilities, simulation, ownership/release, provenance and structured-error tests.
+- **Nine Pixel 8 instrumentation tests passed** on Android 17/arm64-v8a: the original
+  six ART thermometry/color/renderer tests plus three module tests. The new tests open
+  only a non-USB 160×120 simulator or synthetic matrix source, never the attached HT-301.
+- Exact Desktop parity remains **131072 LUT entries** and **2211840 rendered pixels**
+  compared on each runtime, with zero differences. No fixture or assertion was weakened.
+- Debug APK/test APK and lint passed: **zero lint errors / nine existing warnings**.
+  `:app:testDebugUnitTest` is included in the final checks; it has no app JVM test sources.
+- The shared-boundary check passed for 12 sources. `git diff --check` passed.
+  No runtime dependency, LUT cache or additional physical camera module was added.
+
+### Read-only open, initialization and counters
+
+Android enumerated Infiray/T3-317-13 VID/PID `1514:0001`. Registry selection bound
+that exact identity. Operator confirmed grayscale DISPLAY preview, prompt movement,
+usable aiming and no Celsius legend/readings. Logs show complete 224256-byte frames,
+221184-byte image plus 3072-byte trailer and roughly 25 callback FPS. Discovery/open
+sent no radiometric initialization control. Background released the stream normally.
+
+Two distinct explicit display-baseline runs were preserved. The later run appeared
+in the saved logs before completion of the operator checks; its physical reconnect
+chronology is not inferred. Both have three fresh display baseline frames and exactly
+these SET requests, each returning two bytes:
+
+| Request | Bytes | Evidence gate |
+|---|---|---|
+| 32772 | `04 80` | Genuine raw14, 15 receipt discards and distinct valid stage frames |
+| 32800 | `20 80` | Normal range, another 15 receipt discards and distinct valid stage frames |
+| 32768 | `00 80` | Shutter settling: 75 valid frames, then five changing valid frames |
+
+GET_CUR was not used or claimed as a readiness gate. There was no command added by
+the module adapter, no bit masking, and no fixed-delay-only readiness.
+
+| Observation | First explicit run | Later explicit run | Previous accepted runs |
+|---|---:|---:|---|
+| Time to ready | 6.271 s | 6.354 s | 6.345 / 6.355 / 6.351 s |
+| Discarded frames | 105 (15+15+75) | 105 (15+15+75) | Same policy |
+| Changing frames at ready | 5 | 5 | 5 |
+| Session held / rejected at ready | 30 / 85 | 30 / 83 | Held 30; similar settling rejections |
+| Session malformed at ready | 5 | 3 | Separate from native malformed |
+| Native malformed at ready | 31 | 3 | Ready-stream totals 2 / 4 / 5 |
+| Native replacements at ready | 26 | 0 | Ready-stream totals 2 / 0 / 2 |
+| Replacements during sampled ready stream | 28, unchanged | 2, unchanged | 2 / 0 / 2 |
+| Sampled render median | 24.895 ms | 25.045 ms | Combined 24.952 ms |
+| Sampled warmed thermometry median | 18.368 ms | 17.904 ms | Combined 18.674 ms |
+
+The first range transition produced a larger native malformed/replacement burst.
+It did not recur in the later display-baseline run; ready-stream malformed counters
+stayed fixed in both runs. Its **precise cause is unknown**. These observations do
+not establish a persistent timing/liveness regression or justify a protocol change.
+The unchanged gates rejected transient data and delayed measurement until valid
+frames. Sampled timings include the same scopes as the previous report, not per-frame
+deadlines or a claim that every callback was rendered.
+
+First ready raw/matrix ranges were `5375..5472` / `27.440..29.614 °C` and
+`5610..5932` / `32.685..39.402 °C` respectively. Full inputs and original trailer vs
+literal-center values are retained in the report; no center-region algorithm is inferred.
+
+### Presentation, touch and conservative reopen
+
+Operator confirmed recognizable ready Celsius output; all five palettes; Locked
+25–45 °C and return to Auto; aligned touch/high/low markers; warmer hand readings
+than background; color-only effects of presentation controls; and responsive interaction.
+The saved render records contain Inferno Auto/Locked plus one valid touch. Other
+live palette changes are operator confirmation supported by exact JVM/ART goldens,
+not claimed as five distinct persisted palette-key samples.
+
+The recorded touch at native `(210,145)` used original raw14 `5841` and native-equivalent
+`37.6327 °C`, with namespaced `ht301.raw14` sample evidence and the legacy `raw14` key.
+Module/model/dimensions/capabilities and separate trailer/literal center are present
+in numeric renders. The visible accuracy warning remains explicit.
+
+Close cleared colors, legend, cursor temperature and high/low. Reopen without unplug
+or initialization stayed `RAW14_UNSETTLED`, with a grayscale preview and no temperatures.
+Ten sampled reopened measurements were unavailable. The bounded reopen log contains
+zero initialization/SET events. Both close paths logged native stream release, and
+no module-ownership errors were logged. Native coordinates remain 384×288. No separate
+live phone-rotation acceptance or unsafe USB fault injection is claimed.
+
+### Issue #1 acceptance checklist
+
+All seven [issue #1](https://github.com/LounaMaili/LMThermal/issues/1) acceptance
+criteria are **completed** and ready for review/closure; the issue remains open.
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Contract/registry responsibilities, capabilities, states and data lifetime documented | Completed | Architecture document; `CameraContract`, registry and owner KDoc |
+| HT-301 adapted without test/hardware regression | Completed | Original numerical/color parity retained; Pixel initialization, presentation and reopen regression above |
+| Different simulated dimensions/capabilities prove common core/UI independence | Completed | 160×120 preview-only module, generic matrix/mapper tests, Pixel simulator/presenter tests and boundary check |
+| Selection, unknown/ambiguous identities, release and sole active session verified | Completed | Pure registry tests; awaited replacement, cancellation/detach/background and release-failure tests; Pixel close/reopen |
+| Future module addition documented without HT protocol edits or shared UI duplication | Completed | Module addition guide and composition-root/resource binding contract |
+| README/roadmap/specification/architecture/changelog updated on a dedicated branch, precise simultaneous-acquisition exclusion | Completed | Updated documents and `refactor/camera-module-foundation` |
+| Real-model support limits and hardware/research requirements explicit | Completed | Only HT-301 validated; simulator not commercial support; future-model guide |
+
+Large legacy HT-specific source moves are intentionally deferred, as permitted by
+the milestone. They do not expose HT protocol types through the common contract.
+No second commercial driver or dynamic plugin is added.
+
+Issue #2 remains open. Next recommended milestone is French/English resources,
+language/system-locale policy and persisted selection, complete legacy debug-label
+migration, plurals/fallback/pseudolocale tests and locale-recreation regression proving
+no automatic controls. Stable IDs, structured messages and resource namespaces are
+prepared here. Native ROI/product features remain separate work.
+
+**Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**

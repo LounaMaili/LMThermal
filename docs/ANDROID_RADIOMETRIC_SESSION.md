@@ -24,8 +24,12 @@ No LUT, Celsius or independent physical-accuracy claim is made.
 `core/RadiometricSession` is a plain JVM event-driven component. It receives immutable
 frames/inspections, a monotonic clock and a narrow `RadiometricControl` interface.
 It owns session decisions, independently of acquisition, preview normalization and Compose.
-`CameraController` owns one fresh session per open connection on the existing serialized
-I/O worker. The native callback and StateFlow still each retain only the latest payload/state.
+`Ht301CameraController` (originally `CameraController`) owns one fresh protocol session
+per open connection on the existing serialized I/O worker. The native callback and
+StateFlow still each retain only the latest payload/state. Application-level module
+selection and awaited source release use the separate
+[camera session owner](CAMERA_MODULE_ARCHITECTURE.md); the HT-301 protocol gates below
+are unchanged.
 
 **Connect / Open**, attach, launch, foreground, recreation and raw14 discovery never send
 setting writes. Only **Initialize radiometric** submits a generation-bound request; duplicate
