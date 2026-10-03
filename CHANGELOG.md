@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (Focused implementation guidance — 2026-10-03)
+- Added project-specific guidance inspired by Ponytail: trace affected callers, reuse validated/existing components and platform facilities, limit unnecessary dependencies and review each diff for redundant work.
+- Kept readability, architectural boundaries, golden/numerical parity and applicable real-device validation authoritative; explicitly preserved requested camera-module and internationalization work.
+- Required measured evidence for runtime optimizations. Adopted development guidance only, with no new runtime dependency or plugin hooks.
+
 ### Added (Android Celsius presentation — 2026-10-03)
 - Added JVM-testable Desktop-equivalent White hot, Black hot, Inferno, Iron-like/HOT and Turbo palettes with exact 2nd/98th percentile Auto range, centered minimum 1 °C span, finite exact Locked bounds and five-tick Celsius legend.
 - Added native-coordinate tap/drag inspection and persistent selected pixel with current raw14/Celsius, plus a shared fitted-image/letterbox mapper for touch, cursor and high/low overlays. Native matrices and orientation are unchanged.

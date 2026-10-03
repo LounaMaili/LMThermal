@@ -227,6 +227,51 @@ Do not automatically send them simply because the camera was opened.
 
 Read the current Desktop session implementation and `docs/RADIOMETRIC_INITIALIZATION.md` before changing this sequence, timing, readback validation, or readiness logic.
 
+## Efficient implementation and focused review
+
+The guidance below adapts useful ideas from [Ponytail](https://github.com/DietrichGebert/ponytail)
+to this project. It complements the repository rules, readability requirements and
+hardware-validation safeguards; those requirements take precedence.
+
+Before implementing a change:
+
+- Trace the affected data flow, lifecycle and relevant callers. Fix a shared root
+  cause at the appropriate boundary, while preserving intentional differences
+  between callers or camera models.
+- Look for existing repository components, validated Desktop behavior, standard
+  library functions, Android/AndroidX facilities and installed dependencies before
+  adding code. Reuse only when data semantics, ownership and lifecycle requirements
+  match; a convenient image API cannot replace exact-payload acquisition.
+- Implement the smallest complete, readable solution for the requested behavior.
+  Avoid unused wrappers, duplicate state, speculative configuration and parallel
+  implementations of the same responsibility. Add a dependency only for a missing
+  capability that existing components cannot reasonably provide, and document it.
+- Preserve the existing acquisition/parsing/session/thermometry/presentation
+  boundaries. A focused interface is justified by a real contract or invariant;
+  fewer files or fewer lines are not goals that override those boundaries.
+- Requested camera modules ([#1](https://github.com/LounaMaili/LMThermal/issues/1))
+  and internationalization ([#2](https://github.com/LounaMaili/LMThermal/issues/2))
+  are approved product requirements, not speculative extras. Plan the necessary
+  contracts progressively; this guidance does not claim those features are implemented.
+  Prefer Android translation resources to a custom translation engine.
+
+During diff review:
+
+- Remove unrelated changes, redundant code and unnecessary dependencies. Check all
+  affected callers rather than repairing only the path named in a bug report.
+- Prefer clear names and focused functions to compressed one-liners. Keep comments
+  that explain camera behavior, invariants, ownership or numerical choices.
+- Never reduce calibration checks, frame/session validity gates, data-loss handling,
+  security, accessibility or lifecycle cancellation merely to shorten a change.
+- Use the existing test infrastructure and meaningful checks for changed behavior.
+  Golden fixtures, full numerical parity and real-device tests remain required where
+  applicable; there is no arbitrary one-test limit or ban on fixtures. Documentation-only
+  changes can be verified by reviewing their diff, links and preservation of existing rules.
+- Measure a concrete bottleneck before adding an optimization, cache or concurrency
+  mechanism. Verify the result on an appropriate workload while preserving numerical
+  parity, bounded buffering and current-frame validity. Less code alone does not prove
+  better runtime performance.
+
 ## Code readability and human maintainability
 
 The codebase must remain understandable to a human developer who did not participate in the original reverse engineering.
