@@ -252,3 +252,105 @@ physical accuracy is established by these tests.
 
 Final checks: **66 JVM tests passed**, debug build passed, lint passed with zero
 errors and seven inherited warnings, and `git diff --check` passed.
+
+## Kotlin thermometry parity and live measurement — 2026-10-03
+
+Base `main`: `d072a3faadb1c7940a84a3ab2a05aa67ef4f2a03`; focused branch
+`feat/android-thermometry-parity`. Pixel 8 / Android 17 / arm64, wireless ADB plus
+HT-301 USB Host. Pairing was retained; enabling/restarting Wireless Debugging restored
+mDNS without new pairing. Product and instrumentation APKs were installed before testing.
+No private scene payloads were saved. The report uses labelled compact frame/measurement columns (dotted names identify nested numerical trace fields). Numeric evidence is retained in
+[2026-10-03-android-thermometry.json](diagnostics/2026-10-03-android-thermometry.json).
+
+**Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+### Offline and Android-runtime numerical acceptance
+
+Six existing sanitized fixtures (initial, first raw14, range, shutter-held, settled-room,
+settled-hand) and two synthetic arithmetic cases each compare **all 16384 entries**.
+The synthetic effective-distance-60 branch and uint16 base wrap are derived in memory.
+Five real tables first match existing executed official x86_64 native reference tables;
+hand/synthetic goldens come from Desktop. Intermediate float32 bits, finite count and
+NaN pattern are checked. Full settled-room/hand matrices compare **110592 pixels each**,
+all raw indices, min/max, literal/trailer centers and high/low values/coordinates.
+
+JVM and actual Pixel 8 ART: **zero differing finite bits, zero maximum absolute error,
+zero ULP difference, identical NaN pattern** for all tables and matrices. NaN payload/sign
+bits are not a numerical invariant. Two camera-free instrumentation tests passed on the
+phone before live integration testing. No libm tolerance was relaxed. This is Kotlin/ART
+parity with the established references, not execution of the original APK ARM binary.
+Fixture provenance, reference/source hashes, arithmetic boundaries and supported limits:
+[ANDROID_THERMOMETRY.md](ANDROID_THERMOMETRY.md).
+
+### Fresh display and explicit session
+
+The operator physically reconnected the camera and confirmed DISPLAY with no temperatures.
+Aiming remained grayscale, native 384×288, near 25 callbacks/s. Opening sent no control.
+The operator tapped Initialize once. Existing sequence/timings/liveness were unchanged:
+
+| Control | Actual bytes | Host start / completion ms |
+|---|---:|---|
+| 32772 | 2 | 606889388 / 606889391 |
+| 32800 | 2 | 606890717 / 606890739 |
+| 32768 | 2 | 606891902 / 606891904 |
+
+Three fresh baseline frames spanned 32776–33014 display words. First stage discarded
+15 receipts and qualified two changing raw14 images; range repeated this policy.
+Shutter discarded **75 valid frames**, with **30 held images** observed, then required
+five changing summary-consistent frames. Structural ready at sequence3808 in **6.347 s**;
+measurement became available for that same frame, raw5491–5738, all selected values finite.
+First matrix28.143755–33.471970 °C, trailer/literal center5521/28.806215 °C;
+high5738 at(170,0), low5491 at(310,227). Readiness was not a fixed elapsed-frame assumption.
+
+At ready: session rejected83 total (baseline2), held30, malformed4; native/parser
+malformed/rejection counters4 total, +2 during initialization. Counters overlap and
+include deliberate discards/awaiting-live evidence; they must not be added. Pending
+replacements were1 before measurement; the cold first measurement increased them to3,
+and they remained3 through the subsequent sampled ready run. Supplemental callback
+counters can advance during measurement; the measurement `sequence` identifies its actual
+source frame. Measurement `monotonic_ms` is receipt time, preceding computation.
+
+### Qualitative live scene and performance
+
+The operator confirmed a hand against cooler background, responsive numeric updates,
+red high marker on the hand, cyan low marker on cooler background and responsive app.
+A representative high-center sample at sequence4965:
+
+| Quantity | Native-equivalent result |
+|---|---|
+| Raw range | 5455–6007 |
+| Full matrix | 27.270960–38.948128 °C |
+| Trailer center | index5966 / 38.124280 °C |
+| Literal `(192,144)` | index5967 / 38.144432 °C |
+| High | index6007 / 38.948128 °C at(118,52) |
+| Low | index5455 / 27.270960 °C at(334,263) |
+
+A later cool scene had much smaller/lower matrix range. All86 sampled available
+measurements passed finite observed-index and summary consistency gates; inputs/trace
+are in the report. Scene change is qualitative evidence only, with no assumed hand
+reference temperature or absolute-accuracy conclusion.
+
+A fresh lookup is built every frame: **no cache**. Full measurement evaluation includes
+inspection, parameters, LUT, matrix and summaries. Cold first call **116.491 ms**;
+85 later logged samples **10.203–21.189 ms**, median **14.676 ms**. These are sampled
+worker timings, not isolated LUT benchmarks or guaranteed latency bounds. Callback rate
+24.876–25.316 FPS; operator confirmed responsiveness. The cold start caused two pending
+frame replacements, then no further replacements were observed in the sampled ready run.
+Calibration/FPA inputs changed during streaming and were recomputed each frame.
+
+### Stale-value/lifecycle acceptance
+
+Operator confirmed Close removed Celsius and markers. Close/Open without reconnect or
+initialization produced existing RAW14_UNSETTLED with temperatures unavailable; logs
+confirm unavailable measurements, changing raw14 and no control replay. Final normal
+Close cleared preview and readings; UI dump showed DISCONNECTED, zero frame size,
+Temperatures unavailable and the warning. Worker-release logs confirm shutdown.
+JVM regressions cover held/demoted, invalid calibration/LUT-selected NaN, missing frame
+and disconnected gates without retaining previous Celsius. No unsafe USB fault or
+live calibration corruption was injected, and no post-ready held interval was forced.
+
+Final checks: **95 JVM tests passed**, **2 Pixel 8 instrumentation tests passed**,
+debug build passed, lint **zero errors / nine warnings** (seven inherited plus two
+newer-version notices for test-only dependencies), `git diff --check` passed.
+Next milestone: native-coordinate touch inspection/Celsius presentation using this
+measurement model; independent controlled surface-temperature accuracy remains separate.

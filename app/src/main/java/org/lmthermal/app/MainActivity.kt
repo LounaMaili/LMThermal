@@ -9,6 +9,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import org.lmthermal.core.NativeEquivalentThermometry
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -76,14 +80,32 @@ class MainActivity : ComponentActivity() {
                         Text("Session: ${state.session.state} · ${state.session.stage}")
                         Text("Baseline ${state.session.baseline}/${RadiometricSession.BASELINE_FRAMES} · discarded ${state.session.discarded} · shutter ${state.session.shutterFrames}/${RadiometricSession.SHUTTER_DISCARD} · live ${state.session.live}/${RadiometricSession.READY_LIVE}")
                         state.session.reason?.let { Text("Session evidence: $it") }
-                        state.bitmap?.let { Image(it.asImageBitmap(), "Native thermal aiming preview",
-                            Modifier.fillMaxWidth().aspectRatio(Ht301Layout.WIDTH.toFloat() / Ht301Layout.IMAGE_HEIGHT)) }
+                        state.bitmap?.let { bitmap ->
+                            Box(Modifier.fillMaxWidth().aspectRatio(Ht301Layout.WIDTH.toFloat() / Ht301Layout.IMAGE_HEIGHT)) {
+                                Image(bitmap.asImageBitmap(), "Native thermal aiming preview", Modifier.matchParentSize())
+                                // Presentation-only markers scale native coordinates; the matrix is never transformed.
+                                state.measurement?.let { measurement ->
+                                    Canvas(Modifier.matchParentSize()) {
+                                        for ((point, color) in listOf(measurement.high to Color.Red, measurement.low to Color.Cyan)) {
+                                            val position = Offset((point.x!! + .5f) * size.width / Ht301Layout.WIDTH,
+                                                (point.y!! + .5f) * size.height / Ht301Layout.IMAGE_HEIGHT)
+                                            drawCircle(color, radius = 5.dp.toPx(), center = position, style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         if (state.bitmap == null) Text("No valid preview frame")
                         Text("${state.mode} · ${state.size} bytes · words ${state.range}")
                         Text("Acquisition %.1f FPS · received %d · parser rejected %d · replaced %d · malformed payloads %d".format(state.fps, state.received, state.invalid, state.replaced, state.malformed))
                         state.reason?.let { Text("Frame evidence: $it") }
                         Text("Transport 384×292 · image 384×288 · four trailer rows retained")
-                        Text("Aiming preview. Readiness qualifies structural/live raw14 only. No Celsius or physical accuracy claim.")
+                        state.measurement?.let { m ->
+                            Text("Trailer center %.3f °C · literal (192,144) %.3f °C".format(m.trailerCenter.celsius, m.literalCenter.celsius))
+                            Text("Matrix %.3f..%.3f °C".format(m.matrixMinimum, m.matrixMaximum))
+                            Text("High %.3f °C at (%d,%d) · low %.3f °C at (%d,%d)".format(m.high.celsius, m.high.x, m.high.y, m.low.celsius, m.low.x, m.low.y))
+                        } ?: Text("Temperatures unavailable: ${state.measurementReason}")
+                        Text(NativeEquivalentThermometry.WARNING)
                     }
                 }
             }

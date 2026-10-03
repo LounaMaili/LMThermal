@@ -1,0 +1,67 @@
+{
+  "oracle": "LMThermal-Desktop/native_equivalent_thermometry.py",
+  "source_sha256": "b5231e4799368bbba880978d3ab304bd8fdc19acf8c9cafb0355411d99e687f6",
+  "artifacts": {
+    "radiometric-initial.lut.f32": "bd0997579c202c924236a1bfb1e29108e337a09ab51ec6a270813c875f877af5",
+    "radiometric-initial.properties": "45f5287054853b38d530ae28f6adbf7600037cc0ee5c72f699a0613fdd8e4700",
+    "radiometric-initial.raw": "aae1437a8e5d1f0f7dce03d9c14687545ad27bcc0ea3362d4664b5a5ba337815",
+    "radiometric-room-first.lut.f32": "60c1321bda4183c1e0d5f6a262f2a982f79be3d302e5e6cb4c68a10a6c0c055f",
+    "radiometric-room-first.properties": "ccee11fe49760fbf8524a196184016ad16ecb3b31c0e018b01011acd5c68cad7",
+    "radiometric-room-first.raw": "8e5eb648c7dd632aae7810e89b86633ef79a5cf490b33ff364171cd0c0e80747",
+    "radiometric-room-range.lut.f32": "45b6b4121adf3d416eafddfc5fbfe0755ab463328c7d2abf0169a87d4f9f781e",
+    "radiometric-room-range.properties": "2bdf0686eb1b7e442236ab81c7f754c03d905c95b8770843bf34642862d5d530",
+    "radiometric-room-range.raw": "02c9ef0090da53e322265a36e92bbc53717433951941732838404633db96242d",
+    "radiometric-room-settled.lut.f32": "35459264b8d25d195b0bf18775152408924d7fa0f326dda54404924ecb6eeeee",
+    "radiometric-room-settled.matrix.f32": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+    "radiometric-room-settled.properties": "2c7d8d09f254a15cb7452f26c60483f5aa946397f9dc616a61ef118346e19892",
+    "radiometric-room-shutter-held.lut.f32": "b4594c5df7b60cd34c4e9c41bab3e318b2b2004bcd215602fbc6a6ba801b0b0a",
+    "radiometric-room-shutter-held.properties": "eb9c293555b98f5a69a549ffc374a97a39a4c40b87359d0c65d06879773a9b89",
+    "radiometric-room-shutter-held.raw": "fc1de1c0993e05c851f5aa80032d4b61d66677a2510f44c511030bc60426e2da",
+    "synthetic-base-wrap.lut.f32": "d5568f5091ec8295a1e80e8271f05312ff02762562747c6448bbe95b8bf6fd5e",
+    "synthetic-base-wrap.properties": "e935f2c19beae6810cb26d350843255b30f03bce15f302db5d928ed27109655a",
+    "synthetic-long-distance.lut.f32": "c3bb7ab527b3e9cfd014be8b672556b28f565a5265da4a5038f86cc1a1246522",
+    "synthetic-long-distance.properties": "f531602223f8e8b64060316b6f6074cf991e52bd5ba646959f2e032541c783ed",
+    "warm-hand-settled.lut.f32": "f6ca71431390497b406054e5ae4fb64467f4ec0345d757dd5e6a997d4b5fe283",
+    "warm-hand-settled.matrix.f32": "6a46496059e7d4f9552e9584a7940ae1613fd929be8038a1717189241e25d7ef",
+    "warm-hand-settled.properties": "a36b2fc072ea1c46c0fb818ced9128441fd504dc6aaf570a541cef32f9292355",
+    "warm-hand-settled.raw": "c31fda649ec08740e6ec2744dec037006c87b96ccfa685ca44d453615e50f4ae",
+    "../fixtures/radiometric-room-settled.raw": "fde6a4b803b68fcea07ab7b428f4769d22e896f01055969f43102bdc9270f5d6"
+  },
+  "native_comparisons": {
+    "radiometric-initial": {
+      "entries": 16384,
+      "finite": 13264,
+      "differing_finite_bits": 0,
+      "nan_pattern_equal": true,
+      "npy_sha256": "c262c99d3569ecb245f78bca8b21085c60876fda0407e9769ac483ab03c3cd04"
+    },
+    "radiometric-room-first": {
+      "entries": 16384,
+      "finite": 13079,
+      "differing_finite_bits": 0,
+      "nan_pattern_equal": true,
+      "npy_sha256": "e2f9290ee7fbbaafb4180a4abdedd763cfd239449503972becb632c5611b6735"
+    },
+    "radiometric-room-range": {
+      "entries": 16384,
+      "finite": 13081,
+      "differing_finite_bits": 0,
+      "nan_pattern_equal": true,
+      "npy_sha256": "4d26246bb0272e514981176b86312da4f35ea2fad51e7801975556e0c87db8ed"
+    },
+    "radiometric-room-shutter-held": {
+      "entries": 16384,
+      "finite": 13199,
+      "differing_finite_bits": 0,
+      "nan_pattern_equal": true,
+      "npy_sha256": "ec5e969c98de84a47f49bdee2b3fc60ce7a42094859d6504f764640a409cef27"
+    },
+    "radiometric-room-settled": {
+      "entries": 16384,
+      "finite": 13169,
+      "differing_finite_bits": 0,
+      "nan_pattern_equal": true,
+      "npy_sha256": "39691899990e1698f6611be34b3e0edc8267bf7741946a7994c74472e669ad7c"
+    }
+  }
+}

@@ -10,7 +10,7 @@
 > native arithmetic on raw fixtures. Independent temperature accuracy remains
 > unvalidated. Desktop now exposes native-equivalent values; this Android foundation
 > implements explicit radiometric initialization using exact SET completion and observed
-> frame behavior; structural/live hardware acceptance passed on Pixel 8. No Celsius is exposed. See
+> frame behavior; structural/live hardware acceptance passed on Pixel 8. Kotlin now reproduces the native-equivalent normal-range LUT and matrix; live measurement is separately gated. See
 > [initialization evidence](docs/RADIOMETRIC_INITIALIZATION.md),
 > [native call chain](docs/NATIVE_CALL_CHAIN.md), and
 > [application comparison](docs/APPLICATION_COMPARISON.md). Desktop capture
@@ -26,8 +26,10 @@ Python/PyQt reference, diagnostic tool and fixture generator, not the final prod
 The first mobile foundation is a small Kotlin/Compose application in this repository:
 USB Host authorization → native unconverted UVC acquisition → exact frame inspection
 → latest-frame grayscale aiming preview. The explicit radiometric session is implemented;
-acceptance uses frame evidence rather than unreliable Zoom reads. Celsius/LUT
-conversion remains deferred. See [session architecture](docs/ANDROID_RADIOMETRIC_SESSION.md),
+acceptance uses frame evidence rather than unreliable Zoom reads. The plain-JVM thermometry
+engine has full golden LUT/matrix parity; a current ready frame must also pass finite-LUT
+validation before numeric temperatures and high/low markers are shown. See
+[thermometry design and parity](docs/ANDROID_THERMOMETRY.md), [session architecture](docs/ANDROID_RADIOMETRIC_SESSION.md),
 [foundation architecture](docs/ANDROID_FOUNDATION.md),
 [build configuration](docs/CONFIGURATION.md), and [real-device results](docs/ANDROID_VALIDATION.md).
 
@@ -40,7 +42,7 @@ JDK 17 and the SDK/NDK packages documented in CONFIGURATION.md are required.
 Connect the HT-301 through USB Host/OTG, launch LMThermal, tap **Connect / Open**,
 and grant Android camera/USB permissions. Opening is read-only. From a display stream,
 tap **Initialize radiometric** to qualify the baseline and run the validated sequence.
-Readiness requires structural/liveness evidence; it does not establish Celsius support. **Close** releases the stream; backgrounding
+Readiness requires structural/liveness evidence. Measurement additionally requires valid current-frame thermometry. **Close** releases the stream; backgrounding
 also releases it. Reopening remains explicit. Wireless ADB follows AGENTS.md.
 
 Debug builds also provide **Test raw14 transition (32772)**, a one-shot frame-gated
@@ -48,6 +50,12 @@ experiment that cannot send range/shutter or claim readiness, and **Read zoom in
 a GET-only diagnostic independent
 of initialization. Request/descriptor evidence and unresolved semantics are documented
 in [the Zoom audit](docs/ZOOM_CONTROL_SEMANTICS.md).
+
+**Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+Android test-only parity uses AndroidX Test runner 1.6.2 / JUnit extension 1.2.1.
+`./gradlew :app:connectedDebugAndroidTest` executes all golden tables/matrices on the phone
+without opening USB. No golden data or test dependencies ship in the product APK.
 
 ## Supported camera contract
 
@@ -124,7 +132,7 @@ def get_temp_evn(a, env_term, b):
 - [x] Kotlin/Compose project, Android USB permission and original UVC payload transport.
 - [x] JVM parser/golden fixtures, bounded preview architecture and basic diagnostics.
 - [x] Evidence-gated radiometric session: exact SET completion plus frame evidence; single-32772 and full Pixel 8 sequence passed, including conservative raw14 reopen.
-- [ ] Float32/native-equivalent LUT and measurement parity port.
+- [x] Float32/native-equivalent LUT and measurement parity port for width 384/range 120/lens 68/shutter fix 1.5.
 - [ ] Touch measurements, Celsius palette/range lock and ROI.
 - [ ] Still export, time series, recording/playback and comparison.
 - [ ] Release licensing, packaging and distribution.

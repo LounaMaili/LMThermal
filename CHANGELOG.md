@@ -4,6 +4,14 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Android thermometry parity — 2026-10-03)
+- Ported the validated width-384/range-120/lens-68/shutter-fix-1.5 native-equivalent arithmetic into plain Kotlin core, preserving Float/Double operation boundaries, trailer inputs and undefined LUT entries.
+- Added owned raw14/matrix measurement evidence, separate trailer/literal center, numerical trace and a current-frame thermometry gate independent of structural session readiness.
+- Added complete LUT goldens for six sanitized fixtures and two synthetic branches, full settled room/hand matrix references, intermediate/failure/ownership regressions and Android-runtime parity instrumentation.
+- Added minimal worker-produced live numeric temperatures and coordinate markers with explicit physical-accuracy warning; invalid/unsettled/disconnected frames clear Celsius. No controls, timing, orientation or liveness rules changed.
+- Confirmed all full LUTs/matrices bit-exact on Pixel 8 ART, then validated live hand/background response, coordinate markers and null measurement after close/unknown-raw14 reopen; recorded sampled per-frame evaluation timing without adding a cache.
+- Documented golden provenance/hashes and reproducible export. Test-only AndroidX runner/JUnit dependencies and fixture assets do not ship in the product APK; ignored Kotlin compiler state and preserved numerical fixture bytes with binary Git attributes.
+
 ### Fixed (Android frame-observed radiometric acceptance — 2026-10-02)
 - Confirmed the existing 32772 DISPLAY→raw14 transition on Pixel 8 with a restricted one-shot diagnostic: exact two-byte SET, 15 receipt discards and two distinct valid raw14 images; no GET, range or shutter operation was used.
 - Removed baseline-zero and post-write GET_CUR equality gates. The control interface now returns actual SET length/error and exposes no GET; frame evidence remains mandatory before subsequent commands and readiness.

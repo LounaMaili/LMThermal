@@ -5,3 +5,6 @@
 local.properties
 *.iml
 .idea/
+
+# Kotlin incremental compiler state, not source.
+.kotlin/

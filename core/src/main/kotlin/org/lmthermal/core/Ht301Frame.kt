@@ -24,6 +24,10 @@ object Ht301Layout {
     const val DISPLAY_MASK = 0xff00
     const val DISPLAY_PREFIX = 0x8000
     const val PARAMETERS = 223742
+    // Distinct native transforms: trailer+2 is FPA; trailer+0x902 is calibration temperature.
+    const val FPA_WORD = 221186
+    const val LOOKUP_BASE_WORD = 223488
+    const val CALIBRATION_TEMPERATURE_WORD = 223490
     const val CALIBRATION = 223494
     const val CALIBRATION_COPY = PARAMETERS + 352
     const val CALIBRATION_BYTES = 20

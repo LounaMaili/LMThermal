@@ -14,7 +14,8 @@ milestone implements VID/PID-filtered Android USB authorization, unconverted
 384×292 YUYV acquisition through native libusb/libuvc, exact frame validation,
 288+4 image/trailer separation, Desktop-equivalent display/raw14 inspection and
 a latest-frame grayscale aiming preview. Acquisition/parsing run off the UI thread.
-No camera setting writes or Celsius measurement are exposed. Background/detach
+Explicit session controls and current-frame native-equivalent measurements are now available
+as described below; opening remains read-only. Background/detach
 release the stream; foreground/replug allow explicit reopen.
 
 See [ANDROID_FOUNDATION.md](ANDROID_FOUNDATION.md) for ownership, lifecycle,
@@ -131,8 +132,8 @@ frames, then executes the validated raw14/normal-range/shutter sequence with exa
 SET transfer completion and observed frame evidence. GET_CUR does not control progression. Fifteen-receipt transition discards, two-image stage evidence, 75 valid shutter
 discards and five changing valid summary-consistent images gate structural readiness.
 Unknown pre-existing raw14 remains unsettled. Lifecycle cancellation stops later controls;
-reopen never replays initialization. No Celsius/LUT or measurement UI is introduced.
-Desktop's extra finite-LUT measurement gate will be required in the future thermometry layer.
+reopen never replays initialization. The separate finite-LUT measurement gate is now implemented
+in core; session state/timings/liveness criteria are unchanged.
 Architecture, timings and cancellation limits: [ANDROID_RADIOMETRIC_SESSION.md](ANDROID_RADIOMETRIC_SESSION.md).
 
 The previous GET_CUR blocker is superseded following a controlled single-32772 Pixel 8
@@ -146,3 +147,25 @@ An explicit GET-only diagnostic on the existing worker/handle records descriptor
 Zoom queries and exact response lengths. It cannot select arbitrary controls or request SET.
 Inventory results do not qualify readiness or change session gates. See
 [ZOOM_CONTROL_SEMANTICS.md](ZOOM_CONTROL_SEMANTICS.md).
+
+## Android normal-range thermometry milestone (2026-10-03)
+
+Platform-independent `FrameParameters` → `NativeEquivalentThermometry` → owned
+`RadiometricMeasurement` reproduces the Desktop normal branch with deliberate Float/Double
+rounding. All 16384 LUT entries and full settled matrices have golden regressions.
+Only width 384, host range 120, lens 68 and shutter fix 1.5 are supported.
+Unsupported inputs, invalid copies/indices, inconsistent trailer extrema and observed
+nonfinite lookup values produce no measurement. Undefined unused LUT entries remain NaN.
+
+`RADIOMETRIC_READY` is structural/liveness readiness; `MeasurementGate` evaluates each
+current frame separately. Held, invalid, not-ready and disconnected states clear Celsius.
+The worker builds a fresh table each measurement frame; there is no calibration cache.
+Raw preview normalization remains independent of measurement. Native coordinates and
+image bytes are unchanged; Compose only scales diagnostic high/low markers to the image.
+Trailer center and literal `(192,144)` are displayed separately alongside matrix/high/low
+outputs. Numeric developer evidence is bounded and contains no scene payloads.
+
+**Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+Touch/ROI, Celsius palettes, exports and recording are future milestones. See
+[ANDROID_THERMOMETRY.md](ANDROID_THERMOMETRY.md) and [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md).

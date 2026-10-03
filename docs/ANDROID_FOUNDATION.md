@@ -1,5 +1,10 @@
 # Android USB/UVC foundation
 
+> Current extension (2026-10-03): the separate Kotlin finite-LUT/current-frame
+> measurement gate is now implemented and validated. The original milestone
+> account below describes its earlier scope. Session controls, timings and
+> liveness criteria are unchanged. See [ANDROID_THERMOMETRY.md](ANDROID_THERMOMETRY.md).
+
 ## Scope and architecture
 
 LMThermal is the Android product repository. LMThermal-Desktop is the executable

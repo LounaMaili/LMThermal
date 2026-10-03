@@ -36,9 +36,11 @@ data class CameraSnapshot(
     val session: SessionSnapshot = SessionSnapshot(),
     val inventory: String = "Not requested",
     val transition: TransitionSnapshot = TransitionSnapshot(),
+    val measurement: RadiometricMeasurement? = null,
+    val measurementReason: String? = "Session not ready",
 )
 
-/** Owns discovery, permission and transport lifetime. Explicit session controls remain separate from parsing/rendering; no thermometry.
+/** Owns discovery, permission and transport lifetime. Explicit session controls remain separate from parsing/rendering and core thermometry.
  * Native read/close run on one dispatcher: cancellation cannot free a handle during a JNI read.
  * StateFlow has one current snapshot; the native callback also has a one-frame replacement slot.
  */
@@ -157,6 +159,7 @@ class CameraController(private val context: Context) {
                 val connection = manager.openDevice(device) ?: error("UsbManager.openDevice returned null")
                 val singleEvidence = NumericEvidence(context, "raw14-transition.jsonl", "LMThermalRaw14")
                 val sessionEvidence = NumericEvidence(context, "radiometric-session.jsonl", "LMThermalSession")
+                val thermometryEvidence = NumericEvidence(context, "thermometry.jsonl", "LMThermalTemperature")
                 var collectingSingle = false
                 NativeUvcTransport(connection, { evidence ->
                     if (collectingSingle) singleEvidence.record(evidence) else sessionEvidence.record(evidence)
@@ -172,6 +175,8 @@ class CameraController(private val context: Context) {
                     var cadenceStart = SystemClock.elapsedRealtime()
                     var lastFrameAt = cadenceStart
                     var lastLog = cadenceStart
+                    var lastMeasurementLog = cadenceStart
+                    var previousMeasurementAvailable = false
                     try {
                         while (isActive && token == generation) {
                             if (inventoryRequest.getAndSet(-1L) == token && !session.snapshot().active && !transition.snapshot().active) {
@@ -199,7 +204,7 @@ class CameraController(private val context: Context) {
                             }
                             val request = initializeRequest.getAndSet(-1L)
                             if (request == token && !transition.snapshot().active) {
-                                sessionEvidence.reset(); collectingSingle = false; session.initialize(request)
+                                sessionEvidence.reset(); thermometryEvidence.reset(); collectingSingle = false; session.initialize(request)
                             }
                             transition.tick()
                             session.tick()
@@ -220,6 +225,17 @@ class CameraController(private val context: Context) {
                             val inspection = frame?.inspect() ?: FrameInspection(FrameMode.INVALID, "transport_size", null, null)
                             transition.observe(frame, inspection, counters[4], token)
                             session.observe(frame, inspection, counters[4], token)
+                            // Always evaluate the current post-observation session state. Held/invalid frames
+                            // demote readiness before this gate; no last-good Celsius is carried forward.
+                            val measurementStart = SystemClock.elapsedRealtimeNanos()
+                            val measurement = MeasurementGate.evaluate(session.snapshot().state, frame, counters[4], now)
+                            val measurementNs = SystemClock.elapsedRealtimeNanos() - measurementStart
+                            val available = measurement.measurement != null
+                            if (available != previousMeasurementAvailable || now - lastMeasurementLog >= 2000) {
+                                thermometryEvidence.record(ThermometryDiagnostics.event(measurement, session.snapshot().state,
+                                    counters[4], now, measurementNs) + numericContext(transport).filterKeys { it != "session_state" })
+                                previousMeasurementAvailable = available; lastMeasurementLog = now
+                            }
                             if (inspection.mode == FrameMode.INVALID || inspection.reason != null) invalid++
                             val image = if (frame != null && inspection.mode != FrameMode.INVALID) Bitmap.createBitmap(
                                 PreviewRenderer.grayscale(frame, inspection), Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT, Bitmap.Config.ARGB_8888) else null
@@ -227,7 +243,8 @@ class CameraController(private val context: Context) {
                                 usb = UsbState(UsbPhase.STREAMING, "Streaming · explicit radiometric session"),
                                 mode = inspection.mode, reason = inspection.reason, size = bytes.size,
                                 range = "${inspection.minimum ?: "—"}..${inspection.maximum ?: "—"}",
-                                fps = fps, received = counters[0], invalid = invalid, replaced = counters[1], malformed = counters[2], bitmap = image, session = session.snapshot(), transition = transition.snapshot()) }
+                                fps = fps, received = counters[0], invalid = invalid, replaced = counters[1], malformed = counters[2], bitmap = image, session = session.snapshot(), transition = transition.snapshot(),
+                                measurement = measurement.measurement, measurementReason = measurement.reason) }
                             if (now - lastLog >= 2000) {
                                 // Numeric diagnostics only: no camera serial or private scene is written to logs.
                                 Log.i("LMThermal", "frame size=${bytes.size} image=${frame?.imageBytes()?.size} trailer=${frame?.trailerBytes()?.size} mode=${inspection.mode} reason=${inspection.reason} summary=${inspection.summaryValid} words=${inspection.minimum}..${inspection.maximum} fps=$fps received=${counters[0]} replaced=${counters[1]} malformed=${counters[2]} session=${session.snapshot().state} live=${session.snapshot().live} held=${session.snapshot().held} rejected=${session.snapshot().rejected}")
@@ -244,6 +261,7 @@ class CameraController(private val context: Context) {
                 Log.e("LMThermal", "Transport failed", error)
                 mutableState.updateIf({ token == generation }) { previous -> previous.copy(
                     usb = UsbState(UsbPhase.ERROR, error.message ?: "Transport error"), bitmap = null,
+                    measurement = null, measurementReason = "Transport error",
                     session = previous.session.copy(state = SessionState.ERROR, active = false,
                         canInitialize = false, live = 0, reason = error.message ?: "Transport error")) }
             } finally { Log.i("LMThermal", "Stream released generation=$token") }
