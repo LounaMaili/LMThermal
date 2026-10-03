@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-04",
+  "branch": "feat/android-lmtx-export",
+  "base": "98c99e060577ec947c067ed4a0a74051e94dcb28",
+  "device": {
+    "model": "Pixel 8",
+    "android": "17",
+    "api": 37,
+    "wireless_adb": true,
+    "ht301_vid": "1514",
+    "ht301_pid": "0001"
+  },
+  "live_ready": {
+    "geometry_width": 384,
+    "geometry_height": 288,
+    "float32_payload_bytes": 442368,
+    "independent_source_bits_equal": true,
+    "unchanged_native_transport_image": true,
+    "raw_min": 5109,
+    "raw_max": 5625,
+    "roi_bounds_half_open": [
+      169,
+      76,
+      291,
+      168
+    ],
+    "roi_pixel_count": 11224,
+    "roi_valid_count": 11224,
+    "roi_min_c": 35.854744,
+    "roi_max_c": 37.583725,
+    "roi_mean_c": 36.80378652077781,
+    "roi_min_xy": [
+      173,
+      76
+    ],
+    "roi_max_xy": [
+      196,
+      149
+    ],
+    "palette_id": "turbo",
+    "range_mode": "manual",
+    "range_min_c": 25.0,
+    "range_max_c": 45.0,
+    "snapshot_ms": 83.645833,
+    "serialization_validation_ms": 572.06307,
+    "archive_bytes": 408638,
+    "owned_source_bytes": 982020,
+    "callback_fps_at_snapshot": 24.92522432701894,
+    "operator_preview_responsive": true,
+    "peak_memory_measured": false,
+    "new_export_controls": 0,
+    "same_artifact_after_language_rotation_picker": true,
+    "saf_readback_equal": true
+  },
+  "first_ready": {
+    "snapshot_ms": 172.628418,
+    "serialization_validation_ms": 767.160726,
+    "archive_bytes": 469969,
+    "callback_fps": 25.024061597690086,
+    "saf_readback_equal": true
+  },
+  "unsettled_preview": {
+    "archive_bytes": 67541,
+    "content_class": "visual",
+    "no_temperature_native_calibration_or_stale_statistics": true,
+    "saf_readback_equal": true
+  },
+  "additional_unsettled_preview": {
+    "archive_bytes": 65585,
+    "content_class": "visual",
+    "saf_readback_equal": true
+  },
+  "picker_cancellation": {
+    "private_stage_removed": true,
+    "ui_cancelled": true,
+    "share_disabled_operator_confirmed": true,
+    "camera_released": true
+  },
+  "lifecycle": {
+    "destination_save_and_cancel_release_camera": true,
+    "rotation_releases_camera": true,
+    "language_releases_camera": true,
+    "cause": "Existing unconditional MainActivity.onStop -> leaveForeground -> owner.background policy",
+    "technical_usb_requirement": false,
+    "prepared_capture_independent": true,
+    "continuity_change_deferred": true
+  },
+  "conformance": {
+    "shared_cases": 11,
+    "valid_cases": 8,
+    "negative_cases": 3,
+    "canonical_mask_mean_c": 25.0,
+    "invalid_filler_positive_zero": true,
+    "unknown_json_semantic_precision": true
+  },
+  "tests": {
+    "core_jvm": 224,
+    "compat_api26_32": 8,
+    "pixel_instrumentation": 38,
+    "localization_self_tests": 10,
+    "localization_keys_en": 110,
+    "localization_keys_fr": 110,
+    "boundary_sources": 24,
+    "lint_errors": 0
+  },
+  "privacy": "New live scene archives, source proofs, paths and image hashes remain in ignored local validation storage. Shared HT fixture reuses the previously sanitized room frame.",
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "issue5_status": "implementation-complete / interoperability-pending; remains open",
+  "desktop1_status": "unimplemented; remains open"
+}

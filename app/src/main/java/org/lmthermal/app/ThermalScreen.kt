@@ -41,7 +41,8 @@ import org.lmthermal.core.RoiStatistics
 
 /** Shared camera presentation consumes capabilities/geometry; no protocol, raw encoding or model branch is needed. */
 @Composable
-fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter, connect: () -> Unit) {
+fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter, connect: () -> Unit,
+    exporter: CaptureExporter? = null, chooseDestination: () -> Unit = {}, share: () -> Unit = {}) {
     val source by camera.state.collectAsState()
     val rendered by presenter.state.collectAsState()
     val settings by presenter.settings.collectAsState()
@@ -74,7 +75,7 @@ fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter,
                             RoiReadings(roi, roiStatistics, roiPanelVisible)
                         }
                         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            ScreenControls(source, settings, camera, presenter, connect, ui)
+                            ScreenControls(source, settings, camera, presenter, connect, ui, exporter, chooseDestination, share)
                         }
                     }
                 } else {
@@ -86,7 +87,7 @@ fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter,
                         CelsiusLegend(if (measurement != null) rendered else null, roiPanelVisible)
                         Readings(measurement, pixel, ui, mode == InspectionMode.POINT && source.capabilities?.touchInspection == true)
                         RoiReadings(roi, roiStatistics, roiPanelVisible)
-                        ScreenControls(source, settings, camera, presenter, connect, ui)
+                        ScreenControls(source, settings, camera, presenter, connect, ui, exporter, chooseDestination, share)
                     }
                 }
             }
@@ -233,10 +234,12 @@ private fun Readings(measurement: ThermalMeasurement?, pixel: NativePixel?, ui: 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun ScreenControls(source: CameraSessionState<Bitmap>, settings: CelsiusPresentationSettings,
-    camera: AndroidCameraCoordinator, presenter: CelsiusPresenter, connect: () -> Unit, ui: CameraUiBindings) {
+    camera: AndroidCameraCoordinator, presenter: CelsiusPresenter, connect: () -> Unit, ui: CameraUiBindings,
+    exporter: CaptureExporter?, chooseDestination: () -> Unit, share: () -> Unit) {
     var palettesOpen by remember { mutableStateOf(false) }
     var rangeOpen by remember { mutableStateOf(false) }
     var diagnosticsOpen by remember { mutableStateOf(false) }
+    exporter?.let { CaptureControls(it, source, { camera.state.value }, presenter, chooseDestination, share) }
     if (CameraUiPolicy.showTemperatureControls(source)) {
         if (source.capabilities?.touchInspection == true) {
             val mode by presenter.roi.mode.collectAsState()
@@ -313,4 +316,35 @@ private fun RangeDialog(initial: CelsiusRange, dismiss: () -> Unit, apply: (Cels
     }) { Text(stringResource(R.string.measurement_apply)) } }, dismissButton = {
         TextButton(onClick = dismiss) { Text(stringResource(R.string.measurement_cancel)) }
     })
+}
+
+/** Fixed action/status slots avoid readout reflow during an ROI gesture or export phase change. */
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun CaptureControls(exporter: CaptureExporter, source: CameraSessionState<Bitmap>, currentSource: () -> CameraSessionState<Bitmap>, presenter: CelsiusPresenter,
+    chooseDestination: () -> Unit, share: () -> Unit) {
+    val state by exporter.state.collectAsState()
+    val canCapture = org.lmthermal.exchange.CaptureFreeze.canCapture(source)
+    val busy = state.phase in setOf(ExportPhase.PREPARING, ExportPhase.READY, ExportPhase.WRITING)
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedButton(enabled = canCapture && !busy, onClick = {
+            exporter.prepare(currentSource(), presenter.roi.selection.value, presenter.settings.value, presenter.pixel.value)
+        }) { Text(stringResource(R.string.export_save)) }
+        OutlinedButton(enabled = state.phase == ExportPhase.READY, onClick = chooseDestination) { Text(stringResource(R.string.export_destination)) }
+        TextButton(enabled = busy, onClick = exporter::cancel) { Text(stringResource(R.string.export_cancel)) }
+        TextButton(enabled = state.phase == ExportPhase.SUCCESS, onClick = share) { Text(stringResource(R.string.export_share)) }
+    }
+    val message = when (state.phase) {
+        ExportPhase.IDLE -> if (!canCapture) R.string.export_unavailable else if (source.measurement == null) R.string.export_preview_only else R.string.export_available
+        ExportPhase.PREPARING, ExportPhase.WRITING -> R.string.export_progress
+        ExportPhase.READY -> R.string.export_prepared
+        ExportPhase.SUCCESS -> R.string.export_success
+        ExportPhase.CANCELLED -> R.string.export_cancelled
+        ExportPhase.ERROR -> if (state.errorId == "resource_limit") R.string.export_resource_error else R.string.export_write_error
+    }
+    val line = with(LocalDensity.current) { MaterialTheme.typography.bodySmall.lineHeight.toDp() }
+    Text(stringResource(message) + if (state.partialCleanupFailed) "\n" + stringResource(R.string.export_partial_remaining) else "",
+        Modifier.height(line * 3), style = MaterialTheme.typography.bodySmall, maxLines = 3, overflow = TextOverflow.Ellipsis)
+    Text(stringResource(R.string.export_privacy), Modifier.height(line * 3), style = MaterialTheme.typography.bodySmall,
+        maxLines = 3, overflow = TextOverflow.Ellipsis)
 }

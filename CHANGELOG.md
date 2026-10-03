@@ -4,6 +4,17 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+
+### Added (Android LMTX v1 still export — 2026-10-04)
+
+- Added pure JVM owned capture/evidence models, bounded precision-preserving UTF-8 JSON, streaming DEFLATE/SHA-256 writer and camera-free physical ZIP/schema/payload/statistics checker under the unchanged Accepted v1.0 contract.
+- Added module-owned optional export evidence: HT-301 preserves authoritative Float32 Celsius, unmasked native raw14, original full transport, actual calibration/settings/lookup trace and distinct trailer/literal center observations; the 160×120 simulator exports an honest visual-only capture.
+- Added canonical 0/1 mask/positive-zero filler and deterministic current matrix/ROI/point analysis, separate stable palette/range/derived preview, truthful acquisition/receipt/creation clocks and explicit native-equivalent physical-accuracy warning.
+- Added bounded background capture preparation, private finalize/sync/reopen verification, new-document SAF publication with close/failure/cancel/partial cleanup gates and finalized FileProvider sharing without broad storage permissions. Prepared captures survive source release and Activity/language recreation; no stale ready temperatures are reused.
+- Added 15 EN/FR export/privacy resources with fixed status slots, expanded boundary/localization checks, eleven synthetic/previously sanitized shared conformance files with pinned hashes/outcomes, and writer/reader/publication/ART/lifecycle/locale regressions.
+- Validated live exact current Float32 bits, raw/transport equality, half-open ROI and Turbo Locked 25–45 °C, SAF byte equality after lifecycle transitions, unavailable raw14 preview export, chooser/cancellation, near-25-FPS preparation and zero export controls. Final 224 core JVM, eight API-compatibility, 38 Pixel and ten localization self-tests pass; build/lint/diff checks pass.
+- Documented local resource/self-checker limits, provider/privacy guarantees and the inherited unconditional onStop release for destination UI/rotation/language. USB does not technically require these releases; camera continuity remains a separate lifecycle follow-up. Android #5 remains open with Desktop #1 interoperability pending; no camera/session/thermometry semantics or Desktop importer changed.
+
 ### Added (Android native rectangular ROI — 2026-10-03)
 
 - Added generic strict native half-open rectangles, inclusive touched-cell drag conversion and fitted cell-edge overlays without camera dimensions/protocol dependencies.

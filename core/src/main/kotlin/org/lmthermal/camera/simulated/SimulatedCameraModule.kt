@@ -16,7 +16,7 @@ class SimulatedCameraModule<P>(private val previewFactory: (ArgbImage) -> P,
     val geometry = NativeImageGeometry(160, 120)
     override val metadata = CameraModuleMetadata(CameraModuleId("simulated-preview"), "simulated-160x120",
         CameraCapabilities(preview = true, temperatureMeasurement = false,
-            explicitMeasurementInitialization = false, touchInspection = false))
+            explicitMeasurementInitialization = false, touchInspection = false), sourceOrigin = "simulated")
     init { require(frameIntervalMs > 0) }
     override fun probe(device: CameraDeviceIdentity) = if (device is SimulatedCameraIdentity && device.profile == "preview-only")
         CameraProbeResult.SUPPORTED else CameraProbeResult.UNSUPPORTED

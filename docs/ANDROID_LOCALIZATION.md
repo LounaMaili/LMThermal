@@ -6,8 +6,8 @@ The application follows the system language by default. Its in-app **Language**
 selector offers **System**, **French** and **English**. System clears the
 application-specific locale list; it does not install an English override.
 
-- `app/src/main/res/values/strings.xml`: complete English fallback, 95 keys (including ROI plurals and drag hint).
-- `app/src/main/res/values-fr/strings.xml`: all 95 French translations.
+- `app/src/main/res/values/strings.xml`: complete English fallback, 110 keys (including ROI plurals, drag hint and 15 export resources).
+- `app/src/main/res/values-fr/strings.xml`: all 110 French translations.
 - No redundant `values-en` directory.
 - Unsupported locales resolve through Android's normal resource fallback. Machine
   identifiers are never a replacement for missing product prose.
@@ -172,3 +172,14 @@ resource binding with a unique `camera_<module>_*` namespace. Supply all support
 translations and map every status/error/native sample label. Test module labels/capability
 visibility and numerical invariants. Do not copy shared UI or modify HT-301 protocol to
 translate another module. See CAMERA_MODULE_ARCHITECTURE.md for real-model validation.
+
+## Still-export controls
+
+`export_*` owns complete EN/FR capture/destination/cancel/share, availability, progress,
+completion, storage/resource/partial-cleanup error and richer-evidence privacy prose.
+Machine schema/error identifiers stay untranslated. Fixed font-scaled status slots
+and wrapping action rows prevent progress from shifting the image while ROI is held.
+The real export controls are exercised in English/French/expanded/RTL pseudolocales
+in portrait and landscape using a synthetic source, without USB writes. An immutable
+prepared capture survives app-language Activity recreation; the camera still releases
+and requires explicit reopen. See [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md).

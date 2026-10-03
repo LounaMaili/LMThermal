@@ -89,6 +89,7 @@ class LocalizationLayoutDeviceTest {
                     val module = LayoutModule()
                     var coordinator: AndroidCameraCoordinator? = null
                     var presenter: CelsiusPresenter? = null
+                    var exporter: CaptureExporter? = null
                     lateinit var labels: Map<Int, String>
                     scenario.onActivity { activity ->
                         activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -96,14 +97,16 @@ class LocalizationLayoutDeviceTest {
                             R.string.measurement_auto, R.string.measurement_locked, R.string.camera_diagnostics,
                             R.string.measurement_range_dialog, R.string.measurement_cancel,
                             R.string.measurement_mode_point, R.string.measurement_mode_roi,
-                            R.string.measurement_roi_clear).associateWith { activity.getString(it) }
+                            R.string.measurement_roi_clear, R.string.export_save, R.string.export_destination,
+                            R.string.export_cancel, R.string.export_share).associateWith { activity.getString(it) }
                         val registration = AndroidModuleRegistration(module, Ht301UiBindings)
                         coordinator = AndroidCameraCoordinator(activity.applicationContext, listOf(registration), devices = {
                             listOf(object : CameraDeviceIdentity { override val key = "synthetic-layout" }) })
                         presenter = CelsiusPresenter(activity.applicationContext, coordinator!!.state)
+                        exporter = CaptureExporter(activity.applicationContext)
                         coordinator!!.enterForeground(); coordinator!!.connect()
                         presenter!!.select(NativePixel(80, 60))
-                        activity.setContent { ThermalScreen(coordinator!!, presenter!!, { coordinator!!.connect() }) }
+                        activity.setContent { ThermalScreen(coordinator!!, presenter!!, { coordinator!!.connect() }, exporter = exporter) }
                     }
                     try {
                         withTimeout(5000) { while (presenter!!.state.value.bitmap == null) delay(10) }
@@ -163,6 +166,13 @@ class LocalizationLayoutDeviceTest {
                         module.openedState.value = currentSource
                         withTimeout(5000) { while (presenter!!.state.value.measurement == null ||
                             presenter!!.roi.state.value.statistics != roiStatistics) delay(10) }
+                        compose.onNodeWithText(labels.getValue(R.string.export_save)).performScrollTo().assertIsEnabled().performClick()
+                        withTimeout(10000) { while (exporter!!.state.value.phase != ExportPhase.READY) delay(10) }
+                        compose.waitForIdle()
+                        compose.onNodeWithText(labels.getValue(R.string.export_destination)).performScrollTo().assertIsEnabled()
+                        compose.onNodeWithText(labels.getValue(R.string.export_share)).assertIsNotEnabled()
+                        compose.onNodeWithText(labels.getValue(R.string.export_cancel)).performClick()
+                        if (orientationName == "portrait") image.performScrollTo()
                         // Localized controls can wrap/scroll; assert visibility after bringing each into view.
                         for (id in listOf(R.string.camera_connect, R.string.camera_close,
                             R.string.camera_ht301_initialize_radiometric, R.string.camera_diagnostics)) {
@@ -195,7 +205,7 @@ class LocalizationLayoutDeviceTest {
                         }
                         screenshot.recycle()
                     } finally {
-                        withContext(Dispatchers.Main) { coordinator!!.leaveForeground(); presenter!!.dispose(); coordinator!!.dispose() }
+                        withContext(Dispatchers.Main) { exporter!!.cancel(); exporter!!.dispose(); coordinator!!.leaveForeground(); presenter!!.dispose(); coordinator!!.dispose() }
                     }
                 }
             }

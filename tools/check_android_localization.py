@@ -10,7 +10,7 @@ import unittest
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
-PREFIXES = ('app_', 'camera_', 'measurement_', 'palette_', 'language_')
+PREFIXES = ('app_', 'camera_', 'measurement_', 'palette_', 'language_', 'export_')
 # These describe the report/transport schema, never resource names or translated prose.
 MACHINE_KEYS = {'module_id', 'camera_model', 'palette_id', 'session_state', 'raw14', 'event', 'reason_code'}
 FORMAT = re.compile(r'%(?:(\d+)\$)?([-#+ 0,(<]*)(\d+)?(?:\.(\d+))?([tT]?[a-zA-Z%])')

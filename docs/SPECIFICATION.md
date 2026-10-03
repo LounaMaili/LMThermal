@@ -79,7 +79,7 @@ it does prevent claiming calibrated physical temperature accuracy.
 ### 4. Photo Capture
 - Save still images with temperature overlay
 - Export formats:
-  - **LMThermal Exchange Format (`.lmtx`)** — accepted still-only v1.0 contract; implementation remains future work (see [canonical specification](LMTX_FORMAT_V1.md)).
+  - **LMThermal Exchange Format (`.lmtx`)** — accepted still-only v1.0 contract; Android coherent still export is implemented; Desktop import/interoperability remain pending (see [canonical specification](LMTX_FORMAT_V1.md) and [producer guide](ANDROID_LMTX_EXPORT.md)).
   - **RJPEG** (Radiometric JPEG) — standard format, readable by FLIR Tools, Thermimage, etc.
   - **TIFF radiometric** — for professional thermal analysis software
   - **PNG** — visual only (no embedded temperature data)
@@ -117,7 +117,8 @@ only and preserves independent support for legacy Desktop capture/recording form
 [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4) remains the decision/review
 history. [Android export #5](https://github.com/LounaMaili/LMThermal/issues/5) and
 [Desktop import #1](https://github.com/LounaMaili/LMThermal-Desktop/issues/1) are
-unblocked by acceptance but remain open and unimplemented.
+unblocked by acceptance and remain open. Android export is implemented with
+interoperability pending; Desktop import is unimplemented.
 
 ### RJPEG (Radiometric JPEG)
 A standard JPEG file with embedded radiometric (temperature) data in EXIF/metadata chunks. This is the closest thing to a universal thermal image format:
@@ -251,8 +252,8 @@ Celsius plane. Optional validity bytes are exactly 0 (invalid) / 1 (valid), with
 no mask meaning all valid. Invalid cells never contribute; valid cells must be
 finite. Native row-major traversal chooses the first extrema tie and accumulates
 the unrounded mean in Float64. Zero-valid regions have counts without numbers or
-coordinates. These are [LMTX v1 §§7/10](LMTX_FORMAT_V1.md) semantics; no serializer,
-capture/export or persistence interface is implemented.
+coordinates. These are [LMTX v1 §§7/10](LMTX_FORMAT_V1.md) semantics, used by the
+[Android still exporter](ANDROID_LMTX_EXPORT.md).
 
 The compatible module/device/geometry selection persists across frames, but a gap,
 close or detach clears numerical results. Source or geometry replacement clears
@@ -284,3 +285,15 @@ explicit. No USB fd, readiness or stale measurement is retained through locale r
 Wrapping action rows keep longer labels reachable. Resource tests and the future language/
 module translation procedure: [ANDROID_LOCALIZATION.md](ANDROID_LOCALIZATION.md).
 Real-device results and the issue #2 acceptance review: ANDROID_VALIDATION.md.
+
+## Android coherent still export
+
+Android #5 now provides a camera-independent immutable LMTX v1 acquisition snapshot,
+module-owned optional evidence, exact Float32/mask serialization, matrix-derived
+analysis and separate frozen presentation. A bounded worker privately finalizes/
+checks the archive before new-document SAF publication and finalized URI sharing.
+Display/unsettled/transient previews truthfully omit Celsius; closed sources cannot
+capture. No controls, acquisition, native coordinate or thermometry semantics change.
+See [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md) for privacy, local limits,
+lifecycle/provider guarantees and shared fixtures. Desktop #1 and cross-platform
+interoperability are pending; issue #5 remains open.

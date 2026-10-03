@@ -18,10 +18,13 @@ SHARED_FILES = [
     "app/src/main/java/org/lmthermal/app/CameraText.kt",
     "app/src/main/java/org/lmthermal/app/CelsiusPresenter.kt",
     "app/src/main/java/org/lmthermal/app/RoiPresenter.kt",
+    "app/src/main/java/org/lmthermal/app/CaptureExporter.kt",
     "app/src/main/java/org/lmthermal/app/MainActivity.kt",
     "app/src/main/java/org/lmthermal/app/ThermalScreen.kt",
     "app/src/main/java/org/lmthermal/camera/AndroidCameraCoordinator.kt",
 ]
+SHARED_FILES += [str(path.relative_to(ROOT)) for path in
+                 (ROOT / "core/src/main/kotlin/org/lmthermal/exchange").rglob("*.kt")]
 SHARED_FILES += [str(path.relative_to(ROOT)) for path in
                  (ROOT / "core/src/main/kotlin/org/lmthermal/camera").rglob("*.kt")
                  if "ht301" not in path.parts]

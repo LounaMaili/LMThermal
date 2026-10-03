@@ -9,7 +9,7 @@ object Ht301ModuleProfile : CameraModuleDefinition {
     val GEOMETRY = NativeImageGeometry(Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT)
     override val metadata = CameraModuleMetadata(ID, "HT-301/T3-317-13",
         CameraCapabilities(preview = true, temperatureMeasurement = true,
-            explicitMeasurementInitialization = true, touchInspection = true))
+            explicitMeasurementInitialization = true, touchInspection = true), sourceOrigin = "device")
     override fun probe(device: CameraDeviceIdentity): CameraProbeResult =
         if (device is UsbCameraIdentity && device.vendorId == Ht301Layout.VID && device.productId == Ht301Layout.PID)
             CameraProbeResult.SUPPORTED else CameraProbeResult.UNSUPPORTED
@@ -18,7 +18,7 @@ object Ht301ModuleProfile : CameraModuleDefinition {
 /** Zero-reinterpretation adapter: the original raw/calibration/trailer/LUT evidence remains owned and accessible.
  * Shared consumers see only native geometry/Celsius/extrema and optional namespaced sample evidence.
  */
-class Ht301ThermalMeasurement(val evidence: RadiometricMeasurement) : ThermalMeasurement {
+class Ht301ThermalMeasurement(val evidence: RadiometricMeasurement) : ThermalMeasurement, org.lmthermal.exchange.ExportEvidenceProvider {
     override val geometry = Ht301ModuleProfile.GEOMETRY
     override val sequence get() = evidence.sequence
     override val receivedMonotonicMs get() = evidence.receivedMonotonicMs
@@ -38,4 +38,6 @@ class Ht301ThermalMeasurement(val evidence: RadiometricMeasurement) : ThermalMea
         geometry.offset(pixel)
         return NativeSample("ht301.raw14", evidence.source.pixel(pixel.x, pixel.y))
     }
+    /** The module freezes its own exact acquisition/settings evidence; common persistence sees no protocol types. */
+    override fun exportEvidence() = Ht301ExportEvidence.freeze(evidence)
 }

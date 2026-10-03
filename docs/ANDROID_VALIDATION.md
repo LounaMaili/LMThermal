@@ -832,3 +832,134 @@ All ROI values retain the warning: **Native-equivalent temperatures; absolute
 physical accuracy not yet independently validated.** HT-301 acquisition, parsing,
 session/control and thermometry implementations and the accepted LMTX specification
 are unchanged.
+
+## Android LMTX v1 export — 2026-10-04
+
+Branch `feat/android-lmtx-export`, base `98c99e060577ec947c067ed4a0a74051e94dcb28`.
+Normative contract unchanged: [LMTX_FORMAT_V1.md](LMTX_FORMAT_V1.md).
+Implementation/storage/local-limit guide: [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md).
+Sanitized numerical report: [2026-10-04-android-lmtx-export.json](diagnostics/2026-10-04-android-lmtx-export.json).
+New live scene files/proofs/paths/image hashes stay in ignored local validation storage.
+
+### Camera-free regression
+
+- **224 core JVM tests passed**, including 38 exchange/publication/conformance cases.
+  Coverage includes exact Float32 bits (signed zero/subnormal/extremes), alternate
+  geometry, masks/positive-zero filler/no-valid counts, half-open ROI statistics,
+  immutable array ownership and truthful unavailable previews; required schema,
+  clocks, SHA/CRC/inventory, unsafe/duplicate ZIP members, forbidden flags/attributes,
+  local/central contradictions, JSON limits/types and optional precise JSON values.
+- **Eight API 26/32 compatibility tests passed**; **38 Pixel 8/Android 17 tests passed**,
+  zero failures/errors/skips. Eight export ART tests cover exact source bits,
+  immutable ROI/presentation, actual preview-only simulator, stale-value omission,
+  cancel/failure/close/share gates, bounded generation replacement and prepared-file
+  survival through Activity recreation without automatic camera ownership.
+- The real export controls are included in the synthetic English/French/en-XA/ar-XB
+  portrait/landscape test. Save/prepare/cancel are reachable; sharing stays unavailable
+  before success. Held ROI gestures retain fixed image/control positions.
+- All **11 shared corpus archives** have pinned full-file hashes/sizes/outcomes:
+  temperatures-only, canonical mask, zero-valid, 160×120 visual, 7×19, sanitized HT-rich,
+  compatible newer minor/precise JSON, opaque optional extension/future shape/palette,
+  unsupported major/required feature and stale SHA. No private new fixture is added.
+- Debug build/lint pass (**zero lint errors**, 11 existing dependency warnings).
+  Localization parity is **110 EN / 110 FR** keys; **10 checker self-tests** and the
+  **24-source camera boundary audit** pass. Production CLI reopens the canonical mask
+  and the live ready artifact camera-free. `git diff --check` passes.
+
+A ZIP-negative test initially modified a DOS attribute instead of the intended Unix
+execute bit; the test fixture was corrected. The expanded layout test initially
+compared a deliberate scroll position with a pre-scroll position; export interaction
+checks were moved after held-gesture assertions. The full final suite then passed.
+No camera acquisition/session or thermometry arithmetic was changed for these fixes.
+
+### Pixel 8 + HT-301 acquisition export
+
+Already-paired wireless ADB remained usable with the camera on USB Host/OTG. The
+operator explicitly opened the display stream and initialized via the established
+32772 → 32800 → 32768 sequence. The scene/ROI, Turbo and Locked 25–45 °C were selected
+before Save; normal view/ROI interactions remained responsive.
+
+The controlled ready capture independently matches a ByteBuffer encoding of the
+retained original current matrix: **442368 bytes, every Float32 bit preserved**.
+Geometry/source are 384×288, `ht301`, `HT-301/T3-317-13`, origin device. The native plane
+is exactly the first 221184 bytes of the original 224256-byte transport; complete raw
+words span **5109–5625**, without high-bit masking. Available calibration/settings,
+lookup trace, distinct trailer/literal centers and high/low observations are retained
+in the hash-verified module extension. Core extrema remain matrix-derived.
+
+| Frozen field | Result |
+|---|---|
+| Native half-open ROI | `[169,291) × [76,168)` |
+| Valid / total cells | 11224 / 11224 |
+| ROI min / max / mean | 35.854744 / 37.583725 / 36.80378652077781 °C |
+| ROI min / max coordinates | `(173,76)` / `(196,149)` |
+| Presentation | `turbo`, `manual`, 25–45 °C |
+| Snapshot including PNG/debug source proof | 83.646 ms |
+| Streaming serialization, sync and reopen verification | 572.063 ms |
+| Final archive | 408638 bytes |
+| Owned temperature/evidence/encoded preview | 982020 bytes |
+| Callback FPS at capture | 24.925 |
+
+An earlier ready save took 172.628 ms snapshot + 767.161 ms serialization/checking,
+469969 bytes, callback FPS 25.024. These are two observed runs, not latency guarantees
+or a peak-heap measurement. One worker/job and 8 KiB streaming buffers are used; no
+whole-ZIP allocation or frame queue is introduced. Subsequent logged acquisition
+continued near 25 FPS and the operator confirmed responsiveness during preparation.
+
+**Export sent zero new controls.** The scoped pre/post logs contain only the three
+explicit initialization SETs per deliberately initialized session; reopening and
+exporting unknown raw14 did not send them. Common persistence has no transport/control
+reference, and camera/session/controller implementations are unchanged.
+
+### Publication, stale-value and lifecycle checks
+
+The complete prepared capture was pulled before destination interaction. The operator
+changed app language and orientation and selected a local DocumentsUI/Downloads SAF
+destination. The saved destination is **byte-for-byte identical** to the retained
+408638-byte prepared archive (same capture UUID, bits, ROI, palette/range and evidence),
+without another Save gesture. Debug provider readback also reports equality after
+successful close. The finalized Share chooser was exercised/dismissed; no file was
+sent to an external recipient. Its narrow content-URI grant is also tested on ART.
+
+Reopening without initialization showed **RAW14_UNSETTLED**, with no Celsius readings.
+A 67541-byte visual-only save was reopened/verified: no temperature/native/acquisition/
+calibration payload, old provenance/statistics or effective Celsius bounds. ROI geometry
+and the palette identity may remain. Another unsettled visual save was 65585 bytes;
+its SAF readback matched. A subsequent display-preview picker cancellation showed
+**Export cancelled**, removed its private stage and left Share disabled; the operator
+then closed the camera. Open/write/close/storage-full/delete failures are injected in
+JVM/ART tests instead of filling the phone's storage.
+
+**Lifecycle observation:** selecting/saving/cancelling a destination, rotation and
+language changes all release the camera. Investigation traces this to the inherited
+unconditional `MainActivity.onStop → leaveForeground → owner.background` policy;
+there is no USB technical requirement for rotation/picker release. The prepared
+ViewModel-owned artifact survives independently, which is verified here. This branch
+preserves the conservative policy; live continuity across selected transitions is a
+separate ownership/lifecycle follow-up. Returning requires explicit Connect/Open;
+there is no implicit initialization or revival of stale Celsius data. Continuous
+acquisition throughout external picker UI is therefore **not claimed**.
+
+The pure checker/API rules and corpus were finalized after the live run without
+changing HT data acquisition, measurement or rendering semantics; the final complete
+JVM/compatibility/Pixel/build/lint suite passed again. The debug APK is reinstalled
+following test-package cleanup, with the camera closed.
+
+### Issue #5 acceptance status
+
+| Criterion | Status / evidence |
+|---|---|
+| Accepted contract/canonical specification | Complete; normative document unchanged |
+| Pure coherent owned snapshot, exact floats/evidence, clocks/provenance | Complete; JVM/ART/source-proof and live reopen |
+| Simulator/non-HT geometry without fabricated temperatures | Complete; actual 160×120 simulator and 7×19 corpus |
+| HT evidence and physical-accuracy warning | Complete; native/full transport/extension, distinct centers |
+| No stale/partial success; failure/cancel/recreation safety | Complete; unavailable live captures, private/destination checks and injected failures |
+| Bounded off-thread preparation and zero camera writes | Complete; streaming worker, code boundary audit, live logs/FPS |
+| New-document local SAF/save/share behavior | Complete for local DocumentsUI plus injected provider failures; cloud atomicity/durability not promised |
+| Shared conformance fixtures | Complete initial 11-case corpus |
+| Android → Desktop exact interoperability | **Pending Desktop #1 implementation** |
+| EN/FR/pseudolocales, regression, documentation/changelog | Complete |
+
+Android #5 is **implementation-complete / interoperability-pending**, not closed.
+Desktop #1 remains open/unimplemented. No Desktop product code is changed.
+**Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**

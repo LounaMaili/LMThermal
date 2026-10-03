@@ -98,4 +98,19 @@
         <item quantity="one">%1$d valid pixel out of %2$d</item>
         <item quantity="other">%1$d valid pixels out of %2$d</item>
     </plurals>
+    <string name="export_save">Save capture</string>
+    <string name="export_destination">Choose destination</string>
+    <string name="export_cancel">Cancel export</string>
+    <string name="export_share">Share capture</string>
+    <string name="export_available">Current capture available.</string>
+    <string name="export_unavailable">No current capture. Open a source first.</string>
+    <string name="export_preview_only">Temperatures unavailable; capture saves the current preview only.</string>
+    <string name="export_progress">Preparing or writing capture…</string>
+    <string name="export_prepared">Capture frozen and checked. Choose a destination.</string>
+    <string name="export_success">Capture saved completely.</string>
+    <string name="export_cancelled">Export cancelled.</string>
+    <string name="export_resource_error">Capture exceeds the local export resource limit.</string>
+    <string name="export_write_error">Capture could not be saved. No incomplete file is shared.</string>
+    <string name="export_partial_remaining">The provider could not delete the partial document. Remove it manually.</string>
+    <string name="export_privacy">Capture includes scene imagery and available native/calibration evidence. No location, serial or network identity is added.</string>
 </resources>

@@ -29,8 +29,8 @@ data class CameraCapabilities(val preview: Boolean, val temperatureMeasurement: 
 
 /** Model IDs describe hardware/data provenance; translated product labels belong to Android resources. */
 data class CameraModuleMetadata(val id: CameraModuleId, val modelId: String,
-    val capabilities: CameraCapabilities) {
-    init { require(modelId.isNotBlank()) }
+    val capabilities: CameraCapabilities, val sourceOrigin: String = "unknown") {
+    init { require(modelId.isNotBlank()); require(sourceOrigin in setOf("device", "simulated", "unknown")) }
 }
 
 enum class CameraProbeResult { UNSUPPORTED, SUPPORTED }

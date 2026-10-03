@@ -99,4 +99,19 @@
         <item quantity="many">%1$d pixels valides sur %2$d</item>
         <item quantity="other">%1$d pixels valides sur %2$d</item>
     </plurals>
+    <string name="export_save">Enregistrer la capture</string>
+    <string name="export_destination">Choisir la destination</string>
+    <string name="export_cancel">Annuler l’export</string>
+    <string name="export_share">Partager la capture</string>
+    <string name="export_available">Capture actuelle disponible.</string>
+    <string name="export_unavailable">Aucune capture actuelle. Ouvrez une source.</string>
+    <string name="export_preview_only">Températures indisponibles ; seule la vue actuelle est enregistrée.</string>
+    <string name="export_progress">Préparation ou écriture de la capture…</string>
+    <string name="export_prepared">Capture figée et vérifiée. Choisissez une destination.</string>
+    <string name="export_success">Capture enregistrée intégralement.</string>
+    <string name="export_cancelled">Export annulé.</string>
+    <string name="export_resource_error">La capture dépasse la limite locale de ressources.</string>
+    <string name="export_write_error">Échec de l’enregistrement. Aucun fichier incomplet n’est partagé.</string>
+    <string name="export_partial_remaining">Le fournisseur ne peut pas supprimer le document partiel. Supprimez-le manuellement.</string>
+    <string name="export_privacy">La capture contient la scène et les données natives/de calibration disponibles. Aucune localisation ni identité réseau ou numéro de série n’est ajouté.</string>
 </resources>

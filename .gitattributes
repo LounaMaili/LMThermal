@@ -8,3 +8,4 @@ core/src/test/resources/thermometry/*.f32 binary
 
 core/src/test/resources/presentation/*.argb binary
 core/src/test/resources/presentation/*.levels binary
+core/src/test/resources/lmtx/*.lmtx binary

@@ -160,8 +160,9 @@ def get_temp_evn(a, env_term, b):
   presentation and 160×120 preview-only simulator (see camera architecture and validation).
 - [x] French/English localization, persisted System/app-language selection, fallback and locale regression (issue #2; see localization/validation documents).
 - [ ] Additional real camera models, each requiring protocol research and hardware validation.
-- [x] Generic native rectangular ROI drawing and deterministic valid-only statistics compatible with LMTX v1; no exchange export yet.
-- [ ] Still export, time series, recording/playback and comparison.
+- [x] Generic native rectangular ROI drawing and deterministic valid-only statistics compatible with LMTX v1.
+- [x] Coherent LMTX v1 still export with module-owned evidence, SAF publication and shared conformance fixtures; Desktop interoperability pending.
+- [ ] Mobile time series, recording/playback and comparison.
 - [ ] Release licensing, packaging and distribution.
 
 Real-device acceptance evidence for the first foundation is tracked separately in
@@ -182,7 +183,8 @@ for the original full-payload Android camera test.
 
 ## Documentation
 
-- [`docs/LMTX_FORMAT_V1.md`](docs/LMTX_FORMAT_V1.md) — Accepted v1.0 canonical specification for still-only `.lmtx` exchange; Android export and Desktop import remain future work. [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4) retains the decision/review history.
+- [`docs/LMTX_FORMAT_V1.md`](docs/LMTX_FORMAT_V1.md) — Accepted v1.0 canonical specification for still-only `.lmtx` exchange; Android still export is implemented ([producer guide](docs/ANDROID_LMTX_EXPORT.md)); Desktop import/interoperability remain pending. [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4) retains the decision/review history.
+- [`docs/ANDROID_LMTX_EXPORT.md`](docs/ANDROID_LMTX_EXPORT.md) — Save capture, immutable module evidence, SAF/share, privacy, limits and conformance tools.
 
 - [`docs/ANDROID_LOCALIZATION.md`](docs/ANDROID_LOCALIZATION.md) — System/French/English, platform storage, formatting, resource checks and language/module addition
 

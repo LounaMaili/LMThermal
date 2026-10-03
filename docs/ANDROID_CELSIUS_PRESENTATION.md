@@ -137,8 +137,8 @@ The fitted mapper maps ROI **cell edges**, while point/extrema markers map cente
 The statistics engine takes a Celsius `FloatArray`, geometry, rectangle and optional
 `ByteArray` validity mask. Null means all valid; only 0/1 bytes are accepted. It checks
 the whole plane/mask and rejects nonfinite valid values. Invalid internal values are
-ignored, including filler; the exact serialized positive-zero rule remains future
-export's responsibility. Min/max retain source Float32 values, ties retain the first
+ignored, including filler; the [LMTX exporter](ANDROID_LMTX_EXPORT.md) applies the
+exact serialized positive-zero rule. Min/max retain source Float32 values, ties retain the first
 valid native row-major pixel, and the mean uses a positive-zero Float64 accumulator
 with sequential row-major additions/division and no internal presentation rounding.
 No-valid regions have counts only, with absent min/max/mean/extrema coordinates.
@@ -147,7 +147,7 @@ The method matches `finite-valid-row-major-f64-v1` in [LMTX v1 §7](LMTX_FORMAT_
 Existing HT-301 measurements retain their all-valid representation. The generic
 `ThermalMeasurement.validityMask()` seam defaults to null and allows a future module
 to supply an owned 0/1 mask for ROI analysis. The engine/worker are tested with masks;
-this does not claim a new partial-valid real camera or mask-aware export implementation.
+this does not claim a new partial-valid real camera. LMTX export supports synthetic masks.
 
 **Point** keeps the persistent cursor and its current-frame reading. **ROI** enables
 create/replace by drag; **Clear ROI** removes it. There are no resize handles or
@@ -181,7 +181,8 @@ locale formatting/plurals. ROI values inherit measurement provenance and HT-301'
 unchanged warning: **Native-equivalent temperatures; absolute physical accuracy not yet
 independently validated.** No measurement comes from palette levels, legend or screenshots.
 The model maps deliberately to LMTX native half-open rectangles/statistics; this milestone
-adds no LMTX serializer/export, capture or fixtures and changes no accepted format semantics.
+originally added no persistence. The subsequent [LMTX still exporter](ANDROID_LMTX_EXPORT.md)
+freezes the same source/ROI/presentation without changing accepted format semantics.
 
 Debug-only bounded `roi.jsonl` records native bounds, counts/statistics, frame sequence,
 provenance kind, calculation time and callback FPS. It contains no scene payloads.

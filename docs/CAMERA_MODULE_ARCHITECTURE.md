@@ -205,12 +205,13 @@ fallback, formatting, generated LocaleConfig, tests and future-language procedur
 
 ## Adding another module
 
-Future exchange persistence follows the **Accepted v1.0 canonical specification** in
+Exchange persistence follows the **Accepted v1.0 canonical specification** in
 [LMTX_FORMAT_V1.md](LMTX_FORMAT_V1.md), including actual module identity/geometry,
 optional temperatures/native evidence, capability/availability and namespaced
-extensions. Its module-owned immutable export snapshot/evidence interface is future
-[Android issue #5](https://github.com/LounaMaili/LMThermal/issues/5) work; no persistence
-interface is implemented here. [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4)
+extensions. The module-owned immutable `ExportEvidenceProvider` seam and common `LmtxCapture`/
+writer are implemented by [Android issue #5](https://github.com/LounaMaili/LMThermal/issues/5);
+see [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md). No Desktop importer is added.
+[Issue #4](https://github.com/LounaMaili/LMThermal/issues/4)
 retains the decision/review history. Implementations follow the contract's versioning
 rules without silently changing v1 semantics.
 
@@ -253,3 +254,25 @@ Real HT-301 regression and the issue #1 acceptance checklist are recorded in
 after those hardware checks pass. Issue #2 acceptance is recorded separately in the
 localization validation section;
 no other commercial driver or simultaneous acquisition is added.
+
+## Still-export evidence seam
+
+Immutable measurement adapters may implement `ExportEvidenceProvider` to return owned,
+repeatable generic payload streams/descriptors and namespace-versioned declarative
+metadata. Common persistence consumes `SourceExportEvidence` without inspecting
+module classes or diagnostic strings. Export must perform no USB I/O or thermometry
+recomputation. Module metadata declares truthful source origin; actual module versions
+are optional and omitted when unavailable. Source capabilities remain distinct from
+current-frame availability. Future modules must test evidence lifetime through new
+frames/close/detach, exact bytes, privacy and alternate geometry. The 160×120 simulated
+preview proves export requires neither HT dimensions nor raw14 nor temperatures.
+
+### Current lifecycle continuity limitation
+
+`MainActivity.onStop()` unconditionally calls `leaveForeground()` and the common
+owner's `background()` release. This predates export and applies to external SAF/share
+UI and rotation/locale recreation. USB hardware does not require release for these
+transitions; retaining a source safely would be a deliberate ownership-policy change.
+This export milestone preserves the established conservative policy and validates
+the ViewModel-owned prepared file independently. Returning never auto-opens or sends
+initialization; unknown raw14 reopen remains measurement-unavailable.
