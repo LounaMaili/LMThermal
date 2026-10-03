@@ -25,10 +25,12 @@ Celsius without changing session controls/state. Close/error also clear the UI
 measurement immediately, protected by existing generation/publication ownership.
 There is no last-good-temperature fallback.
 
-Preview normalization still uses raw/display words only and cannot feed the LUT.
-Compose displays current numeric center/matrix/high/low outputs and scales high/low
-coordinate markers; it performs no thermometry. Trailer center is separate from
-literal pixel `(192,144)`. No center-region algorithm is inferred.
+Unavailable-measurement preview normalization uses raw/display words only and cannot
+feed the LUT. Valid measurements now feed the separate
+[Celsius presentation worker](ANDROID_CELSIUS_PRESENTATION.md), whose matrix colors,
+touch readings and overlays share one completed measurement. Compose performs no
+thermometry. Trailer center remains separate from literal pixel `(192,144)` in
+diagnostics; no center-region algorithm is inferred.
 
 ## Trailer inputs
 
@@ -144,6 +146,7 @@ the key must cover every exact affecting input/configuration and correction sema
 
 Only bounded debug numeric reports are persisted after explicit initialization;
 no scene payloads/images/hashes are recorded. No camera controls/timings/discards/
-liveness criteria changed in this milestone. Touch measurements, ROI, Celsius
-palettes and export/recording remain future work. Absolute physical accuracy still
+liveness criteria changed in the thermometry or presentation milestones. Touch/Celsius
+presentation is now implemented separately; ROI and export/recording remain future
+work. Absolute physical accuracy still
 requires independently measured surface targets with controlled environmental inputs.

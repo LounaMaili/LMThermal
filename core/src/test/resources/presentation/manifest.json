@@ -1,0 +1,20 @@
+{
+  "desktop_source_sha256": "600dfe91d193502b248149c37bac97b49ea58b94f1de6b4e4e39c8cdf0b6daa1",
+  "opencv": "5.0.0",
+  "numpy": "2.5.3",
+  "palette_order": [
+    "White hot",
+    "Black hot",
+    "Inferno",
+    "Iron-like",
+    "Turbo"
+  ],
+  "files": {
+    "palettes.argb": "cd8465b4e9c5da70df0bcdbcfaf55c766b0eb976b23a8e6e656400cda0ffe811",
+    "radiometric-room-settled.auto.levels": "8e550c294cae4277de1dc91c2530f4dc557f9dfd7968649e84f72a20afeb8c22",
+    "radiometric-room-settled.locked.levels": "a556b917332c8f6fb31a64254240da5fab594202d92bf299c28872b3e0d1e3e9",
+    "ranges.properties": "1c9f2391ac8f7d8720a4a840218230bfcdd402225f95abdaa0067f5c58636319",
+    "warm-hand-settled.auto.levels": "6fef24968a1cf1b73faf1fbcd389c192cca984632fc25c7956187237a7c06d1e",
+    "warm-hand-settled.locked.levels": "f9c004816344c4c5e97d586234082d848c411e926edfc0b5406408940736b166"
+  }
+}

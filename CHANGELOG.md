@@ -4,6 +4,14 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Android Celsius presentation — 2026-10-03)
+- Added JVM-testable Desktop-equivalent White hot, Black hot, Inferno, Iron-like/HOT and Turbo palettes with exact 2nd/98th percentile Auto range, centered minimum 1 °C span, finite exact Locked bounds and five-tick Celsius legend.
+- Added native-coordinate tap/drag inspection and persistent selected pixel with current raw14/Celsius, plus a shared fitted-image/letterbox mapper for touch, cursor and high/low overlays. Native matrices and orientation are unchanged.
+- Separated latest-request Celsius bitmap rendering from camera/thermometry work, publishing coherent measurement/color snapshots and clearing colors/legend/cursor readings when measurement becomes unavailable. No camera commands, session gates or LUT cache were added.
+- Grouped the portrait/landscape live screen around image/readings/presentation controls, with optional diagnostics and existing debug-only control experiments.
+- Added independent Desktop full-image color/percentile references, mapping/ownership/cursor regressions and Pixel runtime presentation/worker tests. Numerical fixtures remain test-only; no new runtime dependency was introduced.
+- Validated all palettes, exact 25–45 °C lock, tap/drag/markers and stale-value clearing/recovery on Pixel 8 with HT-301; preserved numeric-only results. Sampled rendering median 24.952 ms, warmed thermometry 18.674 ms and callbacks near 25 FPS; 116 JVM and six Pixel instrumentation tests passed. Absolute physical accuracy remains unvalidated.
+
 ### Added (Android thermometry parity — 2026-10-03)
 - Ported the validated width-384/range-120/lens-68/shutter-fix-1.5 native-equivalent arithmetic into plain Kotlin core, preserving Float/Double operation boundaries, trailer inputs and undefined LUT entries.
 - Added owned raw14/matrix measurement evidence, separate trailer/literal center, numerical trace and a current-frame thermometry gate independent of structural session readiness.

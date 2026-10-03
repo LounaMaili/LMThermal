@@ -1,6 +1,6 @@
 # LMThermal
 
-> **Measurement status (2026-10-02):** Real HT-301 frames confirm 288 thermal
+> **Measurement status (2026-10-03):** Real HT-301 frames confirm 288 thermal
 > image rows followed by four non-image trailer rows. The last 514 bytes are
 > only part of that trailer. Native disassembly identifies field 356 as a
 > duplicated calibration coefficient and locates the app's live center index
@@ -28,7 +28,9 @@ USB Host authorization → native unconverted UVC acquisition → exact frame in
 → latest-frame grayscale aiming preview. The explicit radiometric session is implemented;
 acceptance uses frame evidence rather than unreliable Zoom reads. The plain-JVM thermometry
 engine has full golden LUT/matrix parity; a current ready frame must also pass finite-LUT
-validation before numeric temperatures and high/low markers are shown. See
+validation before Celsius rendering, touch readings and high/low markers are shown.
+Presentation uses five Desktop-equivalent palettes and Auto/Locked Celsius bounds. See
+[presentation and touch architecture](docs/ANDROID_CELSIUS_PRESENTATION.md),
 [thermometry design and parity](docs/ANDROID_THERMOMETRY.md), [session architecture](docs/ANDROID_RADIOMETRIC_SESSION.md),
 [foundation architecture](docs/ANDROID_FOUNDATION.md),
 [build configuration](docs/CONFIGURATION.md), and [real-device results](docs/ANDROID_VALIDATION.md).
@@ -42,7 +44,11 @@ JDK 17 and the SDK/NDK packages documented in CONFIGURATION.md are required.
 Connect the HT-301 through USB Host/OTG, launch LMThermal, tap **Connect / Open**,
 and grant Android camera/USB permissions. Opening is read-only. From a display stream,
 tap **Initialize radiometric** to qualify the baseline and run the validated sequence.
-Readiness requires structural/liveness evidence. Measurement additionally requires valid current-frame thermometry. **Close** releases the stream; backgrounding
+Readiness requires structural/liveness evidence. Measurement additionally requires valid current-frame thermometry.
+Tap/drag the image to inspect native pixel/raw14/Celsius. Choose **Palette**, **Auto** or
+**Locked**, and **Set range** (default 25–45 °C); these controls affect colors only.
+Display/unsettled previews expose no Celsius legend. Optional **Diagnostics** retains
+separate trailer/literal center and debug controls. **Close** releases the stream; backgrounding
 also releases it. Reopening remains explicit. Wireless ADB follows AGENTS.md.
 
 Debug builds also provide **Test raw14 transition (32772)**, a one-shot frame-gated
@@ -133,7 +139,8 @@ def get_temp_evn(a, env_term, b):
 - [x] JVM parser/golden fixtures, bounded preview architecture and basic diagnostics.
 - [x] Evidence-gated radiometric session: exact SET completion plus frame evidence; single-32772 and full Pixel 8 sequence passed, including conservative raw14 reopen.
 - [x] Float32/native-equivalent LUT and measurement parity port for width 384/range 120/lens 68/shutter fix 1.5.
-- [ ] Touch measurements, Celsius palette/range lock and ROI.
+- [x] Native-coordinate tap/drag inspection, five Celsius palettes, Auto/Locked range and legend.
+- [ ] ROI drawing/statistics.
 - [ ] Still export, time series, recording/playback and comparison.
 - [ ] Release licensing, packaging and distribution.
 

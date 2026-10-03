@@ -1,0 +1,1268 @@
+{
+  "date": "2026-10-03",
+  "base_main": "526316fbc9db0a892d38b81f4b48768e63176c83",
+  "branch": "feat/android-celsius-presentation",
+  "device": {
+    "model": "Pixel 8",
+    "android": "17",
+    "abi": "arm64-v8a",
+    "adb": "Already-paired wireless mDNS target; no new pairing or manual connect"
+  },
+  "provenance": "Numeric reports preserved before camera-free instrumentation; no new live image/raw fixture or scene hash",
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "operator_confirmed": [
+    "display grayscale usable without Celsius",
+    "all five palettes usable with aligned scene/high/low markers",
+    "Auto scene adaptation and fixed Locked 25\u201345 Celsius legend",
+    "palette/range colors do not cause numeric temperature jumps",
+    "tap/drag center, edges, hand/background; crosshair follows finger with native bounds",
+    "hand warmer than background; selected coordinate refreshes across live frames",
+    "Close clears Celsius; raw14 reopen remains unsettled without readings/legend",
+    "fresh reconnect/explicit initialized session restores Celsius rendering and touch readings",
+    "responsive live view"
+  ],
+  "instrumentation": {
+    "passed": 6,
+    "duration_seconds": 3.075,
+    "camera_free": true,
+    "classes": [
+      "ThermometryDeviceParityTest",
+      "CelsiusPresentationDeviceTest",
+      "CelsiusPresenterDeviceTest"
+    ],
+    "presentation_pixels_compared": 2211840,
+    "presentation_pixel_differences": 0
+  },
+  "jvm": {
+    "passed": 116,
+    "failed": 0,
+    "presentation_pixels_compared": 2211840,
+    "presentation_pixel_differences": 0
+  },
+  "build": {
+    "debug": "passed",
+    "android_test": "passed",
+    "lint_errors": 0,
+    "lint_warnings": 9
+  },
+  "runs": [
+    {
+      "label": "palettes",
+      "time_to_ready_ms": 6345,
+      "initialization_events": [
+        {
+          "relative_ms": 107,
+          "event": "display_baseline",
+          "state": "DISPLAY_STREAM",
+          "stage": "BASELINE",
+          "mode": "DISPLAY",
+          "baseline": 3,
+          "discarded": 0,
+          "shutter_frames": 0,
+          "live": 0,
+          "held": 0,
+          "rejected": 2,
+          "malformed": 1,
+          "minimum": 32768,
+          "maximum": 33023
+        },
+        {
+          "relative_ms": 629,
+          "event": "set_transfer",
+          "requested": 32772,
+          "bytes": [
+            4,
+            128
+          ],
+          "requested_length": 2,
+          "actual_length": 2
+        },
+        {
+          "relative_ms": 1343,
+          "event": "stage_verified",
+          "state": "RAW14_UNSETTLED",
+          "stage": "WAIT_RANGE",
+          "mode": "RAW14",
+          "baseline": 3,
+          "discarded": 15,
+          "shutter_frames": 0,
+          "live": 0,
+          "held": 0,
+          "rejected": 2,
+          "malformed": 1,
+          "minimum": null,
+          "maximum": null
+        },
+        {
+          "relative_ms": 1967,
+          "event": "set_transfer",
+          "requested": 32800,
+          "bytes": [
+            32,
+            128
+          ],
+          "requested_length": 2,
+          "actual_length": 2
+        },
+        {
+          "relative_ms": 2665,
+          "event": "stage_verified",
+          "state": "RAW14_UNSETTLED",
+          "stage": "WAIT_SHUTTER",
+          "mode": "RAW14",
+          "baseline": 3,
+          "discarded": 30,
+          "shutter_frames": 0,
+          "live": 0,
+          "held": 0,
+          "rejected": 4,
+          "malformed": 2,
+          "minimum": null,
+          "maximum": null
+        },
+        {
+          "relative_ms": 3168,
+          "event": "set_transfer",
+          "requested": 32768,
+          "bytes": [
+            0,
+            128
+          ],
+          "requested_length": 2,
+          "actual_length": 2
+        },
+        {
+          "relative_ms": 6345,
+          "event": "radiometric_ready",
+          "state": "RADIOMETRIC_READY",
+          "stage": "FINISHED",
+          "mode": "RAW14",
+          "baseline": 3,
+          "discarded": 105,
+          "shutter_frames": 75,
+          "live": 5,
+          "held": 30,
+          "rejected": 83,
+          "malformed": 2,
+          "minimum": null,
+          "maximum": null
+        }
+      ],
+      "first_ready_frame": {
+        "sequence": 186,
+        "minimum": 5261,
+        "maximum": 5799,
+        "baseline": 3,
+        "discarded": 105,
+        "shutter_frames": 75,
+        "live": 5,
+        "held": 30,
+        "rejected": 83,
+        "malformed": 2,
+        "replaced_count": 0,
+        "native_malformed": 2,
+        "parser_rejected": 4
+      },
+      "render_ms": {
+        "samples": 65,
+        "minimum": 18.035075,
+        "median": 24.566691,
+        "maximum": 40.664225
+      },
+      "measurement_ms": {
+        "samples": 62,
+        "minimum": 10.092163,
+        "median": 18.214844,
+        "maximum": 113.937133
+      },
+      "callback_fps_at_render_samples": {
+        "samples": 65,
+        "minimum": 24.92522432701894,
+        "median": 25,
+        "maximum": 25.365853658536587
+      },
+      "pending_replacements_at_render_samples": [
+        2
+      ],
+      "native_malformed_at_render_samples": [
+        2
+      ],
+      "completed_superseded_renders_last": 46,
+      "settings_sample_counts": [
+        {
+          "palette": "Inferno",
+          "automatic": true,
+          "samples": 52
+        },
+        {
+          "palette": "Inferno",
+          "automatic": false,
+          "samples": 4
+        },
+        {
+          "palette": "White hot",
+          "automatic": true,
+          "samples": 1
+        },
+        {
+          "palette": "Black hot",
+          "automatic": true,
+          "samples": 4
+        },
+        {
+          "palette": "Iron-like",
+          "automatic": true,
+          "samples": 2
+        },
+        {
+          "palette": "Turbo",
+          "automatic": true,
+          "samples": 2
+        }
+      ],
+      "availability_events": [
+        {
+          "relative_ms": 9076,
+          "event": "presentation_unavailable",
+          "session_state": "RAW14_UNSETTLED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        },
+        {
+          "relative_ms": 29078,
+          "event": "presentation_unavailable",
+          "session_state": "RAW14_UNSETTLED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        },
+        {
+          "relative_ms": 79088,
+          "event": "presentation_unavailable",
+          "session_state": "RAW14_UNSETTLED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        },
+        {
+          "relative_ms": 129891,
+          "event": "presentation_unavailable",
+          "session_state": "DISCONNECTED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        }
+      ],
+      "touch_samples": [],
+      "render_samples_columns": [
+        "relative_ms",
+        "sequence",
+        "render_ms",
+        "palette",
+        "automatic",
+        "range",
+        "matrix_range",
+        "cursor",
+        "callback_fps",
+        "replaced",
+        "malformed",
+        "superseded_completed_renders"
+      ],
+      "render_samples": [
+        [6751,195,24.951782,"Inferno",true,[26.08107566833496,37.00703811645508],[25.895006,37.672504],null,25.048169556840076,2,2,0],
+        [8868,248,24.915161,"Inferno",true,[25.852587699890137,26.852587699890137],[25.818819,29.702583],null,25.048169556840076,2,2,5],
+        [10560,290,23.982747,"Inferno",true,[25.888710021972656,33.56998825073242],[25.702198,35.004757],null,24.975024975024976,2,2,5],
+        [12716,344,23.729167,"Inferno",true,[26.147676467895508,35.11198425292969],[26.031466,35.810604],null,24.975024975024976,2,2,9],
+        [14828,397,26.887044,"Inferno",true,[26.104299545288086,35.04917907714844],[25.94158,35.66361],null,25,2,2,10],
+        [16875,448,33.132284,"Inferno",true,[26.07797622680664,33.29061508178711],[25.915161,34.53688],null,25.120772946859905,2,2,11],
+        [18884,498,33.658284,"Inferno",true,[26.124454498291016,33.44184875488281],[25.938448,34.643627],null,25.048169556840076,2,2,11],
+        [20922,549,40.664225,"Inferno",true,[26.124454498291016,33.528160095214844],[25.938448,34.79287],null,25.07232401157184,2,2,12],
+        [22947,600,22.754028,"Inferno",true,[26.16779899597168,34.04330825805664],[26.005112,34.877064],null,25.365853658536587,2,2,12],
+        [25028,652,24.064616,"Inferno",true,[26.144607543945312,33.91440963745117],[25.958538,34.962204],null,25,2,2,13],
+        [27031,702,27.844563,"Inferno",true,[26.098098754882812,33.84989929199219],[25.935314,34.898354],null,25.024061597690086,2,2,13],
+        [29036,752,26.845052,"Inferno",true,[26.074874877929688,33.74235916137695],[25.911997,34.834446],null,25.024061597690086,2,2,14],
+        [30555,790,24.737997,"Inferno",true,[26.479475021362305,37.09872817993164],[26.363676,37.743153],null,24.975024975024976,2,2,14],
+        [32631,842,24.085734,"Inferno",true,[26.061870574951172,36.32445526123047],[25.619146,37.991585],null,24.975024975024976,2,2,15],
+        [34675,893,27.595621,"Inferno",true,[26.386837005615234,36.555233001708984],[26.247719,37.45261],null,24.975024975024976,2,2,16],
+        [36682,943,29.802206,"Inferno",true,[26.35747528076172,36.386024475097656],[26.241455,37.617893],null,25,2,2,16],
+        [38719,994,33.891927,"Inferno",true,[26.3404541015625,36.492332458496094],[26.224497,36.827297],null,25.048169556840076,2,2,16],
+        [40759,1045,35.722982,"Inferno",true,[26.38373565673828,36.57554244995117],[26.26781,36.972996],null,25,2,2,16],
+        [41715,1069,18.035075,"Inferno",false,[25,45],[26.294102,36.952652],null,25.024061597690086,2,2,16],
+        [43716,1119,28.992513,"Inferno",false,[25,45],[26.19504,37.01422],null,24.975024975024976,2,2,16],
+        [45743,1170,18.593913,"Inferno",false,[25,45],[26.128471,37.472923],null,24.975024975024976,2,2,17],
+        [47756,1220,24.194214,"Inferno",true,[26.33118438720703,36.72089385986328],[26.168653,37.51361],null,25,2,2,21],
+        [49626,1267,18.570231,"Inferno",false,[25,45],[26.2151,37.492825],null,25,2,2,21],
+        [50246,1282,24.411581,"Inferno",true,[26.3404541015625,36.785499572753906],[26.224497,37.577206],null,25,2,2,21],
+        [52247,1332,28.175619,"Inferno",true,[26.261577606201172,36.67900466918945],[26.122175,37.59673],null,24.975984630163303,2,2,22],
+        [54315,1384,26.336385,"Inferno",true,[26.215099334716797,36.67900466918945],[26.098888,37.409645],null,25.024061597690086,2,2,23],
+        [54636,1392,24.789348,"White hot",true,[26.19190788269043,36.67900466918945],[26.075666,37.43043],null,25.024061597690086,2,2,23],
+        [56469,1438,24.376953,"Black hot",true,[26.195039749145508,36.721527099609375],[26.07883,37.451694],null,25,2,2,23],
+        [58513,1489,24.708781,"Black hot",true,[26.19190788269043,36.699981689453125],[26.05238,37.59673],null,25,2,2,23],
+        [58919,1499,24.328858,"Inferno",true,[26.19817352294922,36.70121383666992],[26.058708,37.576794],null,25,2,2,23],
+        [60951,1550,24.167683,"Black hot",true,[26.18877601623535,36.74123764038086],[26.049215,37.596283],null,24.975024975024976,2,2,23],
+        [63075,1603,24.320313,"Black hot",true,[26.278535842895508,36.65679168701172],[26.115849,37.40873],null,25.024061597690086,2,2,24],
+        [64244,1632,24.622722,"Iron-like",true,[26.18877601623535,36.72029113769531],[26.049215,37.42999],null,24.975024975024976,2,2,24],
+        [66399,1686,24.339274,"Iron-like",true,[26.18877601623535,36.74123764038086],[26.049215,37.471596],null,25,2,2,24],
+        [67034,1702,24.116862,"Turbo",true,[26.19190788269043,36.74184036254883],[26.05238,37.451252],null,25.024061597690086,2,2,24],
+        [69069,1753,26.102173,"Turbo",true,[26.162357330322266,36.740638732910156],[25.99948,37.450333],null,25,2,2,24],
+        [69189,1756,24.566691,"Inferno",true,[26.171785354614258,36.76338577270508],[26.009033,37.47248],null,25,2,2,24],
+        [71232,1807,24.606649,"Inferno",true,[25.83055019378662,26.83055019378662],[25.866056,26.955582],null,25,2,2,24],
+        [73311,1859,21.803915,"Inferno",true,[25.56558895111084,26.56558895111084],[25.599434,26.646372],null,25,2,2,27],
+        [75391,1911,22.077392,"Inferno",true,[25.571931838989258,26.571931838989258],[25.629396,26.652414],null,25.024061597690086,2,2,31],
+        [77430,1962,23.87089,"Inferno",true,[25.56558895111084,26.56558895111084],[25.622816,26.738884],null,25.024061597690086,2,2,31],
+        [80523,2039,29.60905,"Inferno",true,[35.90504837036133,37.288909912109375],[35.7783,37.64248],null,25,2,2,33],
+        [82725,2094,22.103882,"Inferno",true,[26.341949462890625,27.341949462890625],[26.379623,27.738491],null,25,2,2,33],
+        [84833,2147,24.178915,"Inferno",true,[26.254688262939453,27.254688262939453],[26.210829,27.503824],null,25,2,2,34],
+        [86887,2198,28.787272,"Inferno",true,[26.237635612487793,27.237635612487793],[26.24038,27.463642],null,25.024061597690086,2,2,34],
+        [88916,2249,28.882324,"Inferno",true,[26.249231338500977,27.249231338500977],[26.24038,27.48658],null,25,2,2,34],
+        [90989,2301,24.176391,"Inferno",true,[26.252236366271973,27.252236366271973],[26.22029,27.512302],null,25,2,2,34],
+        [93070,2353,24.204997,"Inferno",true,[26.249231338500977,27.249231338500977],[26.24038,27.463642],null,25.024061597690086,2,2,34],
+        [95112,2404,24.485474,"Inferno",true,[26.217638969421387,27.217638969421387],[26.197065,27.44352],null,25,2,2,35],
+        [97238,2457,21.974731,"Inferno",true,[26.17987823486328,27.17987823486328],[26.147423,27.394794],null,25,2,2,35],
+        [99276,2508,25.760701,"Inferno",true,[26.21460247039795,27.21460247039795],[26.193933,27.440702],null,25,2,2,36],
+        [101280,2558,35.778443,"Inferno",true,[26.234708786010742,27.234708786010742],[26.213993,27.460794],null,24.9500998003992,2,2,39],
+        [103313,2609,24.562662,"Inferno",true,[26.25535297393799,27.25535297393799],[26.246675,27.469305],null,24.9500998003992,2,2,39],
+        [105322,2659,27.805908,"Inferno",true,[26.263832092285156,27.263832092285156],[26.22029,27.489395],null,25.024061597690086,2,2,40],
+        [107356,2710,23.96936,"Inferno",true,[26.28393840789795,27.28393840789795],[26.286825,27.532425],null,25,2,2,40],
+        [109360,2760,30.029867,"Inferno",true,[26.339118003845215,27.339118003845215],[26.342606,27.609562],null,24.975024975024976,2,2,41],
+        [111445,2812,31.252929,"Inferno",true,[26.367751121520996,27.367751121520996],[26.359564,27.626867],null,24.975024975024976,2,2,42],
+        [113480,2863,30.3479,"Inferno",true,[26.405290603637695,27.405290603637695],[26.385857,27.698277],null,25.048169556840076,2,2,43],
+        [115547,2915,24.174398,"Inferno",true,[26.442893981933594,27.442893981933594],[26.435339,27.701061],null,25.024061597690086,2,2,44],
+        [117628,2967,23.851277,"Inferno",true,[26.454362869262695,27.454362869262695],[26.435339,27.723936],null,25.024061597690086,2,2,45],
+        [119714,3019,21.956055,"Inferno",true,[26.47446918487549,27.47446918487549],[26.455399,27.789715],null,25,2,2,45],
+        [121718,3069,29.65686,"Inferno",true,[26.49748706817627,27.49748706817627],[26.478527,27.789715],null,25.024061597690086,2,2,45],
+        [123719,3119,25.472087,"Inferno",true,[26.520536422729492,27.520536422729492],[26.501719,27.81259],null,25,2,2,46],
+        [125795,3171,23.819214,"Inferno",true,[26.540611267089844,27.540611267089844],[26.521778,27.83265],null,24.92522432701894,2,2,46],
+        [127805,3221,22.11617,"Inferno",true,[26.598383903503418,27.598383903503418],[26.580341,27.889282],null,25,2,2,46]
+      ],
+      "first_measurement_inputs": {
+        "raw_range": [
+          5261,
+          5799
+        ],
+        "matrix_range": [
+          26.011375,
+          37.796783
+        ],
+        "trailer_center": {
+          "index": 5715,
+          "celsius": 36.04315,
+          "x": null,
+          "y": null
+        },
+        "literal_center": {
+          "index": 5719,
+          "celsius": 36.12731,
+          "x": 192,
+          "y": 144
+        },
+        "high": {
+          "index": 5799,
+          "celsius": 37.796783,
+          "x": 13,
+          "y": 231
+        },
+        "low": {
+          "index": 5261,
+          "celsius": 26.011375,
+          "x": 291,
+          "y": 15
+        },
+        "parameters": {
+          "correction": 0,
+          "reflected": 25,
+          "ambient": 25,
+          "humidity": 0.45,
+          "emissivity": 0.98,
+          "distance": 1,
+          "calibration": [
+            0.2705,
+            35.992,
+            4e-05,
+            0.0057,
+            0.8234
+          ]
+        },
+        "trace": {
+          "host_range": 120,
+          "host_lens": 68,
+          "host_shutter_fix": 1.5,
+          "fpa_word": 7195,
+          "fpa_term": 36.805557,
+          "calibration_word": 3100,
+          "calibration_temperature": 36.850006,
+          "get_fix": 130,
+          "adjusted_lookup_base": 5870,
+          "init_a": 66.52865,
+          "init_b": 4426.061,
+          "linear": 1.0873777,
+          "constant": 1778.124,
+          "effective_native_distance": 3,
+          "calc_fix_raw": [
+            10.296338,
+            0.9886223,
+            1.0321516,
+            246149488
+          ],
+          "finite_lookup_entries": 13250
+        }
+      }
+    },
+    {
+      "label": "touch_and_close",
+      "time_to_ready_ms": 6355,
+      "initialization_events": [
+        {
+          "relative_ms": 114,
+          "event": "display_baseline",
+          "state": "DISPLAY_STREAM",
+          "stage": "BASELINE",
+          "mode": "DISPLAY",
+          "baseline": 3,
+          "discarded": 0,
+          "shutter_frames": 0,
+          "live": 0,
+          "held": 0,
+          "rejected": 2,
+          "malformed": 2,
+          "minimum": 32768,
+          "maximum": 33006
+        },
+        {
+          "relative_ms": 641,
+          "event": "set_transfer",
+          "requested": 32772,
+          "bytes": [
+            4,
+            128
+          ],
+          "requested_length": 2,
+          "actual_length": 2
+        },
+        {
+          "relative_ms": 1352,
+          "event": "stage_verified",
+          "state": "RAW14_UNSETTLED",
+          "stage": "WAIT_RANGE",
+          "mode": "RAW14",
+          "baseline": 3,
+          "discarded": 15,
+          "shutter_frames": 0,
+          "live": 0,
+          "held": 0,
+          "rejected": 2,
+          "malformed": 2,
+          "minimum": null,
+          "maximum": null
+        },
+        {
+          "relative_ms": 1990,
+          "event": "set_transfer",
+          "requested": 32800,
+          "bytes": [
+            32,
+            128
+          ],
+          "requested_length": 2,
+          "actual_length": 2
+        },
+        {
+          "relative_ms": 2634,
+          "event": "stage_verified",
+          "state": "RAW14_UNSETTLED",
+          "stage": "WAIT_SHUTTER",
+          "mode": "RAW14",
+          "baseline": 3,
+          "discarded": 30,
+          "shutter_frames": 0,
+          "live": 0,
+          "held": 0,
+          "rejected": 4,
+          "malformed": 4,
+          "minimum": null,
+          "maximum": null
+        },
+        {
+          "relative_ms": 3157,
+          "event": "set_transfer",
+          "requested": 32768,
+          "bytes": [
+            0,
+            128
+          ],
+          "requested_length": 2,
+          "actual_length": 2
+        },
+        {
+          "relative_ms": 6355,
+          "event": "radiometric_ready",
+          "state": "RADIOMETRIC_READY",
+          "stage": "FINISHED",
+          "mode": "RAW14",
+          "baseline": 3,
+          "discarded": 105,
+          "shutter_frames": 75,
+          "live": 5,
+          "held": 30,
+          "rejected": 83,
+          "malformed": 4,
+          "minimum": null,
+          "maximum": null
+        }
+      ],
+      "first_ready_frame": {
+        "sequence": 179,
+        "minimum": 5262,
+        "maximum": 5735,
+        "baseline": 3,
+        "discarded": 105,
+        "shutter_frames": 75,
+        "live": 5,
+        "held": 30,
+        "rejected": 83,
+        "malformed": 4,
+        "replaced_count": 0,
+        "native_malformed": 4,
+        "parser_rejected": 4
+      },
+      "render_ms": {
+        "samples": 40,
+        "minimum": 22.250162,
+        "median": 26.1189775,
+        "maximum": 37.908977
+      },
+      "measurement_ms": {
+        "samples": 42,
+        "minimum": 10.504679,
+        "median": 19.360352,
+        "maximum": 24.698323
+      },
+      "callback_fps_at_render_samples": {
+        "samples": 40,
+        "minimum": 24.900398406374503,
+        "median": 25.0,
+        "maximum": 25.048169556840076
+      },
+      "pending_replacements_at_render_samples": [
+        0
+      ],
+      "native_malformed_at_render_samples": [
+        4
+      ],
+      "completed_superseded_renders_last": 21,
+      "settings_sample_counts": [
+        {
+          "palette": "Inferno",
+          "automatic": true,
+          "samples": 40
+        }
+      ],
+      "availability_events": [
+        {
+          "relative_ms": 9405,
+          "event": "presentation_unavailable",
+          "session_state": "RAW14_UNSETTLED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        },
+        {
+          "relative_ms": 29462,
+          "event": "presentation_unavailable",
+          "session_state": "RAW14_UNSETTLED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        },
+        {
+          "relative_ms": 79439,
+          "event": "presentation_unavailable",
+          "session_state": "RAW14_UNSETTLED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        },
+        {
+          "relative_ms": 89522,
+          "event": "presentation_unavailable",
+          "session_state": "DISCONNECTED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        }
+      ],
+      "touch_samples": [
+        {
+          "relative_ms": 16385,
+          "sequence": 426,
+          "native_xy": [
+            198,
+            164
+          ],
+          "reading": {
+            "x": 198,
+            "y": 164,
+            "raw14": 5762,
+            "celsius": 36.811222
+          }
+        },
+        {
+          "relative_ms": 17485,
+          "sequence": 456,
+          "native_xy": [
+            269,
+            213
+          ],
+          "reading": {
+            "x": 269,
+            "y": 213,
+            "raw14": 5717,
+            "celsius": 35.888847
+          }
+        },
+        {
+          "relative_ms": 18189,
+          "sequence": 473,
+          "native_xy": [
+            190,
+            161
+          ],
+          "reading": {
+            "x": 190,
+            "y": 161,
+            "raw14": 5757,
+            "celsius": 36.728676
+          }
+        },
+        {
+          "relative_ms": 18847,
+          "sequence": 490,
+          "native_xy": [
+            292,
+            178
+          ],
+          "reading": {
+            "x": 292,
+            "y": 178,
+            "raw14": 5719,
+            "celsius": 35.931656
+          }
+        },
+        {
+          "relative_ms": 19424,
+          "sequence": 504,
+          "native_xy": [
+            220,
+            178
+          ],
+          "reading": {
+            "x": 220,
+            "y": 178,
+            "raw14": 5749,
+            "celsius": 36.560863
+          }
+        },
+        {
+          "relative_ms": 19905,
+          "sequence": 514,
+          "native_xy": [
+            146,
+            126
+          ],
+          "reading": {
+            "x": 146,
+            "y": 126,
+            "raw14": 5756,
+            "celsius": 36.685837
+          }
+        },
+        {
+          "relative_ms": 20543,
+          "sequence": 532,
+          "native_xy": [
+            89,
+            134
+          ],
+          "reading": {
+            "x": 89,
+            "y": 134,
+            "raw14": 5749,
+            "celsius": 36.5614
+          }
+        },
+        {
+          "relative_ms": 21561,
+          "sequence": 558,
+          "native_xy": [
+            232,
+            179
+          ],
+          "reading": {
+            "x": 232,
+            "y": 179,
+            "raw14": 5746,
+            "celsius": 36.498028
+          }
+        },
+        {
+          "relative_ms": 22786,
+          "sequence": 587,
+          "native_xy": [
+            236,
+            156
+          ],
+          "reading": {
+            "x": 236,
+            "y": 156,
+            "raw14": 5735,
+            "celsius": 36.268612
+          }
+        },
+        {
+          "relative_ms": 23412,
+          "sequence": 603,
+          "native_xy": [
+            113,
+            186
+          ],
+          "reading": {
+            "x": 113,
+            "y": 186,
+            "raw14": 5766,
+            "celsius": 36.91658
+          }
+        },
+        {
+          "relative_ms": 25841,
+          "sequence": 663,
+          "native_xy": [
+            315,
+            200
+          ],
+          "reading": {
+            "x": 315,
+            "y": 200,
+            "raw14": 5263,
+            "celsius": 25.857199
+          }
+        },
+        {
+          "relative_ms": 26991,
+          "sequence": 693,
+          "native_xy": [
+            204,
+            71
+          ],
+          "reading": {
+            "x": 204,
+            "y": 71,
+            "raw14": 5727,
+            "celsius": 36.077606
+          }
+        },
+        {
+          "relative_ms": 27957,
+          "sequence": 717,
+          "native_xy": [
+            167,
+            181
+          ],
+          "reading": {
+            "x": 167,
+            "y": 181,
+            "raw14": 5476,
+            "celsius": 30.659538
+          }
+        },
+        {
+          "relative_ms": 28742,
+          "sequence": 737,
+          "native_xy": [
+            132,
+            96
+          ],
+          "reading": {
+            "x": 132,
+            "y": 96,
+            "raw14": 5746,
+            "celsius": 36.476513
+          }
+        }
+      ],
+      "render_samples_columns": [
+        "relative_ms",
+        "sequence",
+        "render_ms",
+        "palette",
+        "automatic",
+        "range",
+        "matrix_range",
+        "cursor",
+        "callback_fps",
+        "replaced",
+        "malformed",
+        "superseded_completed_renders"
+      ],
+      "render_samples": [
+        [6562,183,25.062133,"Inferno",true,[25.912851333618164,32.28379440307617],[25.679956,35.905556],null,24.9500998003992,0,4,0],
+        [8596,234,24.241984,"Inferno",true,[25.98258399963379,32.50169372558594],[25.749878,35.926624],null,25,0,4,0],
+        [10918,292,22.293213,"Inferno",true,[25.964170455932617,32.61496353149414],[25.731401,36.81176],null,25,0,4,0],
+        [13035,345,24.35022,"Inferno",true,[25.98739242553711,32.74528121948242],[25.754719,37.02039],null,25,0,4,0],
+        [15036,395,26.285075,"Inferno",true,[26.477197647094727,36.83308792114258],[26.292078,37.540504],null,24.975024975024976,0,4,0],
+        [17072,446,22.850423,"Inferno",true,[32.638153076171875,36.99998092651367],[26.846426,37.478302],{"x":198,"y":164,"raw14":5746,"celsius":36.498596},24.975984630163303,0,4,1],
+        [19112,497,24.749227,"Inferno",true,[35.212562561035156,36.99953842163086],[28.011377,37.291],{"x":292,"y":178,"raw14":5721,"celsius":35.973072},25,0,4,1],
+        [21154,548,24.350423,"Inferno",true,[35.31937789916992,37.041683197021484],[26.777294,37.27059],{"x":89,"y":134,"raw14":5745,"celsius":36.477654},25,0,4,3],
+        [23243,600,30.541016,"Inferno",true,[26.93564796447754,37.06205749511719],[26.566706,37.35333],{"x":236,"y":156,"raw14":5740,"celsius":36.37226},24.975024975024976,0,4,3],
+        [25243,650,28.563436,"Inferno",true,[25.874252319335938,36.958282470703125],[25.52464,37.499058],{"x":113,"y":186,"raw14":5517,"celsius":31.589727},25,0,4,4],
+        [27274,701,22.892334,"Inferno",true,[25.728269577026367,36.894752502441406],[25.401373,37.394524],{"x":204,"y":71,"raw14":5727,"celsius":36.077606},25,0,4,4],
+        [30926,792,22.974487,"Inferno",true,[26.91682243347168,37.070125579833984],[26.570755,37.7143],{"x":132,"y":96,"raw14":5447,"celsius":30.244972},24.975024975024976,0,4,4],
+        [32962,843,26.274414,"Inferno",true,[26.527536392211914,37.00804901123047],[26.319256,37.38269],{"x":132,"y":96,"raw14":5402,"celsius":29.240335},25,0,4,4],
+        [34962,893,30.624634,"Inferno",true,[26.530542373657227,36.98770523071289],[26.345453,37.445396],{"x":132,"y":96,"raw14":5419,"celsius":29.646486},25,0,4,5],
+        [36965,943,30.7712,"Inferno",true,[26.622926712036133,37.00858688354492],[26.438028,37.466187],{"x":132,"y":96,"raw14":5446,"celsius":30.249147},25,0,4,5],
+        [38995,994,28.348308,"Inferno",true,[26.663171768188477,36.9866943359375],[26.478273,37.38228],{"x":132,"y":96,"raw14":5452,"celsius":30.356247},25,0,4,6],
+        [41005,1044,33.391073,"Inferno",true,[26.689210891723633,37.00804901123047],[26.48128,37.56955],{"x":132,"y":96,"raw14":5474,"celsius":30.846273},25,0,4,6],
+        [43045,1095,31.950114,"Inferno",true,[26.66023063659668,37.027889251708984],[26.452139,37.610268],{"x":132,"y":96,"raw14":5473,"celsius":30.820265},25,0,4,7],
+        [45075,1146,27.107381,"Inferno",true,[26.663171768188477,37.00757598876953],[26.431986,37.61065],{"x":132,"y":96,"raw14":5474,"celsius":30.84431},25.024061597690086,0,4,9],
+        [47085,1196,30.920573,"Inferno",true,[26.411895751953125,36.79938888549805],[26.087309,37.56955],{"x":132,"y":96,"raw14":5481,"celsius":31.00102},25,0,4,11],
+        [49117,1247,22.453126,"Inferno",true,[29.90614891052246,37.00656509399414],[26.887968,37.27746],{"x":132,"y":96,"raw14":5598,"celsius":33.549706},24.975024975024976,0,4,11],
+        [51167,1298,31.587728,"Inferno",true,[33.74485778808594,35.853572845458984],[33.615643,36.148384],{"x":132,"y":96,"raw14":5663,"celsius":34.94287},25,0,4,11],
+        [53206,1349,36.234091,"Inferno",true,[25.681546211242676,26.681546211242676],[25.635408,27.187117],{"x":132,"y":96,"raw14":5258,"celsius":25.938448},25.024061597690086,0,4,11],
+        [55234,1400,22.745442,"Inferno",true,[25.63508415222168,26.63508415222168],[25.588676,27.141176],{"x":132,"y":96,"raw14":5256,"celsius":25.891874},24.975024975024976,0,4,13],
+        [57318,1452,23.56246,"Inferno",true,[25.611876487731934,26.611876487731934],[25.541946,27.095205],{"x":132,"y":96,"raw14":5257,"celsius":25.915161},25.048169556840076,0,4,13],
+        [59343,1503,22.687826,"Inferno",true,[25.542144775390625,26.542144775390625],[25.471802,27.04917],{"x":132,"y":96,"raw14":5254,"celsius":25.845303},25,0,4,13],
+        [61391,1554,23.935262,"Inferno",true,[25.50417709350586,26.50417709350586],[25.445162,26.977253],{"x":132,"y":96,"raw14":5251,"celsius":25.772184},25.024061597690086,0,4,13],
+        [63406,1604,30.197672,"Inferno",true,[25.50417709350586,26.50417709350586],[25.42175,26.977253],{"x":132,"y":96,"raw14":5250,"celsius":25.748835},25,0,4,14],
+        [65441,1655,25.516439,"Inferno",true,[25.475497245788574,26.475497245788574],[25.428299,26.98298],{"x":132,"y":96,"raw14":5250,"celsius":25.755257},25,0,4,16],
+        [67484,1706,28.025798,"Inferno",true,[25.431233406066895,26.431233406066895],[25.371634,26.88218],{"x":132,"y":96,"raw14":5249,"celsius":25.699003},25,0,4,16],
+        [69526,1757,29.661173,"Inferno",true,[25.440662384033203,26.440662384033203],[25.404917,26.98298],{"x":132,"y":96,"raw14":5247,"celsius":25.68527},24.975024975024976,0,4,17],
+        [71563,1808,26.58488,"Inferno",true,[25.47238063812256,26.47238063812256],[25.425009,26.9571],{"x":132,"y":96,"raw14":5250,"celsius":25.752062},25,0,4,18],
+        [73565,1858,29.165324,"Inferno",true,[25.484070777893066,26.484070777893066],[25.425009,26.9801],{"x":132,"y":96,"raw14":5250,"celsius":25.752062},25.024061597690086,0,4,18],
+        [75592,1909,22.250162,"Inferno",true,[25.47779083251953,26.47779083251953],[25.418459,26.997375],{"x":132,"y":96,"raw14":5251,"celsius":25.74567},25,0,4,18],
+        [77684,1961,25.643351,"Inferno",true,[25.480937957763672,26.480937957763672],[25.445162,27.000288],{"x":132,"y":96,"raw14":5249,"celsius":25.725548},25,0,4,19],
+        [80924,2042,25.963541,"Inferno",true,[26.42353057861328,27.42353057861328],[26.416166,27.795568],{"x":132,"y":96,"raw14":5289,"celsius":26.901161},24.975984630163303,0,4,19],
+        [82931,2092,37.908977,"Inferno",true,[26.368541717529297,27.368541717529297],[26.360577,27.764498],{"x":132,"y":96,"raw14":5288,"celsius":26.846172},25.024061597690086,0,4,19],
+        [85002,2144,23.726888,"Inferno",true,[26.371516227722168,27.371516227722168],[26.386837,27.812906],{"x":132,"y":96,"raw14":5289,"celsius":26.895245},24.975024975024976,0,4,21],
+        [87037,2195,23.761638,"Inferno",true,[26.37445831298828,27.37445831298828],[26.389906,27.815626],{"x":132,"y":96,"raw14":5287,"celsius":26.852089},24.975024975024976,0,4,21],
+        [89045,2245,31.753947,"Inferno",true,[26.38300132751465,27.38300132751465],[26.386837,27.812906],{"x":132,"y":96,"raw14":5289,"celsius":26.895245},24.900398406374503,0,4,21]
+      ],
+      "first_measurement_inputs": {
+        "raw_range": [
+          5262,
+          5735
+        ],
+        "matrix_range": [
+          25.703274,
+          36.158005
+        ],
+        "trailer_center": {
+          "index": 5280,
+          "celsius": 26.121954,
+          "x": null,
+          "y": null
+        },
+        "literal_center": {
+          "index": 5281,
+          "celsius": 26.145145,
+          "x": 192,
+          "y": 144
+        },
+        "high": {
+          "index": 5735,
+          "celsius": 36.158005,
+          "x": 374,
+          "y": 287
+        },
+        "low": {
+          "index": 5262,
+          "celsius": 25.703274,
+          "x": 278,
+          "y": 116
+        },
+        "parameters": {
+          "correction": 0,
+          "reflected": 25,
+          "ambient": 25,
+          "humidity": 0.45,
+          "emissivity": 0.98,
+          "distance": 1,
+          "calibration": [
+            0.2705,
+            35.992,
+            4e-05,
+            0.0057,
+            0.8234
+          ]
+        },
+        "trace": {
+          "host_range": 120,
+          "host_lens": 68,
+          "host_shutter_fix": 1.5,
+          "fpa_word": 7198,
+          "fpa_term": 36.72222,
+          "calibration_word": 3097,
+          "calibration_temperature": 36.55002,
+          "get_fix": 131,
+          "adjusted_lookup_base": 5869,
+          "init_a": 66.52865,
+          "init_b": 4426.061,
+          "linear": 1.0866575,
+          "constant": 1761.1273,
+          "effective_native_distance": 3,
+          "calc_fix_raw": [
+            10.296338,
+            0.9886223,
+            1.0321516,
+            246149488
+          ],
+          "finite_lookup_entries": 13237
+        }
+      }
+    },
+    {
+      "label": "fresh_session_recovery",
+      "time_to_ready_ms": 6351,
+      "initialization_events": [
+        {
+          "relative_ms": 113,
+          "event": "display_baseline",
+          "state": "DISPLAY_STREAM",
+          "stage": "BASELINE",
+          "mode": "DISPLAY",
+          "baseline": 3,
+          "discarded": 0,
+          "shutter_frames": 0,
+          "live": 0,
+          "held": 0,
+          "rejected": 2,
+          "malformed": 1,
+          "minimum": 32768,
+          "maximum": 33002
+        },
+        {
+          "relative_ms": 636,
+          "event": "set_transfer",
+          "requested": 32772,
+          "bytes": [
+            4,
+            128
+          ],
+          "requested_length": 2,
+          "actual_length": 2
+        },
+        {
+          "relative_ms": 1346,
+          "event": "stage_verified",
+          "state": "RAW14_UNSETTLED",
+          "stage": "WAIT_RANGE",
+          "mode": "RAW14",
+          "baseline": 3,
+          "discarded": 15,
+          "shutter_frames": 0,
+          "live": 0,
+          "held": 0,
+          "rejected": 2,
+          "malformed": 1,
+          "minimum": null,
+          "maximum": null
+        },
+        {
+          "relative_ms": 1972,
+          "event": "set_transfer",
+          "requested": 32800,
+          "bytes": [
+            32,
+            128
+          ],
+          "requested_length": 2,
+          "actual_length": 2
+        },
+        {
+          "relative_ms": 2630,
+          "event": "stage_verified",
+          "state": "RAW14_UNSETTLED",
+          "stage": "WAIT_SHUTTER",
+          "mode": "RAW14",
+          "baseline": 3,
+          "discarded": 30,
+          "shutter_frames": 0,
+          "live": 0,
+          "held": 0,
+          "rejected": 5,
+          "malformed": 3,
+          "minimum": null,
+          "maximum": null
+        },
+        {
+          "relative_ms": 3151,
+          "event": "set_transfer",
+          "requested": 32768,
+          "bytes": [
+            0,
+            128
+          ],
+          "requested_length": 2,
+          "actual_length": 2
+        },
+        {
+          "relative_ms": 6351,
+          "event": "radiometric_ready",
+          "state": "RADIOMETRIC_READY",
+          "stage": "FINISHED",
+          "mode": "RAW14",
+          "baseline": 3,
+          "discarded": 105,
+          "shutter_frames": 75,
+          "live": 5,
+          "held": 30,
+          "rejected": 84,
+          "malformed": 3,
+          "minimum": null,
+          "maximum": null
+        }
+      ],
+      "first_ready_frame": {
+        "sequence": 210,
+        "minimum": 5320,
+        "maximum": 5775,
+        "baseline": 3,
+        "discarded": 105,
+        "shutter_frames": 75,
+        "live": 5,
+        "held": 30,
+        "rejected": 84,
+        "malformed": 3,
+        "replaced_count": 2,
+        "native_malformed": 5,
+        "parser_rejected": 5
+      },
+      "render_ms": {
+        "samples": 26,
+        "minimum": 21.660726,
+        "median": 26.028117,
+        "maximum": 39.431152
+      },
+      "measurement_ms": {
+        "samples": 26,
+        "minimum": 12.550903,
+        "median": 19.1069335,
+        "maximum": 25.91805
+      },
+      "callback_fps_at_render_samples": {
+        "samples": 26,
+        "minimum": 24.875621890547265,
+        "median": 25.0,
+        "maximum": 25.145067698259187
+      },
+      "pending_replacements_at_render_samples": [
+        2
+      ],
+      "native_malformed_at_render_samples": [
+        5
+      ],
+      "completed_superseded_renders_last": 18,
+      "settings_sample_counts": [
+        {
+          "palette": "Inferno",
+          "automatic": true,
+          "samples": 26
+        }
+      ],
+      "availability_events": [
+        {
+          "relative_ms": 9475,
+          "event": "presentation_unavailable",
+          "session_state": "RAW14_UNSETTLED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        },
+        {
+          "relative_ms": 29493,
+          "event": "presentation_unavailable",
+          "session_state": "RAW14_UNSETTLED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        },
+        {
+          "relative_ms": 58824,
+          "event": "presentation_unavailable",
+          "session_state": "DISCONNECTED",
+          "reason": "Session not ready",
+          "celsius_legend": false,
+          "cursor_celsius": null
+        }
+      ],
+      "touch_samples": [],
+      "render_samples_columns": [
+        "relative_ms",
+        "sequence",
+        "render_ms",
+        "palette",
+        "automatic",
+        "range",
+        "matrix_range",
+        "cursor",
+        "callback_fps",
+        "replaced",
+        "malformed",
+        "superseded_completed_renders"
+      ],
+      "render_samples": [
+        [6514,213,22.128988,"Inferno",true,[34.72997283935547,37.06965255737305],[27.465193,37.340294],null,25,2,5,0],
+        [8522,263,29.037476,"Inferno",true,[31.901151657104492,37.111793518066406],[26.755495,37.444637],null,24.975024975024976,2,5,1],
+        [10951,324,21.767781,"Inferno",true,[25.80356216430664,26.80356216430664],[25.735134,27.376318],null,24.900398406374503,2,5,1],
+        [12983,375,25.123373,"Inferno",true,[25.777301788330078,26.777301788330078],[25.70862,27.373533],null,25.024061597690086,2,5,2],
+        [14990,425,25.7771,"Inferno",true,[25.81213665008545,26.81213665008545],[25.755257,27.396471],null,25.096525096525095,2,5,2],
+        [16996,475,22.168905,"Inferno",true,[25.83834934234619,26.83834934234619],[25.781738,27.44507],null,25.024061597690086,2,5,2],
+        [19037,526,24.150065,"Inferno",true,[25.896328926086426,26.896328926086426],[25.85163,27.467976],null,25.024061597690086,2,5,3],
+        [21064,577,24.470826,"Inferno",true,[25.893290519714355,26.893290519714355],[25.848465,27.488098],null,25,2,5,3],
+        [23078,627,28.060424,"Inferno",true,[25.901881217956543,26.901881217956543],[25.868557,27.462408],null,25,2,5,7],
+        [25083,677,28.104818,"Inferno",true,[25.95122241973877,26.95122241973877],[25.918293,27.465193],null,25.07232401157184,2,5,8],
+        [27083,727,21.714274,"Inferno",true,[25.95122241973877,26.95122241973877],[25.918293,27.510973],null,24.92522432701894,2,5,8],
+        [29085,777,28.42749,"Inferno",true,[25.95122241973877,26.95122241973877],[25.918293,27.53388],null,24.875621890547265,2,5,9],
+        [30954,824,21.660726,"Inferno",true,[26.01412010192871,27.01412010192871],[25.969992,27.561817],null,24.975024975024976,2,5,9],
+        [32967,874,29.343343,"Inferno",true,[25.990992546081543,26.990992546081543],[25.900164,27.516037],null,25,2,5,11],
+        [35001,925,25.498291,"Inferno",true,[26.00809383392334,27.00809383392334],[25.963633,27.533405],null,25,2,5,11],
+        [37002,975,35.124268,"Inferno",true,[26.020179748535156,27.020179748535156],[25.953064,27.567324],null,24.92522432701894,2,5,11],
+        [39002,1025,28.971192,"Inferno",true,[25.990992546081543,26.990992546081543],[25.92345,27.538942],null,25.048169556840076,2,5,11],
+        [41002,1075,30.517862,"Inferno",true,[26.011115074157715,27.011115074157715],[25.966797,27.536158],null,25,2,5,13],
+        [43176,1129,39.431152,"Inferno",true,[25.994013786315918,26.994013786315918],[25.949902,27.541727],null,24.975024975024976,2,5,14],
+        [45206,1180,32.977254,"Inferno",true,[25.999582290649414,26.999582290649414],[25.966797,27.513252],null,25.145067698259187,2,5,14],
+        [47250,1231,34.789347,"Inferno",true,[26.002492904663086,27.002492904663086],[25.946705,27.538942],null,25,2,5,14],
+        [49276,1282,28.38851,"Inferno",true,[25.990992546081543,26.990992546081543],[25.92345,27.516037],null,25.096525096525095,2,5,14],
+        [51277,1332,21.963094,"Inferno",true,[25.967848777770996,26.967848777770996],[25.92345,27.49316],null,24.952015355086374,2,5,14],
+        [53279,1382,23.797567,"Inferno",true,[25.990992546081543,26.990992546081543],[25.946705,27.538942],null,25,2,5,15],
+        [55282,1432,26.279134,"Inferno",true,[33.553123474121094,35.2855224609375],[33.423656,35.94099],null,24.975024975024976,2,5,16],
+        [57396,1485,24.800619,"Inferno",true,[26.45419692993164,36.760475158691406],[26.175993,37.86313],null,25,2,5,18]
+      ],
+      "first_measurement_inputs": {
+        "raw_range": [
+          5320,
+          5775
+        ],
+        "matrix_range": [
+          27.404793,
+          37.320805
+        ],
+        "trailer_center": {
+          "index": 5738,
+          "celsius": 36.549,
+          "x": null,
+          "y": null
+        },
+        "literal_center": {
+          "index": 5741,
+          "celsius": 36.61177,
+          "x": 192,
+          "y": 144
+        },
+        "high": {
+          "index": 5775,
+          "celsius": 37.320805,
+          "x": 172,
+          "y": 274
+        },
+        "low": {
+          "index": 5320,
+          "celsius": 27.404793,
+          "x": 381,
+          "y": 0
+        },
+        "parameters": {
+          "correction": 0,
+          "reflected": 25,
+          "ambient": 25,
+          "humidity": 0.45,
+          "emissivity": 0.98,
+          "distance": 1,
+          "calibration": [
+            0.2705,
+            35.992,
+            4e-05,
+            0.0057,
+            0.8234
+          ]
+        },
+        "trace": {
+          "host_range": 120,
+          "host_lens": 68,
+          "host_shutter_fix": 1.5,
+          "fpa_word": 7198,
+          "fpa_term": 36.72222,
+          "calibration_word": 3100,
+          "calibration_temperature": 36.850006,
+          "get_fix": 131,
+          "adjusted_lookup_base": 5869,
+          "init_a": 66.52865,
+          "init_b": 4426.061,
+          "linear": 1.0866575,
+          "constant": 1778.124,
+          "effective_native_distance": 3,
+          "calc_fix_raw": [
+            10.296338,
+            0.9886223,
+            1.0321516,
+            246149488
+          ],
+          "finite_lookup_entries": 13253
+        }
+      }
+    }
+  ],
+  "combined_sampled_performance": {
+    "render_ms": {
+      "samples": 131,
+      "minimum": 18.035075,
+      "median": 24.951782,
+      "maximum": 40.664225
+    },
+    "cold_first_measurement_ms": 113.937133,
+    "warmed_measurement_ms": {
+      "samples": 129,
+      "minimum": 10.092163,
+      "median": 18.673747,
+      "maximum": 26.912557
+    },
+    "ready_callback_fps": {
+      "samples": 131,
+      "minimum": 24.875621890547265,
+      "median": 25,
+      "maximum": 25.365853658536587
+    },
+    "timing_scope": "Render includes range/color calculation, bitmap creation and dispatch wait; measurement includes inspection/parameters/fresh LUT/matrix/summaries; periodic/settings-change samples, not per-frame bounds",
+    "counter_scope": "Completed-superseded renders exclude cancelled requests; native callback counters and measurement sequence retain their existing independent meanings"
+  },
+  "lifecycle": {
+    "reopen_without_controls": {
+      "state": "RAW14_UNSETTLED",
+      "reason": "host_range_unverified",
+      "stored_cursor": [
+        132,
+        96
+      ],
+      "cursor_reading": "temperature unavailable",
+      "celsius_legend": false,
+      "ui_text_evidence": [
+        "LMThermal \u00b7 RAW14_UNSETTLED",
+        "(132, 96) \u00b7 temperature unavailable",
+        "Session: RAW14_UNSETTLED",
+        "host_range_unverified"
+      ]
+    },
+    "final_release": {
+      "log": "Stream released generation=2",
+      "presentation_unavailable": true,
+      "operator_closed": true
+    },
+    "new_session_recovery": "operator confirmed and valid rendered measurements recorded"
+  },
+  "limits": [
+    "Qualitative hand/background discrimination is not an absolute calibration test",
+    "No unsafe USB fault, calibration corruption or additional camera command was injected",
+    "Native orientation is unchanged; preferred final viewing orientation remains unresolved",
+    "Portrait/landscape and letterbox math tested on JVM/ART; no claimed separate live phone-rotation acceptance",
+    "No new scene fixture; saved numerical goldens reuse existing sanitized matrix evidence"
+  ]
+}

@@ -354,3 +354,108 @@ debug build passed, lint **zero errors / nine warnings** (seven inherited plus t
 newer-version notices for test-only dependencies), `git diff --check` passed.
 Next milestone: native-coordinate touch inspection/Celsius presentation using this
 measurement model; independent controlled surface-temperature accuracy remains separate.
+
+## Celsius presentation and touch acceptance — 2026-10-03
+
+Milestone `feat/android-celsius-presentation`, based on main
+`526316fbc9db0a892d38b81f4b48768e63176c83`. Pixel 8 / Android 17 / arm64-v8a,
+HT-301 through USB Host and the already-paired wireless ADB mDNS target. No new
+pairing/manual connection was needed. The current debug APK was installed before
+operator testing; full ART color/matrix parity also passed. Numeric-only preserved
+hardware evidence is condensed in
+[the presentation report](diagnostics/2026-10-03-android-celsius-presentation.json).
+No new raw/image fixture or scene hash was captured for this milestone.
+
+### Display, palettes and exact range lock
+
+Operator confirmed usable grayscale after physical reconnect/Connect, without
+Celsius value or legend. Explicit Initialize restored recognizable Inferno with a
+Celsius legend. All five palettes—White hot, Black hot, Inferno, Iron-like and
+Turbo—were exercised with a hand against cooler background. Operator confirmed
+scene/high/low alignment, responsive interaction and colors changing without
+palette-driven numeric jumps. Logs contain every palette, Auto scene adaptation,
+and four Locked renders at exact **25–45 °C** while matrix ranges changed. Auto
+later expanded a nearly uniform scene to the specified centered 1 °C minimum span.
+These are presentation/relative-scene observations, not calibrated surface values.
+
+Each saved fresh explicit session completed exactly two bytes for
+`32772 → 32800 → 32768`, with the existing 15/15 transition receipt discards,
+75 valid shutter frames and five live qualification images. First readiness times
+were **6.345 / 6.355 / 6.351 s** in the palette, touch and recovery runs. First ready
+raw ranges were **5261–5799 / 5262–5735 / 5320–5775**. No camera controls or session
+acceptance rules changed in this presentation milestone. Temporary held-stream
+readiness losses produced unavailable measurements and cleared the legend; changing
+acceptable frames restored rendered Celsius. No USB faults were artificially forced.
+
+### Touch, shared mapping and overlays
+
+Operator confirmed tap/drag on center, corners/edges, hand and cooler background,
+with cursor under finger, native bounds, aligned high/low and changing readings at
+one retained coordinate. Fourteen saved touch events had owned raw14/Celsius values;
+all coordinates were inside native x 0..383/y 0..287. Representative observations:
+
+| Touch | Original raw14 | Native-equivalent Celsius |
+|---|---:|---:|
+| Hand `(113,186)` | 5766 | 36.916580 °C |
+| Cooler background `(315,200)` | 5263 | 25.857199 °C |
+| Selected `(132,96)` in warm scene | 5746 | 36.476513 °C |
+| Same `(132,96)` in a later cool scene | 5289 | 26.895245 °C |
+
+These samples are from different live frames, not an assumed reference-temperature
+comparison. Exact corner/edge/letterbox and resized portrait/landscape mappings are
+also covered by JVM/ART tests, including every pixel in four JVM viewports. Native
+orientation remains unchanged; this task does not claim a separately tested live
+phone-rotation workflow or a preferred final viewing orientation.
+
+### Sampled performance and bounded flow
+
+Presentation runs on an independent latest-request worker; valid measurements skip
+redundant acquisition-side grayscale bitmap creation. No LUT cache was introduced.
+Saved periodic/settings-change samples, rather than every frame, show:
+
+| Quantity | Samples | Median | Observed min–max |
+|---|---:|---:|---:|
+| Celsius render, including bitmap/dispatch wait | 131 | 24.952 ms | 18.035–40.664 ms |
+| Warmed full measurement evaluation | 129 | 18.674 ms | 10.092–26.913 ms |
+| Callback FPS at ready render samples | 131 | 25.000 | 24.876–25.366 |
+
+First cold measurement was **113.937 ms**. Thermometry includes inspection,
+parameters, fresh LUT, matrix and summaries. Concurrent rendering increases sampled
+cost compared with the prior thermometry-only run; these timings are not latency
+bounds or isolated microbenchmarks. Operator confirmed responsive view/touch/controls.
+
+Pending native replacements stayed **2 / 0 / 2** throughout the three sampled ready
+runs; their respective native malformed totals stayed **2 / 4 / 5**. The final
+completed-superseded-render counters were **46 / 21 / 18**. These count completed
+renders rejected because inputs changed, excluding coroutine-cancelled requests;
+they are not total presentation-drop counts. The bounded latest worker drops stale
+presentation rather than blocking acquisition or growing a queue. Original native
+callback counters and measurement sequence retain their independent meanings.
+
+### Close, unsettled reopen and recovery
+
+Operator confirmed Close removed Celsius colors, legend, cursor reading and extrema
+markers. Reopen without physical reset or initialization produced RAW14_UNSETTLED
+and `host_range_unverified`, with grayscale aiming preview. UI inspection showed
+`(132,96) · temperature unavailable`, retained selection, no legend and no automatic
+control replay. A fresh physical reconnect/explicit initialization restored current
+Celsius colors, legend and inspection; numeric renders confirm the new ready session.
+Final normal app closure logged unavailable presentation then `Stream released
+generation=2`. No stale reading or legend survived unavailable state.
+
+### Final checks and limits
+
+- **116 JVM tests passed**, including 21 added presentation/mapper regressions.
+- **6 Pixel 8 instrumentation tests passed**: original thermometry parity, full
+  presentation color parity/mapping and actual render-worker replacement/cancellation.
+- Two matrices × two range modes × five palettes: **2,211,840 pixels compared**,
+  zero differences on both JVM and Pixel ART; all 256 entries of every palette match
+  independently exported Desktop references. Measurement immutability is tested.
+- Debug/test builds passed; lint **zero errors / nine existing warnings**;
+  `git diff --check` passed. No runtime dependency was added.
+
+**Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+A hand/background check validates relative response and interaction only. Independently
+measured surface targets remain necessary for absolute-accuracy assessment. Recommended
+next product milestone is native-coordinate ROI statistics, retaining these mapping and
+measurement-validity rules; exports/recording and final orientation presentation remain later work.

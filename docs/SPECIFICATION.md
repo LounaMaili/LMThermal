@@ -1,11 +1,11 @@
 # LMThermal — Application Specification
 
-> Staged Linux capture now produces native 14-bit indices and the standalone
-> lookup matches execution of official x86_64 APK arithmetic. GUI temperature
-> measurement remains gated on independent same-scene reference validation,
-> supported settings and shutter/stability handling. See
-> [RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md). The features
-> below remain planned; experimental offline output is not a calibrated API.
+> Staged capture produces native 14-bit indices and the reconstructed lookup
+> matches official APK arithmetic. Android now exposes current-frame native-equivalent
+> measurements, Celsius palettes and touch inspection, gated by supported settings,
+> finite lookup values and shutter/liveness evidence. Independent physical accuracy
+> remains unvalidated. See [RADIOMETRIC_INITIALIZATION.md](RADIOMETRIC_INITIALIZATION.md).
+> The feature list is the product roadmap; completed milestones are described below.
 
 ## Android foundation milestone
 
@@ -161,11 +161,36 @@ nonfinite lookup values produce no measurement. Undefined unused LUT entries rem
 current frame separately. Held, invalid, not-ready and disconnected states clear Celsius.
 The worker builds a fresh table each measurement frame; there is no calibration cache.
 Raw preview normalization remains independent of measurement. Native coordinates and
-image bytes are unchanged; Compose only scales diagnostic high/low markers to the image.
+image bytes are unchanged; presentation maps high/low markers to the fitted image.
 Trailer center and literal `(192,144)` are displayed separately alongside matrix/high/low
 outputs. Numeric developer evidence is bounded and contains no scene payloads.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
-Touch/ROI, Celsius palettes, exports and recording are future milestones. See
+ROI, exports and recording remain future milestones. Touch/Celsius presentation is
+implemented separately below. See
 [ANDROID_THERMOMETRY.md](ANDROID_THERMOMETRY.md) and [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md).
+
+## Android Celsius presentation milestone (2026-10-03)
+
+A valid current measurement feeds a separate bounded latest-request renderer. White
+hot, Black hot, Inferno, Iron-like/OpenCV HOT and Turbo match Desktop color tables.
+Auto uses linear 2nd/98th percentiles with a centered minimum 1 °C span. Locked bounds
+are exact finite minimum < maximum (default 25–45 °C). Only display levels clip;
+measurement arrays remain unchanged. Five legend ticks use the effective Celsius range.
+
+Tap/drag inspection stores native `(x,y)` and reads original raw14/Celsius from the
+coherent displayed measurement. A single centered `ContentScale.Fit` mapper handles
+letterboxes, touch, cursor and red/cyan high/low markers; outside touches are ignored.
+Coordinates remain 384×288 regardless of layout, without source rotation/mirroring.
+
+Display/raw-unsettled use non-temperature grayscale aiming output. Measurement loss
+clears Celsius colors, legend, cursor value and extrema overlays immediately; selected
+coordinate can survive for the next valid measurement. Trailer/literal center remain
+separate in diagnostics. Portrait/landscape layouts prioritize image/readings/controls;
+developer controls remain debug-only inside optional diagnostics.
+
+No UVC/session/thermometry behavior or LUT cache is added. Architecture, exact Desktop
+references, worker counters and device results:
+[ANDROID_CELSIUS_PRESENTATION.md](ANDROID_CELSIUS_PRESENTATION.md),
+[ANDROID_VALIDATION.md](ANDROID_VALIDATION.md). Absolute physical accuracy remains unvalidated.

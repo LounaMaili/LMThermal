@@ -27,12 +27,15 @@ Do not commit local SDK paths, signing keys, debug keystores, ADB pairing keys,
 unsanitized debug payloads or build outputs. Debug signing uses normal Android tooling.
 The feature branch contains source/tests and wrapper, not a signed release artifact.
 
-## Thermometry parity instrumentation
+## Thermometry and presentation instrumentation
 
 AndroidX Test runner 1.6.2 and JUnit extension 1.2.1 are `androidTestImplementation`
 dependencies only. `AndroidJUnitRunner` executes on the real paired phone; test APK
 assets reuse `core/src/test/resources` and are excluded from the product APK.
-The parity tests never open USB or change camera/session state.
+The parity and presentation-worker tests never open USB or change camera/session state.
+Run them after closing a hardware test: they background the app and worker tests may
+replace its debug numerical presentation evidence with fixture-derived entries.
+Preserve hardware reports first.
 
 ```bash
 ./gradlew :app:assembleDebugAndroidTest
@@ -44,3 +47,13 @@ adb -s <paired-wireless-serial> shell am instrument -w org.lmthermal.app.test/an
 Use the JDK/SDK configuration above. Kotlin compiler `.kotlin/` state is ignored.
 Goldens can be regenerated with the sibling Desktop virtual environment as documented
 in ANDROID_THERMOMETRY.md; Python remains a development oracle, not an app dependency.
+
+Presentation references regenerate with:
+
+```bash
+../LMThermal-Desktop/.venv/bin/python tools/generate_presentation_goldens.py
+```
+
+See ANDROID_CELSIUS_PRESENTATION.md and the presentation fixture manifest for pinned
+Desktop source/OpenCV/NumPy versions. Numerical color tables are embedded in Kotlin;
+Python and OpenCV are development-only oracles, not new Android dependencies.

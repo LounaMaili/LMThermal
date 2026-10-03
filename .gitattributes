@@ -5,3 +5,6 @@ app/src/main/assets/licenses/** -whitespace
 # Sanitized numerical evidence must never undergo line-ending conversion or text merge.
 core/src/test/resources/thermometry/*.raw binary
 core/src/test/resources/thermometry/*.f32 binary
+
+core/src/test/resources/presentation/*.argb binary
+core/src/test/resources/presentation/*.levels binary

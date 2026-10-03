@@ -237,7 +237,9 @@ class CameraController(private val context: Context) {
                                 previousMeasurementAvailable = available; lastMeasurementLog = now
                             }
                             if (inspection.mode == FrameMode.INVALID || inspection.reason != null) invalid++
-                            val image = if (frame != null && inspection.mode != FrameMode.INVALID) Bitmap.createBitmap(
+                            // Valid Celsius frames are rendered on a separate bounded presentation worker.
+                            // Only unavailable measurements need acquisition-side grayscale aiming output.
+                            val image = if (measurement.measurement == null && frame != null && inspection.mode != FrameMode.INVALID) Bitmap.createBitmap(
                                 PreviewRenderer.grayscale(frame, inspection), Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT, Bitmap.Config.ARGB_8888) else null
                             mutableState.updateIf({ token == generation }) { previous -> previous.copy(
                                 usb = UsbState(UsbPhase.STREAMING, "Streaming · explicit radiometric session"),
