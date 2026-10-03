@@ -1,0 +1,194 @@
+{
+  "date": "2026-10-03",
+  "branch": "feat/android-internationalization",
+  "base_commit": "5f604f6043d512af4551e64346ca5d58c4d29ce7",
+  "provenance": "Real Pixel language selection/platform inspection and bounded HT-301 log; test results explicitly identify simulated data/OS.",
+  "app_debug_apk_sha256": "cde0bbdfa92ef15a550161057bb9a7a753b7cd06caa7aea5d2e22d07e165be3b",
+  "device": {
+    "model": "Pixel 8",
+    "android_version": "17",
+    "api": 37,
+    "unchanged_system_locale": "fr-FR"
+  },
+  "resources": {
+    "default": "English",
+    "french_keys": 87,
+    "default_keys": 87,
+    "key_parameter_namespace_parity": true,
+    "debug_locale_config": [
+      "en",
+      "fr",
+      "en-XA",
+      "ar-XB"
+    ],
+    "generated_release_locale_config": [
+      "en",
+      "fr"
+    ]
+  },
+  "language_selection": {
+    "system_list": [],
+    "french_list": [
+      "fr"
+    ],
+    "english_list": [
+      "en"
+    ],
+    "force_stop_persistence_verified": [
+      "fr",
+      "en"
+    ],
+    "system_same_resolved_language_transition_verified": true,
+    "os_settings_english_list": [
+      "en-FR"
+    ],
+    "system_locale_unchanged": true,
+    "os_settings_operator_selection": true
+  },
+  "camera_locale_recreation": {
+    "vid_hex": "1514",
+    "pid_hex": "0001",
+    "initial_state": "RAW14 from previous accepted milestone",
+    "operator_confirmation": "Language switch disconnected the camera; explicit Connect/Open restored preview with the new language.",
+    "stream_probes": 2,
+    "stream_releases": 2,
+    "sampled_complete_frames": 9,
+    "transport_frame_bytes": 224256,
+    "image_bytes": 221184,
+    "trailer_bytes": 3072,
+    "native_geometry": [
+      384,
+      288
+    ],
+    "sampled_raw_range": [
+      5044,
+      5598
+    ],
+    "sampled_session_states": [
+      "RAW14_UNSETTLED"
+    ],
+    "callback_fps_approximate": 25,
+    "first_cancel_to_release_ms": 51,
+    "release_to_explicit_reopen_probe_ms": 4230,
+    "later_background_cancel_to_release_ms": 63,
+    "last_first_stream_sample": {
+      "received": 409,
+      "replaced": 4,
+      "native_malformed": 6,
+      "session_held": 0,
+      "session_rejected": 405
+    },
+    "first_reopen_sample": {
+      "received": 53,
+      "replaced": 1,
+      "native_malformed": 3,
+      "session_held": 0,
+      "session_rejected": 52
+    },
+    "recorded_initialization_or_zoom_set_events": 0,
+    "controls_replayed_by_locale_change": false,
+    "no_new_full_initialization_run": true,
+    "evidence_limits": "Bounded new-run logs and operator confirmation; earlier persisted thermometry file was stale and excluded. Existing full-initialization evidence is reused, not claimed as a new run."
+  },
+  "privacy": {
+    "contains_scene_or_raw_pixels": false,
+    "contains_private_device_serial_or_network_endpoint": false
+  },
+  "measurement_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "validation": {
+    "core_jvm": {
+      "tests": 147,
+      "failures": 0
+    },
+    "legacy_appcompat": {
+      "tests": 8,
+      "failures": 0,
+      "sdk": [
+        26,
+        32
+      ],
+      "environment": "Robolectric; simulated OS, actual AndroidX library/storage"
+    },
+    "resource_checker_self_tests": 8,
+    "resource_parity": true,
+    "module_boundary_check": {
+      "shared_sources": 12,
+      "passed": true
+    },
+    "lint": {
+      "errors": 0,
+      "warnings": 11,
+      "warning_ids": [
+        "ChromeOsAbiSupport",
+        "DataExtractionRules",
+        "GradleDependency",
+        "MissingApplicationIcon"
+      ]
+    },
+    "unsupported_system_fallback": "de-DE simulated API 26/32 and Pixel resource configuration contexts; complete English fallback",
+    "missing_translation_fallback": "Only test APK deliberately omits French fallback_probe; production French complete",
+    "plurals": "Test-only singular/plural strings; no current product sentence requires plurals",
+    "preserved_numerical_regressions": {
+      "lookup_entries": 131072,
+      "rendered_pixels": 2211840,
+      "differences": 0
+    },
+    "final_pixel_suite": {
+      "status": "Passed",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 29.385,
+      "camera_free": true,
+      "test_synchronization_updated": true,
+      "earlier_locked_run_failures": 3
+    },
+    "layout_review": {
+      "locales": [
+        "en",
+        "fr",
+        "en-XA",
+        "ar-XB"
+      ],
+      "orientations": [
+        "portrait",
+        "landscape"
+      ],
+      "combinations": 8,
+      "synthetic_native_geometry": [
+        160,
+        120
+      ],
+      "synthetic_selected_pixel": [
+        80,
+        60
+      ],
+      "synthetic_selected_celsius": 36.5,
+      "targeted_test_passed": true,
+      "targeted_test_seconds": 22.131,
+      "retained_screenshots_reviewed": 16,
+      "controls_reachable_by_wrap_and_scroll": true,
+      "visual_rotation_complete": true,
+      "camera_opened": false,
+      "images_committed": false
+    }
+  },
+  "acceptance": {
+    "1": "Completed",
+    "2": "Completed",
+    "3": "Completed",
+    "4": "Completed",
+    "5": "Completed",
+    "6": "Completed",
+    "7": "Completed",
+    "8": "Completed",
+    "9": "Completed",
+    "10": "Completed"
+  },
+  "limits": [
+    "API 26/32 tests simulate older Android; no physical older-OS device tested.",
+    "Expanded/RTL pseudolocales are debug tests only, not supported production languages.",
+    "No new full radiometric initialization or absolute physical accuracy claim; existing accepted camera/thermometry evidence retained."
+  ]
+}

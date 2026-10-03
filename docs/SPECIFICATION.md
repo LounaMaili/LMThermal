@@ -218,6 +218,28 @@ are adapted behind its module boundary; no numerical or camera-coordinate change
 
 The 160×120 simulated module is preview-only and never matches real USB hardware.
 Android resource bindings map stable status/error/palette identities to labels;
-default-English common/module namespaces prepare the separate localization milestone.
+complete English/French common/module namespaces implement the localization boundary.
 Contracts, deferred legacy file moves, ownership/data lifetime, supported-model limits
 and module addition procedure: [CAMERA_MODULE_ARCHITECTURE.md](CAMERA_MODULE_ARCHITECTURE.md).
+
+## Android internationalization (2026-10-03)
+
+System is the default; explicit French (`fr`) and English (`en`) are selectable through
+the in-app Language menu. AndroidX AppCompat owns API 26–32 storage; Android 13+ platform
+per-app language settings are authoritative and agree with the picker. AppCompatActivity
+retains Compose, with the minimum compatible no-action-bar XML theme. AGP generates the
+locale configuration with English fallback and filters supported product languages.
+
+All 87 product string keys have French translations, positional format parity and
+common/module namespaces. Visible status/error/accessibility and debug prose are resources;
+core/module IDs, diagnostics and numeric data are unchanged. Display locale controls
+Celsius number formatting, never measurement units or calculations. Unsupported languages
+fall back to complete English. Debug pseudolocales and both-orientation layout checks are
+test support, not production language choices.
+
+Language/configuration changes release the camera through existing onStop handling.
+Returning performs read-only discovery; Connect/Open and radiometric initialization remain
+explicit. No USB fd, readiness or stale measurement is retained through locale recreation.
+Wrapping action rows keep longer labels reachable. Resource tests and the future language/
+module translation procedure: [ANDROID_LOCALIZATION.md](ANDROID_LOCALIZATION.md).
+Real-device results and the issue #2 acceptance review: ANDROID_VALIDATION.md.

@@ -27,20 +27,23 @@ object PaletteResources {
 @Composable
 fun cameraStatusText(state: CameraSessionState<*>, ui: CameraUiBindings): String {
     val moduleLabel = ui.status(state.status)
-    val resource = moduleLabel ?: when (state.status.code) {
-            CameraStatusCode.NO_CAMERA -> R.string.camera_status_no_camera
-            CameraStatusCode.DETECTED -> R.string.camera_status_detected
-            CameraStatusCode.PERMISSION_REQUIRED -> R.string.camera_status_permission_required
-            CameraStatusCode.OPENING -> R.string.camera_status_opening
-            CameraStatusCode.PREVIEW_ONLY -> R.string.camera_status_preview_only
-            CameraStatusCode.INITIALIZING -> R.string.camera_status_initializing
-            CameraStatusCode.MEASUREMENT_READY -> R.string.camera_status_measurement_ready
-            CameraStatusCode.MEASUREMENT_UNAVAILABLE -> R.string.camera_status_measurement_unavailable
-            CameraStatusCode.CLOSED -> R.string.camera_status_closed
-            CameraStatusCode.ERROR -> R.string.camera_status_error
-        }
-    return stringResource(resource)
+    return stringResource(moduleLabel ?: cameraStatusResource(state.status.code))
 }
+
+/** Exhaustive shared mapping also provides a resource-audit surface outside Compose. */
+fun cameraStatusResource(code: CameraStatusCode): Int = when (code) {
+    CameraStatusCode.NO_CAMERA -> R.string.camera_status_no_camera
+    CameraStatusCode.DETECTED -> R.string.camera_status_detected
+    CameraStatusCode.PERMISSION_REQUIRED -> R.string.camera_status_permission_required
+    CameraStatusCode.OPENING -> R.string.camera_status_opening
+    CameraStatusCode.PREVIEW_ONLY -> R.string.camera_status_preview_only
+    CameraStatusCode.INITIALIZING -> R.string.camera_status_initializing
+    CameraStatusCode.MEASUREMENT_READY -> R.string.camera_status_measurement_ready
+    CameraStatusCode.MEASUREMENT_UNAVAILABLE -> R.string.camera_status_measurement_unavailable
+    CameraStatusCode.CLOSED -> R.string.camera_status_closed
+    CameraStatusCode.ERROR -> R.string.camera_status_error
+}
+
 fun cameraErrorResource(code: CameraErrorCode): Int = when (code) {
     CameraErrorCode.CAMERA_NOT_FOUND -> R.string.camera_error_not_found
     CameraErrorCode.CAMERA_UNSUPPORTED -> R.string.camera_error_unsupported

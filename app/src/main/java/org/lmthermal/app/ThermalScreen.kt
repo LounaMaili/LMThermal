@@ -20,6 +20,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -127,7 +128,7 @@ private fun CelsiusLegend(rendered: CelsiusPresentationSnapshot?) {
     Image(rendered.legend.asImageBitmap(), stringResource(R.string.measurement_celsius_scale_description),
         Modifier.fillMaxWidth().height(12.dp), contentScale = ContentScale.FillBounds)
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        rendered.range.ticks().forEach { Text("%.1f".format(it), style = MaterialTheme.typography.labelSmall) }
+        rendered.range.ticks().forEach { Text(stringResource(R.string.measurement_legend_tick, it), style = MaterialTheme.typography.labelSmall) }
     }
     Text(stringResource(R.string.measurement_range_label, stringResource(PaletteResources.label(rendered.palette!!)),
         rendered.range.lower, rendered.range.upper), style = MaterialTheme.typography.labelMedium)
@@ -152,6 +153,7 @@ private fun Readings(measurement: ThermalMeasurement?, pixel: NativePixel?, ui: 
 
 /** Capabilities control visibility, while supported actions control enablement. Module diagnostics are optional extensions. */
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 private fun ScreenControls(source: CameraSessionState<Bitmap>, settings: CelsiusPresentationSettings,
     camera: AndroidCameraCoordinator, presenter: CelsiusPresenter, connect: () -> Unit, ui: CameraUiBindings) {
     var palettesOpen by remember { mutableStateOf(false) }
@@ -166,7 +168,7 @@ private fun ScreenControls(source: CameraSessionState<Bitmap>, settings: Celsius
                     onClick = { presenter.setPalette(palette); palettesOpen = false }) }
             }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(selected = settings.automatic, onClick = { presenter.setAutomatic(true) }, label = { Text(stringResource(R.string.measurement_auto)) })
             FilterChip(selected = !settings.automatic, onClick = { presenter.setAutomatic(false) }, label = { Text(stringResource(R.string.measurement_locked)) })
         }
@@ -176,13 +178,14 @@ private fun ScreenControls(source: CameraSessionState<Bitmap>, settings: Celsius
     HorizontalDivider()
     Text(stringResource(ui.modelLabel)); Text(cameraStatusText(source, ui))
     source.error?.let { Text(stringResource(cameraErrorResource(it.code))) }
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Button(onClick = connect, enabled = CameraUiPolicy.canPerform(source, CameraAction.CONNECT)) { Text(stringResource(R.string.camera_connect)) }
         OutlinedButton(onClick = camera::close, enabled = CameraUiPolicy.canPerform(source, CameraAction.CLOSE)) { Text(stringResource(R.string.camera_close)) }
     }
     if (CameraUiPolicy.showInitialize(source)) Button(onClick = { camera.perform(CameraAction.INITIALIZE_MEASUREMENT) },
         enabled = CameraUiPolicy.canPerform(source, CameraAction.INITIALIZE_MEASUREMENT)) { Text(stringResource(ui.initializeLabel)) }
     Text(stringResource(R.string.camera_callback_fps, source.statistics.callbackFps), style = MaterialTheme.typography.labelMedium)
+    LanguageSelector()
     TextButton(onClick = { diagnosticsOpen = !diagnosticsOpen }) { Text(stringResource(
         if (diagnosticsOpen) R.string.camera_hide_diagnostics else R.string.camera_diagnostics)) }
     if (diagnosticsOpen) {
@@ -200,8 +203,9 @@ private fun ScreenControls(source: CameraSessionState<Bitmap>, settings: Celsius
 /** Invalid text leaves the current range untouched. Resources supply messages, not core exception text. */
 @Composable
 private fun RangeDialog(initial: CelsiusRange, dismiss: () -> Unit, apply: (CelsiusRange) -> Unit) {
-    var lower by remember { mutableStateOf(initial.lower.toString()) }
-    var upper by remember { mutableStateOf(initial.upper.toString()) }
+    val locale = LocalConfiguration.current.locales[0]
+    var lower by remember { mutableStateOf(editableCelsius(initial.lower, locale)) }
+    var upper by remember { mutableStateOf(editableCelsius(initial.upper, locale)) }
     var invalid by remember { mutableStateOf(false) }
     AlertDialog(onDismissRequest = dismiss, title = { Text(stringResource(R.string.measurement_range_dialog)) }, text = {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -212,7 +216,7 @@ private fun RangeDialog(initial: CelsiusRange, dismiss: () -> Unit, apply: (Cels
             if (invalid) Text(stringResource(R.string.measurement_invalid_range), color = MaterialTheme.colorScheme.error)
         }
     }, confirmButton = { TextButton(onClick = {
-        val minimum = lower.replace(',', '.').toDoubleOrNull(); val maximum = upper.replace(',', '.').toDoubleOrNull()
+        val minimum = parseEditableCelsius(lower, locale); val maximum = parseEditableCelsius(upper, locale)
         val bounds = if (minimum != null && maximum != null) runCatching { CelsiusRange(minimum, maximum) }.getOrNull() else null
         if (bounds == null) invalid = true else apply(bounds)
     }) { Text(stringResource(R.string.measurement_apply)) } }, dismissButton = {

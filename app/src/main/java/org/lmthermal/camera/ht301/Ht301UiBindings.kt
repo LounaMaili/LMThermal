@@ -37,14 +37,29 @@ object Ht301UiBindings : CameraUiBindings {
         if (reading.sample?.encodingId == "ht301.raw14") mapOf("raw14" to reading.sample!!.value) else emptyMap()
 }
 
+/** All visible permission/inventory prose is localized; protocol stage IDs below remain machine evidence. */
+fun ht301PermissionResource(permission: Ht301Permission): Int = when (permission) {
+    Ht301Permission.NOT_REQUESTED -> R.string.camera_ht301_permission_not_requested
+    Ht301Permission.CAMERA_REQUIRED -> R.string.camera_ht301_permission_camera_required
+    Ht301Permission.PENDING -> R.string.camera_ht301_permission_pending
+    Ht301Permission.GRANTED -> R.string.camera_ht301_permission_granted
+    Ht301Permission.DENIED -> R.string.camera_ht301_permission_denied
+}
+/** Resolve every structured inventory result without displaying exception prose. */
+fun ht301InventoryResource(status: Ht301InventoryStatus): Int = when (status) {
+    Ht301InventoryStatus.NOT_REQUESTED -> R.string.camera_ht301_inventory_not_requested
+    Ht301InventoryStatus.LOGGED -> R.string.camera_ht301_inventory_logged
+    Ht301InventoryStatus.FAILED -> R.string.camera_ht301_inventory_failed
+}
+
 /** DEBUG-only protocol diagnostics retain richer source evidence/actions inside the HT-301 module boundary. */
 @Composable
 fun Ht301DiagnosticPanel(controller: Ht301CameraController) {
     if (!BuildConfig.DEBUG) return
     val source by controller.state.collectAsState()
     Column {
-        Text(source.identity)
-        Text(stringResource(R.string.camera_ht301_diagnostic_permission, source.permission))
+        Text(source.identity ?: stringResource(R.string.camera_ht301_not_attached))
+        Text(stringResource(R.string.camera_ht301_diagnostic_permission, stringResource(ht301PermissionResource(source.permission))))
         Text(stringResource(R.string.camera_ht301_diagnostic_transport, source.mode.name, source.size, source.range))
         Text(stringResource(R.string.camera_ht301_diagnostic_session, source.session.state.name,
             source.session.baseline, RadiometricSession.BASELINE_FRAMES, source.session.discarded,
@@ -55,7 +70,7 @@ fun Ht301DiagnosticPanel(controller: Ht301CameraController) {
             enabled = source.usb.phase == UsbPhase.STREAMING && !source.session.active && !source.transition.active) {
             Text(stringResource(R.string.camera_ht301_zoom_inventory))
         }
-        Text(source.inventory)
+        Text(stringResource(ht301InventoryResource(source.inventory)))
         OutlinedButton(onClick = controller::testRaw14Transition,
             enabled = source.transition.canStart && !source.session.active) { Text(stringResource(R.string.camera_ht301_raw14_test)) }
         Text(stringResource(R.string.camera_ht301_diagnostic_single, source.transition.stage,

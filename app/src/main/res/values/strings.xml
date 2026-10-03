@@ -61,9 +61,9 @@
     <string name="camera_ht301_initialize_radiometric">Initialize radiometric</string>
     <string name="camera_ht301_status_display_stream">Display preview</string>
     <string name="camera_ht301_status_switching_raw14">Switching to raw14</string>
-    <string name="camera_ht301_status_raw14_unsettled">RAW14_UNSETTLED · temperatures unavailable</string>
+    <string name="camera_ht301_status_raw14_unsettled">Raw14 stream unsettled · temperatures unavailable</string>
     <string name="camera_ht301_status_shutter_transient">Shutter transient · settling</string>
-    <string name="camera_ht301_status_ready">RADIOMETRIC_READY</string>
+    <string name="camera_ht301_status_ready">Radiometric ready</string>
     <string name="camera_ht301_raw14_sample">raw14</string>
     <string name="camera_ht301_diagnostic_transport">%1$s · %2$d B · raw words %3$s</string>
     <string name="camera_ht301_diagnostic_session">Session %1$s · baseline %2$d/%3$d · discarded %4$d · shutter %5$d/%6$d · live %7$d/%8$d</string>
@@ -72,4 +72,19 @@
     <string name="camera_ht301_zoom_inventory">Read zoom inventory</string>
     <string name="camera_ht301_raw14_test">Test raw14 transition (32772)</string>
     <string name="camera_ht301_diagnostic_single">Single test: %1$s · discarded %2$d · distinct %3$d</string>
+    <string name="measurement_legend_tick">%1$.1f</string>
+    <string name="language_label">Language: %1$s</string>
+    <string name="language_system">System</string>
+    <string name="language_french">French</string>
+    <string name="language_english">English</string>
+    <string name="language_other">Other: %1$s</string>
+    <string name="camera_ht301_not_attached">HT-301 · not attached</string>
+    <string name="camera_ht301_permission_not_requested">Not requested</string>
+    <string name="camera_ht301_permission_camera_required">Android camera permission required</string>
+    <string name="camera_ht301_permission_pending">Awaiting Android USB permission</string>
+    <string name="camera_ht301_permission_granted">Granted</string>
+    <string name="camera_ht301_permission_denied">Denied</string>
+    <string name="camera_ht301_inventory_not_requested">Zoom inventory not requested</string>
+    <string name="camera_ht301_inventory_logged">Read-only inventory logged</string>
+    <string name="camera_ht301_inventory_failed">Inventory failed; see technical logs</string>
 </resources>

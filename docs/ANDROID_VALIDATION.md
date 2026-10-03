@@ -576,10 +576,143 @@ Large legacy HT-specific source moves are intentionally deferred, as permitted b
 the milestone. They do not expose HT protocol types through the common contract.
 No second commercial driver or dynamic plugin is added.
 
-Issue #2 remains open. Next recommended milestone is French/English resources,
+At completion of the module foundation, issue #2 remained open. The next recommended
+milestone was French/English resources,
 language/system-locale policy and persisted selection, complete legacy debug-label
 migration, plurals/fallback/pseudolocale tests and locale-recreation regression proving
 no automatic controls. Stable IDs, structured messages and resource namespaces are
 prepared here. Native ROI/product features remain separate work.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## Android internationalization — 2026-10-03
+
+Branch: `feat/android-internationalization`, based on
+`5f604f6043d512af4551e64346ca5d58c4d29ce7`. Policy, implementation, storage and
+future language/module instructions are in [ANDROID_LOCALIZATION.md](ANDROID_LOCALIZATION.md).
+Sanitized numeric/public-device evidence is retained in
+[2026-10-03-android-localization.json](diagnostics/2026-10-03-android-localization.json).
+No scene, USB path, phone serial, network endpoint or raw fixture is included.
+
+### Pixel language selection and platform integration
+
+The Pixel 8 runs Android 17/API 37; its unchanged system locale is `fr-FR`.
+The actual in-app menu was checked against Android's stored application list:
+
+| Choice/action | Platform list | Visible picker/UI |
+|---|---|---|
+| System | Empty | Système; French UI follows the phone |
+| French | `fr` | Français; French UI |
+| Force-stop and relaunch | `fr` | French preference retained |
+| English | `en` | English; English UI |
+| Force-stop and relaunch | `en` | English preference retained |
+| Return to System | Empty | Système; French UI follows the phone |
+
+The System/explicit French transition was checked even though both resolve to French.
+Android OS app-language Settings lists LMThermal and English/French. Selecting English
+there produced application `en-FR` with system `fr-FR` unchanged; the in-app policy
+recognizes regional English as English. Returning from Settings uses platform state,
+not an independent preference. The operator completed that app-only Settings selection
+after automatic approval review blocked a region-screen tap as potentially device-wide.
+No device-wide language/region change was made.
+
+The packaged debug manifest references AGP's generated LocaleConfig and the disabled,
+non-exported AndroidX auto-storage service. Packaged debug languages are `en`, `fr`,
+`en-XA`, `ar-XB`; generated release manifest/config lists **only `en`, `fr`**. Debug
+pseudolocales are test options in OS Settings, never entries in the normal language menu.
+
+### Physical locale-recreation safety
+
+The HT-301 was already in raw14 from the accepted previous milestone. The operator
+opened it without initialization, switched language and explicitly reconnected. They
+confirmed that the camera disconnected on the language change and preview returned
+only after Connect/Open. No physical reset or initialization was needed for this test.
+
+The bounded new-run log contains two read-only stream probes and two normal stream
+releases. The first cancellation-to-release took approximately **51 ms**, followed
+by **4.230 s** until the next explicit open/probe. A later background cancellation
+released in approximately **63 ms**; its cause is not inferred from the log.
+
+Nine sampled complete frames were exactly 224256 bytes (image 221184, trailer 3072),
+with native 384×288 geometry, raw words **5044..5598**, approximately **25 callback FPS**,
+and exclusively `RAW14_UNSETTLED`. No readiness or valid Celsius measurement is inferred
+from raw14 alone. There are **zero recorded initialization/Zoom SET events** in this
+new-run log. The first stream's last sampled counters were received 409/replaced 4/
+native malformed 6/session held 0/rejected 405; the reopen sample was 53/1/3/0/52.
+These startup/ineligible-frame counts retain their existing meanings; they do not
+establish a localization-related transport regression.
+
+The release/open gap plus the operator confirmation demonstrates explicit reopening,
+and camera-free Activity tests separately verify no automatic open/measurement after
+locale recreation. No camera controls, calibration, parser/LUT, session gates, palette
+tables, coordinate transforms or existing machine-report formats changed. Previous
+explicit-initialization and numerical/presentation parity evidence is retained; it is
+not claimed as a new full initialization run for localization.
+
+### Automated checks and coverage limits
+
+- **147 core JVM tests passed**, preserving every module, parser, session, full LUT/
+  matrix and color/mapping regression.
+- **Eight AppCompat/Robolectric tests passed** across simulated API 26 and 32. They
+  exercise the actual XML theme, disabled/non-exported auto-storage metadata,
+  unsupported German system fallback, French/English resource application and
+  file-backed cold-static-state restoration. No physical Android 8–12 device is claimed.
+- **22 Pixel instrumentation tests passed**, zero failures/errors/skips: the original
+  nine numerical/renderer/module tests, 12 localization/resource/configuration tests
+  and one synthetic-layout test covering eight locale/orientation combinations.
+  Numerical parity retains **131072 LUT entries** and **2211840 rendered pixels**
+  compared with zero differences on each runtime. Instrumentation never opens USB.
+- Resource completeness/positional-parameter/namespace parity passed for **87 English
+  and 87 French keys**; all eight deliberate checker failure/contract tests passed.
+  Shared camera-module boundary check passed for 12 sources.
+- `:core:test`, `:app:testDebugUnitTest`, `:app:assembleDebug`, `:app:lintDebug`,
+  `:app:connectedDebugAndroidTest`, generated release locale/manifest checks and
+  `git diff --check` passed. Lint reports **zero errors / 11 warnings**, limited to
+  dependency-version notices and the existing Chrome OS ABI/data-extraction/icon
+  warning categories; no translation/resource error remains.
+
+An earlier run made while the phone was locked failed three configuration/layout
+assertions. Final tests await actual asynchronous locale/orientation application,
+and the complete unlocked run passed. A targeted layout run retains synthetic
+screenshots outside Gradle's automatic app/cache cleanup. The final debug app is
+reinstalled after that cleanup; no production screen-awake or rotation policy is added.
+
+Fallback tests include a simulated unsupported `de-DE` system with empty app locales,
+Pixel configuration contexts and a deliberately absent French key only in the test APK.
+Production French is complete. Decimal values, coordinates, counts, accents, special
+characters and test-only singular/plural resources pass; current product count labels
+need no invented plural sentence. HT-specific and actual preview-only simulator bindings
+resolve through their own namespaces, with stable machine IDs/geometry/capabilities.
+
+English, French, expanded `en-XA` and RTL `ar-XB` were checked in portrait and
+landscape with the real screen and explicitly synthetic 160×120 measurements.
+Initial/control screenshots for all eight combinations were reviewed after waiting
+for completed rotation. Readings, palette/range controls and longer labels remain
+readable; wrapping rows and scrolling keep Connect/Close, initialization, language and
+diagnostics reachable. Locked range dialog/Cancel and return to Auto worked in every
+combination. The synthetic selected value remained exactly **36.5 °C** at `(80,60)`;
+no physical measurement or native orientation change is inferred. Pseudo-RTL reverses
+test text as intended; it is not a supported production translation.
+
+### Issue #2 acceptance checklist
+
+All ten [issue #2](https://github.com/LounaMaili/LMThermal/issues/2) criteria are
+**completed** and ready for review. The issue remains open; no branch is merged here.
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Complete default resources and French/English UI | Completed | 87 English fallback and 87 French keys; actual Pixel UI |
+| UI/status/error/accessibility strings externalized, no visible Compose/core literals | Completed | Resource audit, exhaustive mappings and structured HT debug facts; unchanged core |
+| Default System and persisted explicit app language on supported versions | Completed | Pixel picker/force-stop/OS Settings; AppCompat library storage tests on simulated API 26/32 |
+| Unsupported system language and missing translation fallback | Completed | German System/resource-context tests; deliberate omission only in test APK |
+| Variables, plurals, accents and special characters | Completed | Positional parity, French decimal/coordinate/count tests and test-only one/other plurals |
+| Longer French/pseudo layouts keep actions and readings usable | Completed | Eight portrait/landscape combinations, control/dialog assertions and stable screenshot review |
+| Locale recreation preserves validity, closes camera and requires explicit reopening, without automatic initialization | Completed | Physical operator/log evidence with zero SET/init events, RAW14_UNSETTLED reopen and camera-free Activity tests |
+| Lint and targeted resource key/parameter checks | Completed | Zero lint errors, 87/87 parity and eight checker tests |
+| Short future language/camera-module translation guide | Completed | ANDROID_LOCALIZATION.md and module architecture guide |
+| README/roadmap/specification/affected docs/changelog on focused branch | Completed | Updated documents and feat/android-internationalization |
+
+Physical older-OS testing remains additional coverage, rather than an unimplemented
+storage mechanism. Future product screens/modules/languages must follow the documented
+resource/parameter/accessibility checks. No ROI/export/recording work is included.
+Independent absolute temperature accuracy remains unresolved and unchanged by localization.

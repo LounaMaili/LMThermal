@@ -57,3 +57,29 @@ Presentation references regenerate with:
 See ANDROID_CELSIUS_PRESENTATION.md and the presentation fixture manifest for pinned
 Desktop source/OpenCV/NumPy versions. Numerical color tables are embedded in Kotlin;
 Python and OpenCV are development-only oracles, not new Android dependencies.
+
+## App languages and localization tests
+
+Runtime AppCompat 1.7.1 supplies AppCompatActivity and API 26–32 app-locale auto-storage;
+API 33+ delegates to the platform. AGP generates LocaleConfig from English/French
+resources with `unqualifiedResLocale=en`. The release language filter is en/fr; debug
+pseudolocalization also generates en-XA/ar-XB for testing. No manual LocaleConfig is needed.
+
+Robolectric 4.16.1/JUnit are local-test-only dependencies for actual AppCompat auto-storage
+and resource configuration on simulated API 26/32. They download their Android runtimes
+to the development cache and never ship in the app. Run `:app:testDebugUnitTest`.
+Compose UI test/JUnit and Espresso 3.7.0 are instrumentation-only; the latter uses the
+supported input service instead of older reflection that fails on the Pixel's Android OS.
+Existing numerical/core fixtures and parity assertions are unchanged.
+
+```bash
+python3 tools/check_android_localization.py --self-test
+./gradlew :core:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug
+./gradlew :app:connectedDebugAndroidTest
+./gradlew :app:generateReleaseLocaleConfig :app:processReleaseManifestForPackage
+```
+
+Keep the Pixel unlocked for layout tests. Their test-only window flag keeps the screen
+awake while synthetic measurements exercise the normal screen. No production keep-awake
+setting or USB connection is introduced. See ANDROID_LOCALIZATION.md for source files,
+locale/fallback/storage semantics, and resource/layout validation.

@@ -190,10 +190,12 @@ for compatibility, with a new stable `palette_id`. Reports also add `module_id`,
 `camera_model`, native dimensions and capability facts. HT-specific legacy `raw14`,
 trailer/literal-center values and physical-accuracy warning are preserved by bindings.
 
-This prepares issue #2; it does **not** complete it. French resources, language selection,
-system-locale policy/persistence, complete legacy debug-string migration, plurals,
-fallback/pseudolocale coverage and locale-recreation regression remain follow-up work.
-Old HT-only DEBUG inventory strings remain technical legacy diagnostics.
+The localization milestone completes French/English resources, platform app-language
+selection/storage and legacy debug-label migration. Every supported module must translate
+its namespace alongside common resources; machine IDs and numerical evidence stay stable.
+Locale recreation releases the active session through the same ownership policy and does
+not auto-open or initialize. See [ANDROID_LOCALIZATION.md](ANDROID_LOCALIZATION.md) for
+fallback, formatting, generated LocaleConfig, tests and future-language procedure.
 
 ## Adding another module
 
@@ -205,8 +207,9 @@ Old HT-only DEBUG inventory strings remain technical legacy diagnostics.
    temperatures publish valid owned native data with truthful provenance. Preserve
    richer evidence internally and use optional sample encoding IDs where useful.
 5. Register its factory/resource binding at the composition root, with namespaced
-   strings/statuses. Shared UI should need neither a new model-name branch nor copied
-   screen code. A new generic action requires deliberate contract/UI review.
+   strings/statuses and complete translations for each supported language. Shared UI
+   should need neither a new model-name branch nor copied screen code. A new generic
+   action requires deliberate contract/UI review.
 6. Test exact/unknown/ambiguous selection, alternate geometry, ownership/cancellation,
    unsupported actions, invalid data, and independent numerical references.
 7. Validate that new real camera on hardware and repeat HT-301 regression. Update the
@@ -232,5 +235,6 @@ alongside all existing ART numerical/presentation parity checks.
 
 Real HT-301 regression and the issue #1 acceptance checklist are recorded in
 [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md). Issue #1 is ready for review only
-after those hardware checks pass. Issue #2 remains open; this branch adds no language
-selector, other commercial driver or simultaneous acquisition.
+after those hardware checks pass. Issue #2 acceptance is recorded separately in the
+localization validation section;
+no other commercial driver or simultaneous acquisition is added.

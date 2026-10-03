@@ -1,0 +1,6 @@
+<resources>
+    <plurals name="count_probe">
+        <item quantity="one">%1$d trame</item>
+        <item quantity="other">%1$d trames</item>
+    </plurals>
+</resources>

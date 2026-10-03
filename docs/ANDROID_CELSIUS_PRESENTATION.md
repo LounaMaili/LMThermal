@@ -123,3 +123,13 @@ aliases remain stable and reports add module/model/geometry/capability metadata.
 
 ROI, export, logging, recording, alternate lens/range support and independently
 measured physical validation remain later milestones.
+
+## Localized presentation
+
+Celsius ticks/readings and editable range bounds use the configured display locale.
+French uses decimal commas; the strict range parser accepts displayed/comma/dot separators.
+Formatting is outside core: matrix, percentiles, colors, extrema, JSON numbers and native
+coordinates are unchanged. The System/French/English selector uses Android app locales;
+Activity recreation releases the camera and requires explicit reopen, so no old rendered
+Celsius is carried into a new locale session. Wrapping action rows accommodate longer labels.
+See ANDROID_LOCALIZATION.md and its camera-free synthetic layout/number tests.

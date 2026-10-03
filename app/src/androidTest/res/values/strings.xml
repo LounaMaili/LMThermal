@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Deliberately missing in French only in the test APK, never in product resources. -->
+    <string name="fallback_probe" tools:ignore="MissingTranslation">Test fallback · °C</string>
+    <plurals name="count_probe">
+        <item quantity="one">%1$d sample</item>
+        <item quantity="other">%1$d samples</item>
+    </plurals>
+</resources>

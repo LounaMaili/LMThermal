@@ -4,6 +4,14 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Android internationalization — 2026-10-03)
+- Added complete English fallback and French translations for 87 product resource keys, including accessibility, common/module statuses/errors, Celsius controls and HT-301 debug permission/inventory prose.
+- Added System/French/English selection with AppCompat 1.7.1 and AppCompatActivity, documented AndroidX auto-storage on API 26–32 and platform per-app language state on API 33+. AGP generates filtered LocaleConfig; release languages are English/French, debug also enables expanded/RTL pseudolocales.
+- Localized legend/reading/input formatting, preserved round-trip Celsius bounds and introduced wrapping action rows for longer labels. Protocol/core, measurement values, coordinate mapping, palette tables and machine JSON are unchanged.
+- Added resource/format/namespace parity checks with deliberate failure tests, Pixel mapping/fallback/formatting/platform/recreation/simulator coverage, synthetic both-orientation UI checks and actual AppCompat storage tests on simulated API 26/32. Test-only Robolectric/Compose UI/Espresso dependencies are excluded from production.
+- Documented language persistence, locale-recreation camera release/explicit reopen, module translation boundaries and future language/module procedure in the localization guide and related product/configuration documents.
+- Validated Pixel picker/force-stop/System and OS Settings agreement, physical HT-301 release/explicit raw14-unsettled reopen with zero initialization controls, and English/French/expanded/RTL layouts in both orientations. All 147 core JVM, eight simulated API 26/32 AppCompat and 22 Pixel tests pass; lint has zero errors, resource/boundary checks and diff check pass. Recorded sanitized evidence and all ten issue #2 criteria as completed, leaving issue/merge approval to review.
+
 ### Changed (Integrated camera-module foundation — 2026-10-03)
 - Added transport-independent camera contracts, stable IDs/capabilities, pure none/unique/ambiguous registry selection, structured status/errors and one-session ownership with awaited replacement release and generation-bound publication.
 - Adapted the targeted HT-301 controller behind module/session/resource bindings while retaining native transport, parsing, control sequence, shutter/liveness gates, thermometry arithmetic and richer raw/calibration/trailer evidence.

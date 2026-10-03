@@ -25,11 +25,16 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
 import org.lmthermal.core.*
 
+/** UI facts remain language-independent; the Android binding supplies resource labels. */
+enum class Ht301Permission { NOT_REQUESTED, CAMERA_REQUIRED, PENDING, GRANTED, DENIED }
+/** Read-only inventory outcome is presentation data; technical failure details remain in logs. */
+enum class Ht301InventoryStatus { NOT_REQUESTED, LOGGED, FAILED }
+
 /** Immutable UI snapshot; bitmap is created once on the worker and never mutated thereafter. */
 data class Ht301CameraSnapshot(
     val usb: UsbState = UsbState(),
-    val identity: String = "1514:0001 — not attached",
-    val permission: String = "Not requested",
+    val identity: String? = null,
+    val permission: Ht301Permission = Ht301Permission.NOT_REQUESTED,
     val mode: FrameMode = FrameMode.INVALID,
     val reason: String? = null,
     val size: Int = 0,
@@ -43,7 +48,7 @@ data class Ht301CameraSnapshot(
     val malformed: Long = 0,
     val bitmap: Bitmap? = null,
     val session: SessionSnapshot = SessionSnapshot(),
-    val inventory: String = "Not requested",
+    val inventory: Ht301InventoryStatus = Ht301InventoryStatus.NOT_REQUESTED,
     val transition: TransitionSnapshot = TransitionSnapshot(),
     val measurement: RadiometricMeasurement? = null,
     val measurementReason: String? = "Session not ready",
@@ -85,7 +90,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) && manager.hasPermission(device))
                         open(device)
                     else mutableState.value = mutableState.value.copy(
-                        usb = UsbState(UsbPhase.PERMISSION_DENIED, "USB permission denied"), permission = "Denied")
+                        usb = UsbState(UsbPhase.PERMISSION_DENIED, "USB permission denied"), permission = Ht301Permission.DENIED)
                 }
             }
         }
@@ -112,27 +117,27 @@ class Ht301CameraController(private val context: Context, private val target: Us
         val device = camera()
         mutableState.value = if (device == null) Ht301CameraSnapshot() else Ht301CameraSnapshot(
             usb = UsbState().attached(), identity = "${device.manufacturerName ?: "Infiray"} ${device.productName ?: "HT-301"} · 1514:0001",
-            permission = if (manager.hasPermission(device)) "Granted" else "Not requested")
+            permission = if (manager.hasPermission(device)) Ht301Permission.GRANTED else Ht301Permission.NOT_REQUESTED)
     }
     /** Android 9+ requires CAMERA permission as well as the per-device USB permission for UVC. */
     fun connect() {
         if (!foreground || streamJob?.isActive == true) return
         val device = camera() ?: run { discover(); return }
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            mutableState.value = mutableState.value.copy(permission = "Camera permission required")
+            mutableState.value = mutableState.value.copy(permission = Ht301Permission.CAMERA_REQUIRED)
             return
         }
         wantedDevice = device.deviceName
         if (manager.hasPermission(device)) open(device) else {
             mutableState.value = mutableState.value.copy(
-                usb = UsbState(UsbPhase.PERMISSION_PENDING, "Awaiting Android USB permission"), permission = "Pending")
+                usb = UsbState(UsbPhase.PERMISSION_PENDING, "Awaiting Android USB permission"), permission = Ht301Permission.PENDING)
             manager.requestPermission(device, PendingIntent.getBroadcast(context, 0,
                 Intent(permissionAction).setPackage(context.packageName), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
         }
     }
     /** Report denial without bypassing Android authorization. */
     fun cameraPermissionDenied() {
-        mutableState.value = mutableState.value.copy(usb = UsbState(UsbPhase.PERMISSION_DENIED, "Camera permission denied"), permission = "Denied")
+        mutableState.value = mutableState.value.copy(usb = UsbState(UsbPhase.PERMISSION_DENIED, "Camera permission denied"), permission = Ht301Permission.DENIED)
     }
     /** UI requests an operation, never executes USB controls or queues duplicate sequences. */
     fun initializeRadiometric() {
@@ -163,7 +168,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
     private fun open(device: UsbDevice) {
         val token = ++generation
         streamJob?.cancel()
-        mutableState.value = mutableState.value.copy(usb = UsbState(UsbPhase.OPENING, "Opening read-only YUYV stream"), permission = "Granted")
+        mutableState.value = mutableState.value.copy(usb = UsbState(UsbPhase.OPENING, "Opening read-only YUYV stream"), permission = Ht301Permission.GRANTED)
         streamJob = scope.launch {
             try {
                 val connection = manager.openDevice(device) ?: error("UsbManager.openDevice returned null")
@@ -202,9 +207,10 @@ class Ht301CameraController(private val context: Context, private val target: Us
                                                 writer.write(json); writer.newLine(); writer.flush()
                                             }).run()
                                     }
-                                    mutableState.updateIf({ token == generation }) { it.copy(inventory = "Read-only inventory logged") }
+                                    mutableState.updateIf({ token == generation }) { it.copy(inventory = Ht301InventoryStatus.LOGGED) }
                                 } catch (failure: Exception) {
-                                    mutableState.updateIf({ token == generation }) { it.copy(inventory = "Inventory: ${failure.message}") }
+                                    Log.w("LMThermalZoom", "Inventory failed", failure)
+                                    mutableState.updateIf({ token == generation }) { it.copy(inventory = Ht301InventoryStatus.FAILED) }
                                 }
                             }
                             val singleRequest = transitionRequest.getAndSet(-1L)

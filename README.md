@@ -32,6 +32,7 @@ engine has full golden LUT/matrix parity; a current ready frame must also pass f
 validation before Celsius rendering, touch readings and high/low markers are shown.
 Presentation uses five Desktop-equivalent palettes and Auto/Locked Celsius bounds. See
 [integrated camera architecture](docs/CAMERA_MODULE_ARCHITECTURE.md),
+[localization and app-language behavior](docs/ANDROID_LOCALIZATION.md),
 [presentation and touch architecture](docs/ANDROID_CELSIUS_PRESENTATION.md),
 [thermometry design and parity](docs/ANDROID_THERMOMETRY.md), [session architecture](docs/ANDROID_RADIOMETRIC_SESSION.md),
 [foundation architecture](docs/ANDROID_FOUNDATION.md),
@@ -51,7 +52,9 @@ Tap/drag the image to inspect native pixel/raw14/Celsius. Choose **Palette**, **
 **Locked**, and **Set range** (default 25–45 °C); these controls affect colors only.
 Display/unsettled previews expose no Celsius legend. Optional **Diagnostics** retains
 separate trailer/literal center and debug controls. **Close** releases the stream; backgrounding
-also releases it. Reopening remains explicit. Wireless ADB follows AGENTS.md.
+also releases it. Reopening remains explicit. **Language** offers System, French and
+English using Android per-app preferences; switching releases the camera and requires
+explicit reconnect. Wireless ADB follows AGENTS.md.
 
 Debug builds also provide **Test raw14 transition (32772)**, a one-shot frame-gated
 experiment that cannot send range/shutter or claim readiness, and **Read zoom inventory**,
@@ -63,7 +66,8 @@ in [the Zoom audit](docs/ZOOM_CONTROL_SEMANTICS.md).
 
 Android test-only parity uses AndroidX Test runner 1.6.2 / JUnit extension 1.2.1.
 `./gradlew :app:connectedDebugAndroidTest` executes all golden tables/matrices on the phone
-without opening USB. No golden data or test dependencies ship in the product APK.
+without opening USB. No golden data or test dependencies ship in the product APK. Localization also uses
+test-only Robolectric 4.16.1 and Compose UI/Espresso 3.7.0 checks; see CONFIGURATION.md.
 
 ## Supported camera contract
 
@@ -150,7 +154,7 @@ def get_temp_evn(a, env_term, b):
 - [x] Native-coordinate tap/drag inspection, five Celsius palettes, Auto/Locked range and legend.
 - [x] Integrated module contract/registry, one-session ownership, geometry-driven shared
   presentation and 160×120 preview-only simulator (see camera architecture and validation).
-- [ ] French/English localization, language selection and complete locale regression (issue #2).
+- [x] French/English localization, persisted System/app-language selection, fallback and locale regression (issue #2; see localization/validation documents).
 - [ ] Additional real camera models, each requiring protocol research and hardware validation.
 - [ ] ROI drawing/statistics.
 - [ ] Still export, time series, recording/playback and comparison.
@@ -162,7 +166,7 @@ for the original full-payload Android camera test.
 
 ## Stack
 
-- Android Kotlin 2.1.20, Compose/AndroidX, Gradle wrapper 8.11.1, AGP 8.9.2, JDK 17.
+- Android Kotlin 2.1.20, Compose/AndroidX, AppCompat 1.7.1, Gradle wrapper 8.11.1, AGP 8.9.2, JDK 17.
 - compileSdk/targetSdk 35, minSdk 26; initial arm64-v8a APK supports the test Pixel 8.
 - Native libusb 1.0.29 (LGPL-2.1-or-later), pinned libuvc 0.0.8 snapshot (BSD-3-Clause), NDK 28.
 - Plain JVM `core/` holds immutable frame/parser and preview logic; no Python embedded.
@@ -173,6 +177,8 @@ for the original full-payload Android camera test.
   Capstone 5.0.9, pyelftools 0.33 and Androguard 4.1.4 are analysis-only dependencies.
 
 ## Documentation
+
+- [`docs/ANDROID_LOCALIZATION.md`](docs/ANDROID_LOCALIZATION.md) — System/French/English, platform storage, formatting, resource checks and language/module addition
 
 - [`docs/CAMERA_MODULE_ARCHITECTURE.md`](docs/CAMERA_MODULE_ARCHITECTURE.md) — Contracts, registry, ownership, capabilities, resources and future module guide
 
