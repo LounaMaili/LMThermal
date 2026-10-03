@@ -10,7 +10,7 @@ All notable changes to LMThermal will be documented in this file.
 - Added complete LUT goldens for six sanitized fixtures and two synthetic branches, full settled room/hand matrix references, intermediate/failure/ownership regressions and Android-runtime parity instrumentation.
 - Added minimal worker-produced live numeric temperatures and coordinate markers with explicit physical-accuracy warning; invalid/unsettled/disconnected frames clear Celsius. No controls, timing, orientation or liveness rules changed.
 - Confirmed all full LUTs/matrices bit-exact on Pixel 8 ART, then validated live hand/background response, coordinate markers and null measurement after close/unknown-raw14 reopen; recorded sampled per-frame evaluation timing without adding a cache.
-- Documented golden provenance/hashes and reproducible export. Test-only AndroidX runner/JUnit dependencies and fixture assets do not ship in the product APK; ignored Kotlin compiler state and preserved numerical fixture bytes with binary Git attributes.
+- Documented golden provenance/hashes and reproducible export. Test-only AndroidX runner/JUnit dependencies and fixture assets do not ship in the product APK; ignored Kotlin compiler state and preserved numerical fixture bytes with binary Git attributes alongside the existing upstream/license whitespace rules.
 
 ### Fixed (Android frame-observed radiometric acceptance — 2026-10-02)
 - Confirmed the existing 32772 DISPLAY→raw14 transition on Pixel 8 with a restricted one-shot diagnostic: exact two-byte SET, 15 receipt discards and two distinct valid raw14 images; no GET, range or shutter operation was used.
