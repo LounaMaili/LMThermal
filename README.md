@@ -178,6 +178,8 @@ for the original full-payload Android camera test.
 
 ## Documentation
 
+- [`docs/LMTX_FORMAT_V1.md`](docs/LMTX_FORMAT_V1.md) — Accepted v1.0 canonical specification for still-only `.lmtx` exchange; Android export and Desktop import remain future work. [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4) retains the decision/review history.
+
 - [`docs/ANDROID_LOCALIZATION.md`](docs/ANDROID_LOCALIZATION.md) — System/French/English, platform storage, formatting, resource checks and language/module addition
 
 - [`docs/CAMERA_MODULE_ARCHITECTURE.md`](docs/CAMERA_MODULE_ARCHITECTURE.md) — Contracts, registry, ownership, capabilities, resources and future module guide

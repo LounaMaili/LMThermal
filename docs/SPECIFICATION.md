@@ -79,6 +79,7 @@ it does prevent claiming calibrated physical temperature accuracy.
 ### 4. Photo Capture
 - Save still images with temperature overlay
 - Export formats:
+  - **LMThermal Exchange Format (`.lmtx`)** — accepted still-only v1.0 contract; implementation remains future work (see [canonical specification](LMTX_FORMAT_V1.md)).
   - **RJPEG** (Radiometric JPEG) — standard format, readable by FLIR Tools, Thermimage, etc.
   - **TIFF radiometric** — for professional thermal analysis software
   - **PNG** — visual only (no embedded temperature data)
@@ -106,6 +107,17 @@ it does prevent claiming calibrated physical temperature accuracy.
 - Auto or manual temperature range
 
 ## Export Formats
+
+### LMThermal Exchange Format (`.lmtx`)
+
+[LMTX_FORMAT_V1.md](LMTX_FORMAT_V1.md) is the **Accepted v1.0 canonical implementation
+specification**, including the complete manifest, binary encodings, validity,
+provenance, analysis, integrity and compatibility rules. It defines still captures
+only and preserves independent support for legacy Desktop capture/recording formats.
+[Issue #4](https://github.com/LounaMaili/LMThermal/issues/4) remains the decision/review
+history. [Android export #5](https://github.com/LounaMaili/LMThermal/issues/5) and
+[Desktop import #1](https://github.com/LounaMaili/LMThermal-Desktop/issues/1) are
+unblocked by acceptance but remain open and unimplemented.
 
 ### RJPEG (Radiometric JPEG)
 A standard JPEG file with embedded radiometric (temperature) data in EXIF/metadata chunks. This is the closest thing to a universal thermal image format:

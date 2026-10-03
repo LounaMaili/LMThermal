@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Accepted LMTX v1.0 specification — 2026-10-03)
+
+- Added `docs/LMTX_FORMAT_V1.md` as the canonical implementation specification, preserving all 14 normative sections of the owner-accepted issue #4 contract, the masked example and conformance plan without changing the schema.
+- Included the explicit semantic JSON-value preservation clarification with sufficient numeric precision; original number spellings are not required, while specified binary payload byte preservation remains exact.
+- Linked the accepted contract from the README, application specification and camera-module architecture. Issue #4 remains decision/review history; Android export #5 and Desktop import #1 remain open and unimplemented. No application, camera or thermometry code changed.
+
 ### Added (Android internationalization — 2026-10-03)
 - Added complete English fallback and French translations for 87 product resource keys, including accessibility, common/module statuses/errors, Celsius controls and HT-301 debug permission/inventory prose.
 - Added System/French/English selection with AppCompat 1.7.1 and AppCompatActivity, documented AndroidX auto-storage on API 26–32 and platform per-app language state on API 33+. AGP generates filtered LocaleConfig; release languages are English/French, debug also enables expanded/RTL pseudolocales.

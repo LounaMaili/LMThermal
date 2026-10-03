@@ -199,6 +199,15 @@ fallback, formatting, generated LocaleConfig, tests and future-language procedur
 
 ## Adding another module
 
+Future exchange persistence follows the **Accepted v1.0 canonical specification** in
+[LMTX_FORMAT_V1.md](LMTX_FORMAT_V1.md), including actual module identity/geometry,
+optional temperatures/native evidence, capability/availability and namespaced
+extensions. Its module-owned immutable export snapshot/evidence interface is future
+[Android issue #5](https://github.com/LounaMaili/LMThermal/issues/5) work; no persistence
+interface is implemented here. [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4)
+retains the decision/review history. Implementations follow the contract's versioning
+rules without silently changing v1 semantics.
+
 1. Research/validate the actual device/SDK and licenses before claiming support.
 2. Supply a stable identity and pure probe; use another discovery provider if not USB.
 3. Implement `CameraModule`/awaited `CameraSession.close` inside its own package. Keep
