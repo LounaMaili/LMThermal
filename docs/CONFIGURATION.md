@@ -83,3 +83,13 @@ Keep the Pixel unlocked for layout tests. Their test-only window flag keeps the 
 awake while synthetic measurements exercise the normal screen. No production keep-awake
 setting or USB connection is introduced. See ANDROID_LOCALIZATION.md for source files,
 locale/fallback/storage semantics, and resource/layout validation.
+
+## Camera Activity entry and lifetime
+
+MainActivity uses `singleTask` entry so launcher or USB entry while an external destination
+picker covers the app reuses its retained camera composition root. Re-entry clears the
+picker above that root and delivers normal cancellation; no second coordinator is created.
+This does not open USB or initialize radiometry. Configuration recreation uses the same
+ViewModel; locale changes and ordinary background stops release as defined in
+[ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md). `CameraEntryDeviceTest` verifies
+repeat entry on the Pixel without opening the camera.

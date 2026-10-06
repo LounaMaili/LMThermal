@@ -17,15 +17,14 @@ cross-platform interoperability. No Desktop importer or recording format is adde
 5. **Share capture** is available only after successful publication. Android grants
    temporary read access to the finalized private cache file through FileProvider.
 
-Destination/share UI can background the Activity. Rotation also recreates it.
-The existing unconditional `MainActivity.onStop → leaveForeground → owner.background`
-camera policy releases USB in all of these cases; returning requires explicit Connect/Open and never
-initializes automatically. The frozen capture survives this release and Activity/
-language recreation. Neither rotation nor SAF requires USB release technically:
-the coordinator/connection uses application context. This inherited conservative
-policy remains in this milestone; a separate lifecycle change could distinguish
-configuration/picker transitions from genuine background/detach and test permission/
-ownership races. There is no automatic reconnect/initialization workaround here.
+The destination picker registers a retained transaction before launch. Its stop, return,
+cancellation and rotation preserve the same camera/session and send no controls. Normal
+rotation also retains the source, ROI/Point, palette/range and prepared immutable file.
+Language changes intentionally release the live camera but preserve the prepared artifact.
+The Share chooser retains the conservative ordinary-background release policy.
+See [ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md) for exact ownership rules,
+including screen-off and the outstanding-picker exception. No automatic reconnect or
+initialization occurs after a genuine release.
 Final ViewModel disposal cancels unfinished work; backgrounding alone preserves
 the prepared capture while releasing the camera. Process death cannot resume an
 in-progress publication, and incomplete destination bytes are never a valid capture.

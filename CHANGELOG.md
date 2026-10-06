@@ -4,6 +4,17 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (Android camera lifecycle continuity — 2026-10-06)
+
+- Replaced unconditional Activity-stop release with a generic retained UI-lifetime policy: rotation/configuration recreation and a registered SAF destination transaction keep the same single session, without reconnect or radiometric control writes.
+- Kept awaited release for ordinary viewer background/finish, screen-off, Close, matching detach, fatal module ERROR/action failure and final disposal. Locale changes intentionally release before the replacement UI composes and require explicit reopen. Documented the outstanding-picker event-lifetime exception, including Home inside external SAF, without timers or a background service.
+- Constrained MainActivity to singleTask entry so launcher/USB repeat entry above SAF reuses the retained composition root instead of allocating another coordinator; added a real-device entry regression.
+- Preserved retained ROI/Point, palette/range and immutable export artifacts; rejected obsolete Activity lifecycle/result callbacks. HT-301 protocol, thermometry and Accepted LMTX v1 semantics are unchanged.
+- Added bounded numeric owner/session/open/release/action/frame-continuity diagnostics, eight pure ownership-policy tests and two actual Activity/ViewModel regression tests; documented event policy and sanitized physical evidence.
+- Validated Pixel 8/HT-301 picker cancel/success and both rotations on one ready session with zero extra controls, preserved ROI/Turbo/Locked settings and identical prepared capture bytes; confirmed single Close/detach/background/locale releases and conservative raw14 reopen. 232 core, ten Android JVM, 39 Pixel and ten localization-checker tests pass; build/lint/boundary/diff checks pass. Native callback samples remain near 25 FPS; hidden-picker worker replacement and existing invalid/held-frame gates remain observable limitations.
+- Rechecked the final APK above a live destination picker: root re-entry cancelled SAF without changing its ready owner, reopening after Close worked without replug, and no extra SET writes occurred. Recorded an unresolved operator-observed blank initial Connect after test/reinstall separately from the passed continuity/reopen checks.
+
+
 
 ### Added (Android LMTX v1 still export — 2026-10-04)
 

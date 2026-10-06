@@ -17,6 +17,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.lmthermal.app.R
+import org.lmthermal.app.NumericEvidence
+import android.os.SystemClock
 import org.lmthermal.core.CursorReading
 
 /** Application-level discovery/selection and one-session ownership.
@@ -31,16 +33,31 @@ class AndroidCameraCoordinator(private val context: Context,
     private val registry = CameraModuleRegistry(registrations.map { it.module })
     private val mutableDiagnostics = MutableStateFlow<(@Composable () -> Unit)?>(null)
     val diagnostics = mutableDiagnostics.asStateFlow()
+    private val evidence = NumericEvidence(context, "camera-lifetime.jsonl", "LMThermalLifetime").apply { reset() }
+    private val ownerId = java.util.UUID.randomUUID().toString()
+    private var ownership: Map<String, Any?> = emptyMap()
     private val owner = CameraSessionOwner<Bitmap>(scope,
         activeChanged = { mutableDiagnostics.value = (it as? AndroidCameraSession)?.diagnostics },
-        technicalFailure = { Log.e("LMThermalModules", "Module ownership/open failure", it) })
+        technicalFailure = { Log.e("LMThermalModules", "Module ownership/open failure", it) },
+        event = { ownership = it; evidence.record(it + mapOf("owner_id" to ownerId, "monotonic_ms" to SystemClock.elapsedRealtime())) })
     val state = owner.state
     private var foreground = false
+    /** Retained UI policy can bind screen-off without holding an Activity reference. */
+    internal var screenOff: () -> Unit = { leaveForeground() }
+    /** Lifecycle evidence includes acquisition continuity, without module protocol assumptions or private IDs. */
+    fun recordLifecycle(name: String) {
+        val current = state.value
+        evidence.record(ownership + mapOf("owner_id" to ownerId, "event" to name, "monotonic_ms" to SystemClock.elapsedRealtime(),
+            "lifecycle" to current.lifecycle.name, "status" to current.status.code.name,
+            "session_state" to current.status.detail?.machineCode,
+            "received" to current.statistics.received, "callback_fps" to current.statistics.callbackFps))
+    }
     private var pendingCameraPermission: CameraCandidate<Bitmap>? = null
     private val fallbackUi = object : CameraUiBindings { override val modelLabel = R.string.app_name }
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == Intent.ACTION_SCREEN_OFF) { screenOff(); return }
             if (intent.action == UsbManager.ACTION_USB_DEVICE_DETACHED) {
                 val device = IntentCompat.getParcelableExtra(intent, UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
                 if (device != null) {
@@ -54,6 +71,7 @@ class AndroidCameraCoordinator(private val context: Context,
     init {
         ContextCompat.registerReceiver(context, receiver, IntentFilter().apply {
             addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED); addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+            addAction(Intent.ACTION_SCREEN_OFF)
         }, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
     private fun identities(): List<CameraDeviceIdentity> = devices?.invoke() ?: manager.deviceList.values.map {

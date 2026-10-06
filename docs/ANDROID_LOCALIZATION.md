@@ -50,13 +50,15 @@ and [AppCompat 1.7.1](https://developer.android.com/jetpack/androidx/releases/ap
 
 ## Camera lifecycle on language changes
 
-A locale change can recreate the Activity. Existing `onStop` immediately clears the
-visible preview/measurement and releases the module/session. The returning/new Activity
-only detects devices read-only. The operator must explicitly **Connect / Open** again.
+A locale change can recreate the Activity. The retained UI policy compares the app preference
+and effective resource locale when the replacement UI binds, immediately clears the
+visible preview/measurement and releases the module/session before composing that UI.
+This intentional release differs from ordinary rotation, which now retains the source.
+The returning/new Activity only detects devices read-only. The operator must explicitly **Connect / Open** again.
 Existing raw14 is still **RAW14_UNSETTLED**; no readiness or old Celsius value survives.
 Radiometric initialization remains a separate explicit action.
 
-Language selection cannot send 32772/32800/32768, retain a USB handle across recreation,
+Language selection cannot send 32772/32800/32768, retain a USB handle across locale recreation,
 change registry selection, or change raw words, trailer/calibration, native coordinates,
 LUT arithmetic, palette tables or session gates. Protocol/state enums and JSON evidence
 remain language-independent. Real locale-release/reopen evidence is recorded in

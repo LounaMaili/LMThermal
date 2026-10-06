@@ -6,8 +6,8 @@ import org.json.JSONObject
 import java.io.File
 
 /** Bounded developer evidence survives wireless-ADB loss; never stores scene bytes or image hashes.
- * Reset/record are serialized by the owning camera or presentation worker. Persistence
- * starts only for a deliberate diagnostic or measurements following explicit initialization.
+ * Reset/record are serialized by the owning camera or presentation worker. Debug-only
+ * persistence covers lifecycle events, deliberate diagnostics and initialized measurements.
  */
 internal class NumericEvidence(context: Context, name: String, private val tag: String) {
     private val file = File(context.filesDir, name)

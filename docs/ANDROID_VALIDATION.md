@@ -963,3 +963,90 @@ following test-package cleanup, with the camera closed.
 Android #5 is **implementation-complete / interoperability-pending**, not closed.
 Desktop #1 remains open/unimplemented. No Desktop product code is changed.
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## Camera lifecycle continuity — 2026-10-06
+
+Branch `fix/camera-lifecycle-continuity`, based on Android main `1cbdd776`.
+Pixel 8 / Android 17, wireless ADB, fresh HT-301 USB host connection. The operator
+confirmed display aiming, ready responsiveness, both orientations and preserved ROI/
+palette/range. The [event policy](ANDROID_CAMERA_LIFETIME.md) replaces the historical
+unconditional stop release described in the export milestone above.
+
+Sanitized [structured evidence](validation/android-camera-lifetime-2026-10-06.json)
+contains counts/events without phone/USB identifiers or scene payloads. One retained
+owner was observed; its active-session count never exceeded one.
+
+- Display baseline used full 224256-byte frames with display words approximately
+  32768–33023 and native callbacks near 25 FPS. Explicit initialization reached first
+  ready in **6.396 s**. Exactly three SET transfers completed with two bytes each:
+  **32772, 32800, 32768**. The stable initial raw14 frame was **5588–6259**. Readiness
+  still required changing valid frames, not merely a settling counter.
+- First picker: ready session **1** remained owned through launch, roughly 86 seconds
+  in external DocumentsUI, and cancellation. Recorded received counts increased
+  **4072 → 5840**; instantaneous callback samples were approximately 25 FPS. Prepared
+  bytes were identical while covered. Cancellation removed staging and disabled Share;
+  the operator confirmed the preview continued without reconnect.
+- Portrait → landscape → portrait: same session **1**, **zero releases**, **zero extra
+  opens/actions/SET writes**. Configuration stop/start pairs recorded counts **11235**
+  and **13090**, with callbacks **25.024 / 24.900 FPS**. Selected ROI
+  `[131,229) × [130,191)`, ROI mode, Turbo and Locked **25–45 °C** persisted. The
+  286812-byte prepared ROI archive was identical after both recreations.
+- Successful second destination transaction: same ready session **1**, received
+  **15621 → 15721**, zero extra writes or release. Local Downloads publication closed
+  successfully and debug SAF readback matched the finalized archive exactly. Share
+  was not opened during this continuity test; its finalized-file grants/failure guards
+  passed the existing instrumentation regressions.
+- Close released session **1 once**, in **59 ms**. Explicit reopen created session
+  **2**, correctly **RAW14_UNSETTLED**, with grayscale preview and no Celsius values.
+  It sent no initialization. Physical detach then released session **2 once**, in
+  **211 ms**, cleared the view and removed Android enumeration; wireless ADB stayed usable.
+- Fresh display session **3** released once on Home/background, in **103 ms**.
+  Returning required explicit Connect/Open; no preview/session automatically revived.
+- Two observed app-locale changes released display sessions **4 / 5 once each**, in
+  **107 / 97 ms** after release started. The operator confirmed reconnect remained
+  required. No radiometric initialization followed. The finalized capture bytes stayed
+  unchanged through Close, detach, background and locale releases.
+
+Initial readiness counters were **105 discarded** (including **75 shutter frames**),
+**30 held**, **83 rejected**, **2 native malformed**, and **5 qualifying live**.
+Later normal stream liveness/invalid bursts continued to be rejected/recovered by the
+unchanged gates; neither uninterrupted READY nor zero dropped frames is promised.
+While external SAF covered the app, latest-buffer replacement increased as worker
+throughput fell; callback samples remained near 25 FPS and return stayed responsive.
+An already-raw explicit reopen also showed a short malformed-frame burst (17 counted)
+without promoting readiness or leaking old Celsius. No unsafe USB faults were induced.
+
+All **232 core JVM**, **10 Android JVM** (eight API 26/32 AppCompat compatibility plus
+two Activity ownership tests), **39 Pixel instrumentation**, and **10 localization
+checker self-tests** pass without skips/failures. Debug assembly/lint (zero errors;
+four existing warnings), localization parity, module boundaries and `git diff --check`
+pass. Fatal-error cleanup, stale callbacks, repeated Close/disposal and screen-off's
+picker override are tested with injected generic sources; no physical fatal USB failure
+was forced. Camera/thermometry/native transport/Accepted LMTX contract and export codec
+files have no diff. No recording/sequence feature or new scene fixture is introduced.
+
+### Final APK repeat-entry check
+
+The final manifest uses `singleTask` so repeat launcher/USB entry cannot create another
+camera composition root. A separate final-APK live run confirmed external DocumentsUI
+was covering ready session 1. Re-entering LMThermal delivered the intent to the existing
+Activity, cancelled SAF normally and retained the same owner/session: received counts
+**649 → 1522**, callbacks **25.000 / 25.692 FPS**, opens 1, releases 0, explicit actions 1.
+Actual SET logs remained exactly **32772, 32800, 32768** before and after. A subsequent
+configuration recreation retained that session, with callbacks **25.024 FPS**. Close
+released it once in **70 ms**; explicit reopen without replug received changing raw14
+frames near 25 FPS in **RAW14_UNSETTLED**, with no Celsius or additional writes. Its
+initial native malformed count stabilized at 40; this does not establish a new readiness.
+Final Close released session 2 once in **76 ms**: this separate run ended with two opens,
+two completed releases, zero active sessions and still only the three initialization SETs.
+
+The operator also reported a blank initial Connect after the test/reinstall until a
+fresh replug. Android event history shows CAMERA and USB permission dialogs; that brief
+attempt contains no frame or transport-error log before task removal. Its cause is not
+established by the retained evidence. The operator recalled prompts only at first connection
+and could not recall the blank attempt's session state. The subsequent same-process
+no-replug reopen above worked and was confirmed by the operator. Do not infer that
+replug is required for every reopen, or claim the initial
+permission/startup path is fully explained by this lifecycle test.
+
+**Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**

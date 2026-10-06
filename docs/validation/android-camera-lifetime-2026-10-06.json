@@ -1,0 +1,455 @@
+{
+  "date": "2026-10-06",
+  "base_commit": "1cbdd776a485c43e1e7cfa104e3741d1b7e99658",
+  "platform": {
+    "model": "Pixel 8",
+    "android_version": "17",
+    "adb": "wireless; existing pairing"
+  },
+  "scope": "Generic camera lifetime; HT-301 protocol, thermometry and LMTX v1 unchanged",
+  "single_owner": {
+    "distinct_retained_owners": 1,
+    "max_active_sessions": 1,
+    "opens": 5,
+    "completed_releases": 5,
+    "final_active_sessions": 0
+  },
+  "initialization": {
+    "time_to_first_ready_ms": 6396,
+    "stable_raw14_range": [
+      5588,
+      6259
+    ],
+    "discarded": 105,
+    "shutter_frames": 75,
+    "live": 5,
+    "held": 30,
+    "rejected": 83,
+    "native_malformed": 2,
+    "set_transfers": [
+      {
+        "bmRequestType": 33,
+        "bRequest": 1,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested": 32772,
+        "bytes": [
+          4,
+          128
+        ],
+        "requested_length": 2,
+        "actual_length": 2
+      },
+      {
+        "bmRequestType": 33,
+        "bRequest": 1,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested": 32800,
+        "bytes": [
+          32,
+          128
+        ],
+        "requested_length": 2,
+        "actual_length": 2
+      },
+      {
+        "bmRequestType": 33,
+        "bRequest": 1,
+        "wValue": 2816,
+        "wIndex": 256,
+        "requested": 32768,
+        "bytes": [
+          0,
+          128
+        ],
+        "requested_length": 2,
+        "actual_length": 2
+      }
+    ]
+  },
+  "temporary_transitions": {
+    "session_id": 1,
+    "additional_opens": 0,
+    "releases": 0,
+    "additional_control_writes": 0,
+    "picker_cancel": true,
+    "picker_success": true,
+    "portrait_to_landscape_to_portrait": true,
+    "roi_native_bounds": [
+      131,
+      130,
+      229,
+      191
+    ],
+    "roi_mode_retained": true,
+    "palette": "turbo",
+    "locked_range_c": [
+      25,
+      45
+    ],
+    "prepared_bytes_identical_in_picker_after_each_rotation_and_after_releases": true,
+    "prepared_roi_archive_bytes": 286812,
+    "successful_provider_readback_equal": true,
+    "cancel_removed_stage_and_disabled_share": true
+  },
+  "conservative_reopen": {
+    "session_id": 2,
+    "state": "RAW14_UNSETTLED",
+    "celsius_available": false,
+    "additional_control_writes": 0
+  },
+  "release_events": [
+    {
+      "session_id": 1,
+      "reason": "USER",
+      "release_elapsed_ms": 59
+    },
+    {
+      "session_id": 2,
+      "reason": "DETACHED",
+      "release_elapsed_ms": 211
+    },
+    {
+      "session_id": 3,
+      "reason": "BACKGROUND",
+      "release_elapsed_ms": 103
+    },
+    {
+      "session_id": 4,
+      "reason": "BACKGROUND",
+      "release_elapsed_ms": 107
+    },
+    {
+      "session_id": 5,
+      "reason": "BACKGROUND",
+      "release_elapsed_ms": 97
+    }
+  ],
+  "observations": [
+    {
+      "event": "ui_started",
+      "lifecycle": "DISCONNECTED",
+      "session_state": null,
+      "received": 0,
+      "callback_fps": 0
+    },
+    {
+      "event": "picker_started",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 4072,
+      "callback_fps": 24.975024975024976
+    },
+    {
+      "event": "picker_retained",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 4094,
+      "callback_fps": 24.975024975024976
+    },
+    {
+      "event": "picker_returned",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 5840,
+      "callback_fps": 25.096525096525095
+    },
+    {
+      "event": "configuration_retained",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 11235,
+      "callback_fps": 25.024061597690086
+    },
+    {
+      "event": "ui_started",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 11235,
+      "callback_fps": 25.024061597690086
+    },
+    {
+      "event": "configuration_retained",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 13090,
+      "callback_fps": 24.900398406374503
+    },
+    {
+      "event": "ui_started",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 13090,
+      "callback_fps": 24.900398406374503
+    },
+    {
+      "event": "picker_started",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 15621,
+      "callback_fps": 25
+    },
+    {
+      "event": "picker_retained",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 15643,
+      "callback_fps": 25
+    },
+    {
+      "event": "picker_returned",
+      "session_id": 1,
+      "opens": 1,
+      "releases": 0,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "RADIOMETRIC_READY",
+      "received": 15721,
+      "callback_fps": 25.547445255474454
+    },
+    {
+      "event": "background_release",
+      "session_id": 3,
+      "opens": 3,
+      "releases": 2,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "CLOSED",
+      "session_state": null,
+      "received": 0,
+      "callback_fps": 0
+    },
+    {
+      "event": "configuration_retained",
+      "session_id": 4,
+      "opens": 4,
+      "releases": 3,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "DISPLAY_STREAM",
+      "received": 137,
+      "callback_fps": 25.024061597690086
+    },
+    {
+      "event": "locale_release",
+      "session_id": 4,
+      "opens": 4,
+      "releases": 3,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "CLOSED",
+      "session_state": null,
+      "received": 0,
+      "callback_fps": 0
+    },
+    {
+      "event": "ui_started",
+      "session_id": 4,
+      "opens": 4,
+      "releases": 3,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "CLOSED",
+      "session_state": null,
+      "received": 0,
+      "callback_fps": 0
+    },
+    {
+      "event": "configuration_retained",
+      "session_id": 5,
+      "opens": 5,
+      "releases": 4,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "STREAMING",
+      "session_state": "DISPLAY_STREAM",
+      "received": 112,
+      "callback_fps": 25
+    },
+    {
+      "event": "locale_release",
+      "session_id": 5,
+      "opens": 5,
+      "releases": 4,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "CLOSED",
+      "session_state": null,
+      "received": 0,
+      "callback_fps": 0
+    },
+    {
+      "event": "ui_started",
+      "session_id": 5,
+      "opens": 5,
+      "releases": 4,
+      "active_owners": 1,
+      "explicit_actions": 1,
+      "lifecycle": "CLOSED",
+      "session_state": null,
+      "received": 0,
+      "callback_fps": 0
+    }
+  ],
+  "tests": {
+    "core_jvm": 232,
+    "android_jvm": 10,
+    "pixel_instrumentation": 39,
+    "localization_checker_self_tests": 10,
+    "failures": 0,
+    "skipped": 0
+  },
+  "limitations": [
+    "A pending SAF transaction also retains ownership if Home is used inside the external picker, until result/screen-off/detach/failure/disposal.",
+    "Background worker throughput can fall while the picker covers the app; the bounded latest-frame handoff replaces old payloads. Native callback samples remained near 25 FPS.",
+    "The existing liveness gates still reject held/malformed frames; no zero-drop guarantee is made.",
+    "Process-death restoration and cloud-provider durability are not promised."
+  ],
+  "physical_accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "final_single_task_entry_check": {
+    "separate_run_after_final_apk_install": true,
+    "same_activity_and_retained_owner_after_reentry": true,
+    "picker_cancelled_by_reentry": true,
+    "ready_before_and_after": true,
+    "additional_opens": 0,
+    "releases_during_picker": 0,
+    "additional_control_writes": 0,
+    "control_set_values": [
+      32772,
+      32800,
+      32768
+    ],
+    "observations": [
+      {
+        "event": "ui_started",
+        "lifecycle": "DISCONNECTED",
+        "session_state": null,
+        "received": 0,
+        "callback_fps": 0
+      },
+      {
+        "event": "picker_started",
+        "session_id": 1,
+        "opens": 1,
+        "releases": 0,
+        "active_owners": 1,
+        "explicit_actions": 1,
+        "lifecycle": "STREAMING",
+        "session_state": "RADIOMETRIC_READY",
+        "received": 649,
+        "callback_fps": 25
+      },
+      {
+        "event": "picker_retained",
+        "session_id": 1,
+        "opens": 1,
+        "releases": 0,
+        "active_owners": 1,
+        "explicit_actions": 1,
+        "lifecycle": "STREAMING",
+        "session_state": "RADIOMETRIC_READY",
+        "received": 665,
+        "callback_fps": 25
+      },
+      {
+        "event": "picker_returned",
+        "session_id": 1,
+        "opens": 1,
+        "releases": 0,
+        "active_owners": 1,
+        "explicit_actions": 1,
+        "lifecycle": "STREAMING",
+        "session_state": "RADIOMETRIC_READY",
+        "received": 1522,
+        "callback_fps": 25.691699604743082
+      },
+      {
+        "event": "configuration_retained",
+        "session_id": 1,
+        "opens": 1,
+        "releases": 0,
+        "active_owners": 1,
+        "explicit_actions": 1,
+        "lifecycle": "STREAMING",
+        "session_state": "RADIOMETRIC_READY",
+        "received": 3617,
+        "callback_fps": 25.024061597690086
+      },
+      {
+        "event": "ui_started",
+        "session_id": 1,
+        "opens": 1,
+        "releases": 0,
+        "active_owners": 1,
+        "explicit_actions": 1,
+        "lifecycle": "STREAMING",
+        "session_state": "RADIOMETRIC_READY",
+        "received": 3617,
+        "callback_fps": 25.024061597690086
+      }
+    ],
+    "close_elapsed_ms": 70,
+    "explicit_reopen_without_replug": {
+      "session_id": 2,
+      "state": "RAW14_UNSETTLED",
+      "celsius_available": false,
+      "callback_fps_approximately": 25,
+      "additional_control_writes": 0,
+      "initial_native_malformed_count": 40
+    },
+    "initial_connect_observation": "Operator reported a blank preview after test/reinstall until a fresh replug and did not recall its state. Scoped Android history contains first-connection CAMERA and USB permission dialogs; the brief attempt has no frame or transport-error logs. Cause not established. A subsequent same-process explicit reopen without replug was confirmed by logs and operator.",
+    "operator_confirmed_no_replug_reopen": true,
+    "final_opens": 2,
+    "final_completed_releases": 2,
+    "final_active_sessions": 0,
+    "final_close_elapsed_ms": 76
+  }
+}

@@ -122,7 +122,10 @@ not a statement that all structurally valid indices necessarily have defined tem
 
 ## Cancellation and diagnostics
 
-Each source has an immutable generation and ownership predicate. Close/background/detach
+Each source has an immutable generation and ownership predicate. Rotation and the tracked
+SAF picker retain the same source/generation; they cannot manufacture readiness or enqueue controls.
+The [generic UI lifetime policy](ANDROID_CAMERA_LIFETIME.md) decides actual ownership termination.
+Close/background/detach
 invalidates ownership immediately, clears the request and presentation, cancels the worker,
 and releases the UVC handle before the Android descriptor. Checks around every control
 prevent later commands once cancellation is observed. A transfer already in flight

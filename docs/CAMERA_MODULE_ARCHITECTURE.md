@@ -80,8 +80,8 @@ obsolete opening, actions or source publications from reviving data. If release
 fails, ownership is retained and the new factory is blocked until release succeeds.
 Cancellation cannot abandon an already-owned source halfway through release.
 
-Matching detach and Android background clear preview/measurement immediately and
-release the session. Unrelated detach cannot close it. Foreground, attach, discovery,
+Matching detach, fatal module failure and the explicit Android background policy clear
+preview/measurement immediately and release the session. Unrelated detach cannot close it. Foreground, attach, discovery,
 permission completion for a cancelled candidate, and Activity recreation cannot
 initialize radiometry. Foreground merely discovers; reopen requires Connect.
 Permission is bound to the exact pending identity/module and rechecked before opening.
@@ -199,7 +199,7 @@ trailer/literal-center values and physical-accuracy warning are preserved by bin
 The localization milestone completes French/English resources, platform app-language
 selection/storage and legacy debug-label migration. Every supported module must translate
 its namespace alongside common resources; machine IDs and numerical evidence stay stable.
-Locale recreation releases the active session through the same ownership policy and does
+A changed locale signature releases the active session when the replacement UI binds and does
 not auto-open or initialize. See [ANDROID_LOCALIZATION.md](ANDROID_LOCALIZATION.md) for
 fallback, formatting, generated LocaleConfig, tests and future-language procedure.
 
@@ -267,12 +267,19 @@ current-frame availability. Future modules must test evidence lifetime through n
 frames/close/detach, exact bytes, privacy and alternate geometry. The 160×120 simulated
 preview proves export requires neither HT dimensions nor raw14 nor temperatures.
 
-### Current lifecycle continuity limitation
+### Camera lifecycle continuity
 
-`MainActivity.onStop()` unconditionally calls `leaveForeground()` and the common
-owner's `background()` release. This predates export and applies to external SAF/share
-UI and rotation/locale recreation. USB hardware does not require release for these
-transitions; retaining a source safely would be a deliberate ownership-policy change.
-This export milestone preserves the established conservative policy and validates
-the ViewModel-owned prepared file independently. Returning never auto-opens or sends
-initialization; unknown raw14 reopen remains measurement-unavailable.
+The existing retained `CameraViewModel` remains the only composition-root owner. MainActivity's
+`singleTask` launch mode routes launcher/USB repeat entry back to this root, including entry
+above external SAF, instead of allocating another coordinator. Generic
+`CameraUiLifetime` classifies Activity stops: configuration recreation and a registered
+SAF destination transaction retain the source; other stops release it. New UI generations
+ignore obsolete Activity stop/result callbacks. The coordinator and source never retain an
+Activity, View, launcher or Compose callback. No camera-specific lifecycle branch, singleton,
+reopen workaround or grace timer is used. Presenter choices and the independent immutable
+export job survive with the ViewModel.
+
+Locale signatures intentionally release on replacement; screen-off overrides even an outstanding
+picker. `CameraSessionOwner` also awaits release on fatal module ERROR/action failure and rejects
+late publications. The full release/transaction policy and evidence are in
+[ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md).

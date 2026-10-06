@@ -12,7 +12,8 @@ import org.lmthermal.core.LatestFrameState
  */
 class CameraSessionOwner<P>(private val scope: CoroutineScope,
     private val activeChanged: (CameraSession<P>?) -> Unit = {},
-    private val technicalFailure: (Throwable) -> Unit = {}) {
+    private val technicalFailure: (Throwable) -> Unit = {},
+    private val event: (Map<String, Any?>) -> Unit = {}) {
     private val mutex = Mutex()
     private val latest = LatestFrameState(CameraSessionState<P>())
     val state = latest.asStateFlow()
@@ -20,6 +21,30 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
     private var active: CameraSession<P>? = null
     private var activeGeneration = -1L
     private var collector: Job? = null
+    private var nextSession = 0L
+    private var sessionId: Long? = null
+    private var opens = 0L
+    private var releases = 0L
+    private var actions = 0L
+
+    /** Local ordinals and counts only: no USB path, hardware serial, frame bytes or scene fingerprint. */
+    private fun record(name: String, reason: CameraCloseReason? = null) {
+        runCatching { event(mapOf("event" to name, "session_id" to sessionId, "opens" to opens,
+            "releases" to releases, "active_owners" to if (active == null) 0 else 1,
+            "explicit_actions" to actions, "reason" to reason?.name)) }
+    }
+    /** A fatal source ERROR or action failure must release too. Schedule outside the collector/mutex so close can await it. */
+    @Synchronized private fun failed(token: Long, error: CameraError) {
+        if (token != generation) return
+        invalidate(unavailable(state.value, CameraLifecycle.ERROR, CameraStatus(CameraStatusCode.ERROR), error))
+        scope.launch {
+            mutex.withLock {
+                if (activeGeneration != token) return@withLock
+                try { release(CameraCloseReason.FAILED) }
+                catch (failure: Exception) { technicalFailure(failure) }
+            }
+        }
+    }
 
     /** Serialize generation change with eventual publication; no old observer can revive invalidated data. */
     @Synchronized private fun invalidate(snapshot: CameraSessionState<P>): Long {
@@ -71,12 +96,15 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
                     if (token != generation) return@withLock
                     val session = candidate.module.open(candidate.device)
                     if (token != generation) { session.close(CameraCloseReason.REPLACED); return@withLock }
-                    active = session; activeGeneration = token; activeChanged(session)
+                    active = session; activeGeneration = token; sessionId = ++nextSession; opens++
+                    activeChanged(session); record("session_opened")
                     collector = scope.launch {
                         session.state.collect { snapshot ->
                             if (!valid(candidate, snapshot)) {
                                 latest.updateIf({ token == generation }) { unavailable(it, CameraLifecycle.ERROR,
                                     CameraStatus(CameraStatusCode.ERROR), CameraError(CameraErrorCode.MODULE_DATA_INVALID)) }
+                            } else if (snapshot.lifecycle == CameraLifecycle.ERROR) {
+                                failed(token, snapshot.error ?: CameraError(CameraErrorCode.STREAM_FAILED))
                             } else latest.updateIf({ token == generation }) { snapshot }
                         }
                     }
@@ -100,12 +128,11 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
                     latest.updateIf({ token == generation }) { it.copy(error = CameraError(CameraErrorCode.ACTION_UNAVAILABLE,
                         mapOf("action" to action.name))) }
                 } else {
-                    try { active?.perform(action) }
+                    try { active?.let { actions++; record("explicit_action"); it.perform(action) } }
                     catch (cancelled: CancellationException) { throw cancelled }
                     catch (failure: Exception) {
                         technicalFailure(failure)
-                        latest.updateIf({ token == generation }) { unavailable(it, CameraLifecycle.ERROR,
-                            CameraStatus(CameraStatusCode.ERROR), CameraError(CameraErrorCode.STREAM_FAILED)) }
+                        failed(token, CameraError(CameraErrorCode.STREAM_FAILED))
                     }
                 }
             }
@@ -135,9 +162,11 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
     private suspend fun release(reason: CameraCloseReason) = withContext(NonCancellable) {
         collector?.cancelAndJoin(); collector = null
         val old = active; activeChanged(null)
-        if (old != null) old.close(reason)
+        if (old != null) { record("release_started", reason); old.close(reason); releases++ }
         // Retain ownership if release throws: a later open must retry it, never overlap an unreleased source.
         active = null; activeGeneration = -1L
+        if (old != null) record("session_released", reason)
+        sessionId = null
     }
     /** Validate module/geometry provenance at the boundary without interpreting any camera protocol. */
     private fun valid(candidate: CameraCandidate<P>, snapshot: CameraSessionState<P>): Boolean {

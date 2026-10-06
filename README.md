@@ -55,8 +55,9 @@ both touched pixel cells. **Clear ROI** removes it. Min/Max/Mean and valid/total
 use the current authoritative Celsius matrix, independently of colors/range; unavailable
 frames clear readings. See [native ROI semantics](docs/ANDROID_CELSIUS_PRESENTATION.md#native-rectangular-roi).
 Display/unsettled previews expose no Celsius legend. Optional **Diagnostics** retains
-separate trailer/literal center and debug controls. **Close** releases the stream; backgrounding
-also releases it. Reopening remains explicit. **Language** offers System, French and
+separate trailer/literal center and debug controls. **Close** releases the stream. Rotation and
+an outstanding export destination picker retain the same session; ordinary backgrounding and
+screen lock release it. Reopening remains explicit. See the [lifecycle policy](docs/ANDROID_CAMERA_LIFETIME.md). **Language** offers System, French and
 English using Android per-app preferences; switching releases the camera and requires
 explicit reconnect. Wireless ADB follows AGENTS.md.
 

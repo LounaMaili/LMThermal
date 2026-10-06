@@ -77,8 +77,9 @@ Generic indexing is `temperature[y*geometry.width+x]`; the immutable HT-301 matr
 remains `temperature[y*384+x]`, x 0..383/y 0..287. No transpose,
 rotation or mirroring is applied. Portrait and landscape use different layouts,
 with one mapping implementation. Preferred final viewing orientation remains a
-presentation decision; changing phone orientation retains the existing lifecycle
-release/reopen policy rather than keeping USB ownership through Activity backgrounding.
+presentation decision. Changing phone orientation retains the live source and presenter
+choices under the [generic lifecycle policy](ANDROID_CAMERA_LIFETIME.md); native
+coordinates and measurement state are unchanged.
 
 ## Bounded worker and observability
 
@@ -197,6 +198,6 @@ Celsius ticks/readings and editable range bounds use the configured display loca
 French uses decimal commas; the strict range parser accepts displayed/comma/dot separators.
 Formatting is outside core: matrix, percentiles, colors, extrema, JSON numbers and native
 coordinates are unchanged. The System/French/English selector uses Android app locales;
-Activity recreation releases the camera and requires explicit reopen, so no old rendered
+Locale recreation releases the camera and requires explicit reopen, so no old rendered
 Celsius is carried into a new locale session. Wrapping action rows accommodate longer labels.
 See ANDROID_LOCALIZATION.md and its camera-free synthetic layout/number tests.

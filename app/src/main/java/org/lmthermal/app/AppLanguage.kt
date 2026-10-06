@@ -45,7 +45,7 @@ fun LanguageSelector() {
             AppLanguage.entries.forEach { language ->
                 DropdownMenuItem(text = { Text(stringResource(language.label)) }, onClick = {
                     expanded = false
-                    // Activity recreation invokes onStop: release the camera and require explicit reopen.
+                    // The retained UI policy detects the new locale on recreation and requires explicit reopen.
                     AppCompatDelegate.setApplicationLocales(language.locales())
                 })
             }

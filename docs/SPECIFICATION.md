@@ -15,8 +15,10 @@ milestone implements VID/PID-filtered Android USB authorization, unconverted
 288+4 image/trailer separation, Desktop-equivalent display/raw14 inspection and
 a latest-frame grayscale aiming preview. Acquisition/parsing run off the UI thread.
 Explicit session controls and current-frame native-equivalent measurements are now available
-as described below; opening remains read-only. Background/detach
-release the stream; foreground/replug allow explicit reopen.
+as described below; opening remains read-only. Ordinary viewer background/detach
+release the stream; foreground/replug allow explicit reopen. Rotation and a tracked
+destination picker retain the same session under the
+[generic lifecycle policy](ANDROID_CAMERA_LIFETIME.md).
 
 See [ANDROID_FOUNDATION.md](ANDROID_FOUNDATION.md) for ownership, lifecycle,
 interfaces and future session/thermometry boundaries, and
@@ -279,7 +281,8 @@ Celsius number formatting, never measurement units or calculations. Unsupported 
 fall back to complete English. Debug pseudolocales and both-orientation layout checks are
 test support, not production language choices.
 
-Language/configuration changes release the camera through existing onStop handling.
+Locale changes release the camera when the replacement UI binds; ordinary configuration
+recreation retains the live session under the generic lifecycle policy.
 Returning performs read-only discovery; Connect/Open and radiometric initialization remain
 explicit. No USB fd, readiness or stale measurement is retained through locale recreation.
 Wrapping action rows keep longer labels reachable. Resource tests and the future language/

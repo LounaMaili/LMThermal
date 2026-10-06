@@ -52,7 +52,7 @@ enum class CameraStatusCode { NO_CAMERA, DETECTED, PERMISSION_REQUIRED, OPENING,
     INITIALIZING, MEASUREMENT_READY, MEASUREMENT_UNAVAILABLE, CLOSED, ERROR }
 enum class CameraErrorCode { CAMERA_NOT_FOUND, CAMERA_UNSUPPORTED, CAMERA_MATCH_AMBIGUOUS,
     PERMISSION_REQUIRED, PERMISSION_DENIED, STREAM_OPEN_FAILED, STREAM_FAILED, MODULE_DATA_INVALID, ACTION_UNAVAILABLE }
-enum class CameraCloseReason { USER, REPLACED, DETACHED, BACKGROUND, DISPOSED }
+enum class CameraCloseReason { USER, REPLACED, DETACHED, BACKGROUND, DISPOSED, FAILED }
 
 /** Module-specific machine status remains typed/namespaced; common consumers do not interpret protocol states. */
 interface ModuleStatusIdentifier {

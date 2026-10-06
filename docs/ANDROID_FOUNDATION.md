@@ -106,9 +106,12 @@ Connect/Open starts acquisition; attach/foreground does not start it automatical
 Detach cancels and clears stale presentation. A generation token prevents old work
 from publishing after disconnect. Ownership checking and publication are serialized
 with reset so an in-flight update cannot restore a stale final preview. Native close joins transfers/callbacks before
-closing the borrowed Android connection. Returning from background or rotation
-requires explicit Connect/Open; background releases the camera. Final ViewModel
+closing the borrowed Android connection. The retained ViewModel preserves the same source
+through rotation/configuration recreation and a tracked destination picker. Ordinary background
+stops, screen-off and locale changes release it and require explicit Connect/Open. Final ViewModel
 release unregisters the receiver. No root, foreground service or wake lock is used.
+See [ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md) for the exact transaction exception,
+release events and validation.
 
 ## Build and supported platform
 
