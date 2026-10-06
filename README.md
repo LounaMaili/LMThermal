@@ -162,9 +162,15 @@ def get_temp_evn(a, env_term, b):
 - [x] French/English localization, persisted System/app-language selection, fallback and locale regression (issue #2; see localization/validation documents).
 - [ ] Additional real camera models, each requiring protocol research and hardware validation.
 - [x] Generic native rectangular ROI drawing and deterministic valid-only statistics compatible with LMTX v1.
-- [x] Coherent LMTX v1 still export with module-owned evidence, SAF publication and shared conformance fixtures; Desktop interoperability pending.
+- [x] Coherent LMTX v1 still export with module-owned evidence, SAF publication and shared conformance fixtures; real Linux/Windows Desktop interoperability validated.
 - [ ] Mobile time series, recording/playback and comparison.
 - [ ] Release licensing, packaging and distribution.
+
+The [common recording design](docs/COMMON_RECORDING_DESIGN.md) is a **review draft**
+for full-frame, capability-driven Analysis/Native/Full preservation, independent
+of Accepted still LMTX v1. No common recorder/reader is implemented yet. Storage
+calculations, measured compression and proposed implementation issues are linked
+from that draft; owner acceptance remains required.
 
 Real-device acceptance evidence for the first foundation is tracked separately in
 [ANDROID_VALIDATION.md](docs/ANDROID_VALIDATION.md). No fixture-only result can substitute
@@ -181,11 +187,16 @@ for the original full-payload Android camera test.
 - Third-party licenses and exact source pins: [third_party/README.md](third_party/README.md).
 - Python analysis tools and historical prototypes remain research/reference material;
   Capstone 5.0.9, pyelftools 0.33 and Androguard 4.1.4 are analysis-only dependencies.
+- The recording codec study uses Desktop's existing NumPy environment and reference
+  `libzstd` through an analysis-only helper; it adds no Android/runtime dependency.
 
 ## Documentation
 
-- [`docs/LMTX_FORMAT_V1.md`](docs/LMTX_FORMAT_V1.md) — Accepted v1.0 canonical specification for still-only `.lmtx` exchange; Android still export is implemented ([producer guide](docs/ANDROID_LMTX_EXPORT.md)); Desktop import/interoperability remain pending. [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4) retains the decision/review history.
+- [`docs/LMTX_FORMAT_V1.md`](docs/LMTX_FORMAT_V1.md) — Accepted v1.0 canonical specification for still-only `.lmtx` exchange; Android still export and Linux/Windows Desktop interoperability are complete ([producer guide](docs/ANDROID_LMTX_EXPORT.md)). [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4) retains the decision/review history.
 - [`docs/ANDROID_LMTX_EXPORT.md`](docs/ANDROID_LMTX_EXPORT.md) — Save capture, immutable module evidence, SAF/share, privacy, limits and conformance tools.
+- [`docs/COMMON_RECORDING_DESIGN.md`](docs/COMMON_RECORDING_DESIGN.md) — Review draft of the independent common recording format, preservation profiles, complete thermal grids, bounded views, indexing/recovery and Android storage strategy.
+- [`docs/RECORDING_COMPRESSION_STUDY.md`](docs/RECORDING_COMPRESSION_STUDY.md) — Actual short live-frame lossless codec measurements, storage examples and limitations.
+- [`docs/RECORDING_IMPLEMENTATION_PLAN.md`](docs/RECORDING_IMPLEMENTATION_PLAN.md) — Owner decisions, acceptance gates and proposed GitHub issue bodies; no implementation started.
 
 - [`docs/ANDROID_LOCALIZATION.md`](docs/ANDROID_LOCALIZATION.md) — System/French/English, platform storage, formatting, resource checks and language/module addition
 

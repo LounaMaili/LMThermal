@@ -210,10 +210,22 @@ Exchange persistence follows the **Accepted v1.0 canonical specification** in
 optional temperatures/native evidence, capability/availability and namespaced
 extensions. The module-owned immutable `ExportEvidenceProvider` seam and common `LmtxCapture`/
 writer are implemented by [Android issue #5](https://github.com/LounaMaili/LMThermal/issues/5);
-see [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md). No Desktop importer is added.
+see [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md). Linux/Windows Desktop offline
+interoperability is complete; [consumer evidence](https://github.com/LounaMaili/LMThermal-Desktop/blob/main/docs/LMTX_IMPORT.md).
 [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4)
 retains the decision/review history. Implementations follow the contract's versioning
 rules without silently changing v1 semantics.
+
+Future sequence persistence is proposed separately in
+[COMMON_RECORDING_DESIGN.md](COMMON_RECORDING_DESIGN.md), **review draft only**.
+A future module-owned retention contract must distinguish full temperature,
+optional native samples, optional acquisition bytes and interpretation context,
+with truthful support and per-frame availability. Current action/preview capability
+flags are not a claim that all recording roles exist. The common recorder must
+consume owned coherent evidence, never HT-specific casts inside shared UI.
+Analysis/Native/Full choices depend on meaningful module evidence; every recorded
+measurement preserves the complete thermal grid. No recording implementation or
+camera contract change is introduced by this draft.
 
 1. Research/validate the actual device/SDK and licenses before claiming support.
 2. Supply a stable identity and pure probe; use another discovery provider if not USB.

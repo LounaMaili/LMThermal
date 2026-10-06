@@ -4,6 +4,15 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Common radiometric recording review draft — 2026-10-06)
+
+- Audited Android owned measurement/module/still-export/lifecycle seams and Desktop legacy recording/playback read-only; documented reusable concepts and platform/HT-specific boundaries.
+- Proposed an independently versioned recording format with complete native-coordinate temperature grids, explicit validity/clocks/gaps/context, capability-driven Analysis/Native/Full evidence and restricted same-frame native views into exact acquisition payloads. Accepted LMTX v1 still semantics are unchanged.
+- Compared containers and proposed byte-bounded append-only chunks, paged indexes/checkpoints, committed-prefix recovery, resource limits, immutable source analysis and Android storage/publication without a mandatory second full copy.
+- Added exact HT-301 storage budgets and an analysis-only lossless codec benchmark: 180 STORED/DEFLATE/Zstd role/group/dataset cases on saved live raw frames, exact roundtrips and unchanged source hashes. Separated held-room repetition from changing-frame results and offline-derived reference Celsius; no Android sustained codec/provider performance or physical accuracy claim.
+- Added owner recommendations, future shared conformance corpus design, implementation gates and seven proposed issue bodies; the design is not accepted and no recording writer/reader/UI, fixture, application, camera or thermometry code was added/changed. Desktop stayed unchanged.
+- Linked the draft from product/module/export documentation and corrected current still-interoperability status to completed/closed Android #5 and Desktop #1, retaining issue #4 as accepted still history.
+
 ### Fixed (Android camera lifecycle continuity — 2026-10-06)
 
 - Replaced unconditional Activity-stop release with a generic retained UI-lifetime policy: rotation/configuration recreation and a registered SAF destination transaction keep the same single session, without reconnect or radiometric control writes.

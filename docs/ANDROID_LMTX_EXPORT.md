@@ -151,3 +151,13 @@ public image hash. Debug SAF readback compares the destination bytes with the ch
 stage when the provider permits reading. Neither debug proof opens a camera or
 reprocesses thermometry. See [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md) for real
 Pixel/HT-301 evidence and current acceptance status.
+
+## Still interoperability and future recordings
+
+Android #5 and Desktop #1 are completed/closed after real Linux and Windows
+interoperability, exact Float32/ROI parity, native/transport preservation and source
+immutability; see [Desktop acceptance evidence](https://github.com/LounaMaili/LMThermal-Desktop/blob/main/docs/LMTX_IMPORT.md).
+The [common recording review draft](COMMON_RECORDING_DESIGN.md) evaluates long-file
+storage independently: still ZIP limits and private-archive-plus-SAF-copy behavior
+are not automatically the sequence architecture. This documentation does not
+change Accepted LMTX v1, its serializer or the current still publication workflow.

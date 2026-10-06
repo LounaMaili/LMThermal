@@ -81,7 +81,7 @@ it does prevent claiming calibrated physical temperature accuracy.
 ### 4. Photo Capture
 - Save still images with temperature overlay
 - Export formats:
-  - **LMThermal Exchange Format (`.lmtx`)** — accepted still-only v1.0 contract; Android coherent still export is implemented; Desktop import/interoperability remain pending (see [canonical specification](LMTX_FORMAT_V1.md) and [producer guide](ANDROID_LMTX_EXPORT.md)).
+  - **LMThermal Exchange Format (`.lmtx`)** — accepted still-only v1.0 contract; Android coherent still export and real Linux/Windows Desktop interoperability are complete (see [canonical specification](LMTX_FORMAT_V1.md) and [producer guide](ANDROID_LMTX_EXPORT.md)).
   - **RJPEG** (Radiometric JPEG) — standard format, readable by FLIR Tools, Thermimage, etc.
   - **TIFF radiometric** — for professional thermal analysis software
   - **PNG** — visual only (no embedded temperature data)
@@ -91,7 +91,7 @@ it does prevent claiming calibrated physical temperature accuracy.
 - Record thermal video sequences
 - Embed temperature data (each frame carries radiometric data)
 - Export formats:
-  - **Radiometric video** — TBD format (conteneur + raw frames)
+  - **Radiometric recording** — [common format review draft](COMMON_RECORDING_DESIGN.md), with complete temperature grids and user-selectable module-native/source evidence; not implemented or accepted yet.
   - **Standard MP4** — visual only
   - **TIFF sequence + JSON metadata** — for analysis
 
@@ -119,8 +119,19 @@ only and preserves independent support for legacy Desktop capture/recording form
 [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4) remains the decision/review
 history. [Android export #5](https://github.com/LounaMaili/LMThermal/issues/5) and
 [Desktop import #1](https://github.com/LounaMaili/LMThermal-Desktop/issues/1) are
-unblocked by acceptance and remain open. Android export is implemented with
-interoperability pending; Desktop import is unimplemented.
+completed and closed after real Linux/Windows interoperability. See the
+[Desktop validation evidence](https://github.com/LounaMaili/LMThermal-Desktop/blob/main/docs/LMTX_IMPORT.md).
+
+### Common radiometric recording (review draft)
+
+[COMMON_RECORDING_DESIGN.md](COMMON_RECORDING_DESIGN.md) proposes a separate
+recording identity/container, complete authoritative temperature frames, explicit
+validity/time/gaps and capability-driven Analysis/Native/Full preservation. ROI and
+palette choices never remove source pixels. Bounded payload views avoid duplicate
+HT-301 native bytes when transport already contains them; this is not assumed for
+another module. Chunk/index/recovery, Android publication without a mandatory full
+second copy, measured compression and proposed issues are linked there. The draft
+does not change Accepted LMTX v1 or implement recording.
 
 ### RJPEG (Radiometric JPEG)
 A standard JPEG file with embedded radiometric (temperature) data in EXIF/metadata chunks. This is the closest thing to a universal thermal image format:
@@ -187,7 +198,8 @@ outputs. Numeric developer evidence is bounded and contains no scene payloads.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
-Exports and recording remain future milestones. Native rectangular ROI analysis and touch/Celsius presentation are
+Still export is now implemented; common recording remains a future milestone.
+Native rectangular ROI analysis and touch/Celsius presentation are
 implemented separately below. See
 [ANDROID_THERMOMETRY.md](ANDROID_THERMOMETRY.md) and [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md).
 
@@ -298,5 +310,6 @@ checks the archive before new-document SAF publication and finalized URI sharing
 Display/unsettled/transient previews truthfully omit Celsius; closed sources cannot
 capture. No controls, acquisition, native coordinate or thermometry semantics change.
 See [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md) for privacy, local limits,
-lifecycle/provider guarantees and shared fixtures. Desktop #1 and cross-platform
-interoperability are pending; issue #5 remains open.
+lifecycle/provider guarantees and shared fixtures. Desktop #1 and Android #5 are
+closed after real Linux/Windows interoperability. Future common recording follows
+the separate [review draft](COMMON_RECORDING_DESIGN.md).
