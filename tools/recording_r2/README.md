@@ -25,6 +25,9 @@ Window <=8 MiB, no dictionaries, independent single frames, exact decoded size.
 
 `R2PacketDeviceTest` writes compact synthetic packets on Android, with exact
 cross-platform logical-byte tests and read-only app-private descriptor access.
+It requires explicit instrumentation argument `r2Packet=true` and the built test
+codec library; ordinary product regression skips this optional packet experiment.
+`R2ContextDeviceTest` always checks semantic metadata parity without native JNI.
 `R2LiveDeviceTest` is ignored unless `r2Live=true` is explicitly passed to the
 instrumentation runner. It launches the unchanged app and waits for operator
 Connect/Open and Initialize. Never launch it as an unattended control test.

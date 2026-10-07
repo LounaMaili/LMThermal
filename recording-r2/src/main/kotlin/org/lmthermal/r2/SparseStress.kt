@@ -3,7 +3,6 @@ package org.lmthermal.r2
 import org.lmthermal.r2.R2Json as LmtxJson
 import java.io.File
 import java.io.RandomAccessFile
-import java.util.IdentityHashMap
 
 /** Test-only sparse forward logical sink. Zero payload holes stand for exact real zero bytes.
  * This is large-offset tooling, NOT a proposed writer/backend dependency on seek support.

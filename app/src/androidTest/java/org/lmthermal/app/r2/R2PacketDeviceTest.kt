@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Test
 import org.junit.Assert.*
+import org.junit.Assume.assumeTrue
 import org.junit.runner.RunWith
 import org.lmthermal.exchange.LmtxJson
 import org.lmthermal.r2.*
@@ -18,6 +19,9 @@ import java.io.FileOutputStream
 @RunWith(AndroidJUnit4::class)
 class R2PacketDeviceTest {
     @Test fun androidWritesExactCrossPlatformPacketAndReopensCanonicalFileReadOnly() {
+        // The optional reference codec is generated only for deliberate R2 packet runs.
+        // Ordinary product regression must not require a locally downloaded test library.
+        assumeTrue(InstrumentationRegistry.getArguments().getString("r2Packet")=="true")
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val directory = File(context.filesDir, "captures/r2-packet-" + System.currentTimeMillis()).apply { mkdirs() }
         val cases = mutableListOf<Map<String, Any?>>()
@@ -74,11 +78,24 @@ class R2PacketDeviceTest {
         File(context.filesDir, "r2-packet-location.txt").writeText(directory.name)
     }
     @Test fun codecExpansionTrailingAndDictionaryInputsReject() {
+        assumeTrue(InstrumentationRegistry.getArguments().getString("r2Packet")=="true")
         val original = ByteArray(10000) { (it % 173).toByte() }
         for (codec in listOf<BlockCodec>(Stored, Deflate1, NativeZstd)) {
             val encoded = codec.encode(original); assertArrayEquals(original, codec.decode(encoded, original.size))
             try { codec.decode(encoded, 5); fail("expansion accepted") } catch (_: IllegalArgumentException) { }
             try { codec.decode(encoded + byteArrayOf(1), original.size); fail("trailing bytes accepted") } catch (_: IllegalArgumentException) { }
+        }
+        val frame=NativeZstd.encode(original)
+        val descriptor=frame[4].toInt() and 255
+        // Zstd frame-header dict ID follows the optional window descriptor. Set a
+        // nonzero ID without providing a dictionary: reject before output allocation.
+        val dictAt=if(descriptor and 32!=0)5 else 6
+        val dictionary=frame.copyOfRange(0,dictAt)+byteArrayOf(1)+frame.copyOfRange(dictAt,frame.size)
+        dictionary[4]=(descriptor or 1).toByte()
+        val oversizedWindow=frame.copyOfRange(0,5)+byteArrayOf(0xff.toByte())+frame.copyOfRange(5,frame.size)
+        oversizedWindow[4]=(descriptor and 32.inv()).toByte()
+        for(hostile in listOf(dictionary,oversizedWindow)) {
+            try { NativeZstd.decode(hostile,original.size); fail("dictionary/window accepted") } catch (_: IllegalArgumentException) {}
         }
     }
 }
