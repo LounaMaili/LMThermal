@@ -1,12 +1,15 @@
 # Common radiometric recording — review draft 1
 
-**Status: Review draft, 2026-10-06. Not an accepted contract.**
+**Architecture draft: 2026-10-06; R1a owner acceptance recorded 2026-10-07.**
+**The complete wire contract remains provisional, not frozen or published.**
 
-This document proposes the next Android/Linux/Windows interchange milestone.
-Requirements expressed as MUST/SHOULD below are proposed requirements for owner
-review, not changes to an existing format. No common recorder, reader, UI or
-conformance fixture is implemented by this milestone. Binary framing must be
-frozen in a subsequent reviewed specification before implementation.
+This document preserves the architecture proposals for Android/Linux/Windows.
+The [normative candidate](LMTR_FORMAT_CANDIDATE.md) now distinguishes accepted R1a
+product/semantic direction from candidate features and provisional mechanics.
+MUST/SHOULD statements here outside that accepted scope remain proposals, not
+changes to an existing format. No common recorder, reader, UI or conformance
+fixture is implemented. [R2 feasibility](RECORDING_R2_VALIDATION.md) must precede
+R1b owner review/final wire freeze and the canonical R3 corpus.
 
 The [Accepted LMTX v1.0 still contract](LMTX_FORMAT_V1.md) remains unchanged.
 Its format ID is `lmthermal-exchange`, extension `.lmtx`, and `kind=still` only.
@@ -118,7 +121,7 @@ Module/calibration changes are explicit stream/context events.
 
 | Provisional UI choice | Retained evidence for applicable frames |
 |---|---|
-| **Analysis** (recommended default) | Complete temperature, validity, truthful timing, provenance, available interpretation context, gaps and optional analysis/presentation; native/acquisition intentionally omitted |
+| **Analysis** (owner-selected default) | Complete temperature, validity, truthful timing, provenance, available interpretation context, gaps and optional analysis/presentation; native/acquisition intentionally omitted |
 | **Native** | Analysis + actual module-native samples, with their encoding and relationships |
 | **Full / Research** | Analysis + maximum available native/acquisition/context/extensions and useful bounded uninterpreted source evidence |
 
@@ -142,9 +145,12 @@ profile downgrade. A persistent capability/rate/profile change starts a declared
 segment after user acknowledgement; no overwrite of prior policy. Bounded writer
 overload becomes a dropped slot, not an automatic cheaper profile.
 
-Recommend simple levels initially, with storage estimates before Start. Advanced
-manual role selection can follow later; it MUST NOT deselect/crop the full
-temperature plane for a recorded measurement or remove required validity/context.
+The owner accepted simple levels initially, with the choice visible before Start
+and explicitly presented on the first recording per module. Remember the last
+explicit choice per module; a suggested default does not imply raw/source retention.
+No low-level payload checkboxes in the initial UI. Advanced manual selection may
+follow later but MUST NOT crop/deselect temperature, required validity/context
+or truthful timing/gaps.
 
 ## 6. Logical content model
 
@@ -189,7 +195,7 @@ row-major iteration, source Float32 extrema, first row-major tie, Float64 sum/me
 valid/total counts and absent min/max/mean when valid count is zero. Cached
 statistics are non-authoritative and include algorithm/source references.
 
-### Restricted payload views — recommended
+### Restricted payload views — candidate pending R2
 
 Permit **one contiguous exact byte view** of a materialized payload from the
 **same frame and chunk**, not a view of another view. Each descriptor names a
@@ -361,7 +367,7 @@ Masks are separate. Physical blocks are each compressed independently; a view
 does not add another block. Codec flags/descriptors and required features are
 resolved before decoding. There is no shared dictionary dependency across chunks.
 
-Baseline supported codecs: STORED and zlib-wrapped RFC1951 DEFLATE (wrapper
+Candidate baseline codecs: STORED and zlib-wrapped RFC1951 DEFLATE (wrapper
 RFC1950 stated explicitly). Compression may choose STORED when compressed bytes
 would be larger. Initial portable recommendation is DEFLATE level 1; Zstd level 3
 is a promising optional performance candidate, gated on Android/Windows dependency,
@@ -369,6 +375,9 @@ decoder-window, license and sustained-device validation. If accepted, Zstd is a
 separately required feature, not silently substituted for DEFLATE. Its reference
 C implementation supports Android NDK integration and BSD licensing as a technically
 reasonable route; no application dependency is added now. See [Zstandard](https://github.com/facebook/zstd).
+
+The final mandatory codec set, numeric IDs, wrappers and exact chunk/framing
+constants are deliberately not frozen by R1a; R2 evidence and R1b review decide them.
 
 Seal a chunk at the first of **1 second of observed timeline**, **32 frame/slot
 entries**, or **16 MiB aggregate uncompressed bytes** (including metadata). Flush
@@ -507,8 +516,14 @@ Reserve at least two maximum pending chunks plus bounded index/END/error metadat
 and an OS margin appropriate to the backend. Preflight insufficient **known** space
 blocks Start; ongoing reserve breach triggers graceful stop before exhaustion when
 possible. Unknown free space is labelled and requires an explicit warning rather
-than fabricated remaining time. Optional intended-duration checks can use the raw
-upper estimate. Storage-full failure remains possible despite estimates.
+than fabricated remaining time, and **does not block Start** on an otherwise
+supported backend. Known insufficiency means safe startup plus reserve/chunks,
+not a promise to finish a forecast duration. Intended-duration forecasts can use
+the raw upper estimate. Normal recording uses a compact indicator rather than
+repeated warnings; meaningfully low storage triggers a warning, with thresholds
+left to implementation/UI policy. Write refusal stops intake, preserves prior
+valid commits and safely finalizes what remains possible; pending frames are not
+claimed saved. Storage-full failure remains possible despite estimates.
 
 ## 15. Proposed resource/security envelope
 
@@ -596,30 +611,30 @@ A fixture proves format semantics, not camera accuracy or all-provider durabilit
 
 ## 18. Decisions, roadmap and proposed issues
 
-Product decisions still requiring owner review:
+Product decisions explicitly accepted on 2026-10-07:
 
-| Decision | Recommendation |
+| Decision | Accepted choice |
 |---|---|
-| Default preservation | Analysis: normal full-frame offline analysis with lower storage; remember the last explicit choice per module and show the current level before Start |
-| Manual payload selection | Defer initially; later advanced option constrained by required measurement/validity/context invariants |
+| Default preservation | Analysis; present the choice on first module recording, remember the last explicit choice per module and show the selected level before Start; no implied native/source retention |
+| Manual payload selection | No low-level checkboxes initially; later expert mode must retain the complete measurement/validity/context/timing/gap invariants |
 | Maximum-level wording | Explicit **Full / Research**, explaining actual retained roles and no improved physical-accuracy claim |
-| Space/warning gate | Block demonstrably insufficient known capacity; show raw upper estimate + observed estimate, warn explicitly when capacity/durability is unknown; avoid treating uncertain compressed estimates as guarantees |
+| Space/warning gate | Helpful compact estimates/status; low-space warning thresholds remain UI policy. Block clearly insufficient known startup+reserve space. Unknown capacity means concise warning and allowed Start, never fabricated duration. Write refusal stops intake and preserves prior valid commits |
 
-Container, bounded views, index strategy and codecs are technical recommendations,
-not low-level choices delegated to the owner. Their wire precision and backend
-assurance require focused validation. Name/extension remain provisional until the
-format review is accepted. Do not start production recording implementation from
-this draft alone.
+The accepted semantic direction is recorded in [LMTR_FORMAT_CANDIDATE.md](LMTR_FORMAT_CANDIDATE.md).
+Container/index/codecs remain technical proposals; restricted views are a candidate
+feature pending adversarial proof. Name/extension and backend assurance remain
+provisional. No further answer to the four product choices is needed now. R1b is
+the later focused owner review after R2, not permission to implement production now.
 
-Implementation order and **proposed issue bodies** are in
+Implementation gates and **GitHub issue bodies/links** are in
 [RECORDING_IMPLEMENTATION_PLAN.md](RECORDING_IMPLEMENTATION_PLAN.md):
 
-1. Review/accept common semantics; freeze byte framing, required features and corpus.
-2. Validate codecs/storage/framing with bounded disposable prototypes and fault tests.
-3. Add generic immutable evidence/retention capabilities and bounded Android recorder.
-4. Add paged strict Desktop reader and common offline sequence adapter on Linux/Windows.
-5. Add lifecycle/storage/publication UI and cross-platform real acquisition acceptance.
-6. Later analysis timelines/graphs/tracking and explicit legacy conversion.
+1. R1a accepted owner decisions/semantic direction (this planning milestone).
+2. R2 validate codecs/storage/framing/views with bounded disposable prototypes and fault tests.
+3. R1b review the R2 evidence and freeze the actual wire contract explicitly.
+4. R3 freeze shared conformance bytes and pure contract primitives.
+5. R4/R5 Android recorder and Linux/Windows reader, only after their blockers.
+6. R6 product storage/UI and real interoperability, then R7 later analysis/conversion.
 
 The unexplained blank initial camera connection sometimes requiring USB replug is
 an **independent recording-start reliability issue**. Start must truthfully report

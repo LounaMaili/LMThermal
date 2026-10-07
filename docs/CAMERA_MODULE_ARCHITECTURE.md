@@ -217,7 +217,10 @@ retains the decision/review history. Implementations follow the contract's versi
 rules without silently changing v1 semantics.
 
 Future sequence persistence is proposed separately in
-[COMMON_RECORDING_DESIGN.md](COMMON_RECORDING_DESIGN.md), **review draft only**.
+[COMMON_RECORDING_DESIGN.md](COMMON_RECORDING_DESIGN.md). The
+[R1a normative candidate](LMTR_FORMAT_CANDIDATE.md) records accepted product/semantic
+direction; precise wire, candidate views and backend assurances await
+[R2](RECORDING_R2_VALIDATION.md) and later R1b owner review.
 A future module-owned retention contract must distinguish full temperature,
 optional native samples, optional acquisition bytes and interpretation context,
 with truthful support and per-frame availability. Current action/preview capability

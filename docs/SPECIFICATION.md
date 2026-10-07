@@ -91,7 +91,7 @@ it does prevent claiming calibrated physical temperature accuracy.
 - Record thermal video sequences
 - Embed temperature data (each frame carries radiometric data)
 - Export formats:
-  - **Radiometric recording** — [common format review draft](COMMON_RECORDING_DESIGN.md), with complete temperature grids and user-selectable module-native/source evidence; not implemented or accepted yet.
+  - **Radiometric recording** — [R1a normative candidate](LMTR_FORMAT_CANDIDATE.md), with accepted complete-grid/evidence/profile semantics; exact wire remains provisional and recording is unimplemented.
   - **Standard MP4** — visual only
   - **TIFF sequence + JSON metadata** — for analysis
 
@@ -122,16 +122,23 @@ history. [Android export #5](https://github.com/LounaMaili/LMThermal/issues/5) a
 completed and closed after real Linux/Windows interoperability. See the
 [Desktop validation evidence](https://github.com/LounaMaili/LMThermal-Desktop/blob/main/docs/LMTX_IMPORT.md).
 
-### Common radiometric recording (review draft)
+### Common radiometric recording (R1a accepted direction; wire provisional)
 
-[COMMON_RECORDING_DESIGN.md](COMMON_RECORDING_DESIGN.md) proposes a separate
-recording identity/container, complete authoritative temperature frames, explicit
-validity/time/gaps and capability-driven Analysis/Native/Full preservation. ROI and
-palette choices never remove source pixels. Bounded payload views avoid duplicate
-HT-301 native bytes when transport already contains them; this is not assumed for
-another module. Chunk/index/recovery, Android publication without a mandatory full
-second copy, measured compression and proposed issues are linked there. The draft
-does not change Accepted LMTX v1 or implement recording.
+[LMTR_FORMAT_CANDIDATE.md](LMTR_FORMAT_CANDIDATE.md) records accepted R1a owner
+decisions and semantic direction: complete authoritative temperature grids, explicit
+validity/clocks/gaps and capability-driven Analysis/Native/Full preservation. The
+selected level is visible before Start, first-module choice is presented and the
+last explicit per-module choice is remembered; no initial payload checkboxes.
+Full / Research implies maximum meaningful evidence, not better accuracy.
+Unknown capacity warns and allows Start on supported storage; known insufficient
+startup+reserve blocks; write refusal preserves prior valid commits without
+claiming pending frames saved. ROI/palette never remove source pixels.
+
+[Architecture](COMMON_RECORDING_DESIGN.md) keeps bounded views and precise chunk/
+index/codec/backend mechanics provisional. [R2 gates](RECORDING_R2_VALIDATION.md)
+must precede R1b final owner wire acceptance, then the canonical corpus and blocked
+production work in [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). No recording code,
+camera/thermometry behavior or Accepted LMTX v1 semantics change.
 
 ### RJPEG (Radiometric JPEG)
 A standard JPEG file with embedded radiometric (temperature) data in EXIF/metadata chunks. This is the closest thing to a universal thermal image format:
@@ -312,4 +319,5 @@ capture. No controls, acquisition, native coordinate or thermometry semantics ch
 See [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md) for privacy, local limits,
 lifecycle/provider guarantees and shared fixtures. Desktop #1 and Android #5 are
 closed after real Linux/Windows interoperability. Future common recording follows
-the separate [review draft](COMMON_RECORDING_DESIGN.md).
+the separate [R1a candidate](LMTR_FORMAT_CANDIDATE.md): accepted semantic direction,
+with wire details still provisional until R2 and R1b.

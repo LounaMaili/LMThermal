@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (Recording R1a owner decisions and planning — 2026-10-07)
+
+- Recorded explicit owner acceptance of the next-stage Analysis default/visible first-use choice/remembered per-module selection, deferred expert checkboxes, Full / Research meaning and helpful storage policy. Unknown capacity warns and allows Start; known insufficient startup+reserve blocks; write refusal preserves prior valid commits without counting pending frames saved.
+- Added `docs/LMTR_FORMAT_CANDIDATE.md` to separate accepted full-grid/evidence/Celsius/lossless/clock/gap/immutability/coexistence direction from candidate views and provisional identities, exact framing/checksum/index/codec/limit/backend mechanics.
+- Defined R2 device throughput, exact codec parity, bounded forward chunks/indexes, failure recovery, adversarial views and backend/no-copy publication gates; R1b owner wire review/freeze must follow R2 before the canonical R3 corpus and dependent production implementation.
+- Created and cross-linked the R1–R7 GitHub roadmap (LMThermal #6–#10; LMThermal-Desktop #2–#3), with R1a complete, R1 open for R1b, R2 ready only for authorized feasibility and R3–R7 blocked/later. Updated architecture/product/module references. No new recording implementation, application/camera/thermometry change, fixture or benchmark rewrite; Accepted LMTX v1 remains unchanged.
+
 ### Added (Common radiometric recording review draft — 2026-10-06)
 
 - Audited Android owned measurement/module/still-export/lifecycle seams and Desktop legacy recording/playback read-only; documented reusable concepts and platform/HT-specific boundaries.

@@ -1,84 +1,110 @@
-# Common recording implementation roadmap and proposed issues
+# Common recording implementation roadmap and issues
 
-**Review draft, 2026-10-06. No implementation issue is created or accepted by
-this document. No recorder/reader/UI implementation is started.**
+**R1a product/semantic direction accepted, 2026-10-07. Wire contract provisional.**
+R1–R7 issues track future work; no recorder/reader/UI implementation is started.
 
 Design: [COMMON_RECORDING_DESIGN.md](COMMON_RECORDING_DESIGN.md).
 Evidence: [RECORDING_COMPRESSION_STUDY.md](RECORDING_COMPRESSION_STUDY.md).
+Owner decisions and normative candidate: [LMTR_FORMAT_CANDIDATE.md](LMTR_FORMAT_CANDIDATE.md).
+Feasibility gates: [RECORDING_R2_VALIDATION.md](RECORDING_R2_VALIDATION.md).
 The accepted [LMTX v1 still specification](LMTX_FORMAT_V1.md) and completed
 Android #5 / Desktop #1 interoperability remain separate. Issue #4 keeps the
 accepted still decision history; it is not silently expanded into sequences.
 
+## GitHub issue registry
+
+All seven issues remain open. R1a is complete, but R1 must stay open for R1b.
+The native GitHub blocking graph uses R2 → R1 (R1b), so R2 is not blocked by the
+already-completed R1a stage. This avoids a circular R1/R2 issue dependency.
+
+| Stage | Tracking issue | Current gate |
+|---|---|---|
+| R1 | [LMThermal #6](https://github.com/LounaMaili/LMThermal/issues/6) | R1a complete; R1b awaits R2 |
+| R2 | [LMThermal #7](https://github.com/LounaMaili/LMThermal/issues/7) | Ready for separately authorized feasibility; not run here |
+| R3 | [LMThermal #8](https://github.com/LounaMaili/LMThermal/issues/8) | Blocked by R2 and R1b acceptance in R1 |
+| R4 | [LMThermal #9](https://github.com/LounaMaili/LMThermal/issues/9) | Blocked by R3 and its prior gates |
+| R5 | [LMThermal-Desktop #2](https://github.com/LounaMaili/LMThermal-Desktop/issues/2) | Development blocked by R3; real R4 output also required for interoperability completion |
+| R6 | [LMThermal #10](https://github.com/LounaMaili/LMThermal/issues/10) | Blocked by both R4 and R5 |
+| R7 | [LMThermal-Desktop #3](https://github.com/LounaMaili/LMThermal-Desktop/issues/3) | Later; blocked by R6 |
+
 ## Gate order
 
 ```text
-R1 owner review / frozen recording semantics
+R1a owner-approved product/semantic direction [complete]
   └── R2 framing, codec and storage feasibility
-        └── R3 shared conformance corpus / pure contract primitives
-              ├── R4 Android acquisition recorder
-              └── R5 Linux/Windows reader and offline adapter
-                    └── R6 Android product storage/UI + real cross-platform acceptance
-                          └── R7 later analysis / explicit legacy conversion
+        └── R1b focused owner wire review / final freeze [R1 remains open]
+              └── R3 canonical corpus / pure contract primitives
+                    ├── R4 Android acquisition recorder
+                    └── R5 Linux/Windows reader and offline adapter
+                          └── R6 [requires BOTH R4 and R5]
+                                └── R7 later analysis / explicit legacy conversion
 ```
 
-R2 may refine technical recommendations and feed another R1 review. Do not treat
-benchmark success or document merge as owner acceptance of a normative contract.
+R2 may refine technical recommendations and feeds the explicit R1b review. Do not
+treat benchmark success or document merge as owner acceptance of the wire contract.
 Schema/framing changes during prototyping must not masquerade as released v1.
 Small disposable fault-test prototypes in R2 are not a production recording feature.
 The first product milestone should be foreground-scoped; background recording
 requires its own lifecycle/service decision and validation.
 
-## Product choices for review
+## Owner product decisions — accepted for this stage
 
-| Owner decision | Recommended outcome | Reason |
+| Owner decision | Accepted outcome | Constraint |
 |---|---|---|
-| Default evidence level | Analysis, with explicit remembered per-module user choice shown before Start | Complete numerical field remains available without charging every user for research evidence |
-| Advanced manual role selection | Defer from first UI; allow later within mandatory full-temperature/validity/context constraints | Simple understandable levels cover the current cases; manual complexity does not relax measurement invariants |
-| Maximum evidence label | Full / Research, with actual module role summary | Makes extra preservation purposeful; does not imply better physical temperature calibration |
-| Storage warnings/gates | Block known insufficient capacity; show worst-case and rolling estimates, explicit unknown-capacity/durability warning | A compression ratio is not a guaranteed recording duration; unknown provider facts must stay unknown |
+| Default evidence level | Analysis; clearly present choice on first recording for a module, remember the last explicit per-module choice and show it before Start | Analysis does not imply native/source preservation |
+| Advanced manual role selection | No individual payload checkboxes initially; expert mode deferred | Later mode cannot omit full temperature, validity, required context or truthful timing/gaps, or permit ROI source crop |
+| Maximum evidence label | Full / Research, describing actual module roles and meaningful added evidence | No better calibration/resolution/accuracy claim; unavailable when no useful additional evidence |
+| Storage warnings/gates | Compact approximate rates/space/time where known; meaningful low-space warnings. Block clearly insufficient known startup+reserve space. Unknown capacity: concise warning and allowed Start. Refusal: stop, preserve prior commits and report full/failure | No guarantees from compressed estimates or invented duration; thresholds remain UI policy; pending frames are never called saved |
 
-No owner answers are assumed here. Container/chunk/index/resource limits and
-technical codecs are evaluated implementation decisions, with explicit feasibility
-gates, rather than additional low-level questions for the owner. Provisional name
-`.lmtr` / `lmthermal-recording` becomes stable only in the accepted specification.
+These four decisions were explicitly supplied by the owner on 2026-10-07; no repeat
+product answer is required now. Container/chunk/index/resource mechanics, restricted
+views and codecs remain candidate technical choices requiring R2 proof and R1b
+review. `.lmtr` / `lmthermal-recording` are not stable published identifiers yet.
 
-## Proposed R1 — Review and freeze the common radiometric recording contract
+## R1 — Freeze common radiometric recording semantics and later wire contract
 
-**Repository:** LMThermal. **Blockers:** owner review of this draft and product choices.
+**Repository:** LMThermal. **Status:** R1a complete; keep open for R1b, which awaits R2.
 
-Scope: commit the accepted recording specification as a separate canonical document
-after explicit owner approval. Keep LMTX still v1 unchanged. Freeze format ID,
-extension, schema/container generation, role/capability/availability semantics,
-full-grid numerical authority, bounded views, timelines, recovery and error classes.
-The reviewed binary framing annex must define exact magic, endian/header/footer
-layout, hashes/checksum coverage, offsets, codec wrapper IDs, required features,
-record type ordering, index pages/root, commit markers and END semantics.
+Scope: record the owner-approved [R1a normative candidate](LMTR_FORMAT_CANDIDATE.md)
+and product/semantic decisions separately from exact mechanics. Keep LMTX v1
+unchanged. R1b later reviews R2's evidence packet and proposed identifiers/version,
+JSON grammar, features/views, magic/header/footer/checksum/hash/commit/index/END
+layout, codec IDs/set, limits and backend-specific assurance before final wire
+freeze. A prototype cannot silently weaken the accepted semantic invariants.
 
 Acceptance:
 
-- Explicit owner acceptance recorded, with decisions and residual constraints;
-  draft wording is not called Accepted prematurely.
-- Complete finite Float32/mask semantics, exact bytes, no ROI crop/downsample,
-  no timestamp invention, bounded same-frame physical-parent views.
-- Resource ceilings compose; hostile lengths, JSON precision, required features,
-  index corruption and partial chunks have unambiguous outcomes.
-- Published stills and historical Desktop formats stay independently readable;
-  no old reader interprets a recording as a still.
-- No production writer/UI work bundled into the contract decision.
+- [x] Explicit owner product decisions and semantic direction recorded as R1a;
+  full grid, roles, truthful retention, exact Celsius, losslessness, clocks/gaps,
+  recovery goals, source immutability and legacy coexistence are distinguished.
+- [x] Restricted views and identifiers/mechanics remain candidate/provisional;
+  R2 gates and later R1b acceptance are explicit; no production work authorized.
+- [ ] R2 evidence packet reviewed, with failures/untested configurations and
+  semantic consequences resolved explicitly rather than hidden.
+- [ ] R1b owner acceptance recorded for the precise full wire contract and chosen
+  mandatory codec set/backend assurance; specification/version/identifiers frozen.
+- [ ] Resource/feature/index/corruption semantics precise enough to freeze R3 corpus
+  bytes; still and historical readers remain independent. Only then close R1.
 
-## Proposed R2 — Validate framing, codecs and Android storage feasibility
+## R2 — Validate recording framing, codecs and Android storage/recovery
 
 **Repository:** LMThermal, with Desktop read-only or a separate focused validation
-branch if required. **Blocker:** agreed R1 semantics; technical results may reopen
-the draft before a stable wire release.
+branch if required. **Status:** R1a satisfies entry; ready for a separately authorized
+feasibility task, not started here. R2 returns evidence to R1b before stable release.
 
-Scope: controlled prototypes/benchmarks and provider fault tests, using owned saved
-frames. Compare STORED/DEFLATE-1/Zstd-3 on genuine changing scenes, masks, settings
-changes and alternate geometry. Validate a one-second/16 MiB preferred chunk,
-64 MiB hard budget and byte-bounded handoff against actual Android peak heap and
-25 FPS acquisition/thermometry cost. No new thermometry algorithm or unsafe USB fault.
+Scope: controlled prototypes/benchmarks and provider fault tests, using owned
+current measurements and saved frames. Compare STORED/DEFLATE-1/Zstd-3 on genuine
+changing scenes, masks, settings changes and alternate geometry. Validate the
+draft one-second/16 MiB preferred chunk, draft 64 MiB hard budget and byte-bounded
+handoff against actual Android peak heap and 25 FPS acquisition/thermometry cost.
+These constants remain provisional. No new thermometry algorithm or unsafe USB fault.
 
 Acceptance:
+
+All applicable baseline gates A–F and the exit packet in
+[RECORDING_R2_VALIDATION.md](RECORDING_R2_VALIDATION.md) must pass. This includes
+real ~25 FPS Android Analysis/Native/Full tests, byte-exact codecs, forward chunks/
+paged indexes, faults, adversarial views and backend-specific storage proofs.
 
 - Record codec ratio, wall/CPU, allocation, sustained throughput, throttling/power
   and Linux/Windows decoder parity; exact role bytes survive every roundtrip.
@@ -91,26 +117,30 @@ Acceptance:
   pipes/remote providers, URI permission loss, cancellation, failed close/readback.
 - Verify no mandatory full second copy for canonical app-owned access; document
   backup/uninstall implications and guarantees of direct/hybrid storage honestly.
-- Finalize technical framing/index constants and conservative device budgets;
-  update the reviewed draft before stable corpus bytes are frozen.
+- Validate unknown-capacity Start/warning and known insufficient startup+reserve
+  policy independently of backend durability; stop/refusal never counts pending saved.
+- Propose exact framing/index/constants and conservative device budgets, with
+  mandatory codec decision and supported backend assurance. Return to R1b;
+  do not declare the wire contract or corpus frozen as an R2 side effect.
 
-## Proposed R3 — Add shared recording conformance corpus and pure primitives
+## R3 — Build shared .lmtr conformance corpus and pure contract primitives
 
 **Repository:** LMThermal (canonical corpus); Desktop consumes the **same bytes**
-through its own focused branch. **Blockers:** R1 accepted + R2 wire/codec decisions.
+through its own focused branch. **Status:** blocked; R2 baseline gates and explicit
+R1b final wire acceptance are required. R1a alone does not unblock canonical bytes.
 
 Scope: pure Kotlin/JVM contract primitives and independent Python framing checks,
 not Android camera/UI work. Corpus covers every case in design §17, including
 native-only non-raw14, temperature-only, maximal distinct evidence, exact native
-view, alternate geometry, zero/partial validity, calibration changes, all gap
-types, multi-chunk/index recovery, unknown optional JSON/binary, unsupported
-required features, corrupt hashes and preview-only. Synthetic-large generation
+view if accepted in R1b, alternate geometry, zero/partial validity, calibration
+changes, all gap types, multi-chunk/index recovery, unknown optional JSON/binary,
+unsupported required features, corrupt hashes and preview-only. Synthetic-large generation
 must be deterministic and streamed, not a huge checked-in file.
 
 Acceptance:
 
 - Same serialized bytes/hashes expected on Kotlin, Linux and Windows; temperature
-  bits, masks, sample views, context precision and deterministic stats agree.
+  bits, masks, accepted sample views, context precision and deterministic stats agree.
 - Sparse >4 GiB offsets and multi-hour metadata indexes work within bounded heap;
   no whole-sequence load, allocation from unverified lengths, path/URI extraction
   or silent integrity-error-to-gap conversion.
@@ -119,17 +149,18 @@ Acceptance:
 - Document fixture synthetic/real provenance and privacy, with deliberate small
   sanitized real frames only when needed and authorized.
 
-## Proposed R4 — Implement generic Android evidence retention and bounded recorder
+## R4 — Implement Android generic radiometric recorder
 
-**Repository:** LMThermal. **Blockers:** R3; R2 local storage assurance/budgets.
+**Repository:** LMThermal. **Status:** blocked; R3, R1b and R2's selected storage/
+memory/codec assurance must be satisfied before production implementation.
 
 Scope: a separate module-owned recording retention/evidence contract; common
 recorder consumes immutable owned current observations. Analysis/Native/Full
 resolve from actual support, with original descriptors and explicit unavailable
 reasons. Write lossless chunk streams, exact complete temperature/mask/native/
 acquisition, context snapshots/events, integer clocks, slot/source/recorded
-sequences and gap/drop records. HT Full may use the accepted bounded native view;
-another module must not inherit that assumption.
+sequences and gap/drop records. HT Full uses bounded native views only if R1b
+accepts that candidate feature; another module must not inherit that assumption.
 
 Acceptance:
 
@@ -144,10 +175,10 @@ Acceptance:
 - Simulated Stop/detach/crash/full-storage recovery passes before field tests;
   no automatic in-place append to a recovered source.
 
-## Proposed R5 — Implement common recording reader and offline sequence adapter
+## R5 — Implement Desktop .lmtr reader/playback on Linux and Windows
 
-**Repository:** LMThermal-Desktop. **Blocker:** R3; real Android output from R4 for
-interoperability completion (development can use the shared corpus).
+**Repository:** LMThermal-Desktop. **Status:** blocked on R3 and final R1b contract;
+real Android output from R4 is additionally required for interoperability completion.
 
 Scope: independent strict `.lmtr` reader with paged lazy indexes, bounded role
 decode/cache, required-feature checks, explicit integrity errors, read-only recovery
@@ -168,10 +199,11 @@ Acceptance:
 - Legacy recording/playback/capture/LMTX regression suites remain passing on both
   platforms. No implicit upgrade/rewrite of source formats.
 
-## Proposed R6 — Android recording controls, publication and real interoperability
+## R6 — Add Android recording product UI/storage and cross-platform interoperability
 
 **Repository:** LMThermal, coordinating a separate Desktop validation branch.
-**Blockers:** R4/R5; selected product decisions and storage backend assurance.
+**Status:** blocked on both R4 and R5 plus selected R2 backend assurance. The four
+owner product decisions are resolved; they are not an outstanding blocker.
 
 Scope: understandable recording choices, rate/duration/space estimates, explicit
 Start/Stop and pending/committed/drop status, canonical durable app-owned storage,
@@ -186,6 +218,10 @@ Acceptance:
   stop/seal policy. No background service implied by a tracked destination picker.
 - Storage estimates include requested physical roles after view dedup, masks,
   overhead, worst-case compression, reserve and unknown provider capacity.
+- First-module preservation choice is visible; remembered explicit per-module choice
+  stays visible before Start. No low-level payload checkboxes initially. Unknown
+  capacity warns concisely and allows Start on supported storage; known insufficient
+  startup+reserve blocks. Normal operation uses compact status, not repeated nagging.
 - No mandatory second full copy for finalized canonical access; independent export
   success requires destination verification and keeps source unchanged. Consent,
   privacy, access lifetime and uninstall/backup limitations are visible.
@@ -195,10 +231,11 @@ Acceptance:
 - Retain **Native-equivalent temperatures; absolute physical accuracy not yet
   independently validated.** No assumed hand temperature as calibration evidence.
 
-## Proposed R7 — Later time-dependent analysis and explicit legacy conversion
+## R7 — Add later time-series analysis and explicit legacy conversion
 
 **Repository:** LMThermal-Desktop first; shared semantic review in LMThermal.
-**Blocker:** R6; separate future analysis-project/lineage contract if persisted.
+**Status:** later/blocked on R6; separate future analysis-project/lineage contract
+if persisted. No automatic legacy rewrite or new acceptance of that sidecar now.
 
 Scope: multiple ROI/point/annotation timelines, optional tracking, valid-only time
 graphs, explicit time/geometry alignment between recordings, visual video rendering
