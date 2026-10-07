@@ -11,10 +11,10 @@ import java.util.IdentityHashMap
 object SparseStress {
     fun write(file: File): Map<String, Any?> {
         require(!file.exists()); file.parentFile?.mkdirs()
-        val source=RandomAccessFile(file,"rw"); val knownZero=IdentityHashMap<ByteArray,Boolean>()
+        val source=RandomAccessFile(file,"rw")
         val sink=object: AppendSink {
             override fun write(bytes: ByteArray) {
-                val zero=knownZero.getOrPut(bytes) { bytes.size>=1048576 && bytes.all { it==0.toByte() } }
+                val zero=bytes.size>=1048576 && bytes.all { it==0.toByte() }
                 if(zero) source.seek(Bounds.add(source.filePointer,bytes.size.toLong())) else source.write(bytes)
             }
             override fun sync() { source.fd.sync() }

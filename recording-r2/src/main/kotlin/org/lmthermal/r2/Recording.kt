@@ -172,7 +172,11 @@ class PrototypeReader(file: File, private val codecs: Map<Int, BlockCodec> = map
         }
     }
     fun forEachChunk(visitor: (ChunkDecoder.Decoded) -> Unit) {
-        val decode: (Reference) -> Unit = { visitor(ChunkDecoder(codecs).decode(records, records.record(it.offset, it))) }
+        val decode: (Reference) -> Unit = { ref ->
+            val chunk = ChunkDecoder(codecs).decode(records, records.record(ref.offset, ref))
+            require(chunk.entries.first().long("sequence") == ref.first && chunk.entries.last().long("gap_end") == ref.last) { "index_leaf_range" }
+            visitor(chunk)
+        }
         root?.let { visit(it, records.size, visitor = decode) }
         suffix.sortedBy { it.first }.forEach(decode)
     }
@@ -184,7 +188,9 @@ class PrototypeReader(file: File, private val codecs: Map<Int, BlockCodec> = map
             if (sequence !in ref.first..ref.last) return null
             val p = page(ref, owner); val depth = p.int("depth"); if (expectedDepth != null) require(depth == expectedDepth)
             val child = p.list("children").map(::reference).firstOrNull { sequence in it.first..it.last } ?: return null
-            if (depth == 0) { val rec = records.record(child.offset, child); require(rec.type == RecordType.CHUNK); return ChunkDecoder(codecs).decode(records, rec) }
+            if (depth == 0) { val rec = records.record(child.offset, child); require(rec.type == RecordType.CHUNK); return ChunkDecoder(codecs).decode(records, rec).also {
+                require(it.entries.first().long("sequence") == child.first && it.entries.last().long("gap_end") == child.last) { "index_leaf_range" }
+            } }
             owner = ref.offset; ref = child; expectedDepth = depth - 1
         }
         error("index_depth")

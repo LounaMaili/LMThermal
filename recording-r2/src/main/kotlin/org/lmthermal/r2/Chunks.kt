@@ -18,6 +18,15 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
         val storedBytes: Long, val metadataBytes: Int, val codecNs: Long)
     fun encode(observations: List<Observation>): Encoded {
         require(observations.size in 1..Bounds.ENTRIES)
+        var aggregate = 0L
+        observations.forEach { frame ->
+            frame.validate()
+            val physical = (frame.temperature?.size?.toLong() ?: 0L) + (frame.mask?.size ?: 0) + when (profile) {
+                Profile.ANALYSIS -> 0L; Profile.NATIVE -> frame.native?.size?.toLong() ?: 0L
+                Profile.FULL -> frame.acquisition?.size?.toLong() ?: 0L
+            }
+            aggregate = Bounds.add(aggregate, physical); require(aggregate <= Bounds.CHUNK)
+        }
         val contexts = mutableListOf<Map<String, Any?>>()
         val contextKeys = mutableListOf<String>()
         val roles = linkedMapOf<String, ByteArrayOutputStream>()
@@ -86,9 +95,9 @@ class ChunkDecoder(private val codecs: Map<Int, BlockCodec> = mapOf(0 to Stored,
         val metadataLength = ByteBuffer.wrap(reader.bytes(start, 4)).order(ByteOrder.LITTLE_ENDIAN).int
         require(metadataLength in 1..Bounds.META && metadataLength.toLong() + 4 <= record.bodyLength)
         val metadata = LmtxJson.decode(reader.bytes(start + 4, metadataLength))
-        return decodeMetadata(metadata, record.bodyLength - 4 - metadataLength) { at, size -> reader.bytes(start + 4 + metadataLength + at, size) }
+        return decodeMetadata(metadata, record.bodyLength - 4 - metadataLength, metadataLength) { at, size -> reader.bytes(start + 4 + metadataLength + at, size) }
     }
-    fun decodeMetadata(metadata: Map<String, Any?>, storedLength: Int, read: (Long, Int) -> ByteArray): Decoded {
+    fun decodeMetadata(metadata: Map<String, Any?>, storedLength: Int, metadataLength: Int = LmtxJson.encode(metadata).size, read: (Long, Int) -> ByteArray): Decoded {
         require(metadata["profile"] in Profile.entries.map { it.name })
         val contexts = metadata.list("contexts"); require(contexts.size in 1..Bounds.ENTRIES); contexts.forEach { it.objectMap() }
         val entries = metadata.list("entries").map { it.objectMap() }; require(entries.size in 1..Bounds.ENTRIES)
@@ -100,7 +109,7 @@ class ChunkDecoder(private val codecs: Map<Int, BlockCodec> = mapOf(0 to Stored,
             val role = block["role"] as String; require(role in listOf("temperature", "validity", "native", "acquisition"))
             require(block.long("offset") == storedSum)
             storedSum = Bounds.add(storedSum, block.long("stored")); decodedSum = Bounds.add(decodedSum, block.long("decoded"))
-            require(storedSum <= storedLength && decodedSum <= Bounds.CHUNK && block.int("codec") in codecs)
+            require(storedSum <= storedLength && Bounds.add(decodedSum, metadataLength.toLong()) <= Bounds.CHUNK && block.int("codec") in codecs)
         }
         require(storedSum == storedLength.toLong())
         blockDescriptions.forEach { block ->

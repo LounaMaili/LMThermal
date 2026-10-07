@@ -84,7 +84,7 @@ def sha(data): return hashlib.sha256(data).hexdigest()
 class Zstd:
     class Header(ctypes.Structure):
         _fields_ = [('content', ctypes.c_ulonglong), ('window', ctypes.c_ulonglong),
-                    ('block', ctypes.c_uint), ('type', ctypes.c_int), ('dict', ctypes.c_uint),
+                    ('block', ctypes.c_uint), ('type', ctypes.c_int), ('header_size', ctypes.c_uint), ('dict', ctypes.c_uint),
                     ('checksum', ctypes.c_uint), ('reserved1', ctypes.c_uint), ('reserved2', ctypes.c_uint)]
     def __init__(self, library=None):
         name = library or ctypes.util.find_library('zstd')
@@ -241,7 +241,10 @@ class Reader:
             else: yield from self.refs(child, uint(ref['offset']), depth - 1)
     def chunks(self):
         if self.root:
-            for ref in self.refs(self.root, self.size): yield self.chunk(self.record(uint(ref['offset']), ref))
+            for ref in self.refs(self.root, self.size):
+                decoded = self.chunk(self.record(uint(ref['offset']), ref))
+                demand(uint(decoded['entries'][0]['sequence']) == uint(ref['first']) and uint(decoded['entries'][-1]['gap_end']) == uint(ref['last']), 'index_leaf_range')
+                yield decoded
         for ref in sorted(self.suffix, key=lambda value: uint(value['first'])): yield self.chunk(self.record(uint(ref['offset'])))
     def seek(self, sequence):
         sequence = uint(sequence)
@@ -254,7 +257,10 @@ class Reader:
             if expected_depth is not None: demand(depth == expected_depth, 'index_depth')
             child = next((c for c in page['children'] if uint(c['first']) <= sequence <= uint(c['last'])), None)
             if child is None: return None
-            if depth == 0: return self.chunk(self.record(uint(child['offset']), child))
+            if depth == 0:
+                decoded = self.chunk(self.record(uint(child['offset']), child))
+                demand(uint(decoded['entries'][0]['sequence']) == uint(child['first']) and uint(decoded['entries'][-1]['gap_end']) == uint(child['last']), 'index_leaf_range')
+                return decoded
             ref, owner, expected_depth = child, uint(ref['offset']), depth - 1
         raise ValueError('index_depth')
     def chunk(self, record):
@@ -263,8 +269,9 @@ class Reader:
         n = struct.unpack('<I', self.read(start, 4))[0]
         demand(0 < n <= META and n + 4 <= record['body'], 'chunk_metadata')
         meta = bounded_json(self.read(start + 4, n))
-        return self.decode_metadata(meta, record['body'] - 4 - n, lambda off, size: self.read(start + 4 + n + off, size))
-    def decode_metadata(self, meta, stored_length, read):
+        return self.decode_metadata(meta, record['body'] - 4 - n, lambda off, size: self.read(start + 4 + n + off, size), n)
+    def decode_metadata(self, meta, stored_length, read, metadata_length=None):
+        if metadata_length is None: metadata_length = len(json.dumps(meta, default=str).encode())
         demand(meta['profile'] in ('ANALYSIS', 'NATIVE', 'FULL'), 'profile')
         contexts, entries, descriptions = meta['contexts'], meta['entries'], meta['blocks']
         demand(1 <= len(contexts) <= 1024 and all(isinstance(c, dict) for c in contexts), 'context_bound')
@@ -273,7 +280,7 @@ class Reader:
         for b in descriptions:
             demand(b['role'] in ('temperature', 'validity', 'native', 'acquisition') and uint(b['offset']) == stored_sum, 'block_role_offset')
             stored_sum = add(stored_sum, b['stored']); decoded_sum = add(decoded_sum, b['decoded'])
-            demand(stored_sum <= stored_length and decoded_sum + len(json.dumps(meta, default=str).encode()) <= CHUNK, 'chunk_aggregate')
+            demand(stored_sum <= stored_length and decoded_sum + metadata_length <= CHUNK, 'chunk_aggregate')
             demand(uint(b['codec']) in ([0, 1, 2] if self.zstd else [0, 1]), 'unsupported_codec')
         demand(stored_sum == stored_length, 'block_closure')
         blocks = {}
