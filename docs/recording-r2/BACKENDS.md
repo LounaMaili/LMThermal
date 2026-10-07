@@ -65,5 +65,8 @@ Provider refusal, short write, failed close and readback mismatch are determinis
 JVM injections, not induced failures of this real Downloads provider. Remote/pipe
 providers, direct SAF canonical recording, provider process kill and physical
 power-loss durability remain untested and unsupported by this result.
+This probe copies the 213,579-byte synthetic file with a 16 MiB tool-only input
+ceiling. Multi-GB SAF export throughput/capacity and failure recovery are untested;
+the successful small copy is not a supported large-recording export guarantee.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
