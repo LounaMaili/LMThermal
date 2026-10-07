@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Separate test APK component, never a production recording/export screen. -->
+    <application>
+        <activity android:name="org.lmthermal.app.r2.R2SafActivity" android:exported="true" />
+    </application>
+</manifest>

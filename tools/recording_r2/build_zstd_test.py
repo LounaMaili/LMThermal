@@ -25,7 +25,7 @@ for directory in ('common', 'compress', 'decompress'):
         subprocess.run([str(NDK / 'aarch64-linux-android26-clang'), '-c', '-Os', '-fPIC',
                         '-DZSTD_MULTITHREAD=0', '-I' + str(SOURCE / 'lib'), str(source), '-o', str(obj)], check=True)
         objects.append(str(obj))
-subprocess.run([str(NDK / 'aarch64-linux-android26-clang++'), '-std=c++17', '-Os', '-fPIC', '-shared',
+subprocess.run([str(NDK / 'aarch64-linux-android26-clang++'), '-std=c++17', '-Os', '-fPIC', '-shared', '-static-libstdc++',
                 '-I' + str(SOURCE / 'lib'), str(ROOT / 'tools/recording_r2/zstd_test_jni.cpp'),
                 *objects, '-o', str(OUTPUT)], check=True)
 subprocess.run([str(NDK / 'llvm-strip'), '--strip-unneeded', str(OUTPUT)], check=True)

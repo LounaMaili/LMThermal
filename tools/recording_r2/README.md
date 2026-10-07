@@ -52,3 +52,18 @@ App-private data disappears on data-clear/uninstall; backups/access lifetimes ne
 an explicit product decision. Untrusted SAF providers gain no durability claim.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+`validate_packet.py DIRECTORY --zstd --output RESULT.json` checks the Android
+packet on Linux/Windows, including independent synthetic Float32/native/transport
+expectations, recovery, corruption and immutable source hashes. A local Zstd DLL
+may be supplied with `--zstd-library PATH`; without it Zstd packets are explicitly
+unsupported, never silently skipped. `process_faults.py` spawns and kills only its
+own writer children at named boundaries. `sparse` is a JVM tool-only forward logical
+zero-hole generator for >4 GiB offsets; production/backend seeking is not inferred.
+
+The separately installed test APK has `R2SafActivity`, a disposable local-provider
+probe with no camera ownership. Its file seed is an already completed synthetic
+packet, copied into the test app's private directory for this probe. It requests
+one operator-chosen SAF destination, checks rw/append/truncate/readback/sync/close,
+and records source integrity. It is absent from the application APK. Cancellation
+and permission lifetime are independent tests; no provider-wide guarantee follows.

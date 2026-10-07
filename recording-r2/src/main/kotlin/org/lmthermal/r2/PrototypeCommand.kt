@@ -36,9 +36,10 @@ object PrototypeCommand {
             "kill-target" -> {
                 val phase = args[2]; val marker = File(args[3]); val ordinal = args[4].toLong()
                 Synthetic.write(File(args[1]), Profile.FULL, Deflate1, 100) { at, ord ->
-                    if (at == phase && ord == ordinal) { marker.writeText("$at $ord"); while (true) Thread.sleep(1000) }
+                    if (at == phase && (ord == ordinal || ordinal == -1L)) { marker.writeText("$at $ord"); while (true) Thread.sleep(1000) }
                 }
             }
+            "sparse" -> println(String(LmtxJson.encode(SparseStress.write(File(args[1])))))
             "inspect" -> PrototypeReader(File(args[1])).use { reader ->
                 var frames = 0L; var gaps = 0L; var chunks = 0L
                 reader.forEachChunk { chunks++; it.entries.forEach { entry -> if (entry["reason"] == null) frames++ else gaps++ } }

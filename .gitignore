@@ -8,3 +8,6 @@ local.properties
 
 # Kotlin incremental compiler state, not source.
 .kotlin/
+
+# Disposable Python validator caches, never evidence.
+tools/recording_r2/__pycache__/
