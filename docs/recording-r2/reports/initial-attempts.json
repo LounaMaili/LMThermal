@@ -1,0 +1,30 @@
+{
+  "initial_attempts": [
+    {
+      "test": "Pixel regression",
+      "outcome": "four locked-screen layout failures and two test-library linkage failures",
+      "resolution": "Unlocked retest and static C++ runtime link; complete suite passed"
+    },
+    {
+      "test": "Linux Zstd packet",
+      "outcome": "ctypes header omitted reference headerSize field",
+      "resolution": "Fixed diagnostic binding, exact packet passed reference Zstd1.5.7"
+    },
+    {
+      "test": "large sparse sink",
+      "outcome": "512MiB JVM OOM due to sparse test sink retaining every zero-array identity",
+      "resolution": "Removed test-sink cache; 4530250240-byte logical sparse source passed Kotlin/Python; writer budget unchanged"
+    },
+    {
+      "test": "first live harness",
+      "outcome": "Waited on original Activity owner after USB application entry; no sustained measurements started",
+      "resolution": "Test-only harness follows current resumed MainActivity; no production lifecycle or camera change"
+    },
+    {
+      "test": "first sustained recording prototype c1b5c17",
+      "outcome": "All nine configurations overloaded their bounded writer; operator reported severe image latency while controls remained responsive",
+      "resolution": "Retained failed results. R2-only exact metadata adapter, cached numeric grammar, fixed ASCII hashes, no duplicate validation/copy; same criteria for repeated matrix."
+    }
+  ],
+  "threshold_changes": false
+}

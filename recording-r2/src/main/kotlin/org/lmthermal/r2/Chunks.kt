@@ -1,6 +1,6 @@
 package org.lmthermal.r2
 
-import org.lmthermal.exchange.LmtxJson
+import org.lmthermal.r2.R2Json as LmtxJson
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -32,7 +32,7 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
         val roles = linkedMapOf<String, ByteArrayOutputStream>()
         var logical = 0L
         val entries = observations.map { frame ->
-            frame.validate()
+            // The complete owned observation was validated in the admission pass above.
             val contextBytes = LmtxJson.encode(frame.context)
             val contextHash = hex(sha(contextBytes))
             var contextIndex = contextKeys.indexOf(contextHash)
@@ -52,7 +52,7 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
                 if (profile == Profile.NATIVE) materialize("native", requireNotNull(frame.native), "u16le", shape, frame.nativeEncoding)
                 if (profile == Profile.FULL) {
                     val transport = requireNotNull(frame.acquisition); val native = requireNotNull(frame.native)
-                    require(transport.size >= native.size && transport.copyOfRange(0, native.size).contentEquals(native))
+                    require(transport.size >= native.size && native.indices.all { transport[it] == native[it] })
                     materialize("acquisition", transport, "u8", listOf(transport.size))
                     logical = Bounds.add(logical, native.size.toLong())
                     descriptors["native"] = mapOf("kind" to "view", "parent" to "acquisition", "offset" to 0,

@@ -24,7 +24,7 @@ import org.lmthermal.app.CameraViewModel
 import org.lmthermal.app.MainActivity
 import org.lmthermal.camera.*
 import org.lmthermal.camera.ht301.Ht301ThermalMeasurement
-import org.lmthermal.exchange.LmtxJson
+import org.lmthermal.r2.R2Json as LmtxJson
 import org.lmthermal.r2.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -74,15 +74,11 @@ class R2LiveDeviceTest {
     private fun owned(measurement: Ht301ThermalMeasurement, profile: Profile, originMs: Long): Observation {
         val matrix = measurement.matrix(); val temperature = little(matrix.size * 4)
         matrix.forEach(temperature::putFloat)
-        val evidence = measurement.exportEvidence()
-        fun member(id: String): ByteArray = ByteArrayOutputStream().also { output ->
-            evidence.payloads.single { it.id == id }.bytes.writeTo(output)
-        }.toByteArray()
-        val metadata = LmtxJson.decode(member("ht301-metadata"))
+        val metadata = R2HtContext.metadata(measurement.evidence)
         return Observation(measurement.sequence, measurement.receivedMonotonicMs * 1000000,
             (measurement.receivedMonotonicMs - originMs).coerceAtLeast(0) * 1000000, measurement.geometry.width, measurement.geometry.height,
-            temperature.array(), measurement.validityMask(), if (profile != Profile.ANALYSIS) member("native") else null,
-            if (profile == Profile.FULL) member("acquisition") else null,
+            temperature.array(), measurement.validityMask(), if (profile != Profile.ANALYSIS) measurement.evidence.source.imageBytes() else null,
+            if (profile == Profile.FULL) measurement.evidence.source.transportBytes() else null,
             mapOf("module" to "ht301", "provenance" to "real-ht301-native-equivalent", "metadata" to metadata,
                 "warning" to "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."))
     }
@@ -137,6 +133,17 @@ class R2LiveDeviceTest {
                 var previous = -1L; var receipt = -1L; var previousObserved = -1L
                 val intervals = mutableListOf<Long>(); val fingerprints = mutableSetOf<Long>()
                 val statusCounts = mutableMapOf<String, Long>(); val memSamples = mutableListOf<Map<String, Any?>>()
+                val displayAge = mutableListOf<Long>(); val renderTimes = mutableListOf<Long>()
+                var observedCompletedRenders = 0L; var previousRenderSequence = -1L
+                val renderCollect = launch(Dispatchers.Default) {
+                    model.presentation.state.collect { shown ->
+                        val measurement=shown.measurement
+                        if (measurement != null && measurement.sequence>previousRenderSequence) {
+                            previousRenderSequence=measurement.sequence; observedCompletedRenders++
+                            renderTimes+=(shown.renderMs*1000000).toLong()
+                        }
+                    }
+                }
                 var detached = false
                 var noSequenceUnavailable = 0L; var previousCallbackCount = -1L
                 val collect = launch(Dispatchers.Default) {
@@ -176,10 +183,12 @@ class R2LiveDeviceTest {
                     }
                 }
                 save("progress.json", mapOf("phase" to "sustained", "run" to name, "seconds" to 120))
-                repeat(120) { second -> delay(1000); if (second % 2 == 0) memSamples += memory()
+                repeat(120) { second -> delay(1000)
+                    model.presentation.state.value.measurement?.let { displayAge+=SystemClock.elapsedRealtime()-it.receivedMonotonicMs }
+                    if (second % 2 == 0) memSamples += memory()
                     if (second % 10 == 0) save("progress.json", mapOf("phase" to "sustained", "run" to name,
                         "elapsed_s" to second + 1, "accepted" to accepted, "writer_drops" to (writer?.drops ?: 0), "backlog" to (writer?.backlog() ?: 0))) }
-                collect.cancelAndJoin()
+                collect.cancelAndJoin(); renderCollect.cancelAndJoin()
                 val elapsed = (SystemClock.elapsedRealtime() - origin)/1000.0
                 val end = model.camera.state.value.statistics; val cpuEnd = Process.getElapsedCpuTime()
                 val stopStart = SystemClock.elapsedRealtime(); val stop = writer?.stop(if (detached) "usb_or_session_interruption" else "user_stop")
@@ -201,17 +210,23 @@ class R2LiveDeviceTest {
                     "codec_input_output_allocation_lower_bound_bytes" to timed?.allocations?.get(), "freeze_wall_ns" to freezeNs,
                     "owned_retained_copy_lower_bound_bytes" to copiedBytes, "process_cpu_ms" to cpuEnd - cpuBegin,
                     "ui_heartbeat_p99_ms" to percentile(ui, .99), "ui_heartbeat_max_ms" to ui.maxOrNull(), "ui_heartbeat_samples" to ui.size,
+                    "observed_completed_renders" to observedCompletedRenders,
+                    "observed_completed_render_fps" to observedCompletedRenders/elapsed,
+                    "render_wall_ns_p95" to percentile(renderTimes,.95),
+                    "displayed_source_age_ms_p50" to percentile(displayAge,.5),
+                    "displayed_source_age_ms_p95" to percentile(displayAge,.95),
+                    "displayed_source_age_ms_max" to displayAge.maxOrNull(),
                     "memory_start" to memoryBegin, "memory_peak" to memoryBegin.keys.associateWith { key -> memSamples.mapNotNull { it[key] as? Long }.maxOrNull() },
                     "memory_end" to memory(), "power_start" to powerBegin, "power_end" to power(), "detached" to detached)
                 reports += report; save("runs.json", mapOf("plan" to plan, "prototype" to revision, "device" to "Pixel 8", "android" to Build.VERSION.RELEASE,
                     "api" to Build.VERSION.SDK_INT, "runs" to reports, "limitations" to listOf("Latest StateFlow; sequence gaps disclosed", "Process CPU is not isolated thermometry CPU",
-                        "Memory sampled at 2 seconds; instantaneous peaks may be higher", "Codec source frozen before baseline warmup; baseline has no recording freeze/write")))
+                        "Memory sampled at 2 seconds; instantaneous peaks may be higher", "Fair codec study runs after sustained profiles to avoid allocator-cache confounding", "Codec source frozen before baseline warmup; baseline has no recording freeze/write")))
                 writer?.close()
             }
             try {
                 run("baseline", null, null)
-                codecStudy(sample, codecs)
                 for (codec in codecs) for (profile in Profile.entries) run(profile.name.lowercase() + "-" + codec.name, profile, codec)
+                codecStudy(sample, codecs)
                 if (args.getString("r2Detach") == "true") {
                     val origin = SystemClock.elapsedRealtime()
                     val detachedWriter = BoundedRecorder(File(directory, "usb-detach.r2proto"), Profile.FULL, Deflate1)

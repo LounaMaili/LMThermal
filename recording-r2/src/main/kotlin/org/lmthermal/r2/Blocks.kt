@@ -70,7 +70,14 @@ object Deflate1 : BlockCodec {
 
 /** Hashes bind logical bytes, independent of their physical block or candidate view representation. */
 fun sha(bytes: ByteArray): ByteArray = MessageDigest.getInstance("SHA-256").digest(bytes)
-fun hex(bytes: ByteArray): String = bytes.joinToString("") { "%02x".format(it.toInt() and 255) }
+fun hex(bytes: ByteArray): String {
+    // Hash spelling is fixed ASCII, so per-byte Formatter/locale allocations add no semantics.
+    val digits = "0123456789abcdef"
+    return CharArray(bytes.size * 2).also { result -> bytes.forEachIndexed { i, byte ->
+        val value = byte.toInt() and 255
+        result[i * 2] = digits[value ushr 4]; result[i * 2 + 1] = digits[value and 15]
+    } }.concatToString()
+}
 fun little(size: Int): ByteBuffer = ByteBuffer.allocate(size).order(ByteOrder.LITTLE_ENDIAN)
 
 enum class Profile { ANALYSIS, NATIVE, FULL }

@@ -11,6 +11,12 @@ import java.util.zip.CRC32
 class PrototypeTest {
     private fun file(): File = File.createTempFile("r2-", ".r2proto").also { it.delete(); it.deleteOnExit() }
     private fun rejected(block: () -> Unit) { try { block(); fail("accepted hostile input") } catch (_: IllegalArgumentException) { } }
+    @Test fun fastR2JsonPreservesStillHelperSemanticsAndNumericPrecision() {
+        val value=mapOf("unknown" to java.math.BigDecimal("1.2345678901234567890123456789"),
+            "array" to listOf(1,1.0,1e0,0.00004f,-0.0f),"unicode" to "thermal\nµ")
+        assertEquals(LmtxJson.decode(LmtxJson.encode(value)),R2Json.decode(R2Json.encode(value)))
+        rejected { R2Json.decode("{\"x\":1,\"x\":2}".toByteArray()) }
+    }
     @Test fun profilesPreserveEveryLogicalByteAndFullDeduplicates() {
         for (profile in Profile.entries) for (codec in listOf(Stored, Deflate1)) {
             val source = file(); Synthetic.write(source, profile, codec)

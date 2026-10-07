@@ -1,6 +1,6 @@
 package org.lmthermal.r2
 
-import org.lmthermal.exchange.LmtxJson
+import org.lmthermal.r2.R2Json as LmtxJson
 import java.io.File
 import java.io.RandomAccessFile
 import java.util.IdentityHashMap

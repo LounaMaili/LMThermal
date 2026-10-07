@@ -164,3 +164,29 @@ Regression commands: `:core:test`, `:app:testDebugUnitTest`, `:app:assembleDebug
 Python localization/boundary checks and `git diff --check`. Record existing lint
 warnings separately. Native-equivalent temperatures; absolute physical accuracy
 not yet independently validated.
+
+## Instrumentation revision before the second sustained attempt
+
+The first sustained prototype uses existing still-export freeze/JSON code for every
+recorded frame. It reported writer overload and the operator reported severe image
+latency while controls remained responsive. Preserve that attempt, including all
+completed runs and partial tails; it does not pass the throughput/responsiveness gate.
+
+Before rerunning, the disposable harness now copies exact already-owned matrix/native/
+transport directly and constructs the **same complete existing HT metadata mapping**.
+A test compares semantic JSON equality with the existing export evidence. The R2-only
+bounded JSON fork caches its numeric token grammar; the production still serializer
+is unchanged. Fixed ASCII hash spelling avoids per-byte Formatter allocations; an
+already completed validation scan is not repeated, and native-view equality is
+checked without allocating another copied plane. No checks, values/calibration/trace
+fields, profiles, frames or gaps are removed.
+The standalone fair codec study moves after the sustained profiles to avoid its
+native allocator caches confounding memory against the ready baseline.
+
+Warmup/duration, chunk policy, 4 MiB queue, 64 MiB incremental-memory target, 5% source
+FPS threshold, zero-overload requirement and operator responsiveness gate are
+**unchanged**. Commit this executable/plan revision before reruns. Record both attempts.
+The first attempt's good UI heartbeat cannot override the operator's image-latency
+failure; render timings and completed-frame age must be considered separately.
+The repeat also samples completed presentation age and counts observed completed
+renders independently of the main-thread heartbeat.
