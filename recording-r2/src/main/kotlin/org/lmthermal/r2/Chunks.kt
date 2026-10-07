@@ -33,10 +33,10 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
         var logical = 0L
         val entries = observations.map { frame ->
             // The complete owned observation was validated in the admission pass above.
-            val contextBytes = LmtxJson.encode(frame.context)
+            val contextBytes = frame.contextBytes
             val contextHash = hex(sha(contextBytes))
             var contextIndex = contextKeys.indexOf(contextHash)
-            if (contextIndex < 0) { contextIndex = contexts.size; contexts += frame.context; contextKeys += contextHash }
+            if (contextIndex < 0) { contextIndex = contexts.size; contexts += LmtxJson.decode(contextBytes); contextKeys += contextHash }
             val descriptors = linkedMapOf<String, Any?>()
             fun materialize(role: String, bytes: ByteArray, dtype: String, shape: List<Int>, encoding: String? = null) {
                 val block = roles.getOrPut(role) { ByteArrayOutputStream() }

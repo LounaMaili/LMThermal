@@ -1,6 +1,10 @@
 # R2 feasibility and fault-validation gates
 
-**Planning only, 2026-10-07. No R2 prototype/test is executed by this task.**
+**Authoritative R2 acceptance checklist. Execution evidence is separate.**
+
+The authorized feasibility branch now contains [isolated R2 prototypes/reports](recording-r2/README.md).
+This checklist remains the acceptance gate; a prototype or prepared Windows packet
+does not imply completion. R1b wire freeze and R3 remain gated.
 
 [R1a semantics and owner decisions](LMTR_FORMAT_CANDIDATE.md) are accepted direction.
 Wire details and backend assurance remain provisional. This checklist defines what
@@ -182,6 +186,6 @@ unsupported optional codec/backend configurations may be excluded with reasons.
 Return a precise revised candidate with chosen wire/codec/limit/backend proposal.
 R1b must explicitly approve it, including any departure from R1a. Only then may
 R3 freeze the canonical corpus and R4–R6 progress through their dependencies into
-production implementation. This task records those gates and runs none of them.
+production implementation. The [R2 evidence packet](recording-r2/README.md) records executed and incomplete gates separately.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**

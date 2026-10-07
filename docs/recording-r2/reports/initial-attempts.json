@@ -24,6 +24,21 @@
       "test": "first sustained recording prototype c1b5c17",
       "outcome": "All nine configurations overloaded their bounded writer; operator reported severe image latency while controls remained responsive",
       "resolution": "Retained failed results. R2-only exact metadata adapter, cached numeric grammar, fixed ASCII hashes, no duplicate validation/copy; same criteria for repeated matrix."
+    },
+    {
+      "test": "repeat sustained eb7af2a",
+      "outcome": "All nine stages again overloaded and severely delayed the image; initial baseline interrupted by background/explicit reopen",
+      "resolution": "Failed results retained; excluded interrupted baseline; separately predeclared baseline-only measured after the matrix. No production change."
+    },
+    {
+      "test": "standalone camera-free SAF probe",
+      "outcome": "Operator saw white screen; UI hierarchy and screenshot showed controls under system/action bars",
+      "resolution": "Test APK only: hide action bar, apply system insets, keep destination button below scrollable results. Fixed controls visually verified before retry."
+    },
+    {
+      "test": "metadata evidence parity probe",
+      "outcome": "Initial range/initial fixtures were not valid measurement inputs for this comparison",
+      "resolution": "Retested two settled room/hand fixtures; semantic metadata parity passed against unchanged still evidence helper."
     }
   ],
   "threshold_changes": false

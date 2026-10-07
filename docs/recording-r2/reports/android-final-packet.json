@@ -1,0 +1,15 @@
+{
+  "artifact": "noncanonical-r2",
+  "Pixel_packet_and_metadata_tests": 3,
+  "passed": true,
+  "same_15_packet_hashes_as_published_archive": true,
+  "app_private": {
+    "available_bytes": 9604866048,
+    "statfs": true,
+    "file_sync": true,
+    "read_only_no_copy_descriptor": true,
+    "source_immutable": true
+  },
+  "Zstd_dictionary_and_oversized_window_rejected": true,
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

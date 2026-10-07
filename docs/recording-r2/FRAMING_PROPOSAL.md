@@ -133,11 +133,15 @@ unsupported required codecs, including during recovery; it does not downgrade ro
 
 Seal **before** adding the next entry when elapsed observed timeline reaches 1 s,
 32 entries, or adding bytes would reach the preferred 16 MiB physical target. Seal
-immediately for a singleton already meeting the target. Include metadata closure;
-hard decoded physical+metadata <=64 MiB, record <=65 MiB. Final Stop seals a short
+immediately for a singleton already meeting the target. Charge serialized contexts to preferred admission; complete descriptor/closure
+overhead is bounded at final encoding, so the preferred target remains approximate.
+Hard decoded physical+metadata <=64 MiB, record <=65 MiB. Final Stop seals a short
 chunk. Context changes and gap/mask entries retain closure. Bounds precede allocation.
 
-The current prototype has a 4 MiB nonblocking handoff and one writer thread.
+The final prototype has a 4 MiB nonblocking handoff charging payload plus serialized
+context/queued-gap bytes and one writer thread. One separate pending overload-gap
+closure is bounded to 1 MiB. The measured revisions charged only payload to the
+queue; this final admission correction has not passed a new sustained live matrix.
 Ordinary HT incremental-memory engineering target is 64 MiB; actual measured
 heap/native/RSS and source-state conflation must be reported. Large singleton
 success does not imply ordinary-budget support. R1b must approve a memory admission
@@ -168,6 +172,36 @@ current interval), and resumes read-only navigation from a valid prior checkpoin
 Index damage is rebuildable; committed payload damage is an explicit integrity
 failure, never a normal gap. Damage beyond those recovery bounds is an explicit
 limit. Recovered files are never implicitly resumed/rewritten in place.
+
+## Concrete R1b recommendation (requires owner acceptance)
+
+| Decision | Proposed value / status |
+|---|---|
+| Family / extension / ID | LMThermal Recording / `.lmtr` / `lmthermal-recording`, recording kind |
+| Final record magic | Recommend ASCII `LMTRREC1` (8 bytes); **not emitted by R2** |
+| Final commit magic | Recommend ASCII `LMTRCMT1` (8 bytes); **not emitted by R2** |
+| Envelope | Same 40-byte LE header / 72-byte footer and checked signed-64 acceptance range described above, revision 1 |
+| Framing integrity | IEEE CRC32(header40 + footer64); body SHA-256 and reference SHA-256(header40 + body SHA); per-block and per-logical-payload SHA-256 |
+| Commit | Complete footer after body sync, then footer sync before advancing live committed counters |
+| Baseline codec IDs | Recommend STORED=0 and RFC1950-wrapped DEFLATE=1 mandatory decoder capabilities; writer level 1 as conservative candidate |
+| Optional codec ID | Zstd=2 only as explicit required feature for recordings that use it; defer product adoption pending real Windows and live gate success |
+| Preferred / hard chunk | Earliest 1 s / 32 entries / 16 MiB; aggregate decoded+metadata 64 MiB, record 65 MiB; metadata 1 MiB |
+| Index | Bounded JSON pages, 256 children, depth 8, page 512 KiB, backwards ordinal/offset links |
+| Checkpoint | Every 32 committed chunks, immutable root plus previous checkpoint; Stop seals final short chunk |
+| END | Truthful committed entries/chunks, final root/checkpoint/reason, emitted only after successful drain/seal; absent END never implies completion |
+| Views | Retain only independently hashed same-frame/same-chunk contiguous native into a materialized acquisition parent |
+| Android budget | 4 MiB nonblocking owned handoff; **64 MiB ordinary incremental writer target remains unmet/unproven**, not a supported-configuration claim |
+| Initial canonical backend | App-private local file with tested sync/read-only reopening; optional verified SAF export; no direct arbitrary-provider recording guarantee |
+| Recovery | Verified committed prefix, bounded tail search and suffix traversal above; explicit integrity failure for promised payload corruption |
+
+The magic replacement/format identity are proposed release spellings, not a change to
+R2 artifact bytes. Complete generic/module JSON schemas, clock-domain declarations,
+required-feature names and interoperability vectors still need R1b review. Relative
+time in this prototype is host monotonic receipt relative to run origin, not sensor
+UTC; gaps have no invented receipt/acquisition clock. No R1a preservation invariant
+is relaxed. The failed live throughput/responsiveness gate blocks recommending any
+prototype configuration as a 25 FPS product default. This packet is ready for review
+of evidence, **not** for owner wire freeze or production implementation.
 
 ## Initial backend recommendation and R1b decisions
 

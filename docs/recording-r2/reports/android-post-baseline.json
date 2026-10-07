@@ -1,0 +1,100 @@
+{
+  "plan": "cd56d4e",
+  "prototype": "2ddc541043766eb9afeaa95f88a8c871ccbf6009",
+  "device": "Pixel 8",
+  "android": "17",
+  "api": 37,
+  "runs": [
+    {
+      "run": "baseline",
+      "profile": null,
+      "codec": null,
+      "duration_s": 122.941,
+      "callback_fps": 24.995729658942093,
+      "acquired": 3073,
+      "replacement_delta": 0,
+      "malformed_delta": 0,
+      "accepted": 3039,
+      "unavailable_states": 34,
+      "held_or_transient_states": 0,
+      "unavailable_without_sequence": 0,
+      "sequence_unobserved": 0,
+      "statuses": {
+        "RADIOMETRIC_READY": 3039,
+        "RAW14_UNSETTLED": 34
+      },
+      "receipt_interval_ms_p50": 40.0,
+      "receipt_interval_ms_p95": 42.0,
+      "receipt_interval_ms_p99": 45.0,
+      "distinct_scene_fingerprints": 3039,
+      "writer_drops": 0,
+      "queue_max_bytes": 0,
+      "queue_max_depth": 0,
+      "writer_failure": null,
+      "finalized": null,
+      "stop_ms": 0,
+      "committed_entries": null,
+      "chunks": null,
+      "physical_bytes": null,
+      "logical_bytes": null,
+      "stored_bytes": null,
+      "file_bytes": null,
+      "max_chunk_bytes": null,
+      "codec_wall_ns": null,
+      "codec_cpu_ns": null,
+      "codec_input_output_allocation_lower_bound_bytes": null,
+      "freeze_wall_ns": 0,
+      "owned_retained_copy_lower_bound_bytes": 0,
+      "process_cpu_ms": 236096,
+      "ui_heartbeat_p99_ms": 16.0,
+      "ui_heartbeat_max_ms": 17,
+      "ui_heartbeat_samples": 7371,
+      "observed_completed_renders": 981,
+      "observed_completed_render_fps": 7.9794372910583125,
+      "render_wall_ns_p95": 41652710.0,
+      "displayed_source_age_ms_p50": 129.0,
+      "displayed_source_age_ms_p95": 350.0,
+      "displayed_source_age_ms_max": 582,
+      "memory_start": {
+        "java_used": 114995392,
+        "native_heap": 34984176,
+        "pss_bytes": 363069440,
+        "rss_bytes": 426033152
+      },
+      "memory_peak": {
+        "java_used": 258126016,
+        "native_heap": 40424896,
+        "pss_bytes": 472889344,
+        "rss_bytes": 536305664
+      },
+      "memory_end": {
+        "java_used": 146956480,
+        "native_heap": 28356272,
+        "pss_bytes": 356571136,
+        "rss_bytes": 419921920
+      },
+      "power_start": {
+        "battery_percent": 49,
+        "current_ua": -1244375,
+        "battery_temperature_tenths_c": 387,
+        "thermal_status": 1
+      },
+      "power_end": {
+        "battery_percent": 48,
+        "current_ua": -941250,
+        "battery_temperature_tenths_c": 381,
+        "thermal_status": 1
+      },
+      "detached": false
+    }
+  ],
+  "limitations": [
+    "Latest StateFlow; sequence gaps disclosed",
+    "Process CPU is not isolated thermometry CPU",
+    "Memory sampled at 2 seconds; instantaneous peaks may be higher",
+    "Fair codec study runs after sustained profiles to avoid allocator-cache confounding",
+    "Codec source frozen before baseline warmup; baseline has no recording freeze/write"
+  ],
+  "post_matrix_baseline": true,
+  "comparison_limitation": "Different run order/thermal history; interrupted initial repeat baseline is excluded"
+}

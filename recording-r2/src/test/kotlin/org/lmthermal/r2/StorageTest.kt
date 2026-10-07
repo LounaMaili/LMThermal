@@ -5,6 +5,38 @@ import org.junit.Assert.*
 import java.io.*
 
 class StorageTest {
+    @Test fun failedCloseDoesNotReportSuccessfulStopEvenIfEndBytesSurvive() {
+        val source=File.createTempFile("r2-close", ".r2proto").apply { delete(); deleteOnExit() }
+        val writer=BoundedRecorder(source,Profile.FULL,Stored) { file ->
+            val delegate=FileSink(file)
+            object: AppendSink {
+                override fun write(bytes: ByteArray)=delegate.write(bytes)
+                override fun sync()=delegate.sync()
+                override fun close() { delegate.close(); throw IOException("injected close failure") }
+            }
+        }
+        writer.offer(Synthetic.frame(0,3,2))
+        assertFalse(writer.stop(timeoutMs=5000)); assertTrue(writer.failure!!.startsWith("close_failed"))
+        assertFalse(writer.offer(Synthetic.frame(1,3,2)))
+        PrototypeReader(source).use { reader -> assertTrue(reader.complete) }
+    }
+    @Test fun queuedMetadataConsumesBudgetEvenForTinyPlanes() {
+        val source=File.createTempFile("r2-metadata", ".r2proto").apply { delete(); deleteOnExit() }
+        val entered=java.util.concurrent.CountDownLatch(1); val release=java.util.concurrent.CountDownLatch(1)
+        val codec=object: BlockCodec {
+            override val id=0; override val name="blocked-stored"
+            override fun encode(input: ByteArray): ByteArray { entered.countDown(); check(release.await(10,java.util.concurrent.TimeUnit.SECONDS)); return Stored.encode(input) }
+            override fun decode(input: ByteArray,size: Int)=Stored.decode(input,size)
+        }
+        val context=(0 until 30).associate { "field$it" to "x".repeat(10000) }
+        val writer=BoundedRecorder(source,Profile.FULL,codec)
+        fun frame(i: Int)=Synthetic.frame(i.toLong(),3,2).copy(relativeNs=i*2000000000L,context=context)
+        try {
+            writer.offer(frame(0)); writer.offer(frame(1)); assertTrue(entered.await(5,java.util.concurrent.TimeUnit.SECONDS))
+            repeat(30) { writer.offer(frame(it+2)) }
+            assertTrue(writer.drops>0); assertTrue(writer.maxBytes<=Bounds.QUEUE)
+        } finally { release.countDown(); assertTrue(writer.stop(timeoutMs=5000)) }
+    }
     @Test fun refusalOrSyncFailureAtMultipleChunkBoundariesPreservesEarlierCommits() {
         for (fault in listOf("write", "body_sync", "footer_sync")) for (message in listOf("ENOSPC", "provider refusal")) {
             val source=File.createTempFile("r2-refusal", ".r2proto").apply { delete(); deleteOnExit() }

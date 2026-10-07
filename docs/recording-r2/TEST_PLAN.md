@@ -200,3 +200,19 @@ repeat the 20-second warmup/120-second baseline alone after the matrix, using a 
 explicit ready session. This post-matrix baseline is labeled as such (run order,
 thermal/memory differences remain disclosed), never relabeled as the original
 pre-profile baseline. No pass threshold or profile duration changes.
+
+## Post-run budget audit (no new live success claim)
+
+The measured revisions charged payload bytes only to their 4 MiB queue. The final
+prototype now also charges bounded serialized context and any queued overload-gap
+closure, and caches the same immutable JSON closure for encoding. The one pending
+overload-gap range remains separately bounded by the 1 MiB metadata ceiling. Preferred
+chunk admission charges contexts; final complete descriptors/closure still enforce
+the hard limit, so preferred 16 MiB is approximate (at most bounded metadata overhead),
+not a promise of an exact peak allocation. A blocked-writer/tiny-plane/large-context
+regression proves metadata cannot bypass queue admission.
+
+These resource changes need a future sustained live rerun. Neither failed matrix is
+relabeled as a success, and no 25 FPS configuration is recommended. The final
+post-matrix baseline has no writer and uses its separately recorded executable
+revision. Camera/session/thermometry and R1a preservation semantics are unchanged.

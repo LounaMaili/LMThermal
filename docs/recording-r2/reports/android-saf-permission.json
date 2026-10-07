@@ -1,0 +1,4 @@
+{
+  "permission_after_task_end": "denied",
+  "error_class": "SecurityException"
+}

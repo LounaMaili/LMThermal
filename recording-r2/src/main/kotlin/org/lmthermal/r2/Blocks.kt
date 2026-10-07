@@ -89,7 +89,11 @@ data class Observation(val sequence: Long, val receiptNs: Long?, val relativeNs:
     val context: Map<String, Any?> = emptyMap(), val reason: String? = null,
     val nativeEncoding: String = "org.lmthermal.ht301.raw14",
     val gapEnd: Long = sequence) {
-    val bytes: Long get() = listOfNotNull(temperature, mask, native, acquisition).sumOf { it.size.toLong() }
+    // Metadata must also consume the byte budget, including observations with no plane.
+    // Cache the immutable serialized closure so admission and encoding use the same values.
+    val contextBytes: ByteArray by lazy { R2Json.encode(context) }
+    val payloadBytes: Long get() = listOfNotNull(temperature, mask, native, acquisition).sumOf { it.size.toLong() }
+    val bytes: Long get() = Bounds.add(payloadBytes, contextBytes.size.toLong())
     fun validate() {
         require(sequence >= 0 && gapEnd >= sequence && relativeNs >= 0 && (receiptNs == null || receiptNs >= 0))
         val pixels = Bounds.pixels(width, height)

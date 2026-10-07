@@ -1,7 +1,8 @@
 # Common recording implementation roadmap and issues
 
 **R1a product/semantic direction accepted, 2026-10-07. Wire contract provisional.**
-R1–R7 issues track future work; no recorder/reader/UI implementation is started.
+R1–R7 issues track the product work. R2 has isolated disposable prototypes and
+[evidence](recording-r2/README.md); no production recorder/reader/UI or R3 corpus is started.
 
 Design: [COMMON_RECORDING_DESIGN.md](COMMON_RECORDING_DESIGN.md).
 Evidence: [RECORDING_COMPRESSION_STUDY.md](RECORDING_COMPRESSION_STUDY.md).
@@ -89,8 +90,10 @@ Acceptance:
 ## R2 — Validate recording framing, codecs and Android storage/recovery
 
 **Repository:** LMThermal, with Desktop read-only or a separate focused validation
-branch if required. **Status:** R1a satisfies entry; ready for a separately authorized
-feasibility task, not started here. R2 returns evidence to R1b before stable release.
+branch if required. **Status:** the authorized R2 feasibility task has executed.
+The [R2 execution packet](recording-r2/README.md) now records
+prototypes, measurements and outstanding gates. R2 remains open and returns
+evidence to R1b before stable release.
 
 Scope: controlled prototypes/benchmarks and provider fault tests, using owned
 current measurements and saved frames. Compare STORED/DEFLATE-1/Zstd-3 on genuine

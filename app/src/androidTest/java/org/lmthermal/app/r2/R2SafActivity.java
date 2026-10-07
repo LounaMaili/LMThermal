@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ScrollView;
 import android.system.Os;
 import android.system.OsConstants;
 import org.json.JSONObject;
@@ -35,15 +36,26 @@ public final class R2SafActivity extends Activity {
     }
     @Override public void onCreate(Bundle state) {
         super.onCreate(state); getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if (getActionBar()!=null) getActionBar().hide();
         source=new File(getFilesDir(),"r2-seed.r2proto");
         LinearLayout layout=new LinearLayout(this); layout.setOrientation(LinearLayout.VERTICAL);
-        status=new TextView(this); status.setText("R2 diagnostic SAF probe — no camera use. Choose a LOCAL destination. Source is synthetic/noncanonical.");
-        layout.addView(status); Button choose=new Button(this); choose.setText("Choose R2 test destination"); layout.addView(choose);
+        // Target-SDK edge-to-edge otherwise puts this standalone test Activity's controls under the system bars.
+        int padding=Math.round(16*getResources().getDisplayMetrics().density);
+        layout.setOnApplyWindowInsetsListener((view,insets) -> {
+            view.setPadding(padding+insets.getSystemWindowInsetLeft(),padding+insets.getSystemWindowInsetTop(),
+                    padding+insets.getSystemWindowInsetRight(),padding+insets.getSystemWindowInsetBottom());
+            return insets;
+        });
+        status=new TextView(this); status.setTextSize(16);
+        status.setText("R2 diagnostic SAF probe — no camera use. Choose a LOCAL destination. Source is synthetic/noncanonical.");
+        ScrollView results=new ScrollView(this); results.addView(status);
+        layout.addView(results,new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0,1));
+        Button choose=new Button(this); choose.setText("Choose R2 test destination"); layout.addView(choose);
         choose.setOnClickListener(view -> {
             Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT); intent.setType("application/octet-stream");
             intent.addCategory(Intent.CATEGORY_OPENABLE); intent.putExtra(Intent.EXTRA_TITLE,"lmthermal-r2-saf-test.r2proto");
             startActivityForResult(intent,41);
-        }); setContentView(layout);
+        }); setContentView(layout); layout.requestApplyInsets();
         if (getIntent().hasExtra("probe_uri")) {
             new Thread(() -> {
                 JSONObject result=new JSONObject();
@@ -73,7 +85,11 @@ public final class R2SafActivity extends Activity {
             try {
                 byte[] original; try (InputStream in=new FileInputStream(source)) { original=read(in); }
                 String before=hash(original); result.put("source_sha256",before);
-                if (code!=RESULT_OK || intent==null || intent.getData()==null) { result.put("status","cancelled"); report(result); return; }
+                if (code!=RESULT_OK || intent==null || intent.getData()==null) {
+                    byte[] after; try (InputStream in=new FileInputStream(source)) { after=read(in); }
+                    result.put("source_immutable",before.equals(hash(after)));
+                    result.put("status","cancelled"); report(result); return;
+                }
                 Uri uri=intent.getData(); result.put("uri",uri.toString()); result.put("authority",uri.getAuthority());
                 android.content.pm.ProviderInfo provider=getPackageManager().resolveContentProvider(uri.getAuthority(),0);
                 result.put("provider_class",provider==null?"unknown":provider.name); result.put("capacity","unknown");

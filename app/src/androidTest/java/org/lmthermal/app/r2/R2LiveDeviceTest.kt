@@ -80,7 +80,7 @@ class R2LiveDeviceTest {
             temperature.array(), measurement.validityMask(), if (profile != Profile.ANALYSIS) measurement.evidence.source.imageBytes() else null,
             if (profile == Profile.FULL) measurement.evidence.source.transportBytes() else null,
             mapOf("module" to "ht301", "provenance" to "real-ht301-native-equivalent", "metadata" to metadata,
-                "warning" to "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."))
+                "warning" to "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.")).also { it.contextBytes }
     }
     @Test fun sustainedReadyStreamAndCodecStudy() = runBlocking {
         assumeTrue(args.getString("r2Live") == "true")

@@ -1,0 +1,103 @@
+{
+  "status": "R2_INCOMPLETE",
+  "device": {
+    "model": "Pixel 8",
+    "android": "17",
+    "api": 37,
+    "tested_abi": "arm64-v8a"
+  },
+  "gates": {
+    "sustained_25fps": "FAILED_writer_drops_and_severe_image_latency",
+    "incremental_steady_memory": "INCOMPLETE_sampling_and_baseline_limitations",
+    "latest_metadata_admission_live_retest": "PENDING",
+    "Android_exact_codecs": "PASS",
+    "framing_recovery_bounds": "PASS_with_declared_limits",
+    "Linux_independent_same_bytes": "PASS_15_cases",
+    "real_Windows": "PENDING",
+    "app_private_no_copy_readonly": "PASS",
+    "local_SAF": "PASS_Downloads_verified_export_cancel_source_immutable_temporary_grant_loss",
+    "external_no_copy_URI": "NOT_TESTED_not_recommended",
+    "production_recording": "NOT_IMPLEMENTED",
+    "R1b_wire_freeze": "NOT_ACCEPTED",
+    "R3_canonical_corpus": "NOT_STARTED"
+  },
+  "source_reports": [
+    "android-first-sustained.json",
+    "android-repeat-sustained.json",
+    "android-post-baseline.json",
+    "android-first-codecs.json",
+    "android-repeat-codecs.json",
+    "android-first-detach.json",
+    "thermometry-cost.json",
+    "linux-packet.json",
+    "process-kill.json",
+    "sparse-kotlin.json",
+    "sparse-python.json",
+    "android-saf-success.json",
+    "android-saf-cancel.json",
+    "android-saf-permission.json",
+    "android-final-packet.json"
+  ],
+  "repeat_saved_fps": {
+    "analysis-stored": 18.735982057033002,
+    "native-stored": 15.229438264960331,
+    "full-stored": 12.831787655900223,
+    "analysis-deflate-1": 15.991896375701888,
+    "native-deflate-1": 13.795878943979396,
+    "full-deflate-1": 12.181607940127838,
+    "analysis-zstd-3": 17.678930140615122,
+    "native-zstd-3": 14.128992019958101,
+    "full-zstd-3": 13.161387898924403
+  },
+  "recommendation": {
+    "baseline_decoder_codecs": [
+      "STORED_0",
+      "zlib_DEFLATE_1"
+    ],
+    "writer_candidate": "DEFLATE_level1_subject_to_failed_live_gates",
+    "Zstd": "DEFER_product_adoption_optional_feature_if_later_approved",
+    "native_view": "retain_only_same_frame_contiguous_materialized_parent_candidate",
+    "canonical_backend": "app_owned_local_file",
+    "SAF": "optional_verified_copy_only"
+  },
+  "artifact": {
+    "file": "artifacts/android-r2-packet.zip",
+    "sha256": "49cc244c60ca51b71c4d1ee38b4360e7e4bc8f490216ad4887f0fd1b770117cc",
+    "noncanonical": true
+  },
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "regression": {
+    "host": {
+      "core_JVM": 232,
+      "app_JVM": 10,
+      "R2_JVM": 20,
+      "failed": 0
+    },
+    "build": "PASS_debug_and_test_APK",
+    "lint": {
+      "errors": 0,
+      "existing_warnings": 11
+    },
+    "localization": "PASS_110_English_110_French",
+    "shared_boundaries": "PASS_25_sources",
+    "Python_hostile": 7,
+    "Linux_packet_cases": 15,
+    "process_kill_cases": 8,
+    "Pixel_explicit_packet_metadata_tests": 3,
+    "Pixel_full_existing_regression": {
+      "discovered": 44,
+      "passed": 40,
+      "skipped": 4,
+      "failed": 0,
+      "skip_reason": "Explicit opt-in live(1), packet(2), thermometry-cost(1); their separate runs retained"
+    },
+    "production_source_and_LMTX_contract_diff": "EMPTY",
+    "Desktop_worktree": "UNCHANGED",
+    "private_live_evidence_preserved": {
+      "files": 30,
+      "archive_bytes": 9299060736,
+      "git_ignored": true,
+      "three_benchmark_reports_readable": true
+    }
+  }
+}

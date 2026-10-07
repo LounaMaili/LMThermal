@@ -3,6 +3,12 @@
 **R1a product/semantic direction: owner-accepted, 2026-10-07.**
 **Complete wire contract: provisional; not published or frozen.**
 
+R2 now has [isolated prototypes and an evidence packet](recording-r2/README.md).
+The [exact experimental framing annex](recording-r2/FRAMING_PROPOSAL.md) is a proposal
+for R1b, not acceptance. Both live matrices failed writer-throughput/preview gates;
+incremental/steady memory and real Windows parity remain incomplete. All applicable
+gates must pass before R2 can be complete; failed configurations remain reported.
+
 Authority: the owner explicitly supplied the decisions and semantic acceptance
 scope on 2026-10-07. This document records that scope; it does not infer acceptance
 of every recommendation in the [architecture draft](COMMON_RECORDING_DESIGN.md).

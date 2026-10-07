@@ -4,6 +4,29 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Recording R2 feasibility prototypes — 2026-10-07)
+
+- Isolated disposable framing, bounded writer, lossless codec, storage/fault and
+  independent Python validation tooling in a JVM module and the Android test APK.
+  No production recording action, camera behavior, thermometry or LMTX v1 change.
+- Added an exact provisional framing annex for R1b. Measured results and incomplete
+  platform/backend gates are reported separately; final wire acceptance remains open.
+- Preserved both real Pixel 8 profile/codec matrices, including explicit writer
+  drops and operator-confirmed severe thermal-image latency despite near-25-FPS
+  acquisition. Retained the interrupted repeat baseline and a separately predeclared
+  post-matrix baseline; no 25 FPS configuration is approved.
+- Verified Android/Linux exact synthetic payloads/views, bounded hostile-input
+  rejection, eight actual writer-process kills, sparse >4 GiB navigation and
+  storage refusal/close failure. Prepared the unchanged Android-written Windows
+  packet; real Windows parity and incremental/steady memory remain incomplete.
+- Corrected test-only metadata queue accounting and standalone SAF-probe system-bar
+  insets. The metadata admission change has not passed another live sustained run.
+  R1/R2 remain open; no R1b wire freeze, canonical R3 fixtures or product recorder.
+- Verified a local Downloads SAF export byte-for-byte, append/truncate/reopen,
+  sync/close, cancellation/source immutability and temporary-grant denial after task
+  termination. Passed 262 JVM tests, 40 general Pixel tests (four opt-in skips),
+  three targeted Pixel packet/metadata tests and all host validation checks.
+
 ### Added (Recording R2 predeclared feasibility plan — 2026-10-07)
 
 - Committed a disposable R2 test plan before measurements, with verified Pixel 8 Android 17/API 37, baseline/profile durations, bounded resources, metric/pass definitions, fault/adversarial/backend gates, privacy and real Windows completion requirements. No prototype benchmark or production recording feature is included in this planning commit; accepted semantics and still LMTX v1 are unchanged.
