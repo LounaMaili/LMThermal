@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Recording R2 predeclared feasibility plan — 2026-10-07)
+
+- Committed a disposable R2 test plan before measurements, with verified Pixel 8 Android 17/API 37, baseline/profile durations, bounded resources, metric/pass definitions, fault/adversarial/backend gates, privacy and real Windows completion requirements. No prototype benchmark or production recording feature is included in this planning commit; accepted semantics and still LMTX v1 are unchanged.
+
 ### Changed (Recording R1a owner decisions and planning — 2026-10-07)
 
 - Recorded explicit owner acceptance of the next-stage Analysis default/visible first-use choice/remembered per-module selection, deferred expert checkboxes, Full / Research meaning and helpful storage policy. Unknown capacity warns and allows Start; known insufficient startup+reserve blocks; write refusal preserves prior valid commits without counting pending frames saved.
