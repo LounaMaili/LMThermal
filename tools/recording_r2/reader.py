@@ -137,7 +137,7 @@ class Reader:
                 if self.root: self.page(self.root, last['offset'])
                 self.complete = True
             except (ValueError, KeyError, TypeError):
-                self.recovery = 'damaged_final_index'; self.recover(last)
+                self.root = None; self.recovery = 'damaged_final_index'; self.recover(last)
         else:
             self.recovery = 'missing_or_torn_end'; self.recover(last)
 

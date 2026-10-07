@@ -225,8 +225,10 @@ class R2LiveDeviceTest {
             }
             try {
                 run("baseline", null, null)
-                for (codec in codecs) for (profile in Profile.entries) run(profile.name.lowercase() + "-" + codec.name, profile, codec)
-                codecStudy(sample, codecs)
+                if (args.getString("r2BaselineOnly") != "true") {
+                    for (codec in codecs) for (profile in Profile.entries) run(profile.name.lowercase() + "-" + codec.name, profile, codec)
+                    codecStudy(sample, codecs)
+                }
                 if (args.getString("r2Detach") == "true") {
                     val origin = SystemClock.elapsedRealtime()
                     val detachedWriter = BoundedRecorder(File(directory, "usb-detach.r2proto"), Profile.FULL, Deflate1)

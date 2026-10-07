@@ -27,12 +27,15 @@ def synthetic_check(chunk):
         demand(context['provenance'] == 'synthetic-r2-not-camera' and int(context['epoch']) == sequence//30, 'context_parity')
 
 
-def run(directory, codec=None):
+def run(directory, codec=None, baseline_only=False):
     directory = pathlib.Path(directory); manifest = json.loads((directory/'packet.json').read_text(encoding='utf-8'))
     demand(manifest['artifact'] == 'noncanonical-r2-synthetic-packet')
     rows = []
     for case in manifest['cases']:
         path = directory/case['file']; before = file_sha(path); demand(before == case['sha256'], 'packet_source_hash')
+        if baseline_only and 'zstd-3' in case['file']:
+            rows.append(dict(file=case['file'], source_sha256=before, skipped='Zstd excluded from requested baseline-only run'))
+            continue
         error = None; result = None
         try:
             result = validate(path, codec)
@@ -48,14 +51,14 @@ def run(directory, codec=None):
         demand(before == file_sha(path), 'source_mutated')
         rows.append(dict(file=case['file'], expect=case['expect'], passed=True, source_sha256=before, result=result, error=error))
     return dict(platform=sys.platform, python=sys.version.split()[0], artifact='noncanonical-r2',
-                zstd_version=codec.version if codec else None, cases=rows, passed=True, source_immutable=True)
+                zstd_version=codec.version if codec else None, cases=rows, passed=True, source_immutable=True, baseline_only=baseline_only)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__); parser.add_argument('directory')
-    parser.add_argument('--zstd', action='store_true'); parser.add_argument('--zstd-library'); parser.add_argument('--output')
+    parser.add_argument('--baseline-only', action='store_true'); parser.add_argument('--zstd', action='store_true'); parser.add_argument('--zstd-library'); parser.add_argument('--output')
     args = parser.parse_args(); codec = Zstd(args.zstd_library) if args.zstd or args.zstd_library else None
-    result = run(args.directory, codec); text = json.dumps(result, indent=2)
+    result = run(args.directory, codec, args.baseline_only); text = json.dumps(result, indent=2)
     if args.output: pathlib.Path(args.output).write_text(text+'\n', encoding='utf-8')
     print(text)
 if __name__ == '__main__': main()

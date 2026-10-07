@@ -1,0 +1,8 @@
+{
+  "logical_file_bytes": 4530250240,
+  "chunks": 180,
+  "peak_java_used": 229560320,
+  "seek_validation_read_bytes": 75562200,
+  "offset_over_4gib": true,
+  "sparse_test_only": true
+}

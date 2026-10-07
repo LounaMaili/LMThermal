@@ -126,7 +126,10 @@ class PrototypeReader(file: File, private val codecs: Map<Int, BlockCodec> = map
             try {
                 val end = records.json(records.record(last.ref.offset)); root = end["root"]?.let(::reference)
                 root?.let { page(it, last.ref.offset) }; complete = true
-            } catch (_: IllegalArgumentException) { recoveryReason = "damaged_final_index"; recover(last) }
+            } catch (_: IllegalArgumentException) {
+                // A damaged END root must not survive fallback when no checkpoint exists.
+                root = null; recoveryReason = "damaged_final_index"; recover(last)
+            }
         } else { recoveryReason = "missing_or_torn_end"; recover(last) }
     }
     private fun page(ref: Reference, owner: Long): Map<String, Any?> {

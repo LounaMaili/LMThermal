@@ -50,4 +50,19 @@ class HostileTests(unittest.TestCase):
                 if change=='view_of_view': m['entries'][0]['payloads']['acquisition']['kind']='view'
                 with self.assertRaises(ValueError): self.check(m,b)
 
+    def test_index_cycles_ranges_and_ordinals_are_bounded(self):
+        ref=dict(offset='1000',length='200',ordinal='5',first='0',last='3',hash='0'*64)
+        child=dict(offset='0',length='200',ordinal='1',first='0',last='3',hash='0'*64)
+        for change in ['cycle','range','ordinal','overlap','depth']:
+            page=dict(depth=0,children=[copy.deepcopy(child)])
+            if change=='cycle': page['children'][0]['offset']='1000'
+            if change=='range': page['children'][0]['last']='4'
+            if change=='ordinal': page['children'][0]['ordinal']='5'
+            if change=='overlap': page['children'].append(copy.deepcopy(child))
+            if change=='depth': page['depth']=8
+            reader=Reader.__new__(Reader)
+            reader.record=lambda *args,**kwargs: dict(type=3)
+            reader.metadata=lambda *args: page
+            with self.subTest(change=change), self.assertRaises(ValueError): reader.page(ref,1200)
+
 if __name__=='__main__': unittest.main()

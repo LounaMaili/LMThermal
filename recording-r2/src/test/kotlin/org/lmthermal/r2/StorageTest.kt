@@ -5,6 +5,35 @@ import org.junit.Assert.*
 import java.io.*
 
 class StorageTest {
+    @Test fun refusalOrSyncFailureAtMultipleChunkBoundariesPreservesEarlierCommits() {
+        for (fault in listOf("write", "body_sync", "footer_sync")) for (message in listOf("ENOSPC", "provider refusal")) {
+            val source=File.createTempFile("r2-refusal", ".r2proto").apply { delete(); deleteOnExit() }
+            val delegate=FileSink(source); var failing=false; var syncs=0
+            val sink=object: AppendSink {
+                override fun write(bytes: ByteArray) {
+                    if(failing && fault=="write") throw IOException(message)
+                    delegate.write(bytes)
+                }
+                override fun sync() {
+                    if(failing) { syncs++; if(syncs==if(fault=="body_sync")1 else if(fault=="footer_sync")2 else -1) throw IOException(message) }
+                    delegate.sync()
+                }
+                override fun close()=delegate.close()
+            }
+            PrototypeRecorder(RecordWriter(sink),Profile.FULL,Stored).use { writer ->
+                writer.accept(Synthetic.frame(0,3,2)); writer.seal(); failing=true
+                writer.accept(Synthetic.frame(1,3,2))
+                try { writer.seal(); fail("refusal ignored") } catch (_: IOException) {}
+                assertEquals(1L,writer.committedEntries); assertFalse(writer.finalized)
+            }
+            PrototypeReader(source).use { reader ->
+                assertFalse(reader.complete); var count=0; reader.forEachChunk { count+=it.entries.size }
+                // An unacknowledged footer sync may still leave verifiable bytes. They were
+                // never counted saved by the failed writer; forensic recovery is separate.
+                assertEquals(if(fault=="footer_sync")2 else 1,count)
+            }
+        }
+    }
     @Test fun exportRequiresSuccessfulCloseAndExactReadback() {
         val source = File.createTempFile("r2-source", ".bin").apply { writeBytes(ByteArray(180000) { it.toByte() }); deleteOnExit() }
         val destination = File.createTempFile("r2-dest", ".bin").apply { deleteOnExit() }

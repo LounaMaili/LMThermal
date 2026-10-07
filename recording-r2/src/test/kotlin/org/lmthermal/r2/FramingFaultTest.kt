@@ -10,6 +10,30 @@ import java.nio.ByteOrder
 class FramingFaultTest {
     private fun file() = File.createTempFile("r2-framing", ".r2proto").also { it.delete(); it.deleteOnExit() }
     private fun rejects(action: () -> Unit) { try { action(); fail("invalid input accepted") } catch (_: IllegalArgumentException) {} }
+    @Test fun cyclicIndexRecoversOnlyCommittedChunksAndFalseLeafRangesReject() {
+        for (case in listOf("cycle", "ordinal", "leaf_range", "leaf_type")) {
+            val source=file()
+            RecordWriter(FileSink(source)).use { records ->
+                val header=records.json(RecordType.HEADER,mapOf("artifact" to "noncanonical-r2","revision" to 1,
+                    "required_features" to listOf("contiguous-native-view"),"codecs" to listOf(0)))
+                val encoded=ChunkEncoder(Profile.FULL,Stored).encode(listOf(Synthetic.frame(0,3,2)))
+                val chunk=records.append(RecordType.CHUNK,encoded.parts,0,0)
+                val child=when(case) {
+                    "cycle" -> chunk.copy(offset=chunk.offset+chunk.length)
+                    "ordinal" -> chunk.copy(ordinal=chunk.ordinal+1)
+                    "leaf_range" -> chunk.copy(first=1,last=1)
+                    else -> header
+                }
+                val page=records.append(RecordType.INDEX_PAGE,listOf(R2Json.encode(mapOf("depth" to 0,
+                    "children" to listOf(child.json())))),child.first,child.last)
+                records.json(RecordType.END,mapOf("root" to page.json(),"chunks" to "1","entries" to "1",
+                    "reason" to "user_stop","checkpoint" to null))
+            }
+            if(case in listOf("cycle","ordinal")) PrototypeReader(source).use { reader ->
+                assertFalse(reader.complete); var count=0; reader.forEachChunk { count+=it.entries.size }; assertEquals(1,count)
+            } else rejects { PrototypeReader(source).use { it.forEachChunk {} } }
+        }
+    }
     @Test fun maliciousLengthsRecordTypesAndOrdinalsRejectBeforeAllocation() {
         for (field in listOf("length", "type", "ordinal")) {
             val source = file(); Synthetic.write(source, Profile.FULL, Deflate1, 3)

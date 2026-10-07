@@ -190,3 +190,13 @@ The first attempt's good UI heartbeat cannot override the operator's image-laten
 failure; render timings and completed-frame age must be considered separately.
 The repeat also samples completed presentation age and counts observed completed
 renders independently of the main-thread heartbeat.
+
+## Baseline interruption handling
+
+The second attempt's initial baseline included a normal BACKGROUND release and
+explicit reopen/initialize. It is retained as interrupted and excluded from matched
+whole-run throughput comparison. Keep the subsequent complete profile observations;
+repeat the 20-second warmup/120-second baseline alone after the matrix, using a fresh
+explicit ready session. This post-matrix baseline is labeled as such (run order,
+thermal/memory differences remain disclosed), never relabeled as the original
+pre-profile baseline. No pass threshold or profile duration changes.
