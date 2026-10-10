@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R2 candidate regression evidence — 2026-10-10)
+
+- Verified all 272 JVM tests, 41 camera-free Pixel tests (six explicit opt-in skips), both APK builds, zero lint errors, localization/shared boundaries and nine independent Python checks for the bounded-chunk candidate. Repeated all eight actual process-kill cases successfully. Independently verified the failed 16 MiB Native-DEFLATE file retained 3131 matrices with all 31 writer-loss and six source-loss sequences explicitly represented; its private source is immutable and preserved.
+- Clean Full-STORED memory and the explicit 4 MiB Analysis/Native/Full DEFLATE repeat remain operator-dependent and pending. No final memory/default-codec or Windows acceptance claim is made.
+
 ### Changed (R2 bounded DEFLATE seal configuration — 2026-10-10)
 
 - Added a test-prototype preferred chunk target with unchanged 16 MiB default after the measured Native-DEFLATE burst failure. The opt-in 4 MiB repeat preserves complete logical payloads, all integrity domains, finalization/index semantics and unchanged 4 MiB queues; smaller chunks remain provisional R1b engineering evidence. Added full-role exactness/source-immutability/lazy-seek regression across profiles and STORED/DEFLATE.

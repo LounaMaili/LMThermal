@@ -1,0 +1,35 @@
+{
+  "analysis-deflate-1.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3087,
+    "gaps": 69,
+    "chunks": 125,
+    "logical_sha256": "2d5b822554b34659f0341f44664612d4afa676c15f73291d683730f3d5624354",
+    "source_sha256": "7e9850c9cccbc429f2f7325ff06e347897ed655fe209fcb8848c720d34626176",
+    "lazy_open_bytes": 2050,
+    "validation_read_bytes": 825401402,
+    "validation_wall_s": 40.351264120999986,
+    "gap_sequences": 69,
+    "gap_reasons": {
+      "RAW14_UNSETTLED": 69
+    }
+  },
+  "native-deflate-1.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3131,
+    "gaps": 21,
+    "chunks": 127,
+    "logical_sha256": "ba13a2e65e198b3c6d18901089ef6dbad594de40c1504b76272b13b7f8c5ae1d",
+    "source_sha256": "176f6d78234d21b927a712d7a1a4527ffa0e8807eda1e722239d0d656d61a84a",
+    "lazy_open_bytes": 2050,
+    "validation_read_bytes": 1492956211,
+    "validation_wall_s": 58.673295436001354,
+    "gap_sequences": 37,
+    "gap_reasons": {
+      "writer_overload": 31,
+      "source-or-stateflow-unobserved": 6
+    }
+  }
+}

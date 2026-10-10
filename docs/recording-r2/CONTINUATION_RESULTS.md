@@ -176,6 +176,9 @@ Analysis saved 3087/3087 with zero recorder loss, acquisition 25.005 FPS, render
 drops**, six separate source replacements and zero preparation loss; render
 24.59 FPS and age 86/117/177 ms. Full escalation stopped, so it is not a pass.
 [Preserved failed configuration](reports/android-continuation-deflate-16m.json).
+Independent readback confirms all 3131 retained Native matrices, 31 writer-loss
+sequences and six source-loss sequences, with complete integrity and immutable
+source ([report](reports/continuation-deflate-16m-readback.json)).
 Native chunk p95 311.789 ms / max 512.830 ms, writer-service max 529.550 ms, queue
 max 3990999 B: the approximately 240 ms six-frame queue window is exceeded by
 sealing bursts despite mean service 10.114 ms per observed valid frame. No bulk
@@ -184,7 +187,9 @@ this remaining bounded burst problem without increasing queues or reducing rate.
 
 Clean Full/final selected DEFLATE memory and the shorter-chunk repeat remain
 pending at this intermediate report. Earlier recovery/sparse/view/provider evidence is preserved;
-the test-only SAF launch and final same-byte packet are checked after live runs.
+the test-only SAF launch passed on the Pixel and all 15 regenerated packet
+members matched the existing artifact and passed independent Linux validation.
+The later bounded-chunk build reruns the affected checks before final reporting.
 Real Windows execution remains a required pending gate.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.

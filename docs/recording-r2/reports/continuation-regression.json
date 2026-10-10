@@ -55,5 +55,33 @@
       1038,
       2295
     ]
-  }
+  },
+  "final_candidate_revision": "531b8fd0653d503309f5def0899380a939b6f6d6",
+  "final_candidate_jvm": {
+    "core": {
+      "tests": 232,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "app": {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "recording-r2": {
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "final_candidate_pixel": {
+    "passed": 41,
+    "skipped_opt_in": 6,
+    "failures": 0,
+    "discovered": 47
+  },
+  "final_candidate_fault_cases_passed": 8
 }

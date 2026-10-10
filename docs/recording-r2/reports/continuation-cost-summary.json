@@ -1,0 +1,899 @@
+{
+  "measurements": {
+    "original-freeze": {
+      "source_report": "android-continuation-ablations.json",
+      "accepted": 1562,
+      "stage_costs": {
+        "matrix_copy": {
+          "wall_ms_per_accepted": 0.470252195262484,
+          "thread_cpu_ms_per_accepted": 0.43612775736235593,
+          "wall_ms_p95_per_call": 1.426392,
+          "wall_ms_max_per_call": 3.29126,
+          "count": 1562,
+          "copied_bytes_lower_bound": 690978816,
+          "allocated_bytes_lower_bound": 690978816,
+          "threads": [
+            "DefaultDispatcher-worker-7",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-8"
+          ]
+        },
+        "f32_encode": {
+          "wall_ms_per_accepted": 7.79975695134443,
+          "thread_cpu_ms_per_accepted": 7.376383236235595,
+          "wall_ms_p95_per_call": 16.310669,
+          "wall_ms_max_per_call": 38.462768,
+          "count": 1562,
+          "copied_bytes_lower_bound": 690978816,
+          "allocated_bytes_lower_bound": 690978816,
+          "threads": [
+            "DefaultDispatcher-worker-7",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-8"
+          ]
+        },
+        "context_build": {
+          "wall_ms_per_accepted": 0.12095292829705506,
+          "thread_cpu_ms_per_accepted": 0.11979671895006402,
+          "wall_ms_p95_per_call": 0.187663,
+          "wall_ms_max_per_call": 0.707804,
+          "count": 1562,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "DefaultDispatcher-worker-7",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-8"
+          ]
+        },
+        "context_encode": {
+          "wall_ms_per_accepted": 2.7597600736235592,
+          "thread_cpu_ms_per_accepted": 2.5978102868117796,
+          "wall_ms_p95_per_call": 4.493977,
+          "wall_ms_max_per_call": 18.032756,
+          "count": 1562,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "DefaultDispatcher-worker-7",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-8"
+          ]
+        },
+        "freeze_total": {
+          "wall_ms_per_accepted": 11.338200311139564,
+          "thread_cpu_ms_per_accepted": 10.687024496158772,
+          "wall_ms_p95_per_call": 21.360433,
+          "wall_ms_max_per_call": 41.880168,
+          "count": 1562,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "DefaultDispatcher-worker-7",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-8"
+          ]
+        }
+      }
+    },
+    "original-discard": {
+      "source_report": "android-continuation-ablations.json",
+      "accepted": 1572,
+      "stage_costs": {
+        "matrix_copy": {
+          "wall_ms_per_accepted": 0.5194829319338422,
+          "thread_cpu_ms_per_accepted": 0.4800663396946565,
+          "wall_ms_p95_per_call": 1.580079,
+          "wall_ms_max_per_call": 6.418253,
+          "count": 1572,
+          "copied_bytes_lower_bound": 695402496,
+          "allocated_bytes_lower_bound": 695402496,
+          "threads": [
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-8",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-7"
+          ]
+        },
+        "f32_encode": {
+          "wall_ms_per_accepted": 7.946855059796437,
+          "thread_cpu_ms_per_accepted": 7.530793262086514,
+          "wall_ms_p95_per_call": 16.866007,
+          "wall_ms_max_per_call": 25.664835,
+          "count": 1572,
+          "copied_bytes_lower_bound": 695402496,
+          "allocated_bytes_lower_bound": 695402496,
+          "threads": [
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-8",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-7"
+          ]
+        },
+        "context_build": {
+          "wall_ms_per_accepted": 0.08861560559796437,
+          "thread_cpu_ms_per_accepted": 0.0886000324427481,
+          "wall_ms_p95_per_call": 0.131632,
+          "wall_ms_max_per_call": 0.594361,
+          "count": 1572,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-8",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-7"
+          ]
+        },
+        "context_encode": {
+          "wall_ms_per_accepted": 2.395988891857506,
+          "thread_cpu_ms_per_accepted": 2.255374517811705,
+          "wall_ms_p95_per_call": 3.675822,
+          "wall_ms_max_per_call": 11.191406,
+          "count": 1572,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-8",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-7"
+          ]
+        },
+        "freeze_total": {
+          "wall_ms_per_accepted": 11.105039917302799,
+          "thread_cpu_ms_per_accepted": 10.479264874045802,
+          "wall_ms_p95_per_call": 21.636434,
+          "wall_ms_max_per_call": 34.450195,
+          "count": 1572,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-2",
+            "DefaultDispatcher-worker-8",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-7"
+          ]
+        },
+        "writer_queue_wait": {
+          "wall_ms_per_accepted": 109.58509636132315,
+          "thread_cpu_ms_per_accepted": 0.0,
+          "wall_ms_p95_per_call": 420.729859,
+          "wall_ms_max_per_call": 695.045899,
+          "count": 1435,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "admission_validation": {
+          "wall_ms_per_accepted": 9.30072019783715,
+          "thread_cpu_ms_per_accepted": 8.732486578880406,
+          "wall_ms_p95_per_call": 15.718181,
+          "wall_ms_max_per_call": 74.487631,
+          "count": 1487,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "writer_service": {
+          "wall_ms_per_accepted": 26.797100902671755,
+          "thread_cpu_ms_per_accepted": 24.182941381679388,
+          "wall_ms_p95_per_call": 24.390462,
+          "wall_ms_max_per_call": 741.618409,
+          "count": 1435,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "producer_validation": {
+          "wall_ms_per_accepted": 8.607796963740459,
+          "thread_cpu_ms_per_accepted": 7.3900240432569975,
+          "wall_ms_p95_per_call": 15.468913,
+          "wall_ms_max_per_call": 32.679077,
+          "count": 1487,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "context_hash": {
+          "wall_ms_per_accepted": 0.022279387404580152,
+          "thread_cpu_ms_per_accepted": 0.016649138040712465,
+          "wall_ms_p95_per_call": 0.035767,
+          "wall_ms_max_per_call": 4.739095,
+          "count": 1487,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "context_decode": {
+          "wall_ms_per_accepted": 0.7512203734096693,
+          "thread_cpu_ms_per_accepted": 0.7204641844783716,
+          "wall_ms_p95_per_call": 0.925293,
+          "wall_ms_max_per_call": 5.420899,
+          "count": 1487,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "role_aggregate": {
+          "wall_ms_per_accepted": 0.3851366138676845,
+          "thread_cpu_ms_per_accepted": 0.3649468282442748,
+          "wall_ms_p95_per_call": 1.797282,
+          "wall_ms_max_per_call": 8.912434,
+          "count": 1435,
+          "copied_bytes_lower_bound": 634798080,
+          "allocated_bytes_lower_bound": 634798080,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "logical_hash": {
+          "wall_ms_per_accepted": 0.2616721272264631,
+          "thread_cpu_ms_per_accepted": 0.2552214688295165,
+          "wall_ms_p95_per_call": 0.308472,
+          "wall_ms_max_per_call": 4.326375,
+          "count": 1435,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "role_materialize": {
+          "wall_ms_per_accepted": 0.1371137175572519,
+          "thread_cpu_ms_per_accepted": 0.13370672837150127,
+          "wall_ms_p95_per_call": 3.848104,
+          "wall_ms_max_per_call": 7.732829,
+          "count": 62,
+          "copied_bytes_lower_bound": 634798080,
+          "allocated_bytes_lower_bound": 634798080,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "codec": {
+          "wall_ms_per_accepted": 0.13796857633587786,
+          "thread_cpu_ms_per_accepted": 0.13196929389312978,
+          "wall_ms_p95_per_call": 3.883667,
+          "wall_ms_max_per_call": 7.718221,
+          "count": 62,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "block_hash": {
+          "wall_ms_per_accepted": 0.23767612913486005,
+          "thread_cpu_ms_per_accepted": 0.2244304103053435,
+          "wall_ms_p95_per_call": 6.553751,
+          "wall_ms_max_per_call": 14.027832,
+          "count": 62,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "metadata_encode": {
+          "wall_ms_per_accepted": 6.844874388676844,
+          "thread_cpu_ms_per_accepted": 6.134520725826972,
+          "wall_ms_p95_per_call": 246.569011,
+          "wall_ms_max_per_call": 364.166016,
+          "count": 62,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "chunk_encode_total": {
+          "wall_ms_per_accepted": 17.462170972646312,
+          "thread_cpu_ms_per_accepted": 15.43538775,
+          "wall_ms_p95_per_call": 535.694255,
+          "wall_ms_max_per_call": 720.834555,
+          "count": 62,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "file_write": {
+          "wall_ms_per_accepted": 0.0005454058524173028,
+          "thread_cpu_ms_per_accepted": 0.0004940477099236641,
+          "wall_ms_p95_per_call": 0.005697,
+          "wall_ms_max_per_call": 0.019857,
+          "count": 391,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "framing_hash": {
+          "wall_ms_per_accepted": 0.23289167493638677,
+          "thread_cpu_ms_per_accepted": 0.2239630159033079,
+          "wall_ms_p95_per_call": 6.105875,
+          "wall_ms_max_per_call": 9.892903,
+          "count": 213,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "sync_commit": {
+          "wall_ms_per_accepted": 0.00020199936386768448,
+          "thread_cpu_ms_per_accepted": 0.00019036005089058522,
+          "wall_ms_p95_per_call": 0.004028,
+          "wall_ms_max_per_call": 0.005778,
+          "count": 178,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        }
+      }
+    },
+    "optimized-analysis-stored": {
+      "source_report": "android-continuation-stage1.json",
+      "accepted": 3164,
+      "stage_costs": {
+        "immutable_handoff": {
+          "wall_ms_per_accepted": 0.14324547724399495,
+          "thread_cpu_ms_per_accepted": 0.1147253577749684,
+          "wall_ms_p95_per_call": 0.291097,
+          "wall_ms_max_per_call": 7.198283,
+          "count": 3164,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "DefaultDispatcher-worker-7",
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-8",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-5",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-3"
+          ]
+        },
+        "preparation_queue_wait": {
+          "wall_ms_per_accepted": 0.21383155562579015,
+          "thread_cpu_ms_per_accepted": 0.0,
+          "wall_ms_p95_per_call": 0.441365,
+          "wall_ms_max_per_call": 6.108723,
+          "count": 3164,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "matrix_copy": {
+          "wall_ms_per_accepted": 0.9661703542983564,
+          "thread_cpu_ms_per_accepted": 0.8887433290139064,
+          "wall_ms_p95_per_call": 1.775675,
+          "wall_ms_max_per_call": 27.381673,
+          "count": 3164,
+          "copied_bytes_lower_bound": 1399652352,
+          "allocated_bytes_lower_bound": 1399652352,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "f32_encode": {
+          "wall_ms_per_accepted": 0.8929986779393173,
+          "thread_cpu_ms_per_accepted": 0.831253492414665,
+          "wall_ms_p95_per_call": 1.688843,
+          "wall_ms_max_per_call": 4.729166,
+          "count": 3164,
+          "copied_bytes_lower_bound": 1399652352,
+          "allocated_bytes_lower_bound": 1399652352,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "context_build": {
+          "wall_ms_per_accepted": 0.4362970967130215,
+          "thread_cpu_ms_per_accepted": 0.40921929045512007,
+          "wall_ms_p95_per_call": 0.915486,
+          "wall_ms_max_per_call": 2.363566,
+          "count": 3164,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "context_encode": {
+          "wall_ms_per_accepted": 3.187400421618205,
+          "thread_cpu_ms_per_accepted": 2.9498671690897598,
+          "wall_ms_p95_per_call": 5.895548,
+          "wall_ms_max_per_call": 11.407674,
+          "count": 3164,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "freeze_total": {
+          "wall_ms_per_accepted": 5.804934100821745,
+          "thread_cpu_ms_per_accepted": 5.3589046419089765,
+          "wall_ms_p95_per_call": 10.269898,
+          "wall_ms_max_per_call": 32.842733,
+          "count": 3164,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "writer_queue_wait": {
+          "wall_ms_per_accepted": 2.7927628596713023,
+          "thread_cpu_ms_per_accepted": 0.0,
+          "wall_ms_p95_per_call": 19.237101,
+          "wall_ms_max_per_call": 100.924845,
+          "count": 3164,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "writer_service": {
+          "wall_ms_per_accepted": 3.5399635941845764,
+          "thread_cpu_ms_per_accepted": 2.6092368669405817,
+          "wall_ms_p95_per_call": 0.283814,
+          "wall_ms_max_per_call": 138.012045,
+          "count": 3164,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "role_materialize": {
+          "wall_ms_per_accepted": 0.0025992022756005056,
+          "thread_cpu_ms_per_accepted": 0.0022108075221238936,
+          "wall_ms_p95_per_call": 0.113851,
+          "wall_ms_max_per_call": 0.985799,
+          "count": 125,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 1399652352,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "context_hash": {
+          "wall_ms_per_accepted": 0.055233356826801513,
+          "thread_cpu_ms_per_accepted": 0.04812342509481669,
+          "wall_ms_p95_per_call": 0.19279,
+          "wall_ms_max_per_call": 7.020874,
+          "count": 3164,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "role_aggregate": {
+          "wall_ms_per_accepted": 0.4107200268647282,
+          "thread_cpu_ms_per_accepted": 0.38065788938053097,
+          "wall_ms_p95_per_call": 0.986776,
+          "wall_ms_max_per_call": 7.108805,
+          "count": 3164,
+          "copied_bytes_lower_bound": 1399652352,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "logical_hash": {
+          "wall_ms_per_accepted": 0.44448471649810367,
+          "thread_cpu_ms_per_accepted": 0.4073307882427307,
+          "wall_ms_p95_per_call": 0.931722,
+          "wall_ms_max_per_call": 8.675537,
+          "count": 3164,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "codec": {
+          "wall_ms_per_accepted": 0.00028706637168141594,
+          "thread_cpu_ms_per_accepted": 0.00024251801517067003,
+          "wall_ms_p95_per_call": 0.010783,
+          "wall_ms_max_per_call": 0.013346,
+          "count": 125,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "block_hash": {
+          "wall_ms_per_accepted": 0.32101917446270545,
+          "thread_cpu_ms_per_accepted": 0.3055574548040455,
+          "wall_ms_p95_per_call": 10.26176,
+          "wall_ms_max_per_call": 21.237875,
+          "count": 125,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "metadata_encode": {
+          "wall_ms_per_accepted": 0.6127951049304677,
+          "thread_cpu_ms_per_accepted": 0.5671149386852086,
+          "wall_ms_p95_per_call": 18.648925,
+          "wall_ms_max_per_call": 61.018392,
+          "count": 125,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "chunk_encode_total": {
+          "wall_ms_per_accepted": 1.9990907629582808,
+          "thread_cpu_ms_per_accepted": 1.8429346583438686,
+          "wall_ms_p95_per_call": 63.165446,
+          "wall_ms_max_per_call": 92.274821,
+          "count": 125,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "file_write": {
+          "wall_ms_per_accepted": 0.2530832104930468,
+          "thread_cpu_ms_per_accepted": 0.23453593457648544,
+          "wall_ms_p95_per_call": 6.40153,
+          "wall_ms_max_per_call": 13.676107,
+          "count": 760,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "framing_hash": {
+          "wall_ms_per_accepted": 0.28676100505689,
+          "thread_cpu_ms_per_accepted": 0.26225214823008847,
+          "wall_ms_p95_per_call": 7.948405,
+          "wall_ms_max_per_call": 14.309733,
+          "count": 420,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "sync_commit": {
+          "wall_ms_per_accepted": 0.9269700189633375,
+          "thread_cpu_ms_per_accepted": 0.20103793520859672,
+          "wall_ms_p95_per_call": 25.113648,
+          "wall_ms_max_per_call": 74.154622,
+          "count": 340,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        }
+      }
+    },
+    "optimized-native-deflate-16m": {
+      "source_report": "android-continuation-deflate-16m.json",
+      "accepted": 3162,
+      "stage_costs": {
+        "immutable_handoff": {
+          "wall_ms_per_accepted": 0.13521880613535736,
+          "thread_cpu_ms_per_accepted": 0.1040067972802024,
+          "wall_ms_p95_per_call": 0.251628,
+          "wall_ms_max_per_call": 7.259888,
+          "count": 3162,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "DefaultDispatcher-worker-3",
+            "DefaultDispatcher-worker-5",
+            "DefaultDispatcher-worker-6",
+            "DefaultDispatcher-worker-4",
+            "DefaultDispatcher-worker-8",
+            "DefaultDispatcher-worker-1",
+            "DefaultDispatcher-worker-9"
+          ]
+        },
+        "preparation_queue_wait": {
+          "wall_ms_per_accepted": 0.20458560657811511,
+          "thread_cpu_ms_per_accepted": 0.0,
+          "wall_ms_p95_per_call": 0.392659,
+          "wall_ms_max_per_call": 6.274373,
+          "count": 3167,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "matrix_copy": {
+          "wall_ms_per_accepted": 0.9022269797596457,
+          "thread_cpu_ms_per_accepted": 0.8416999193548387,
+          "wall_ms_p95_per_call": 1.725138,
+          "wall_ms_max_per_call": 17.530681,
+          "count": 3162,
+          "copied_bytes_lower_bound": 1398767616,
+          "allocated_bytes_lower_bound": 1398767616,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "f32_encode": {
+          "wall_ms_per_accepted": 0.8334460050600886,
+          "thread_cpu_ms_per_accepted": 0.7761342862112587,
+          "wall_ms_p95_per_call": 1.590658,
+          "wall_ms_max_per_call": 20.560384,
+          "count": 3162,
+          "copied_bytes_lower_bound": 1398767616,
+          "allocated_bytes_lower_bound": 1398767616,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "context_build": {
+          "wall_ms_per_accepted": 0.3011584155597723,
+          "thread_cpu_ms_per_accepted": 0.27998771695129665,
+          "wall_ms_p95_per_call": 0.604289,
+          "wall_ms_max_per_call": 7.912964,
+          "count": 3162,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "native_copy": {
+          "wall_ms_per_accepted": 0.4368233747628083,
+          "thread_cpu_ms_per_accepted": 0.3870239329538267,
+          "wall_ms_p95_per_call": 0.815267,
+          "wall_ms_max_per_call": 33.647583,
+          "count": 3162,
+          "copied_bytes_lower_bound": 699383808,
+          "allocated_bytes_lower_bound": 699383808,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "context_encode": {
+          "wall_ms_per_accepted": 2.7284837922201137,
+          "thread_cpu_ms_per_accepted": 2.5350055028462997,
+          "wall_ms_p95_per_call": 5.352986,
+          "wall_ms_max_per_call": 13.373251,
+          "count": 3162,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "freeze_total": {
+          "wall_ms_per_accepted": 5.519131850727388,
+          "thread_cpu_ms_per_accepted": 5.096430332700822,
+          "wall_ms_p95_per_call": 10.239502,
+          "wall_ms_max_per_call": 42.16158,
+          "count": 3162,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-preparation"
+          ]
+        },
+        "writer_queue_wait": {
+          "wall_ms_per_accepted": 27.393870726122707,
+          "thread_cpu_ms_per_accepted": 0.0,
+          "wall_ms_p95_per_call": 180.581421,
+          "wall_ms_max_per_call": 481.185303,
+          "count": 3136,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "writer_service": {
+          "wall_ms_per_accepted": 10.113629411764705,
+          "thread_cpu_ms_per_accepted": 8.929289612903226,
+          "wall_ms_p95_per_call": 0.156453,
+          "wall_ms_max_per_call": 529.550009,
+          "count": 3136,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "role_materialize": {
+          "wall_ms_per_accepted": 0.09135251359898798,
+          "thread_cpu_ms_per_accepted": 0.005003360847564833,
+          "wall_ms_p95_per_call": 0.156535,
+          "wall_ms_max_per_call": 129.791463,
+          "count": 254,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 2077581312,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "context_hash": {
+          "wall_ms_per_accepted": 0.05313360562934852,
+          "thread_cpu_ms_per_accepted": 0.03774533839342189,
+          "wall_ms_p95_per_call": 0.127116,
+          "wall_ms_max_per_call": 38.87325,
+          "count": 3152,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "role_aggregate": {
+          "wall_ms_per_accepted": 0.6077143693864643,
+          "thread_cpu_ms_per_accepted": 0.5415083387096774,
+          "wall_ms_p95_per_call": 0.691203,
+          "wall_ms_max_per_call": 9.068726,
+          "count": 6262,
+          "copied_bytes_lower_bound": 2077581312,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "logical_hash": {
+          "wall_ms_per_accepted": 0.6865671306135358,
+          "thread_cpu_ms_per_accepted": 0.6095563083491462,
+          "wall_ms_p95_per_call": 0.679321,
+          "wall_ms_max_per_call": 6.874593,
+          "count": 6262,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "codec": {
+          "wall_ms_per_accepted": 6.768914517077799,
+          "thread_cpu_ms_per_accepted": 6.33024433776091,
+          "wall_ms_p95_per_call": 124.542277,
+          "wall_ms_max_per_call": 248.225382,
+          "count": 254,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "block_hash": {
+          "wall_ms_per_accepted": 0.5030738149905123,
+          "thread_cpu_ms_per_accepted": 0.4739871068943706,
+          "wall_ms_p95_per_call": 8.334351,
+          "wall_ms_max_per_call": 16.279907,
+          "count": 254,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "metadata_encode": {
+          "wall_ms_per_accepted": 0.4900043902593295,
+          "thread_cpu_ms_per_accepted": 0.4416956018342821,
+          "wall_ms_p95_per_call": 21.085896,
+          "wall_ms_max_per_call": 27.917318,
+          "count": 127,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "chunk_encode_total": {
+          "wall_ms_per_accepted": 9.440161923782416,
+          "thread_cpu_ms_per_accepted": 8.608476715686274,
+          "wall_ms_p95_per_call": 311.789022,
+          "wall_ms_max_per_call": 512.829671,
+          "count": 127,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "file_write": {
+          "wall_ms_per_accepted": 0.09654993801391525,
+          "thread_cpu_ms_per_accepted": 0.08721621631878558,
+          "wall_ms_p95_per_call": 1.182983,
+          "wall_ms_max_per_call": 5.297201,
+          "count": 897,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "framing_hash": {
+          "wall_ms_per_accepted": 0.12297221125869703,
+          "thread_cpu_ms_per_accepted": 0.11333449493991143,
+          "wall_ms_p95_per_call": 1.648152,
+          "wall_ms_max_per_call": 8.681275,
+          "count": 553,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        },
+        "sync_commit": {
+          "wall_ms_per_accepted": 0.4415697849462366,
+          "thread_cpu_ms_per_accepted": 0.11029824667931688,
+          "wall_ms_p95_per_call": 11.886475,
+          "wall_ms_max_per_call": 44.600626,
+          "count": 344,
+          "copied_bytes_lower_bound": 0,
+          "allocated_bytes_lower_bound": 0,
+          "threads": [
+            "r2-bounded-writer"
+          ]
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Inclusive stage totals overlap component stages; do not sum them.",
+    "Allocation/copy counters are lower bounds, not full process allocation attribution.",
+    "Different runs/load/CPU frequency; not a controlled CPU speed ratio."
+  ]
+}

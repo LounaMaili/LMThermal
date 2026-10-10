@@ -79,3 +79,17 @@ LMTX v1 are unchanged. The app APK still has no R2/Zstd dependency, storage acti
 or product recorder. Desktop remains read-only and clean. No R1b/R3 work or merge.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+
+### Bounded DEFLATE target candidate
+
+The explicitly predeclared smaller-chunk candidate is
+`531b8fd0653d503309f5def0899380a939b6f6d6`. Default remains 16 MiB; the live
+repeat explicitly requests 4 MiB preferred chunks. No reader hard bound or
+wire field changes. All 272 JVM tests pass (core 232, app 12, prototype 28),
+including later-chunk logical-role exactness and independent seek. Both APK builds,
+lint (0 errors/11 existing warnings), localization and shared boundaries pass.
+The installed matching APKs again pass 41 Pixel tests (six opt-in skipped).
+All eight actual process-kill cases pass on this source too
+([report](reports/continuation-short-chunk-process-kill.json)). Live and final
+memory/packet results are recorded in the continuation report when complete.
