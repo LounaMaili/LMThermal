@@ -52,15 +52,15 @@ class RecordWriter(private val sink: AppendSink, private val boundary: (String, 
         val header = little(HEADER_BYTES).put(MAGIC).putShort(1).putShort(type.id.toShort()).putInt(0)
             .putLong(ordinal).putLong(bodyLength).putLong(previous).array()
         val digest = MessageDigest.getInstance("SHA-256")
-        sink.write(header); boundary("header", ordinal)
-        parts.forEachIndexed { index, bytes -> sink.write(bytes); digest.update(bytes); boundary("body_$index", ordinal) }
-        sink.sync(); syncs++; boundary("body_synced", ordinal)
+        StageCosts.timed("file_write") { sink.write(header) }; boundary("header", ordinal)
+        parts.forEachIndexed { index, bytes -> StageCosts.timed("file_write") { sink.write(bytes) }; StageCosts.timed("framing_hash") { digest.update(bytes) }; boundary("body_$index", ordinal) }
+        StageCosts.timed("sync_commit") { sink.sync() }; syncs++; boundary("body_synced", ordinal)
         val bodyHash = digest.digest()
         val prefix = little(64).put(COMMIT).putLong(length).putLong(ordinal).putLong(previous).put(bodyHash).array()
         val crc = CRC32().apply { update(header); update(prefix) }.value.toInt()
         val footer = little(FOOTER_BYTES).put(prefix).putInt(crc).putInt(0).array()
-        sink.write(footer); boundary("footer_written", ordinal)
-        sink.sync(); syncs++; boundary("footer_synced", ordinal)
+        StageCosts.timed("file_write") { sink.write(footer) }; boundary("footer_written", ordinal)
+        StageCosts.timed("sync_commit") { sink.sync() }; syncs++; boundary("footer_synced", ordinal)
         val ref = Reference(position, length, ordinal, hex(sha(header + bodyHash)), first, last)
         previous = position; position += length; ordinal++
         return ref

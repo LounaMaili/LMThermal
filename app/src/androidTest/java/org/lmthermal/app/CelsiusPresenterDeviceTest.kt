@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,6 +27,28 @@ class CelsiusPresenterDeviceTest {
     }
     private suspend fun waitUntil(condition: () -> Boolean) = withTimeout(5000) {
         while (!condition()) delay(10)
+    }
+    /** A controlled render slower than source cadence must still publish fresh completed frames.
+     * No USB or thermometry change: the delay is in a test measurement's copy accessor only.
+     */
+    @Test fun continuousValidSourceDoesNotStarveSlowRendering() = runBlocking {
+        org.junit.Assume.assumeTrue(InstrumentationRegistry.getArguments().getString("r2SlowRender") == "true")
+        val source=camera(); val base=source.value; val measurement=base.measurement!!
+        val presenter=CelsiusPresenter(InstrumentationRegistry.getInstrumentation().targetContext,source)
+        var completed=0
+        val observer=launch { presenter.state.collect { if ((it.measurement?.sequence ?: 0)>0) completed++ } }
+        try {
+            waitUntil { presenter.state.value.measurement != null }
+            repeat(60) { sequence ->
+                source.value=base.copy(measurement=object: ThermalMeasurement by measurement {
+                    override val sequence=sequence.toLong()+1
+                    override fun matrix():FloatArray { Thread.sleep(80); return measurement.matrix() }
+                })
+                delay(20)
+            }
+            // Read while the source is still changing, before the final request can catch up.
+            assertTrue("Slow valid rendering starved: only $completed published",completed>=4)
+        } finally { observer.cancelAndJoin(); presenter.dispose() }
     }
     @Test fun repeatedSettingsReplaceObsoletePendingRenders() = runBlocking {
         val source = camera()

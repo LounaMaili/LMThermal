@@ -59,7 +59,7 @@ class PrototypeRecorder(private val records: RecordWriter, val profile: Profile,
     }
     private fun physical(frame: Observation): Long = frame.bytes - if (profile == Profile.FULL) (frame.native?.size?.toLong() ?: 0L) else 0L
     fun accept(frame: Observation) {
-        require(!finalized); frame.validate()
+        require(!finalized); StageCosts.timed("admission_validation") { frame.validate() }
         require(frame.sequence > previousSequence && frame.relativeNs >= previousTime)
         val bytes = physical(frame)
         if (pending.isNotEmpty() && (frame.relativeNs - pending.first().relativeNs >= 1000000000L ||
@@ -70,7 +70,7 @@ class PrototypeRecorder(private val records: RecordWriter, val profile: Profile,
     }
     fun seal() {
         if (pending.isEmpty()) return
-        val encoded = ChunkEncoder(profile, codec).encode(pending)
+        val encoded = StageCosts.timed("chunk_encode_total") { ChunkEncoder(profile, codec).encode(pending) }
         chunkBoundary("before_chunk", committedChunks)
         val ref = records.append(RecordType.CHUNK, encoded.parts, pending.first().sequence, pending.last().gapEnd)
         // This boundary permits an actual child-process kill after commit and before index/checkpoint.

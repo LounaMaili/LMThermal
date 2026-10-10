@@ -9,8 +9,8 @@ import java.util.ArrayDeque
  * Writer work, compression and sync run on their own thread; queue acceptance is never a saved count.
  */
 class BoundedRecorder(file: File, profile: Profile, codec: BlockCodec,
-    sinkFactory: (File) -> AppendSink = ::FileSink) : Closeable {
-    private data class Item(val gap: Observation?, val frame: Observation) {
+    private val costs: StageCosts? = null, sinkFactory: (File) -> AppendSink = ::FileSink) : Closeable {
+    private data class Item(val gap: Observation?, val frame: Observation, val queuedNs: Long = System.nanoTime()) {
         val bytes get() = Bounds.add(frame.bytes,gap?.bytes ?: 0L)
     }
     private val monitor = Object()
@@ -38,10 +38,12 @@ class BoundedRecorder(file: File, profile: Profile, codec: BlockCodec,
                         while (queue.isEmpty() && !stopping) monitor.wait()
                         if (queue.isEmpty()) null else queue.removeFirst().also { queueBytes -= it.bytes }
                     } ?: break
-                    item.gap?.let(recorder::accept); recorder.accept(item.frame); drained++
+                    costs?.record("writer_queue_wait", System.nanoTime() - item.queuedNs)
+                    fun service() = StageCosts.timed("writer_service") { item.gap?.let(recorder::accept); recorder.accept(item.frame); drained++ }
+                    if (costs == null) service() else costs.attached { service() }
                 }
                 synchronized(monitor) { gap }?.let(recorder::accept)
-                recorder.finish(reason)
+                if (costs == null) recorder.finish(reason) else costs.attached { recorder.finish(reason) }
             } catch (error: Exception) { failure = error.javaClass.simpleName + ":" + (error.message ?: "write_failure") }
             finally { try { recorder.close() } catch (error: IOException) { failure = "close_failed:" + error.message } }
         }, "r2-bounded-writer").apply { start() }

@@ -20,7 +20,7 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
         require(observations.size in 1..Bounds.ENTRIES)
         var aggregate = 0L
         observations.forEach { frame ->
-            frame.validate()
+            StageCosts.timed("producer_validation") { frame.validate() }
             val physical = (frame.temperature?.size?.toLong() ?: 0L) + (frame.mask?.size ?: 0) + when (profile) {
                 Profile.ANALYSIS -> 0L; Profile.NATIVE -> frame.native?.size?.toLong() ?: 0L
                 Profile.FULL -> frame.acquisition?.size?.toLong() ?: 0L
@@ -34,16 +34,16 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
         val entries = observations.map { frame ->
             // The complete owned observation was validated in the admission pass above.
             val contextBytes = frame.contextBytes
-            val contextHash = hex(sha(contextBytes))
+            val contextHash = StageCosts.timed("context_hash") { hex(sha(contextBytes)) }
             var contextIndex = contextKeys.indexOf(contextHash)
-            if (contextIndex < 0) { contextIndex = contexts.size; contexts += LmtxJson.decode(contextBytes); contextKeys += contextHash }
+            if (contextIndex < 0) { contextIndex = contexts.size; contexts += StageCosts.timed("context_decode") { LmtxJson.decode(contextBytes) }; contextKeys += contextHash }
             val descriptors = linkedMapOf<String, Any?>()
             fun materialize(role: String, bytes: ByteArray, dtype: String, shape: List<Int>, encoding: String? = null) {
                 val block = roles.getOrPut(role) { ByteArrayOutputStream() }
                 val offset = block.size(); require(Bounds.add(offset.toLong(), bytes.size.toLong()) <= Bounds.CHUNK)
-                block.write(bytes); logical = Bounds.add(logical, bytes.size.toLong())
+                StageCosts.timed("role_aggregate", bytes.size.toLong(), bytes.size.toLong()) { block.write(bytes) }; logical = Bounds.add(logical, bytes.size.toLong())
                 descriptors[role] = mapOf("kind" to "materialized", "block" to role, "offset" to offset,
-                    "length" to bytes.size, "hash" to hex(sha(bytes)), "dtype" to dtype, "shape" to shape, "encoding" to encoding)
+                    "length" to bytes.size, "hash" to StageCosts.timed("logical_hash") { hex(sha(bytes)) }, "dtype" to dtype, "shape" to shape, "encoding" to encoding)
             }
             frame.temperature?.let { temperature ->
                 val shape = listOf(frame.height, frame.width)
@@ -56,7 +56,7 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
                     materialize("acquisition", transport, "u8", listOf(transport.size))
                     logical = Bounds.add(logical, native.size.toLong())
                     descriptors["native"] = mapOf("kind" to "view", "parent" to "acquisition", "offset" to 0,
-                        "length" to native.size, "hash" to hex(sha(native)), "dtype" to "u16le", "shape" to shape,
+                        "length" to native.size, "hash" to StageCosts.timed("logical_hash") { hex(sha(native)) }, "dtype" to "u16le", "shape" to shape,
                         "encoding" to frame.nativeEncoding)
                 }
             }
@@ -68,14 +68,14 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
         var offset = 0L; var physical = 0L; var codecNs = 0L
         val encoded = mutableListOf<ByteArray>()
         val blocks = roles.map { (role, stream) ->
-            val original = stream.toByteArray(); physical = Bounds.add(physical, original.size.toLong())
-            val start = System.nanoTime(); val stored = codec.encode(original); codecNs += System.nanoTime() - start
+            val original = StageCosts.timed("role_materialize", stream.size().toLong(), stream.size().toLong()) { stream.toByteArray() }; physical = Bounds.add(physical, original.size.toLong())
+            val start = System.nanoTime(); val stored = StageCosts.timed("codec") { codec.encode(original) }; codecNs += System.nanoTime() - start
             val descriptor = mapOf("role" to role, "offset" to offset, "stored" to stored.size,
-                "decoded" to original.size, "codec" to codec.id, "hash" to hex(sha(original)))
+                "decoded" to original.size, "codec" to codec.id, "hash" to StageCosts.timed("block_hash") { hex(sha(original)) })
             offset = Bounds.add(offset, stored.size.toLong()); encoded += stored; descriptor
         }
-        val metadata = LmtxJson.encode(mapOf("profile" to profile.name, "contexts" to contexts,
-            "entries" to entries, "blocks" to blocks))
+        val metadata = StageCosts.timed("metadata_encode") { LmtxJson.encode(mapOf("profile" to profile.name, "contexts" to contexts,
+            "entries" to entries, "blocks" to blocks)) }
         require(metadata.size <= Bounds.META && Bounds.add(physical, metadata.size.toLong()) <= Bounds.CHUNK)
         require(Bounds.add(offset, metadata.size.toLong() + 4) <= Bounds.RECORD - 112)
         return Encoded(listOf(little(4).putInt(metadata.size).array(), metadata) + encoded,

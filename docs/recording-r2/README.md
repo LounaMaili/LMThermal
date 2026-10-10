@@ -4,6 +4,7 @@
 gate. Incremental/steady memory remains unproven and real Windows parity is pending.
 Passing prototype JUnit methods does not override these failed acceptance gates.
 
+- [Continuation diagnosis plan](CONTINUATION_PLAN.md): ownership audit and staged ablations before optimization.
 - [Predeclared plan](TEST_PLAN.md), committed before measurements (`9269417`).
 - [Exact proposed framing annex](FRAMING_PROPOSAL.md), for R1b owner review only.
 - [Pixel 8 benchmark](ANDROID_BENCHMARK.md): both matrices and the separately

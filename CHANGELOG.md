@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Recording R2 throughput diagnosis — 2026-10-10)
+
+- Predeclared a staged continuation before optimization, with per-thread stage costs, controlled nondurable ablations, explicit source-ownership/copy audit, presentation-starvation hypothesis and clean memory/sustained rerun gates. Preserved all failed evidence and the existing packet; no performance success or wire change is claimed.
+
 ### Added (Recording R2 feasibility prototypes — 2026-10-07)
 
 - Isolated disposable framing, bounded writer, lossless codec, storage/fault and

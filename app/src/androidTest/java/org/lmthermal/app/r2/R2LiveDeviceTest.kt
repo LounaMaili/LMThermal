@@ -71,17 +71,6 @@ class R2LiveDeviceTest {
         }
         override fun decode(input: ByteArray, size: Int) = codec.decode(input, size)
     }
-    private fun owned(measurement: Ht301ThermalMeasurement, profile: Profile, originMs: Long): Observation {
-        val matrix = measurement.matrix(); val temperature = little(matrix.size * 4)
-        matrix.forEach(temperature::putFloat)
-        val metadata = R2HtContext.metadata(measurement.evidence)
-        return Observation(measurement.sequence, measurement.receivedMonotonicMs * 1000000,
-            (measurement.receivedMonotonicMs - originMs).coerceAtLeast(0) * 1000000, measurement.geometry.width, measurement.geometry.height,
-            temperature.array(), measurement.validityMask(), if (profile != Profile.ANALYSIS) measurement.evidence.source.imageBytes() else null,
-            if (profile == Profile.FULL) measurement.evidence.source.transportBytes() else null,
-            mapOf("module" to "ht301", "provenance" to "real-ht301-native-equivalent", "metadata" to metadata,
-                "warning" to "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.")).also { it.contextBytes }
-    }
     @Test fun sustainedReadyStreamAndCodecStudy() = runBlocking {
         assumeTrue(args.getString("r2Live") == "true")
         directory = File(context.filesDir, "recording-r2/" + args.getString("r2Run", "run-" + System.currentTimeMillis()))
@@ -112,7 +101,7 @@ class R2LiveDeviceTest {
             val sample = mutableListOf<Observation>()
             val sampleOrigin = SystemClock.elapsedRealtime()
             withTimeout(15000) { model.camera.state.mapNotNull { it.measurement as? Ht301ThermalMeasurement }
-                .distinctUntilChangedBy { it.sequence }.take(25).collect { sample += owned(it, Profile.FULL, sampleOrigin) } }
+                .distinctUntilChangedBy { it.sequence }.take(25).collect { sample += freezeLegacy(it, Profile.FULL, sampleOrigin) } }
             val heartbeat = mutableListOf<Long>(); var heartbeatActive = true; var heartbeatLast = 0L
             val callback = object: Choreographer.FrameCallback {
                 override fun doFrame(time: Long) { synchronized(heartbeat) { if (heartbeatLast != 0L && heartbeat.size < 20000) heartbeat += time - heartbeatLast; heartbeatLast = time }
@@ -175,7 +164,7 @@ class R2LiveDeviceTest {
                             repeat(16) { i -> fingerprint = fingerprint * 31 + measurement.evidence.source.pixel((i*23)%384, (i*17)%288) }
                             fingerprints += fingerprint
                             if (profile != null) {
-                                val start = System.nanoTime(); val frame = owned(measurement, profile, origin)
+                                val start = System.nanoTime(); val frame = freezeLegacy(measurement, profile, origin)
                                 freezeNs += System.nanoTime() - start; copiedBytes += frame.bytes
                                 writer?.offer(frame)
                             }
@@ -238,7 +227,7 @@ class R2LiveDeviceTest {
                             val measurement = state.measurement as? Ht301ThermalMeasurement
                             if (measurement != null && measurement.sequence > lastSequence) {
                                 lastSequence = measurement.sequence
-                                detachedWriter.offer(owned(measurement, Profile.FULL, origin))
+                                detachedWriter.offer(freezeLegacy(measurement, Profile.FULL, origin))
                             }
                         }
                     }
