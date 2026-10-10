@@ -37,7 +37,7 @@ class PageIndex(private val writer: RecordWriter) {
 class PrototypeRecorder(private val records: RecordWriter, val profile: Profile, private val codec: BlockCodec,
     private val chunkBoundary: (String, Long) -> Unit = { _, _ -> }) : Closeable {
     private val index = PageIndex(records)
-    private val pending = mutableListOf<Observation>()
+    private val pending = mutableListOf<ProducerEntry>()
     private var pendingBytes = 0L
     private var previousSequence = -1L
     private var previousTime = -1L
@@ -45,6 +45,10 @@ class PrototypeRecorder(private val records: RecordWriter, val profile: Profile,
     private var lastChunk: Reference? = null
     var committedEntries = 0L; private set
     var committedChunks = 0L; private set
+    var committedMeasurements = 0L; private set
+    var committedGapSequences = 0L; private set
+    @Volatile var encodingBufferBytes = 0L; private set
+    @Volatile var pendingPayloadBytes = 0L; private set
     var physicalBytes = 0L; private set
     var logicalBytes = 0L; private set
     var storedBytes = 0L; private set
@@ -58,28 +62,35 @@ class PrototypeRecorder(private val records: RecordWriter, val profile: Profile,
             "codecs" to listOf(codec.id), "warning" to "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."))
     }
     private fun physical(frame: Observation): Long = frame.bytes - if (profile == Profile.FULL) (frame.native?.size?.toLong() ?: 0L) else 0L
-    fun accept(frame: Observation) {
-        require(!finalized); StageCosts.timed("admission_validation") { frame.validate() }
+    fun accept(frame: Observation) = acceptEntry(ProducerEntry(frame))
+    fun accept(frame: OwnedObservation) = acceptEntry(ProducerEntry(frame.frame, frame))
+    internal fun acceptEntry(input: ProducerEntry) {
+        val frame = input.frame
+        require(!finalized)
+        if (input.owned == null) StageCosts.timed("admission_validation") { frame.validate() }
+        else require(input.owned.frame === frame)
         require(frame.sequence > previousSequence && frame.relativeNs >= previousTime)
         val bytes = physical(frame)
-        if (pending.isNotEmpty() && (frame.relativeNs - pending.first().relativeNs >= 1000000000L ||
+        if (pending.isNotEmpty() && (frame.relativeNs - pending.first().frame.relativeNs >= 1000000000L ||
             pending.size >= 32 || Bounds.add(pendingBytes, bytes) >= Bounds.TARGET)) seal()
-        pending += frame; pendingBytes = Bounds.add(pendingBytes, bytes)
+        pending += input; pendingPayloadBytes += frame.payloadBytes; pendingBytes = Bounds.add(pendingBytes, bytes)
         previousSequence = frame.gapEnd; previousTime = frame.relativeNs
         if (pendingBytes >= Bounds.TARGET || pending.size >= 32) seal()
     }
     fun seal() {
         if (pending.isEmpty()) return
-        val encoded = StageCosts.timed("chunk_encode_total") { ChunkEncoder(profile, codec).encode(pending) }
+        val encoded = StageCosts.timed("chunk_encode_total") { ChunkEncoder(profile, codec) { encodingBufferBytes = it }.encodeEntries(pending) }
         chunkBoundary("before_chunk", committedChunks)
-        val ref = records.append(RecordType.CHUNK, encoded.parts, pending.first().sequence, pending.last().gapEnd)
+        val ref = records.append(RecordType.CHUNK, encoded.parts, pending.first().frame.sequence, pending.last().frame.gapEnd)
         // This boundary permits an actual child-process kill after commit and before index/checkpoint.
         chunkBoundary("after_chunk", committedChunks)
         index.add(ref); lastChunk = ref; committedChunks++; committedEntries += pending.size
+        committedMeasurements += pending.count { it.frame.temperature != null }
+        committedGapSequences += pending.filter { it.frame.temperature == null }.sumOf { it.frame.gapEnd - it.frame.sequence + 1 }
         physicalBytes += encoded.physicalBytes; logicalBytes += encoded.logicalBytes; storedBytes += encoded.storedBytes
         metadataBytes += encoded.metadataBytes; codecNs += encoded.codecNs
         maxChunkBytes = maxOf(maxChunkBytes, encoded.physicalBytes + encoded.metadataBytes)
-        pending.clear(); pendingBytes = 0
+        pending.clear(); pendingBytes = 0; pendingPayloadBytes = 0; encodingBufferBytes = 0
         if (committedChunks % 32 == 0L) checkpoint()
     }
     fun checkpoint() {

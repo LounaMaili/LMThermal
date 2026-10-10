@@ -32,7 +32,6 @@ class CelsiusPresenterDeviceTest {
      * No USB or thermometry change: the delay is in a test measurement's copy accessor only.
      */
     @Test fun continuousValidSourceDoesNotStarveSlowRendering() = runBlocking {
-        org.junit.Assume.assumeTrue(InstrumentationRegistry.getArguments().getString("r2SlowRender") == "true")
         val source=camera(); val base=source.value; val measurement=base.measurement!!
         val presenter=CelsiusPresenter(InstrumentationRegistry.getInstrumentation().targetContext,source)
         var completed=0

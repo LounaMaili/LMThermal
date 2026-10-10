@@ -70,3 +70,37 @@ packet, copied into the test app's private directory for this probe. It requests
 one operator-chosen SAF destination, checks rw/append/truncate/readback/sync/close,
 and records source integrity. It is absent from the application APK. Cancellation
 and permission lifetime are independent tests; no provider-wide guarantee follows.
+
+## Continuation stage diagnosis
+
+See [the committed continuation plan](../../docs/recording-r2/CONTINUATION_PLAN.md).
+`R2StagesDeviceTest#controlledStages` is opt-in with `r2Stages`; defaults are
+10 s warmup and 60 s per stage. Set `r2Run` to a fresh identifier and `r2Revision`
+to the exact installed executable SHA. Choose
+`baseline,observe,freeze,queue,discard,nosync,file`; output is private
+`files/recording-r2/<run>/stages.json`. Discard/no-sync are nondurable ablations.
+They retain the legacy intake algorithm for before/after diagnosis, not an approved
+recording configuration. Stage CPU uses Android thread CPU; copy/allocation counters
+are explicitly lower bounds and process allocation counters are not isolated CPU.
+
+After building/installing the test APK, with the device unlocked and camera closed:
+
+```sh
+python3 tools/recording_r2/check_saf_launch.py --adb /path/to/adb --serial <paired-serial>
+python3 -m unittest discover -s tools/recording_r2 -p 'test_*.py'
+```
+
+The first command launches only the separate test probe, then verifies visible
+instructions and a usable nonoverlapping destination button via Android layout
+diagnostics. It does not open USB or select a destination. Actual provider claims
+remain limited to the preserved SAF evidence; this is a launch regression.
+
+
+`R2CandidateDeviceTest#stagedCandidate` opts in with `r2Candidate`, using a fresh
+`r2Run` and exact installed `r2Revision`. First choose
+`baseline,analysis-stored,full-stored` (20 s warmup/120 s measurement each).
+It stops escalation on preparation/writer loss or failure. Only after that passes,
+choose `native-stored,analysis-deflate-1,native-deflate-1,full-deflate-1`.
+Private `candidate.json` includes saved matrices versus gaps, costs, backlog,
+render freshness, 100 ms Java/native and 1 s PSS/RSS, post-GC and conservative
+live array-slot inventories. Clean-process memory comparisons are separate.

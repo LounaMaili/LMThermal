@@ -31,7 +31,9 @@ interface BlockCodec { val id: Int; val name: String; fun encode(input: ByteArra
 
 object Stored : BlockCodec {
     override val id = 0; override val name = "stored"
-    override fun encode(input: ByteArray) = input.copyOf()
+    // Encoding consumes an immutable owned role block until append completes; no compression copy.
+    // Decoding remains defensive. Callers must not mutate input while its encoded result is used.
+    override fun encode(input: ByteArray) = input.also { require(it.size <= Bounds.CHUNK) }
     override fun decode(input: ByteArray, size: Int): ByteArray { require(size in 0..Bounds.CHUNK && input.size == size); return input.copyOf() }
 }
 

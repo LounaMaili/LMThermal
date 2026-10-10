@@ -6,6 +6,8 @@ import android.os.SystemClock
 import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.channels.Channel
+import java.util.concurrent.atomic.AtomicLong
 import org.lmthermal.camera.*
 import org.lmthermal.core.CelsiusPalette
 import org.lmthermal.core.CelsiusPresentationSettings
@@ -15,6 +17,7 @@ import org.lmthermal.core.CursorInspection
 import org.lmthermal.core.CursorReading
 import org.lmthermal.core.LatestFrameState
 import org.lmthermal.core.NativePixel
+import org.lmthermal.core.NativeImageGeometry
 
 /** A completed render and its generic source measurement are published together; no protocol data is required. */
 data class CelsiusPresentationSnapshot(val measurement: ThermalMeasurement? = null,
@@ -22,7 +25,7 @@ data class CelsiusPresentationSnapshot(val measurement: ThermalMeasurement? = nu
     val range: CelsiusRange? = null, val palette: CelsiusPalette? = null, val renderMs: Double = 0.0,
     val error: CameraErrorCode? = null)
 
-/** Cancellable latest-request presentation worker, independent of transport/session/thermometry.
+/** One in-flight render plus one conflated pending request, independent of transport/session/thermometry.
  * Geometry comes from measurement data. Registered module callbacks preserve optional numerical diagnostics.
  */
 class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSessionState<Bitmap>>,
@@ -44,15 +47,37 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
     private var selectedModule: CameraModuleId? = null
     private var skipped = 0L
 
+    private data class RenderKey(val module: CameraModuleMetadata?, val device: CameraDeviceIdentity?,
+        val geometry: NativeImageGeometry?, val settings: CelsiusPresentationSettings)
+    private data class Request(val source: CameraSessionState<Bitmap>, val settings: CelsiusPresentationSettings,
+        val generation: Long, val key: RenderKey)
+    private val requests = Channel<Request>(Channel.CONFLATED)
+    private val generation = AtomicLong()
+    private fun key(source: CameraSessionState<Bitmap>, settings: CelsiusPresentationSettings) =
+        RenderKey(source.module, source.device, source.geometry, settings)
+    /** New valid frames supersede the pending request, not the useful in-flight render.
+     * Close/unavailable/settings/device changes still invalidate in-flight publication.
+     */
+    private fun canPublish(request: Request): Boolean {
+        val current = camera.value
+        val measurement = current.measurement ?: return false
+        val original = request.source.measurement ?: return false
+        return scope.isActive && generation.get() == request.generation &&
+            current.lifecycle == CameraLifecycle.STREAMING && current.error == null &&
+            measurement.validity == MeasurementValidity.VALID && key(current, mutableSettings.value) == request.key &&
+            measurement.sequence >= original.sequence && measurement.receivedMonotonicMs >= original.receivedMonotonicMs
+    }
     init {
         scope.launch {
-            combine(camera, mutableSettings) { source, settings -> source to settings }.collectLatest { (source, settings) ->
+            var currentKey: RenderKey? = null
+            combine(camera, mutableSettings) { source, settings -> source to settings }.collect { (source, settings) ->
                 source.module?.id?.let { id ->
                     if (selectedModule != null && id != selectedModule) mutablePixel.value = null
                     selectedModule = id
                 }
                 val measurement = source.measurement
-                if (measurement == null) {
+                if (measurement == null || measurement.validity != MeasurementValidity.VALID || source.lifecycle != CameraLifecycle.STREAMING || source.error != null) {
+                    generation.incrementAndGet(); currentKey = null
                     latest.value = CelsiusPresentationSnapshot()
                     if (previousAvailable) evidence.record(mapOf("event" to "presentation_unavailable",
                         "session_state" to (source.status.detail?.machineCode ?: source.lifecycle.name),
@@ -60,8 +85,18 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
                         "module_id" to source.module?.id?.value,
                         "monotonic_ms" to SystemClock.elapsedRealtime(), "celsius_legend" to false, "cursor_celsius" to null))
                     previousAvailable = false
-                    return@collectLatest
+                    return@collect
                 }
+                val nextKey = key(source, settings)
+                if (nextKey != currentKey) { generation.incrementAndGet(); currentKey = nextKey }
+                requests.trySend(Request(source, settings, generation.get(), nextKey))
+            }
+        }
+        scope.launch {
+            for (request in requests) {
+                if (!canPublish(request)) { skipped++; continue }
+                val source = request.source; val settings = request.settings
+                val measurement = requireNotNull(source.measurement)
                 val start = SystemClock.elapsedRealtimeNanos()
                 val rendered = try {
                     withContext(Dispatchers.Default) {
@@ -75,15 +110,15 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
                 } catch (cancelled: CancellationException) { throw cancelled }
                 catch (failure: Exception) {
                     Log.e("LMThermalPresentation", "Module presentation data rejected", failure)
-                    latest.value = CelsiusPresentationSnapshot(error = CameraErrorCode.MODULE_DATA_INVALID)
-                    return@collectLatest
+                    latest.updateIf({ canPublish(request) }) { CelsiusPresentationSnapshot(error = CameraErrorCode.MODULE_DATA_INVALID) }
+                    continue
                 }
-                if (!scope.isActive || camera.value !== source || mutableSettings.value != settings) { skipped++; return@collectLatest }
+                if (!canPublish(request)) { skipped++; continue }
                 var published = false
-                latest.updateIf({ scope.isActive && camera.value === source && mutableSettings.value == settings }) {
+                latest.updateIf({ canPublish(request) }) {
                     published = true; rendered
                 }
-                if (!published) { skipped++; return@collectLatest }
+                if (!published) { skipped++; continue }
                 if (!recording) { evidence.reset(); recording = true }
                 val now = SystemClock.elapsedRealtime()
                 if (!previousAvailable || previousSettings != settings || now - lastLog >= 2000) {
@@ -131,5 +166,5 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
             "sample" to it.sample?.let { sample -> mapOf("encoding_id" to sample.encodingId, "value" to sample.value) }) +
             cursorEvidence(moduleId, it)
     }
-    fun dispose() { roi.dispose(); scope.cancel(); latest.value = CelsiusPresentationSnapshot() }
+    fun dispose() { generation.incrementAndGet(); requests.close(); roi.dispose(); scope.cancel(); latest.value = CelsiusPresentationSnapshot() }
 }

@@ -4,8 +4,18 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R2 measured throughput candidate — 2026-10-10)
+
+- Preserved original seven-stage Pixel ablations: acquisition near 25 FPS, no freeze/queue-only drops, but 137 STORED drops even into a no-write sink. Duplicate finite-value scans and encode/decode JSON work dominate chunk-sealing bursts; original failed evidence remains intact.
+- Added private immutable HT producer tokens, complete shared context mapping, bulk little-endian Float32 encoding, exact-size role blocks and owned STORED passthrough. Generic mutable producers and hostile readers retain full validation; Full hashes its native prefix without extracting another plane. All integrity domains and evidence are preserved.
+- Added a dedicated byte-bounded preparation thread retaining proven owned HT evidence, explicit preparation loss accounting, separate committed-measurement/gap counts, and staged opt-in throughput/memory diagnostics. No product recording controls, acquisition/protocol/cadence/thermometry change or R1b wire acceptance.
+- Corrected demonstrated display publication starvation with one in-flight render plus one conflated latest request, generation invalidation and Close/dispose regressions. Retained the test-only SAF layout fix and added a camera-free launch check. Sustained candidate/memory/Windows gates remain pending until measured; see the continuation report.
+
+
 ### Added (Recording R2 throughput diagnosis — 2026-10-10)
 
+- Reproduced presentation starvation under a continuously valid source with controlled slow rendering (zero publications), and corrected only the demonstrated scheduling path: one in-flight render plus one latest pending request, with Close/source/settings invalidation guards and regression coverage. Live pressure validation remains pending.
+- Added a test-APK SAF launch/layout checker and stage byte/copy probes; retained the system-bar fix and exact framing/codec bytes.
 - Predeclared a staged continuation before optimization, with per-thread stage costs, controlled nondurable ablations, explicit source-ownership/copy audit, presentation-starvation hypothesis and clean memory/sustained rerun gates. Preserved all failed evidence and the existing packet; no performance success or wire change is claimed.
 
 ### Added (Recording R2 feasibility prototypes — 2026-10-07)

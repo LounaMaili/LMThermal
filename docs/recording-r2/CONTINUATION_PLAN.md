@@ -91,3 +91,17 @@ Android same-byte packet. Real Windows remains pending until actual execution.
 Retain the test-only SAF system-bar fix and add launch regression coverage.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+## Diagnosis update before live ablations
+
+A controlled Robolectric test reproduced the presentation hypothesis against the
+unchanged pre-continuation production source: 100 ms matrix-copy accessor, source
+arrival every 10 ms for 100 updates, **zero published renders during arrivals**.
+The necessary presentation-only correction passes the same test, completing at
+least three renders while arrivals continue, and a blocked-render/Close regression.
+Original product/test APKs are retained in ignored local storage for the pre-copy-
+optimization ablations. The writer/intake algorithm is still unchanged.
+
+Wireless pairing was genuinely absent and was restored with normal operator pairing.
+The original seven live ablations completed; their evidence and measured candidate
+changes are recorded in [CONTINUATION_RESULTS.md](CONTINUATION_RESULTS.md).

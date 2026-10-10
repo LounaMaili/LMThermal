@@ -83,17 +83,27 @@ coordinates and measurement state are unchanged.
 
 ## Bounded worker and observability
 
-A `combine`/`collectLatest` worker conflates camera/settings requests. It permits one
-render in flight and replaces obsolete requests. Completion checks current camera
-snapshot and settings before publication; disposal cancels work and clears output.
-Acquisition never waits for Compose. Valid measurements skip redundant acquisition-
-side grayscale rendering. Transport, session, thermometry arithmetic and fresh LUT
-construction remain unchanged.
+A small `combine` collector offers camera/settings requests to one conflated
+pending slot. A separate worker completes one render at a time, then takes the
+newest pending source. It does not cancel a useful in-flight render merely because
+a newer valid frame arrived. Under continuous source updates, the former
+`collectLatest` plus exact source-identity publication guard could suppress every
+completion and leave a seconds-old image visible. A controlled 100 ms render /
+10 ms source-arrival regression reproduced zero publications before the correction.
+
+Module/device/geometry/settings changes and unavailable/closed/error states invalidate
+publication with a generation guard. Completion also checks current valid streaming
+state and nondecreasing source sequence/receipt time; disposal cancels and clears output.
+One in-flight plus one pending request bounds display work; recording must use its
+own explicit retention/drop policy. Acquisition never waits for Compose. Valid
+measurements skip acquisition-side grayscale. Transport/session/thermometry are
+unchanged. This scheduling regression passes on the JVM Android runtime; sustained
+Pixel recording-pressure freshness still requires the continuation live tests.
 
 Debug-only, bounded `presentation.jsonl` records numeric render timings, settings,
 range, cursor samples, callback FPS, acquisition replacements and completed renders
-rejected as superseded. This last counter excludes coroutine-cancelled requests;
-it is not a total dropped-render count. No image payloads or scene hashes are saved.
+rejected as superseded. This counter records invalidated renders skipped at publication/consumption;
+it does not count every pending request replaced in the conflated slot. No image payloads or scene hashes are saved.
 Render timing includes core range/color work, bitmap construction and dispatch wait;
 thermometry evaluation is sampled separately. Hardware results and timing distributions
 are in [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md).

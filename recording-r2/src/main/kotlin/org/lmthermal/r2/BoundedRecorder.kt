@@ -10,16 +10,17 @@ import java.util.ArrayDeque
  */
 class BoundedRecorder(file: File, profile: Profile, codec: BlockCodec,
     private val costs: StageCosts? = null, sinkFactory: (File) -> AppendSink = ::FileSink) : Closeable {
-    private data class Item(val gap: Observation?, val frame: Observation, val queuedNs: Long = System.nanoTime()) {
-        val bytes get() = Bounds.add(frame.bytes,gap?.bytes ?: 0L)
+    private data class Item(val gap: ProducerEntry?, val frame: ProducerEntry, val queuedNs: Long = System.nanoTime()) {
+        val bytes get() = Bounds.add(frame.frame.bytes,gap?.frame?.bytes ?: 0L)
     }
     private val monitor = Object()
     private val queue = ArrayDeque<Item>()
     private var queueBytes = 0L
-    private var gap: Observation? = null
+    private var gap: ProducerEntry? = null
     private var stopping = false
     private var reason = "user_stop"
     @Volatile var failure: String? = null; private set
+    @Volatile var inFlightBytes = 0L; private set
     @Volatile var maxBytes = 0L; private set
     @Volatile var maxDepth = 0; private set
     @Volatile var drops = 0L; private set
@@ -36,26 +37,27 @@ class BoundedRecorder(file: File, profile: Profile, codec: BlockCodec,
                 while (true) {
                     val item = synchronized(monitor) {
                         while (queue.isEmpty() && !stopping) monitor.wait()
-                        if (queue.isEmpty()) null else queue.removeFirst().also { queueBytes -= it.bytes }
+                        if (queue.isEmpty()) null else queue.removeFirst().also { queueBytes -= it.bytes; inFlightBytes = it.bytes }
                     } ?: break
                     costs?.record("writer_queue_wait", System.nanoTime() - item.queuedNs)
-                    fun service() = StageCosts.timed("writer_service") { item.gap?.let(recorder::accept); recorder.accept(item.frame); drained++ }
-                    if (costs == null) service() else costs.attached { service() }
+                    fun service() = StageCosts.timed("writer_service") { item.gap?.let(recorder::acceptEntry); recorder.acceptEntry(item.frame); drained++ }
+                    if (costs == null) service() else costs.attached { service() }; inFlightBytes = 0
                 }
-                synchronized(monitor) { gap }?.let(recorder::accept)
+                synchronized(monitor) { gap }?.let(recorder::acceptEntry)
                 if (costs == null) recorder.finish(reason) else costs.attached { recorder.finish(reason) }
             } catch (error: Exception) { failure = error.javaClass.simpleName + ":" + (error.message ?: "write_failure") }
-            finally { try { recorder.close() } catch (error: IOException) { failure = "close_failed:" + error.message } }
+            finally { inFlightBytes = 0; try { recorder.close() } catch (error: IOException) { failure = "close_failed:" + error.message } }
         }, "r2-bounded-writer").apply { start() }
     }
-    fun offer(frame: Observation): Boolean = synchronized(monitor) {
+    fun offer(frame: Observation): Boolean = offerEntry(ProducerEntry(frame))
+    fun offer(frame: OwnedObservation): Boolean = offerEntry(ProducerEntry(frame.frame, frame))
+    private fun offerEntry(frame: ProducerEntry): Boolean = synchronized(monitor) {
         if (stopping || failure != null) return false
         intake++
         val item=Item(gap,frame)
         if (Bounds.add(queueBytes,item.bytes) > Bounds.QUEUE || queue.size >= 128) {
             drops++
-            gap = gap?.copy(gapEnd = frame.gapEnd) ?: frame.copy(temperature = null, mask = null, native = null,
-                acquisition = null, receiptNs = null, reason = "writer_overload")
+            gap = (gap ?: frame).gap("writer_overload", frame.frame.gapEnd)
             return false
         }
         queue.addLast(item); gap = null; queueBytes += item.bytes

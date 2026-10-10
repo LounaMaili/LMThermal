@@ -2,7 +2,6 @@ package org.lmthermal.r2
 
 import java.math.BigDecimal
 import java.nio.ByteBuffer
-import java.nio.CharBuffer
 import java.nio.charset.CodingErrorAction
 
 typealias JsonObject = Map<String, Any?>
@@ -34,12 +33,32 @@ object R2Json {
                 is Boolean -> text.append(v)
                 is Number -> {
                     demand(v !is Double || v.isFinite()); demand(v !is Float || v.isFinite())
-                    text.append(v.toString())
+                    val token = v.toString()
+                    demand(token.length <= MAX_STRING, "resource_limit")
+                    demand(numberToken.matches(token))
+                    // Built-in numeric types already establish parseable precision/range.
+                    // A custom Number must satisfy the same reader numeric boundary.
+                    if (v !is Byte && v !is Short && v !is Int && v !is Long && v !is Float && v !is Double &&
+                        v !is BigDecimal && v !is java.math.BigInteger) {
+                        try { if (token.none { it in ".eE" }) token.toBigInteger() else BigDecimal(token) }
+                        catch (_: Exception) { throw R2JsonException("invalid_manifest", "Numeric overflow") }
+                    }
+                    text.append(token)
                 }
                 is String -> {
-                    val utf8 = try { Charsets.UTF_8.newEncoder().onMalformedInput(CodingErrorAction.REPORT).encode(CharBuffer.wrap(v)) }
-                    catch (_: Exception) { throw R2JsonException("invalid_manifest", "Invalid Unicode string") }
-                    demand(utf8.remaining() <= MAX_STRING, "resource_limit")
+                    // Validate UTF-16 and count UTF-8 bytes without a Charset encoder per key.
+                    // This establishes the reader invariant before writing; replacement is forbidden.
+                    var bytes = 0; var at = 0
+                    while (at < v.length) {
+                        val c = v[at++]
+                        bytes += when {
+                            c.code < 128 -> 1
+                            c.code < 2048 -> 2
+                            c.isHighSurrogate() -> { demand(at < v.length && v[at].isLowSurrogate()); at++; 4 }
+                            else -> { demand(!c.isLowSurrogate()); 3 }
+                        }
+                        demand(bytes <= MAX_STRING, "resource_limit")
+                    }
                     text.append('"')
                     v.forEach { c -> when (c) {
                         '"' -> text.append("\\\""); '\\' -> text.append("\\\\")
@@ -51,9 +70,10 @@ object R2Json {
                     demand(depth < MAX_DEPTH, "resource_limit"); items += v.size
                     demand(items <= MAX_ITEMS, "resource_limit")
                     text.append('{')
+                    val keys = HashSet<String>()
                     v.entries.forEachIndexed { i, entry ->
                         if (i > 0) text.append(',')
-                        demand(entry.key is String); write(entry.key, depth + 1); text.append(':'); write(entry.value, depth + 1)
+                        demand(entry.key is String && keys.add(entry.key as String)); write(entry.key, depth + 1); text.append(':'); write(entry.value, depth + 1)
                     }; text.append('}')
                 }
                 is List<*> -> {
@@ -68,8 +88,7 @@ object R2Json {
         write(value, 0)
         return text.toString().toByteArray(Charsets.UTF_8).also {
             demand(it.size <= MAX_BYTES, "resource_limit")
-            // Also reject malformed surrogate sequences supplied by callers, rather than replacing them.
-            decode(it)
+            // All encoder invariants were established above; do not allocate a discarded parse tree.
         }
     }
 

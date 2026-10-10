@@ -1,7 +1,6 @@
 package org.lmthermal.r2
 
 import org.lmthermal.r2.R2Json as LmtxJson
-import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -13,14 +12,26 @@ internal fun Map<String, Any?>.list(key: String): List<Any?> = getValue(key) as?
 /** Role-major independent blocks preserve logical per-frame hashes. HT Full stores transport once.
  * Context closure is chunk-local; no seeking reader needs an earlier frame's settings.
  */
-class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) {
+class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec, private val ownedBytes: (Long) -> Unit = {}) {
     data class Encoded(val parts: List<ByteArray>, val logicalBytes: Long, val physicalBytes: Long,
         val storedBytes: Long, val metadataBytes: Int, val codecNs: Long)
-    fun encode(observations: List<Observation>): Encoded {
+    fun encode(observations: List<Observation>): Encoded = encodeEntries(observations.map { ProducerEntry(it) })
+    internal fun encodeEntries(inputs: List<ProducerEntry>): Encoded {
+        val observations = inputs.map { it.frame }
         require(observations.size in 1..Bounds.ENTRIES)
         var aggregate = 0L
-        observations.forEach { frame ->
-            StageCosts.timed("producer_validation") { frame.validate() }
+        val sizes = linkedMapOf<String, Int>()
+        inputs.forEach { input ->
+            val frame = input.frame
+            if (input.owned == null) StageCosts.timed("producer_validation") { frame.validate() }
+            else require(input.owned.frame === frame)
+            fun size(role: String, bytes: ByteArray?) { if (bytes != null) sizes[role] = Math.addExact(sizes[role] ?: 0, bytes.size) }
+            size("temperature", frame.temperature); size("validity", frame.mask)
+            if (frame.temperature != null) when (profile) {
+                Profile.ANALYSIS -> Unit
+                Profile.NATIVE -> size("native", requireNotNull(frame.native))
+                Profile.FULL -> size("acquisition", requireNotNull(frame.acquisition))
+            }
             val physical = (frame.temperature?.size?.toLong() ?: 0L) + (frame.mask?.size ?: 0) + when (profile) {
                 Profile.ANALYSIS -> 0L; Profile.NATIVE -> frame.native?.size?.toLong() ?: 0L
                 Profile.FULL -> frame.acquisition?.size?.toLong() ?: 0L
@@ -29,19 +40,24 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
         }
         val contexts = mutableListOf<Map<String, Any?>>()
         val contextKeys = mutableListOf<String>()
-        val roles = linkedMapOf<String, ByteArrayOutputStream>()
+        // Exact bounded role blocks: one allocation and one fill, no BAOS growth/final copy.
+        val roles = sizes.mapValuesTo(linkedMapOf()) { (_, size) -> StageCosts.timed("role_materialize", allocated = size.toLong()) { ByteArray(size) } }
+        ownedBytes(aggregate)
+        val positions = mutableMapOf<String, Int>()
         var logical = 0L
-        val entries = observations.map { frame ->
+        val entries = inputs.map { input ->
+            val frame = input.frame
             // The complete owned observation was validated in the admission pass above.
             val contextBytes = frame.contextBytes
             val contextHash = StageCosts.timed("context_hash") { hex(sha(contextBytes)) }
             var contextIndex = contextKeys.indexOf(contextHash)
-            if (contextIndex < 0) { contextIndex = contexts.size; contexts += StageCosts.timed("context_decode") { LmtxJson.decode(contextBytes) }; contextKeys += contextHash }
+            if (contextIndex < 0) { contextIndex = contexts.size; contexts += if (input.owned != null) frame.context else StageCosts.timed("context_decode") { LmtxJson.decode(contextBytes) }; contextKeys += contextHash }
             val descriptors = linkedMapOf<String, Any?>()
             fun materialize(role: String, bytes: ByteArray, dtype: String, shape: List<Int>, encoding: String? = null) {
-                val block = roles.getOrPut(role) { ByteArrayOutputStream() }
-                val offset = block.size(); require(Bounds.add(offset.toLong(), bytes.size.toLong()) <= Bounds.CHUNK)
-                StageCosts.timed("role_aggregate", bytes.size.toLong(), bytes.size.toLong()) { block.write(bytes) }; logical = Bounds.add(logical, bytes.size.toLong())
+                val block = roles.getValue(role)
+                val offset = positions[role] ?: 0; require(Bounds.add(offset.toLong(), bytes.size.toLong()) <= block.size)
+                StageCosts.timed("role_aggregate", bytes.size.toLong()) { bytes.copyInto(block, offset) }
+                positions[role] = offset + bytes.size; logical = Bounds.add(logical, bytes.size.toLong())
                 descriptors[role] = mapOf("kind" to "materialized", "block" to role, "offset" to offset,
                     "length" to bytes.size, "hash" to StageCosts.timed("logical_hash") { hex(sha(bytes)) }, "dtype" to dtype, "shape" to shape, "encoding" to encoding)
             }
@@ -51,12 +67,20 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
                 frame.mask?.let { materialize("validity", it, "u8", shape) }
                 if (profile == Profile.NATIVE) materialize("native", requireNotNull(frame.native), "u16le", shape, frame.nativeEncoding)
                 if (profile == Profile.FULL) {
-                    val transport = requireNotNull(frame.acquisition); val native = requireNotNull(frame.native)
-                    require(transport.size >= native.size && native.indices.all { transport[it] == native[it] })
+                    val transport = requireNotNull(frame.acquisition)
+                    val viewLength = input.owned?.nativeViewLength?.takeIf { it > 0 } ?: requireNotNull(frame.native).size
+                    if (input.owned == null) {
+                        val native = requireNotNull(frame.native)
+                        StageCosts.timed("native_view_validation") { require(transport.size >= native.size && native.indices.all { transport[it] == native[it] }) }
+                    }
+                    require(viewLength == frame.width * frame.height * 2 && transport.size >= viewLength)
                     materialize("acquisition", transport, "u8", listOf(transport.size))
-                    logical = Bounds.add(logical, native.size.toLong())
+                    logical = Bounds.add(logical, viewLength.toLong())
+                    val viewHash = StageCosts.timed("logical_hash") {
+                        java.security.MessageDigest.getInstance("SHA-256").also { it.update(transport, 0, viewLength) }.digest()
+                    }
                     descriptors["native"] = mapOf("kind" to "view", "parent" to "acquisition", "offset" to 0,
-                        "length" to native.size, "hash" to StageCosts.timed("logical_hash") { hex(sha(native)) }, "dtype" to "u16le", "shape" to shape,
+                        "length" to viewLength, "hash" to hex(viewHash), "dtype" to "u16le", "shape" to shape,
                         "encoding" to frame.nativeEncoding)
                 }
             }
@@ -67,9 +91,12 @@ class ChunkEncoder(private val profile: Profile, private val codec: BlockCodec) 
         }
         var offset = 0L; var physical = 0L; var codecNs = 0L
         val encoded = mutableListOf<ByteArray>()
-        val blocks = roles.map { (role, stream) ->
-            val original = StageCosts.timed("role_materialize", stream.size().toLong(), stream.size().toLong()) { stream.toByteArray() }; physical = Bounds.add(physical, original.size.toLong())
+        var encodedExtra = 0L
+        val blocks = roles.map { (role, original) ->
+            require(positions.getValue(role) == original.size); physical = Bounds.add(physical, original.size.toLong())
             val start = System.nanoTime(); val stored = StageCosts.timed("codec") { codec.encode(original) }; codecNs += System.nanoTime() - start
+            if (stored !== original) encodedExtra += stored.size
+            ownedBytes(aggregate + encodedExtra)
             val descriptor = mapOf("role" to role, "offset" to offset, "stored" to stored.size,
                 "decoded" to original.size, "codec" to codec.id, "hash" to StageCosts.timed("block_hash") { hex(sha(original)) })
             offset = Bounds.add(offset, stored.size.toLong()); encoded += stored; descriptor
