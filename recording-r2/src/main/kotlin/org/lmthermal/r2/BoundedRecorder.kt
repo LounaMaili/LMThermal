@@ -9,7 +9,8 @@ import java.util.ArrayDeque
  * Writer work, compression and sync run on their own thread; queue acceptance is never a saved count.
  */
 class BoundedRecorder(file: File, profile: Profile, codec: BlockCodec,
-    private val costs: StageCosts? = null, sinkFactory: (File) -> AppendSink = ::FileSink) : Closeable {
+    private val costs: StageCosts? = null, preferredChunkBytes: Int = Bounds.TARGET,
+    sinkFactory: (File) -> AppendSink = ::FileSink) : Closeable {
     private data class Item(val gap: ProducerEntry?, val frame: ProducerEntry, val queuedNs: Long = System.nanoTime()) {
         val bytes get() = Bounds.add(frame.frame.bytes,gap?.frame?.bytes ?: 0L)
     }
@@ -30,8 +31,9 @@ class BoundedRecorder(file: File, profile: Profile, codec: BlockCodec,
     val recorder: PrototypeRecorder
     private val worker: Thread
     init {
+        require(preferredChunkBytes in Bounds.MIB..Bounds.TARGET)
         require(!file.exists()) { "refuse_overwrite" }; file.parentFile?.mkdirs()
-        recorder = PrototypeRecorder(RecordWriter(sinkFactory(file)), profile, codec)
+        recorder = PrototypeRecorder(RecordWriter(sinkFactory(file)), profile, codec, preferredChunkBytes)
         worker = Thread({
             try {
                 while (true) {

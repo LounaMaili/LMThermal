@@ -104,3 +104,12 @@ choose `native-stored,analysis-deflate-1,native-deflate-1,full-deflate-1`.
 Private `candidate.json` includes saved matrices versus gaps, costs, backlog,
 render freshness, 100 ms Java/native and 1 s PSS/RSS, post-GC and conservative
 live array-slot inventories. Clean-process memory comparisons are separate.
+
+
+The measured 16 MiB preferred Native-DEFLATE seal exceeded the six-frame queue
+window despite adequate mean service. The predeclared repeat explicitly passes
+`r2ChunkTargetMiB=4` for Analysis/Native/Full DEFLATE. Default remains 16 MiB;
+both handoffs remain 4 MiB and the hard decoded bound remains 64 MiB. This is a
+provisional prototype configuration for R1b review, not a new format semantic.
+The report records the actual preferred size. Use default 16 for the separate
+fresh Full-STORED memory case; no bulk evidence backup during measured runs.

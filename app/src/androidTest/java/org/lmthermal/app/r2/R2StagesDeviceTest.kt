@@ -104,7 +104,7 @@ class R2StagesDeviceTest {
                 val memoryBefore=memory(); val samples=mutableListOf<Map<String,Any?>>()
                 val backlog=mutableListOf<Long>(); val age=mutableListOf<Long>(); val renderMs=mutableListOf<Long>(); val measurementAge=mutableListOf<Long>()
                 val writer=if (stage in listOf("discard","nosync","file")) BoundedRecorder(File(directory,"$stage.r2proto"),Profile.ANALYSIS,Stored,costs,
-                    { file -> when(stage) { "discard" -> DiscardSink(); "nosync" -> NoSyncSink(file); else -> FileSink(file) } }) else null
+                    sinkFactory = { file -> when(stage) { "discard" -> DiscardSink(); "nosync" -> NoSyncSink(file); else -> FileSink(file) } }) else null
                 val discard=if (stage=="queue") DiscardQueue(costs) else null
                 var accepted=0L; var unavailable=0L; var missed=0L; var previous=-1L; var rendered=0L; var lastRender=-1L
                 val renderJob=launch(Dispatchers.Default) { model.presentation.state.collect { shown ->

@@ -20,7 +20,7 @@ object Synthetic {
     fun write(file: File, profile: Profile, codec: BlockCodec, frames: Int = 60, marker: ((String, Long) -> Unit)? = null) {
         require(!file.exists()) { "refuse_overwrite" }; file.parentFile?.mkdirs()
         RecordWriter(FileSink(file), marker ?: { _, _ -> }).use { records ->
-            PrototypeRecorder(records, profile, codec, marker ?: { _, _ -> }).use { writer ->
+            PrototypeRecorder(records, profile, codec, chunkBoundary = marker ?: { _, _ -> }).use { writer ->
                 repeat(frames) { i -> writer.accept(if (i == 27) Observation(i.toLong(), null, i * 40000000L, 384, 288, null, reason = "explicit-synthetic-gap")
                     else frame(i.toLong(), masked = i % 11 == 0)) }
                 writer.finish()

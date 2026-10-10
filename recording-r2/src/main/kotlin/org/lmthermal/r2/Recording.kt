@@ -35,6 +35,7 @@ class PageIndex(private val writer: RecordWriter) {
  * Counter advancement is after commit sync; a refusing sink leaves pending data uncounted.
  */
 class PrototypeRecorder(private val records: RecordWriter, val profile: Profile, private val codec: BlockCodec,
+    private val preferredChunkBytes: Int = Bounds.TARGET,
     private val chunkBoundary: (String, Long) -> Unit = { _, _ -> }) : Closeable {
     private val index = PageIndex(records)
     private val pending = mutableListOf<ProducerEntry>()
@@ -57,6 +58,10 @@ class PrototypeRecorder(private val records: RecordWriter, val profile: Profile,
     var maxChunkBytes = 0L; private set
     var finalized = false; private set
     init {
+        // The measured DEFLATE seal can exceed the finite queue window at 16 MiB.
+        // A smaller preferred chunk bounds that burst; it changes no hard reader
+        // limit, logical payload or source cadence. Singleton frames remain legal.
+        require(preferredChunkBytes in Bounds.MIB..Bounds.TARGET)
         records.json(RecordType.HEADER, mapOf("artifact" to "noncanonical-r2", "revision" to 1,
             "profile" to profile.name, "required_features" to if (profile == Profile.FULL) listOf("contiguous-native-view") else emptyList<String>(),
             "codecs" to listOf(codec.id), "warning" to "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."))
@@ -72,10 +77,10 @@ class PrototypeRecorder(private val records: RecordWriter, val profile: Profile,
         require(frame.sequence > previousSequence && frame.relativeNs >= previousTime)
         val bytes = physical(frame)
         if (pending.isNotEmpty() && (frame.relativeNs - pending.first().frame.relativeNs >= 1000000000L ||
-            pending.size >= 32 || Bounds.add(pendingBytes, bytes) >= Bounds.TARGET)) seal()
+            pending.size >= 32 || Bounds.add(pendingBytes, bytes) >= preferredChunkBytes)) seal()
         pending += input; pendingPayloadBytes += frame.payloadBytes; pendingBytes = Bounds.add(pendingBytes, bytes)
         previousSequence = frame.gapEnd; previousTime = frame.relativeNs
-        if (pendingBytes >= Bounds.TARGET || pending.size >= 32) seal()
+        if (pendingBytes >= preferredChunkBytes || pending.size >= 32) seal()
     }
     fun seal() {
         if (pending.isEmpty()) return

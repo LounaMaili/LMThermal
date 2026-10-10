@@ -81,4 +81,38 @@ class OptimizedProducerTest {
             PrototypeReader(file).use { assertTrue(it.complete) }
         } finally { file.delete() }
     }
+    @Test fun shorterChunksRetainEveryLogicalRoleAndCanBeSoughtIndependently() {
+        // Shorter DEFLATE seals address the measured burst, not by dropping source
+        // frames or relaxing hashes. Later chunks must still close their contexts.
+        val sources = List(12) { Synthetic.frame(it.toLong(), masked = it % 11 == 0) }
+        for (profile in Profile.entries) for (codec in listOf(Stored, Deflate1)) {
+            val file = File.createTempFile("r2-short-chunks", ".r2proto")
+            try {
+                PrototypeRecorder(RecordWriter(FileSink(file)), profile, codec,
+                    preferredChunkBytes = 4 * Bounds.MIB).use { writer ->
+                    sources.forEach(writer::accept); writer.finish()
+                    assertEquals(12L, writer.committedMeasurements)
+                    assertTrue(writer.committedChunks > 1)
+                }
+                val original = hex(sha(file.readBytes()))
+                PrototypeReader(file).use { reader ->
+                    assertTrue(reader.complete)
+                    var count = 0
+                    reader.forEachChunk { chunk ->
+                        chunk.entries.zip(chunk.bytes).forEach { (entry, payloads) ->
+                            val expected = sources[entry.long("sequence").toInt()]
+                            assertArrayEquals(expected.temperature, payloads["temperature"])
+                            assertArrayEquals(expected.mask, payloads["validity"])
+                            if (profile != Profile.ANALYSIS) assertArrayEquals(expected.native, payloads["native"])
+                            if (profile == Profile.FULL) assertArrayEquals(expected.acquisition, payloads["acquisition"])
+                            count++
+                        }
+                    }
+                    assertEquals(12, count)
+                    assertNotNull(reader.seek(9))
+                }
+                assertEquals(original, hex(sha(file.readBytes())))
+            } finally { file.delete() }
+        }
+    }
 }

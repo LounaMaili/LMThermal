@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R2 bounded DEFLATE seal configuration — 2026-10-10)
+
+- Added a test-prototype preferred chunk target with unchanged 16 MiB default after the measured Native-DEFLATE burst failure. The opt-in 4 MiB repeat preserves complete logical payloads, all integrity domains, finalization/index semantics and unchanged 4 MiB queues; smaller chunks remain provisional R1b engineering evidence. Added full-role exactness/source-immutability/lazy-seek regression across profiles and STORED/DEFLATE.
+
 ### Changed (R2 measured throughput candidate — 2026-10-10)
 
 - Preserved original seven-stage Pixel ablations: acquisition near 25 FPS, no freeze/queue-only drops, but 137 STORED drops even into a no-write sink. Duplicate finite-value scans and encode/decode JSON work dominate chunk-sealing bursts; original failed evidence remains intact.

@@ -51,6 +51,9 @@ class R2CandidateDeviceTest {
         val supported = listOf("baseline", "analysis-stored", "native-stored", "full-stored", "analysis-deflate-1", "native-deflate-1", "full-deflate-1")
         require(stages.all { it in supported })
         val duration = args.getString("r2Seconds", "120")!!.toInt(); require(duration in 120..600)
+        val preferredChunkMiB = args.getString("r2ChunkTargetMiB", "16")!!.toInt()
+        require(preferredChunkMiB in 1..16)
+        val preferredChunkBytes = preferredChunkMiB * Bounds.MIB
         val directory = File(context.filesDir, "recording-r2/" + args.getString("r2Run"))
         require(!directory.exists()); directory.mkdirs()
         val reports = mutableListOf<Map<String, Any?>>()
@@ -79,7 +82,7 @@ class R2CandidateDeviceTest {
                 val age = mutableListOf<Long>(); val renderMs = mutableListOf<Long>(); val measurementAge = mutableListOf<Long>()
                 val profile = if (stage == "baseline") null else Profile.valueOf(stage.substringBefore('-').uppercase())
                 val codec = if (stage.endsWith("deflate-1")) Deflate1 else Stored
-                val writer = profile?.let { BoundedRecorder(File(directory, "$stage.r2proto"), it, codec, costs) }
+                val writer = profile?.let { BoundedRecorder(File(directory, "$stage.r2proto"), it, codec, costs, preferredChunkBytes) }
                 val prep = profile?.let { Ht301Preparation(writer!!, it, origin, costs) }
                 var accepted = 0L; var unavailable = 0L; var missed = 0L; var previous = -1L; var rendered = 0L; var lastRender = -1L
                 val states = mutableMapOf<String, Long>()
@@ -129,6 +132,7 @@ class R2CandidateDeviceTest {
                 val pass = profile == null || prepared == true && finalized == true && prep!!.drops == 0L && prep.lostSourceGapSequences == 0L && writer!!.drops == 0L &&
                     accepted > elapsed * 20 && writer.recorder.committedMeasurements == accepted
                 reports += mapOf("stage" to stage, "duration_s" to elapsed, "callback_fps" to (after.received - before.received) / elapsed,
+                    "preferred_chunk_bytes" to preferredChunkBytes,
                     "acquired" to after.received - before.received, "replaced" to after.replaced - before.replaced, "malformed" to after.malformed - before.malformed,
                     "accepted" to accepted, "unavailable" to unavailable, "sequence_unobserved" to missed, "states" to states,
                     "preparation_drops" to (prep?.drops ?: 0), "preparation_lost_source_gap_sequences" to (prep?.lostSourceGapSequences ?: 0),
