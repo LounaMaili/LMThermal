@@ -2,7 +2,10 @@
 
 The historical failed runs below remain intact. The [measured continuation](CONTINUATION_RESULTS.md) records the later bounded candidate and its separate acceptance status.
 
-**Gate A FAILED: no tested 25 FPS recording configuration is approved.** R2 remains open.
+**Historical Gate A FAILED.** The original configurations below are not approved.
+The separate continuation now passes the tested STORED/4 MiB DEFLATE throughput
+and freshness workloads; R2 remains open for real Windows validation. Historical
+tables and failure evidence below are unchanged.
 
 Pixel 8, Android 17/API 37, arm64-v8a, real HT-301 in an explicitly initialized ready session. Test-only consumers/writers; production acquisition, thermometry, controls, coordinates and UI were unchanged. Each complete stage followed the predeclared 20 s warmup and approximately 120 s observation. The operator was asked to move a hand/object during the stages and reported severe visible-image latency. Distinct image fingerprints are reported, but are not a calibrated target or a per-stage scene annotation. Private scene bytes are preserved outside Git; reports contain numeric evidence only.
 

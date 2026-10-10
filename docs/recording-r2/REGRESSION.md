@@ -92,4 +92,19 @@ lint (0 errors/11 existing warnings), localization and shared boundaries pass.
 The installed matching APKs again pass 41 Pixel tests (six opt-in skipped).
 All eight actual process-kill cases pass on this source too
 ([report](reports/continuation-short-chunk-process-kill.json)). Live and final
-memory/packet results are recorded in the continuation report when complete.
+memory/packet results are now recorded in the continuation report.
+
+### Resume validation on the same installed candidate
+
+Read-only installed APK hashes match the committed candidate; no source rebuild,
+reinstall, data clear or old-test resumption was needed. Fresh unique Full-STORED
+and 4 MiB Analysis/Native/Full DEFLATE runs pass throughput/freshness and measured
+clean-process memory targets. The operator confirms all previews usable.
+Three explicit final Pixel packet/context tests and nine Python reader/SAF-helper
+tests pass. All 15 regenerated packet members are byte-identical and independently
+pass Linux validation. Existing 272 JVM, 41 general Pixel and eight process-kill
+results remain applicable to the unchanged executable; they were not repeated.
+The full private live files, independent readback and recovery evidence are linked
+from [the completed continuation](CONTINUATION_RESULTS.md).
+Real Windows remains pending, R2 stays open, and this resumed task changes only
+documentation/numeric reports. No new application/camera/thermometry code or merge.

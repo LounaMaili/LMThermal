@@ -1,0 +1,19 @@
+{
+  "resumed_from": "7ed74cef0ab57b7e70727852dc7bbf536c15ea7d",
+  "candidate_apks": {
+    "revision": "531b8fd0653d503309f5def0899380a939b6f6d6",
+    "apks": {
+      "app-debug.apk": "adef2ab4cce7f289d85618a48ec94c1b8032ee891614ee7deff79a174c07d65c",
+      "app-debug-androidTest.apk": "1da2190c1b3591097d018e6f86675c9a5be48a4c35ef321e374e98ba4d992319"
+    }
+  },
+  "tree_clean": true,
+  "expired_run": "candidate-clean-full-stored-20261010",
+  "expired_result": "readiness timeout, no measured candidate report",
+  "old_instrumentation_active": false,
+  "old_app_process_active": false,
+  "installed_apks_match": true,
+  "actual_usb_at_preflight": "no current HT-301 host device; connection history only",
+  "new_run": "candidate-clean-full-stored-resume-20261010-2044",
+  "existing_evidence_preserved": true
+}

@@ -3,10 +3,15 @@
 **Pending. Preparing this packet does not pass R2 Windows parity or complete R2.**
 All packets are noncanonical R2 synthetic artifacts, not R3/canonical release fixtures.
 Same source bytes already passed Android and the independent Linux validator.
-The optimized candidate `9f9d6097960d17188611e2da159ac4606cee148d` regenerated
-all 15 exact member hashes unchanged and passed independent Linux readback again
-([continuation proof](reports/continuation-packet.json)). The original ZIP is
-retained; no Windows run is inferred from Android/Linux execution.
+The final bounded-chunk candidate `531b8fd0653d503309f5def0899380a939b6f6d6`
+has now passed its sustained 4 MiB Analysis/Native/Full DEFLATE repeat and regenerated
+all 15 exact member hashes unchanged. All pass independent Linux readback again
+([final candidate proof](reports/continuation-final-packet.json)); the earlier
+[candidate proof](reports/continuation-packet.json) remains preserved too.
+The original ZIP is retained. Its SHA-256 remains
+`49cc244c60ca51b71c4d1ee38b4360e7e4bc8f490216ad4887f0fd1b770117cc`.
+This is the stable packet to execute on real Windows; no Windows result is inferred
+from Android/Linux execution or a previous Desktop still-LMTX validation.
 
 Use the repository at the pushed R2 branch with Python 3.11 or newer. In PowerShell,
 from the repository root:

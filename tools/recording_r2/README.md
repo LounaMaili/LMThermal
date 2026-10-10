@@ -113,3 +113,21 @@ both handoffs remain 4 MiB and the hard decoded bound remains 64 MiB. This is a
 provisional prototype configuration for R1b review, not a new format semantic.
 The report records the actual preferred size. Use default 16 for the separate
 fresh Full-STORED memory case; no bulk evidence backup during measured runs.
+
+### Resuming an interrupted readiness wait
+
+An expired wait is not a live session or performance result. Inspect actual ADB,
+instrumentation/process/USB ownership first; preserve the old directory and logs.
+Verify installed APK hashes against the committed executable, then start only the
+unfinished stage in a fresh process with a new `r2Run`. Wait for actual measurement
+readiness from a new explicit operator Connect/Open/Initialize; never inherit READY
+or DETECTED from a previous run. Do not reinstall/clear data merely to restart a wait.
+A previous completed raw14 session requires the validated display baseline before
+new initialization; request a physical reconnect only for that concrete reason or
+an absent device. Do not invent a camera reset command.
+
+The resumed Full-STORED and 4 MiB DEFLATE measurements are documented in
+[the continuation report](../../docs/recording-r2/CONTINUATION_RESULTS.md).
+Their private recordings remain outside Git. The same-byte synthetic packet is
+ready for [real Windows validation](../../docs/recording-r2/WINDOWS_VALIDATION.md),
+which remains pending; no R1b/R3/product work follows automatically.

@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R2 resumed live validation — 2026-10-10)
+
+- Preserved the expired readiness attempt and all prior failures; verified the clean existing branch, installed candidate APK hashes, current wireless ADB and actual absent USB/session state before opening unique fresh-process harness runs.
+- Completed clean Full-STORED and explicit 4 MiB Analysis/Native/Full DEFLATE measurements near 25 FPS with zero preparation/writer drops, usable fresh previews and normal single-owner release. Measured clean-process memory differences remain below 64 MiB with explicit sampling/attribution limits; shorter DEFLATE seals removed the observed bounded-queue overflow bursts without a larger queue or lower source rate.
+- Independently verified all four full private files' integrity, exact byte totals, native views, saved/gap counts and source immutability; separate missing-END copies recover every committed frame. Preserved the complete private backup without adding scene bytes to Git.
+- Regenerated the final candidate's 15 synthetic packet members byte-identically and independently passed Linux validation; retained the original Windows ZIP and all historical evidence. Real Windows validation remains pending and R2 stays open; no R1b/R3/product recorder, application, camera, thermometry or accepted-format change.
+
 ### Added (R2 candidate regression evidence — 2026-10-10)
 
 - Verified all 272 JVM tests, 41 camera-free Pixel tests (six explicit opt-in skips), both APK builds, zero lint errors, localization/shared boundaries and nine independent Python checks for the bounded-chunk candidate. Repeated all eight actual process-kill cases successfully. Independently verified the failed 16 MiB Native-DEFLATE file retained 3131 matrices with all 31 writer-loss and six source-loss sequences explicitly represented; its private source is immutable and preserved.

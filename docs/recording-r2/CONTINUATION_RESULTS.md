@@ -185,11 +185,164 @@ sealing bursts despite mean service 10.114 ms per observed valid frame. No bulk
 backup overlapped this run. The predeclared 4 MiB preferred-chunk repeat tests
 this remaining bounded burst problem without increasing queues or reducing rate.
 
-Clean Full/final selected DEFLATE memory and the shorter-chunk repeat remain
-pending at this intermediate report. Earlier recovery/sparse/view/provider evidence is preserved;
+Before resumption, clean Full/final selected DEFLATE memory and the shorter-chunk
+repeat remained pending. Earlier recovery/sparse/view/provider evidence is preserved;
 the test-only SAF launch passed on the Pixel and all 15 regenerated packet
 members matched the existing artifact and passed independent Linux validation.
 The later bounded-chunk build reruns the affected checks before final reporting.
 Real Windows execution remains a required pending gate.
+
+Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+## Fresh continuation after the expired readiness window
+
+Resumed the clean branch at `7ed74cef0ab57b7e70727852dc7bbf536c15ea7d`.
+The old Full-STORED readiness wait timed out without measured output; its log and
+all earlier recordings/reports remain preserved. No expired test/session was resumed.
+No LMThermal process or instrumentation remained. Read-only preflight found no
+current HT-301 USB host device; historical USB connection records were not treated
+as current enumeration. Both installed APK hashes matched executable candidate
+`531b8fd0653d503309f5def0899380a939b6f6d6`; no reinstall or data clear was needed.
+[Sanitized preflight](reports/continuation-resume-preflight.json).
+
+The operator connected the camera and explicitly initialized the new session.
+Fresh-process Full-STORED retained the default 16 MiB preferred chunk target:
+3086/3086 valid measurements saved, 68 unavailable raw14-unsettled observations,
+zero unobserved/replaced/malformed measured frames and zero preparation/writer loss.
+Acquisition was 24.995443 FPS over 126.183 s; display age was 82/104/112 ms
+(p50/p95/max). Stop/drain/finalization took 128 ms. The camera owner then released
+exactly once. [Complete numeric report](reports/android-continuation-full-stored-clean.json).
+
+Full-STORED steady increments against the earlier matched clean baseline are
++19.58 MiB Java, -0.84 MiB native, +8.73 MiB PSS and +38.25 MiB RSS. Observed
+owned array slots peaked at 34.76 MiB. Process-difference measurements include
+camera/presentation/runtime variation; sampled peaks can miss short transients
+and slot counters exclude object headers, text and codec scratch. The matched
+baseline is retained rather than repeated. [Metric definitions and comparisons](reports/continuation-resume-summary.json).
+
+The new 4 MiB DEFLATE repeat uses a separate process and unique run identifier.
+No bulk private evidence transfer overlaps either measured run. The completed
+Full-STORED session left the camera raw14; a physical reconnect for the next
+explicit initialization supplies the required display baseline, rather than
+inventing a reset control. The harness itself sends no camera commands.
+
+### Completed 4 MiB DEFLATE repeat
+
+Executed source remains `531b8fd0653d503309f5def0899380a939b6f6d6`.
+Unique runs are `candidate-clean-full-stored-resume-20261010-2044` and
+`candidate-deflate4-resume-20261010-2050`; identifiers are not reused from the
+expired waits. Each stage has the established 20 s warmup/GC and 1200 measured
+100 ms intervals. Elapsed times include harness overhead.
+
+| Stage / preferred target | Acquisition FPS | Saved / observed valid | Unavailable / unobserved | Preparation / writer drops | Render FPS | Display age p50/p95/max ms | Seal p95/max ms | Stop ms |
+|---|---:|---:|---:|---:|---:|---|---|---:|
+| Clean Full-STORED / 16 MiB | 24.995 | 3086 / 3086 | 68 / 0 | 0 / 0 | 24.41 | 82 / 104 / 112 | 88 / 133 | 128 |
+| Analysis-DEFLATE / 4 MiB | 24.999 | 3114 / 3114 | 41 / 0 | 0 / 0 | 24.66 | 85 / 109 / 117 | 75 / 86 | 81 |
+| Native-DEFLATE / 4 MiB | 25.001 | 3156 / 3156 | 0 / 0 | 0 / 0 | 24.96 | 83 / 109 / 136 | 79 / 104 | 98 |
+| Full-DEFLATE / 4 MiB | 24.997 | 3162 / 3162 | 0 / 0 | 0 / 0 | 24.74 | 85 / 117 / 203 | 93 / 140 | 99 |
+
+[Complete DEFLATE numeric report](reports/android-continuation-deflate-4m.json).
+The matched baseline is 25.000395 FPS. All four acquisition differences are below
+0.03%, within the unchanged 5% gate. All measured malformed/replacement counters
+are zero. Unavailable observations are explicitly `RAW14_UNSETTLED`; they do not
+carry previous temperatures or count as saved matrices. No physical cause is
+inferred solely from that state. Native/Full DEFLATE preserve every measured
+callback; callback FPS alone would not establish this without the zero source
+loss counters and matching saved counts.
+
+The operator explicitly confirmed **all four previews were usable** with a moving
+target. The earlier severe lag is not concealed or relabeled as a passing run.
+Both new sessions used one explicit initialization and released exactly once,
+with zero remaining owners. [Control evidence](reports/continuation-resume-controls.json).
+
+Native sealing p95/max fell from 311.789/512.830 ms in the failed 16 MiB run to
+79.041/104.330 ms. The repeat eliminates the observed queue-overflow bursts in
+these workloads, without reducing source rate or increasing queue capacity.
+This is a finite sustained test, not an all-scenes or indefinite-runtime guarantee.
+Both preparation and writer caps remain 4194304 B. Writer maxima are
+3341207 / 887968 / 1995499 / 2004719 B in table order; preparation max is 1108992 B
+in every case. Sampled writer backlog is zero in 108 / 107 / 106 / 99 of 120 samples,
+drains repeatedly, and finalization succeeds. Per-call queue waits and service costs
+are retained in the complete reports rather than replaced with average throughput.
+
+| Stage | Physical role bytes | Stored role bytes | Complete file bytes | Chunks |
+|---|---:|---:|---:|---:|
+| Clean Full-STORED | 2057201664 | 2057201664 | 2064858188 | 127 |
+| Analysis-DEFLATE | 1377533952 | 338660758 | 345242547 | 347 |
+| Native-DEFLATE | 2094170112 | 574890494 | 582573464 | 526 |
+| Full-DEFLATE | 2107865088 | 563264284 | 571617125 | 527 |
+
+File bytes additionally include metadata/framing/index/finalization. Different
+scene content prevents treating size ratios versus earlier runs as a controlled
+chunk-size-only compression comparison. Full still physically stores temperature
+and original acquisition; its native image is the exact restricted view, not a
+duplicate physical plane.
+
+All four complete private files independently pass logical/block/framing integrity,
+Float32 validity, raw14/native-view/transport closure and source SHA-256 immutability.
+Saved matrices, chunks, gap sequences and exact file/stored/decoded byte totals
+match the Android reports. Full-STORED has 68 unavailable gap sequences, Analysis
+has 41, and Native/Full DEFLATE have none. All four files and numeric reports are
+preserved in a 3564421120-byte private backup outside Git; earlier backups remain
+unchanged. [Independent complete-file readback](reports/continuation-resume-readback.json).
+
+Separate private copies with only final END removed recover the exact complete
+committed prefix for all four files: identical frame/gap/chunk counts and logical
+payload hashes, with unchanged original source hashes. This also exercises many
+shorter chunks/checkpoints; it is software recovery evidence, not physical power-
+loss certification. [Recovery report](reports/continuation-resume-recovery.json).
+No active instrumentation remains. The observed leftover SAF test-helper Activity
+was closed after testing without clearing app data or changing pairing/camera state.
+
+### Completed clean-process memory observations
+
+Steady is the last-half median of 120 one-second samples. The earlier fresh
+Analysis-STORED evidence is preserved, including its overlapping backup load;
+the new Full and selected Analysis-DEFLATE are first stages in independent fresh
+processes with no overlapping backup. The camera/presentation baseline behavior
+is unchanged between executable revisions.
+
+| Configuration | Steady Java increment MiB | Native increment MiB | PSS increment MiB | RSS increment MiB | Observed owned slots peak MiB |
+|---|---:|---:|---:|---:|---:|
+| Earlier clean Analysis-STORED | 8.40 | -1.20 | 2.98 | 46.15 | 24.05 |
+| New clean Full-STORED | 19.58 | -0.84 | 8.73 | 38.25 | 34.76 |
+| New clean Analysis-DEFLATE / 4 MiB | 12.18 | -0.32 | 7.84 | 53.35 | 10.88 |
+
+All observed steady, sampled-peak and post-GC process differences are below
+64 MiB; the largest steady difference is RSS +53.35 MiB. This satisfies the
+target on the measured clean-process evidence, not merely theoretical limits.
+Negative native differences reflect process/runtime variation, not negative
+recorder allocations. Complete absolute baseline/configuration values, peaks,
+post-GC and conservative slot inventories are in
+[the resumed summary](reports/continuation-resume-summary.json).
+Java/native peaks are sampled every 100 ms and PSS/RSS every second. Separate
+process-max subtraction is observational, not isolated recorder allocation;
+short peaks may be missed. Slot counts can double-count shared references and
+exclude headers/text/codec scratch. No unlimited-duration memory or allocator-
+profiler certification is inferred. No measured budget revision is needed here.
+
+Whole-device thermal status remained 0 at the sampled endpoints. Battery
+temperature was 27.3 C at the Full start sample, 29.6 C at the DEFLATE start and
+34.7 C at its end; levels were 80/78/75%. These are whole-device observations,
+not isolated recording energy or proof of causal throttling.
+
+### Stable packet and remaining boundary
+
+The final installed candidate passed three explicit Pixel packet/context tests.
+All 15 regenerated member hashes exactly match the original published ZIP;
+all 15 pass the independent Linux reader, including exact synthetic Float32,
+mask/native/transport/context, restricted views, missing-END recovery, corruption
+rejection and immutable sources. The ZIP was not replaced.
+[Final candidate packet proof](reports/continuation-final-packet.json).
+Nine independent Python reader/SAF-helper checks pass again. The unchanged
+candidate retains its earlier 272 JVM/41 general Pixel/eight actual process-kill
+passes; those suites were not needlessly repeated after a documentation-only resume.
+Existing sparse/hostile-input/backend/SAF evidence remains preserved and scoped to
+its tested configurations.
+
+The packet is now stable enough for the documented **real Windows validation**,
+which is still pending. R2 #7 remains open. The 4 MiB target is provisional test
+evidence, not an accepted wire/default change; R1b, R3 and product recording have
+not started. No application/camera/thermometry source changed in this resumed task.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.

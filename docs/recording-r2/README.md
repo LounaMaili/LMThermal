@@ -3,8 +3,10 @@
 **R2 INCOMPLETE.** The original live matrices failed throughput/preview gates and
 remain preserved. The measured continuation now retains every delivered valid
 STORED measurement with zero preparation/writer drops and fresh presentation.
-DEFLATE sustained runs, complete clean-process incremental memory and real Windows
-parity remain pending. Passing prototype JUnit methods alone is not gate acceptance.
+The resumed clean Full-STORED and explicit 4 MiB Analysis/Native/Full DEFLATE runs
+also pass throughput/freshness, with measured clean-process memory differences
+below the 64 MiB target. Real Windows parity remains pending. Passing prototype
+JUnit methods alone is not gate acceptance; memory sampling limits remain explicit.
 
 - [Measured continuation and bounded candidate](CONTINUATION_RESULTS.md): original ablations, cost/copy model and staged rerun status.
 - [Continuation diagnosis plan](CONTINUATION_PLAN.md): ownership audit and staged ablations before optimization.
@@ -20,7 +22,8 @@ parity remain pending. Passing prototype JUnit methods alone is not gate accepta
 - [Storage/backend and SAF matrix](BACKENDS.md).
 - [Same-byte real Windows validation packet and commands](WINDOWS_VALIDATION.md):
   ready to run; not yet executed on Windows.
-- [Machine-readable gate summary](reports/aggregate.json) and linked raw reports.
+- [Historical machine-readable gate summary](reports/aggregate.json), preserved
+  unchanged, and [resumed candidate metrics](reports/continuation-resume-summary.json).
 - [Final regression and scope checks](REGRESSION.md).
 - [Final test-APK packet proof](reports/android-final-packet.json): all 15 file hashes
   match the published Android/Linux/Windows packet; no replacement of the artifact.

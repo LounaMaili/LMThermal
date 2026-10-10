@@ -1,0 +1,80 @@
+{
+  "revision": "531b8fd0653d503309f5def0899380a939b6f6d6",
+  "method": "Separate private copies, truncate only final END; independent Python reader recovers exact committed prefix; original files unchanged",
+  "files": {
+    "full-stored.r2proto": {
+      "passed": true,
+      "source_immutable": true,
+      "source_sha256": "0528fac72ddc84ee0c46fee9ca7ba4f02c5ae3400a350de0e86c65660c9a30ed",
+      "recovery_copy_bytes": 2064857693,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 3086,
+        "gaps": 68,
+        "chunks": 127,
+        "logical_sha256": "b5e41fb5b2a14c00071d4f4b2e184c284a501d3be0fca17e978a359bd9f18266",
+        "source_sha256": "21b4dad95c460f2f12186de9912cb927b86b13b7026587f647c273bf50ce7109",
+        "lazy_open_bytes": 3316,
+        "validation_read_bytes": 6194364096
+      },
+      "validation_wall_s": 63.516127339004015
+    },
+    "analysis-deflate-1.r2proto": {
+      "passed": true,
+      "source_immutable": true,
+      "source_sha256": "6d19e8e705c300c6b7f79c58ec498c9101a891348df8c400e92a39d4fcacbde5",
+      "recovery_copy_bytes": 345242054,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 3114,
+        "gaps": 41,
+        "chunks": 347,
+        "logical_sha256": "ff6be60c40edbe2c9224eb559814e9c47c2c3c488c1e94f1b0e68233823f92a7",
+        "source_sha256": "94c8da56f20a859550cb76e75128b450d33a1425024780beb38a800662a6ec16",
+        "lazy_open_bytes": 3268,
+        "validation_read_bytes": 1035060276
+      },
+      "validation_wall_s": 42.29568522000045
+    },
+    "native-deflate-1.r2proto": {
+      "passed": true,
+      "source_immutable": true,
+      "source_sha256": "aad92a96af07f9f39f078173e8adbaf2951579454adc2ca6fd237f60fa3b9234",
+      "recovery_copy_bytes": 582572970,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 3156,
+        "gaps": 0,
+        "chunks": 526,
+        "logical_sha256": "a3ec4f6f69dd25abbfa9202cf0414b08c2f5dd8e05d6ff5315f9906048c703fa",
+        "source_sha256": "6d659baf274c90676665f3e666818c42b49264ee5ce01641e1ec9719a52fb4c8",
+        "lazy_open_bytes": 3270,
+        "validation_read_bytes": 1746615630
+      },
+      "validation_wall_s": 60.96724463099963
+    },
+    "full-deflate-1.r2proto": {
+      "passed": true,
+      "source_immutable": true,
+      "source_sha256": "573c75d337fcf58df63d685694067ee4c90a03a3c906029529bd090db37b0ad4",
+      "recovery_copy_bytes": 571616630,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 3162,
+        "gaps": 0,
+        "chunks": 527,
+        "logical_sha256": "f2621be0c992001815fbb4fd01193896d5dfe1fe00ab82cbb131ac8b0dc9ef5f",
+        "source_sha256": "d2af0ca56a8de702169c21ad38a9b2a3adb47962b589c69a541d547a004c9c15",
+        "lazy_open_bytes": 3322,
+        "validation_read_bytes": 1713741582
+      },
+      "validation_wall_s": 60.57698545599851
+    }
+  },
+  "physical_power_loss_certified": false,
+  "prior_actual_process_kill_cases_retained": 8
+}

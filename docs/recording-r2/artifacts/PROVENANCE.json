@@ -23,5 +23,15 @@
     "linux_cases_passed": 15,
     "report": "../reports/continuation-packet.json",
     "windows": "pending real execution"
+  },
+  "bounded_chunk_candidate_verification": {
+    "date": "2026-10-10",
+    "executed_revision": "531b8fd0653d503309f5def0899380a939b6f6d6",
+    "android_regenerated_members": 15,
+    "all_original_member_hashes_identical": true,
+    "original_zip_retained": true,
+    "linux_cases_passed": 15,
+    "report": "../reports/continuation-final-packet.json",
+    "windows": "pending real execution"
   }
 }

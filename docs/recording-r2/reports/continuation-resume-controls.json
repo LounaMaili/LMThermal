@@ -1,0 +1,66 @@
+{
+  "revision": "531b8fd0653d503309f5def0899380a939b6f6d6",
+  "explicit_operator_sessions": {
+    "full": [
+      {
+        "event": "control",
+        "requested": 32772,
+        "actual_length": 2,
+        "control_transfer_completed": true,
+        "state": "DISPLAY_STREAM",
+        "stage": "WAIT_RAW",
+        "mode": "DISPLAY"
+      },
+      {
+        "event": "control",
+        "requested": 32800,
+        "actual_length": 2,
+        "control_transfer_completed": true,
+        "state": "RAW14_UNSETTLED",
+        "stage": "WAIT_RANGE",
+        "mode": "RAW14"
+      },
+      {
+        "event": "control",
+        "requested": 32768,
+        "actual_length": 2,
+        "control_transfer_completed": true,
+        "state": "RAW14_UNSETTLED",
+        "stage": "WAIT_SHUTTER",
+        "mode": "RAW14"
+      }
+    ],
+    "deflate4": [
+      {
+        "event": "control",
+        "requested": 32772,
+        "actual_length": 2,
+        "control_transfer_completed": true,
+        "state": "DISPLAY_STREAM",
+        "stage": "WAIT_RAW",
+        "mode": "DISPLAY"
+      },
+      {
+        "event": "control",
+        "requested": 32800,
+        "actual_length": 2,
+        "control_transfer_completed": true,
+        "state": "RAW14_UNSETTLED",
+        "stage": "WAIT_RANGE",
+        "mode": "RAW14"
+      },
+      {
+        "event": "control",
+        "requested": 32768,
+        "actual_length": 2,
+        "control_transfer_completed": true,
+        "state": "RAW14_UNSETTLED",
+        "stage": "WAIT_SHUTTER",
+        "mode": "RAW14"
+      }
+    ]
+  },
+  "harness_controls": 0,
+  "reused_previous_readiness": false,
+  "camera_protocol_change": false
+}

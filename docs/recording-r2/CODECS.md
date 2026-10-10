@@ -94,7 +94,12 @@ samples are not instantaneous peak allocation; this remains a measurement limita
 ## Decision returned to R1b
 
 Recommend **STORED and zlib-wrapped DEFLATE as mandatory decoder capabilities**;
-DEFLATE-1 remains the conservative writer candidate, subject to the failed live gate.
+DEFLATE-1 remains the conservative provisional writer candidate. The original and
+optimized 16 MiB Native failures remain preserved; the explicit 4 MiB preferred
+target now passes all three sustained profiles with unchanged queues, integrity
+and acquisition cadence. See [the resumed evidence](CONTINUATION_RESULTS.md#fresh-continuation-after-the-expired-readiness-window).
+Real Windows and R1b owner acceptance are still required; the prototype default
+remains 16 MiB and no final wire/default is frozen here.
 Zstd shows faster standalone encoding and modest extra size reduction, but neither
 that nor Desktop numbers overrides live overload/latency. **Defer product adoption**;
 if later approved, require explicit feature negotiation for codec2, never silent fallback.
