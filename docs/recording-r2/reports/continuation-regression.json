@@ -1,0 +1,59 @@
+{
+  "revision": "9f9d6097960d17188611e2da159ac4606cee148d",
+  "jvm": {
+    "core": {
+      "tests": 232,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "recording-r2": {
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "app": {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "Pixel_focused": 4,
+  "Python": 9,
+  "build": "PASS_debug_and_test_APK",
+  "lint": {
+    "errors": 0,
+    "existing_warnings": 11
+  },
+  "localization": "PASS_110_EN_110_FR",
+  "module_boundaries": "PASS_25_shared_sources",
+  "process_kills": 8,
+  "diff_check": "PASS",
+  "production_change": "Only demonstrated Celsius presentation starvation correction; camera/thermometry/Accepted LMTX unchanged",
+  "Desktop": "Read-only; no changes",
+  "full_pixel_suite": {
+    "discovered": 47,
+    "passed": 41,
+    "opt_in_skipped": 6,
+    "failures": 0,
+    "uninstall_or_data_clear": false
+  },
+  "explicit_packet_metadata_pixel_tests_passed": 3,
+  "saf_probe_launch": {
+    "test_only_probe_visible": true,
+    "instructions_bounds": [
+      42,
+      174,
+      1038,
+      329
+    ],
+    "button_bounds": [
+      42,
+      2169,
+      1038,
+      2295
+    ]
+  }
+}

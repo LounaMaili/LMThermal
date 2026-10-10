@@ -1,0 +1,26 @@
+{
+  "analysis-stored.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3164,
+    "gaps": 0,
+    "chunks": 125,
+    "logical_sha256": "66e3cd279529096c69baa0866e24b7c4e49af2634d0b76d722e5d78b49009560",
+    "source_sha256": "c94e026595cc2ff0884e483c2f8761283cb9b84dc8c0b52be0ef4e58d12b7e27",
+    "lazy_open_bytes": 2060,
+    "validation_read_bytes": 4218064224,
+    "validation_wall_s": 43.44619270200201
+  },
+  "full-stored.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3156,
+    "gaps": 0,
+    "chunks": 127,
+    "logical_sha256": "663633eb0ca2ab1fe9fbca69fefc00dbb39892c4a060ab9c6f1a7b6ca69befe2",
+    "source_sha256": "244197bac9b8fe2559a07014f402e2eac796b79c100df683ef7251f72c121494",
+    "lazy_open_bytes": 2104,
+    "validation_read_bytes": 6334845021,
+    "validation_wall_s": 62.28072760299983
+  }
+}

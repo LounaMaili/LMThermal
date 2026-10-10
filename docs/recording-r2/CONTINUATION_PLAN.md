@@ -105,3 +105,30 @@ optimization ablations. The writer/intake algorithm is still unchanged.
 Wireless pairing was genuinely absent and was restored with normal operator pairing.
 The original seven live ablations completed; their evidence and measured candidate
 changes are recorded in [CONTINUATION_RESULTS.md](CONTINUATION_RESULTS.md).
+
+
+## Predeclared DEFLATE burst repeat after measured 16 MiB failure
+
+The optimized 16 MiB Analysis-DEFLATE run saved all 3087 valid observations;
+Native-DEFLATE saved 3131/3162, with 31 explicit writer-overload losses and zero
+preparation loss. Automatic Full escalation stopped. Preserve this failure.
+Native chunk encode p95 311.789 ms / max 512.830 ms; writer service max 529.550 ms.
+Six complete Native observations fit the unchanged 4 MiB queue (approximately
+240 ms at the actual source cadence). Average service is sufficient but a monolithic
+seal still exceeds that finite buffering window.
+
+Before another live run, add a test-prototype preferred chunk byte target (default
+16 MiB unchanged). Explicitly test **4 MiB preferred chunks for DEFLATE**, not a
+larger queue or lower source rate. Shorter seals preserve every grid/role/context,
+independent codec blocks and all logical/block/framing hashes. The hard 64 MiB
+reader bound, 1 s maximum interval, source ownership and both 4 MiB handoffs remain.
+No sleep, priority boost, hidden drop or final-wire constant change. The reduced
+preferred size is a provisional R1b budget proposal if measured successful.
+
+Repeat Analysis/Native/Full DEFLATE with the explicit target, 20 s warmup and
+120 s each, stopping on loss. Use a fresh process; the first Analysis stage also
+supplies selected-codec clean memory. Separately run fresh Full-STORED at the
+unchanged default for clean memory. Recheck shorter-chunk exact logical bytes,
+indexes/finalization and full regression before live execution. Synthetic packet
+bytes should remain unchanged because those vectors are smaller than either target;
+verify that rather than assuming it. Real Windows remains pending.

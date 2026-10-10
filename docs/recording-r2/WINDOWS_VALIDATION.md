@@ -3,6 +3,10 @@
 **Pending. Preparing this packet does not pass R2 Windows parity or complete R2.**
 All packets are noncanonical R2 synthetic artifacts, not R3/canonical release fixtures.
 Same source bytes already passed Android and the independent Linux validator.
+The optimized candidate `9f9d6097960d17188611e2da159ac4606cee148d` regenerated
+all 15 exact member hashes unchanged and passed independent Linux readback again
+([continuation proof](reports/continuation-packet.json)). The original ZIP is
+retained; no Windows run is inferred from Android/Linux execution.
 
 Use the repository at the pushed R2 branch with Python 3.11 or newer. In PowerShell,
 from the repository root:

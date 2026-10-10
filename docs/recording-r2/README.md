@@ -1,8 +1,10 @@
 # R2 feasibility evidence
 
-**R2 INCOMPLETE.** Both live matrices failed the writer-throughput/thermal-preview
-gate. Incremental/steady memory remains unproven and real Windows parity is pending.
-Passing prototype JUnit methods does not override these failed acceptance gates.
+**R2 INCOMPLETE.** The original live matrices failed throughput/preview gates and
+remain preserved. The measured continuation now retains every delivered valid
+STORED measurement with zero preparation/writer drops and fresh presentation.
+DEFLATE sustained runs, complete clean-process incremental memory and real Windows
+parity remain pending. Passing prototype JUnit methods alone is not gate acceptance.
 
 - [Measured continuation and bounded candidate](CONTINUATION_RESULTS.md): original ablations, cost/copy model and staged rerun status.
 - [Continuation diagnosis plan](CONTINUATION_PLAN.md): ownership audit and staged ablations before optimization.
@@ -29,9 +31,12 @@ have not started. Test APK helpers add no production recording action. Accepted
 [LMTX still v1](../LMTX_FORMAT_V1.md), source coordinates, camera controls, session
 readiness and thermometry remain unchanged. Desktop is read-only.
 
-The final test-only queue correction now charges metadata and pending gap closures;
-its bounds/failed-close regressions pass on the JVM but a new live matrix remains
-necessary. No tested configuration is promoted as a practical 25 FPS default.
+The candidate keeps the 4 MiB writer bound, adds a dedicated byte-bounded preparation
+thread and records source gaps independently of writer loss. Initial Analysis/Full
+STORED retained the actual approximately 25 FPS stream. The continuation also fixes
+a demonstrated production display-publication starvation bug with regression
+coverage; camera/session/thermometry are unchanged. No product recorder or final
+codec/default decision follows from these prototype measurements.
 The exact annex is an evidence-backed proposal, not owner acceptance of R1b.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.

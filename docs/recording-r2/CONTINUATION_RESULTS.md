@@ -26,7 +26,10 @@ Private scene files and reports are backed up outside Git; no private scene fixt
 
 Baseline deliberately had no recorder source observer. Its zero source-invalid/
 sequence counters mean not observed. Committed entries include gap ranges and
-must not be described as saved matrices. These short original-path runs stayed
+must not be described as saved matrices. Independent read-only validation of
+the original no-sync/durable files confirms 1378/1356 saved matrices and
+59/57 gap-range entries, exact payload integrity and source immutability
+([report](reports/android-continuation-original-files.json)). These short original-path runs stayed
 fresh; the historical multi-second presentation failure is not relabeled as
 occurring in these new runs. Discard/no-sync cannot pass durability gates.
 
@@ -104,18 +107,84 @@ latest request. Compatible newer valid sources allow publication; generation/key
 invalidation on unavailable/Close/dispose/device/geometry/settings rejects obsolete
 results. Identical controlled regression now publishes 10 during arrivals; blocked
 render followed by Close cannot restore Celsius. Recording admission is independent.
-Sustained freshness under actual recording pressure still requires the candidate run.
+The sustained candidate evidence below tests freshness under actual recording pressure.
 
-## Gates at candidate preparation
+## Candidate regression and completed STORED stages
 
 Private-producer fixture tests preserve exact Float32/native/transport and complete
 context, source immutability and defensive generic validation. JSON hostile bounds,
 STORED ownership and preparation-thread/drain regressions pass. Production camera,
 thermometry, controls, coordinates and cadence are unchanged.
 
-Staged sustained candidate, clean incremental memory and actual final Windows
-execution remain pending. Earlier recovery/sparse/view/provider evidence remains
-available; affected integrity/fault checks will be rerun on final candidate bytes.
-Test-only SAF layout fix remains; camera-free launch regression is available.
+The fresh JVM/build/lint pass has 271 tests (core 232, app 12, prototype 27),
+0 failures/errors/skips, 0 lint errors and 11 existing warnings. Localization
+(110 English/French keys), shared camera boundaries (25 sources), nine independent
+Python checks and four focused Pixel regressions pass. All eight actual child-process
+kill cases pass again. [Regression report](reports/continuation-regression.json),
+[fault report](reports/continuation-process-kill.json).
+
+The executed source is `9f9d6097960d17188611e2da159ac4606cee148d`.
+Each stage has 20 s warmup, GC, then 1200 100 ms ticks; elapsed periods include
+instrumentation overhead (approximately 126–129 s).
+
+| Stage | Acquisition FPS | Saved valid / observed valid | Preparation/writer drops | Render FPS | Display age p50/p95/max ms |
+|---|---:|---:|---:|---:|---|
+| Matched baseline | 25.000 | No writer / 3099 | 0 / 0 | 24.31 | 83 / 114 / 153 |
+| Analysis-STORED | 24.995 | 3164 / 3164 | 0 / 0 | 25.00 | 78 / 103 / 116 |
+| Full-STORED | 25.006 | 3156 / 3156 | 0 / 0 | 24.97 | 82 / 112 / 152 |
+| Fresh-process Analysis-STORED | 24.992 | 3114 / 3114 | 0 / 0 | 22.41 | 106 / 154 / 218 |
+| Native-STORED | 24.993 | 3113 / 3113 | 0 / 0 | 19.78 | 117 / 256 / 338 |
+
+[Stage 1 numeric evidence](reports/android-continuation-stage1.json),
+[fresh Analysis/Native evidence](reports/android-continuation-analysis-native.json).
+Baseline has 68 unavailable raw14-unsettled observations. Initial Analysis and Full
+have no unavailable/unobserved/malformed/replaced frames: every callback during
+those measured periods was saved. Fresh Analysis has 68 unavailable and seven
+replaced/unobserved frames; Native has 108 replaced/unobserved frames. These are
+source gaps, not writer loss. Every delivered valid measurement was retained.
+Independent readback confirms 3114 Analysis matrices plus 75 gap entries, and
+3113 Native matrices plus 106 gap entries covering 108 missing sequences, with
+complete integrity and source immutability ([report](reports/continuation-analysis-native-readback.json)).
+The fresh Analysis/Native run overlapped private evidence backup; do not attribute
+the replacements to that load without a controlled causal comparison.
+
+The operator explicitly confirmed hand/object movement was **very usable and
+fluid** during Analysis-STORED. Measured freshness remains below a second in all
+completed candidate stages; controls alone are not treated as presentation proof.
+
+For initial Analysis, inclusive preparation wall/CPU falls from 11.338/10.687 to
+5.805/5.359 ms per frame; Float32 encoding falls from 7.800/7.376 to
+0.893/0.831 ms. Candidate chunk encode p95 is 63.165 ms versus original discard
+535.69 ms; metadata p95 is 18.649 ms versus 246.57 ms. Loads/frequency differ, so
+these are stage observations, not a controlled CPU microbenchmark ratio.
+
+Both preparation and writer remain byte-bounded at 4 MiB, with no priority boost.
+Initial Analysis/Full measured writer maxima are 1331953/3341203 B; preparation
+max is one queued 1108992 B source. Sampled backlog drains repeatedly and final
+stop takes 80/63 ms. There is no sustained backlog trend. Every committed entry,
+including gaps, remains separately counted from saved matrices.
+
+Independent readback of the complete Stage 1 files verifies all payloads, logical/
+block/framing integrity, native Full views and source immutability: Analysis
+3164 valid matrices, zero gaps, 125 chunks; Full 3156, zero gaps, 127 chunks.
+[Readback report](reports/continuation-stage1-readback.json). Private recordings
+are preserved locally outside Git; no scene fixture or private machine data added.
+
+The original preferred 16 MiB DEFLATE candidate is now measured:
+Analysis saved 3087/3087 with zero recorder loss, acquisition 25.005 FPS, render
+24.35 FPS and age 84/108/122 ms. Native saved 3131/3162 with **31 explicit writer
+drops**, six separate source replacements and zero preparation loss; render
+24.59 FPS and age 86/117/177 ms. Full escalation stopped, so it is not a pass.
+[Preserved failed configuration](reports/android-continuation-deflate-16m.json).
+Native chunk p95 311.789 ms / max 512.830 ms, writer-service max 529.550 ms, queue
+max 3990999 B: the approximately 240 ms six-frame queue window is exceeded by
+sealing bursts despite mean service 10.114 ms per observed valid frame. No bulk
+backup overlapped this run. The predeclared 4 MiB preferred-chunk repeat tests
+this remaining bounded burst problem without increasing queues or reducing rate.
+
+Clean Full/final selected DEFLATE memory and the shorter-chunk repeat remain
+pending at this intermediate report. Earlier recovery/sparse/view/provider evidence is preserved;
+the test-only SAF launch and final same-byte packet are checked after live runs.
+Real Windows execution remains a required pending gate.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.

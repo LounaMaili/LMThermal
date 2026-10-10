@@ -1,5 +1,7 @@
 # R2 Android codec evidence and recommendation
 
+The original codec/performance evidence below is retained. See the [measured continuation](CONTINUATION_RESULTS.md) for the optimized framing/preparation path; original writer overload is not evidence that a codec itself is intrinsically too slow. Zstd product adoption remains deferred.
+
 **Lossless byte benchmarks; no 25 FPS product configuration is approved.**
 
 Reference source is the same 25 owned live Full measurements for every codec in a study.

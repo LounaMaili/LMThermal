@@ -13,5 +13,15 @@
     "zstd-3"
   ],
   "windows": "pending; no real Windows result yet",
-  "linux_report": "../reports/linux-packet.json"
+  "linux_report": "../reports/linux-packet.json",
+  "continuation_verification": {
+    "date": "2026-10-10",
+    "executed_revision": "9f9d6097960d17188611e2da159ac4606cee148d",
+    "android_regenerated_members": 15,
+    "all_original_member_hashes_identical": true,
+    "original_zip_retained": true,
+    "linux_cases_passed": 15,
+    "report": "../reports/continuation-packet.json",
+    "windows": "pending real execution"
+  }
 }

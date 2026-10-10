@@ -1,0 +1,37 @@
+{
+  "analysis-stored.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3114,
+    "gaps": 75,
+    "chunks": 126,
+    "logical_sha256": "e92906d742f4bbad2c986ba7292d90a5e703efdf625bbf6c7e9a6a910a0a34bf",
+    "source_sha256": "dc1dea752d3156866fb3d73b5304b6a6e3f8ac66cb9ec61c10c41c59d071bbb4",
+    "lazy_open_bytes": 2056,
+    "validation_read_bytes": 4151428939,
+    "validation_wall_s": 79.7686086620015,
+    "gap_sequences": 75,
+    "gap_reasons": {
+      "RAW14_UNSETTLED": 68,
+      "source-or-stateflow-unobserved": 7
+    },
+    "gap_entries": 75
+  },
+  "native-stored.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3113,
+    "gaps": 106,
+    "chunks": 128,
+    "logical_sha256": "20d4f455d6d84ffbdefaaa8375d7136bb52111e97748b238b2c5bf5fc42fffca",
+    "source_sha256": "5228ee4c8605b3f79f7097a51c0eebdda466e60818d895a6bb0451abb1917831",
+    "lazy_open_bytes": 2056,
+    "validation_read_bytes": 6217955683,
+    "validation_wall_s": 115.89501869300148,
+    "gap_sequences": 108,
+    "gap_reasons": {
+      "source-or-stateflow-unobserved": 108
+    },
+    "gap_entries": 106
+  }
+}

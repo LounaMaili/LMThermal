@@ -1,0 +1,34 @@
+{
+  "fresh_clean_analysis_session": [
+    {
+      "event": "control",
+      "requested": 32772,
+      "actual_length": 2,
+      "control_transfer_completed": true,
+      "state": "DISPLAY_STREAM",
+      "stage": "WAIT_RAW",
+      "mode": "DISPLAY"
+    },
+    {
+      "event": "control",
+      "requested": 32800,
+      "actual_length": 2,
+      "control_transfer_completed": true,
+      "state": "RAW14_UNSETTLED",
+      "stage": "WAIT_RANGE",
+      "mode": "RAW14"
+    },
+    {
+      "event": "control",
+      "requested": 32768,
+      "actual_length": 2,
+      "control_transfer_completed": true,
+      "state": "RAW14_UNSETTLED",
+      "stage": "WAIT_SHUTTER",
+      "mode": "RAW14"
+    }
+  ],
+  "harness_controls": 0,
+  "evidence_source": "Existing numeric session log; explicit operator Initialize only",
+  "camera_protocol_change": false
+}

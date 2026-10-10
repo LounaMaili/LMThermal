@@ -1,0 +1,24 @@
+{
+  "nosync.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 1378,
+    "gaps": 59,
+    "chunks": 63,
+    "logical_sha256": "2628571d2747b6dc56546be42913ea45c2787d6b888de07d4a50449dd97727b9",
+    "source_sha256": "14de322381f699c15da9cc32d653051314c8e206c11aa8a12bc9f852b4ab81d8",
+    "lazy_open_bytes": 2050,
+    "validation_read_bytes": 1837405942
+  },
+  "file.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 1356,
+    "gaps": 57,
+    "chunks": 63,
+    "logical_sha256": "22a49956c3ac078e7742c49bbf630fdffc46f19cd735eded6ed769088ede4217",
+    "source_sha256": "47fb6a6a34f252346f8e96038bf174e3dedcbcc405c2581cb076b43cacef89f5",
+    "lazy_open_bytes": 2054,
+    "validation_read_bytes": 1808067566
+  }
+}
