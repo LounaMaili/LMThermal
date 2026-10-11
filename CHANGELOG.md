@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R2 native Windows interoperability — 2026-10-11)
+
+- Validated the clean R2 checkout at `736aba08fa78d070d0a31b29826b7cd4b63fe2ec` on native Windows 11 Pro 25H2 build 26200.9550/x64 with Python 3.12.10. Verified the original archive SHA-256 before extraction and retained it unchanged.
+- Passed all ten STORED/DEFLATE baseline outcomes (six complete, two missing-END recoveries, two expected committed-corruption rejections), with five explicit Zstd skips. Separately passed all 15 codec outcomes using preinstalled reference Zstd 1.5.7; product Zstd adoption remains deferred.
+- Recorded exact case-result parity with both existing Linux reports, exact synthetic measurement/native/acquisition/context checks, restricted views and lazy seeking, plus unchanged archive/manifest/all 15 member hashes. Added sanitized Windows evidence and updated current R2 status to ready for completion review.
+- Preserved prior Android/Linux/live failures and sampling/backend caveats. No format/prototype, application, camera, thermometry, Desktop, R1b/R3/product change, merge or automatic issue closure.
+
 ### Added (R2 resumed live validation — 2026-10-10)
 
 - Preserved the expired readiness attempt and all prior failures; verified the clean existing branch, installed candidate APK hashes, current wireless ADB and actual absent USB/session state before opening unique fresh-process harness runs.

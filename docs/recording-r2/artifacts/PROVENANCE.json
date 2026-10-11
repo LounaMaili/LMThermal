@@ -12,7 +12,7 @@
     "deflate-1",
     "zstd-3"
   ],
-  "windows": "pending; no real Windows result yet",
+  "windows": "Native Windows baseline and separate optional reference Zstd parity passed 2026-10-11; see windows_verification",
   "linux_report": "../reports/linux-packet.json",
   "continuation_verification": {
     "date": "2026-10-10",
@@ -33,5 +33,21 @@
     "linux_cases_passed": 15,
     "report": "../reports/continuation-final-packet.json",
     "windows": "pending real execution"
+  },
+  "windows_verification": {
+    "date": "2026-10-11",
+    "validated_revision": "736aba08fa78d070d0a31b29826b7cd4b63fe2ec",
+    "platform": "Native Windows 11 Pro 25H2 build 26200.9550/x64",
+    "python": "3.12.10",
+    "baseline_outcomes_passed": 10,
+    "baseline_zstd_cases_skipped": 5,
+    "optional_all_codec_outcomes_passed": 15,
+    "optional_zstd_reference_version": "1.5.7",
+    "exact_parity_with_original_and_final_linux_reports": true,
+    "all_original_member_hashes_identical": true,
+    "original_zip_retained": true,
+    "all_sources_immutable": true,
+    "report": "../reports/windows-packet.json",
+    "status": "R2 ready for completion review; no R1b wire approval"
   }
 }

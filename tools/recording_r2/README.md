@@ -129,5 +129,7 @@ an absent device. Do not invent a camera reset command.
 The resumed Full-STORED and 4 MiB DEFLATE measurements are documented in
 [the continuation report](../../docs/recording-r2/CONTINUATION_RESULTS.md).
 Their private recordings remain outside Git. The same-byte synthetic packet is
-ready for [real Windows validation](../../docs/recording-r2/WINDOWS_VALIDATION.md),
-which remains pending; no R1b/R3/product work follows automatically.
+now passes [native Windows validation](../../docs/recording-r2/WINDOWS_VALIDATION.md):
+10 baseline outcomes and a separate optional 15-case Zstd 1.5.7 run, with exact
+Linux parity and immutable sources. R2 is ready for completion review; no
+R1b/R3/product work follows automatically.

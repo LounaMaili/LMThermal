@@ -346,3 +346,23 @@ evidence, not an accepted wire/default change; R1b, R3 and product recording hav
 not started. No application/camera/thermometry source changed in this resumed task.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+## Native Windows gate completed — 2026-10-11
+
+The Windows gate left pending by the 2026-10-10 continuation above now passes on
+native Windows 11 Pro 25H2 build 26200.9550/x64 with Python 3.12.10, using a clean
+checkout at `736aba08fa78d070d0a31b29826b7cd4b63fe2ec`. The unchanged original ZIP
+passes all ten STORED/DEFLATE baseline outcomes (five explicit Zstd skips) and a
+separate optional all-15-case run with preinstalled reference Zstd 1.5.7. Every
+executed case equals both published Linux reports; source archive, manifest and
+all members remain immutable. See [execution details](WINDOWS_VALIDATION.md) and
+[the sanitized report](reports/windows-packet.json).
+
+No Android/Linux test or live recording was repeated. Earlier failed runs and
+memory sampling/backend assurance limits remain preserved. R2 is ready for
+completion review, with #7 kept open. R1b owner approval remains separate; the
+provisional chunk/codec/wire recommendations and deferred product Zstd adoption
+are unchanged. This Windows task changes only validation evidence/documentation,
+with no Desktop change, R1b/R3 work, product recorder or merge.
+
+Native-equivalent temperatures; absolute physical accuracy not yet independently validated.

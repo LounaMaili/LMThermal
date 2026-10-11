@@ -200,7 +200,7 @@ for the original full-payload Android camera test.
 - [`docs/LMTR_FORMAT_CANDIDATE.md`](docs/LMTR_FORMAT_CANDIDATE.md) — R1a owner-accepted product/semantic direction, normative candidate and explicitly provisional recording wire details.
 - [`docs/COMMON_RECORDING_DESIGN.md`](docs/COMMON_RECORDING_DESIGN.md) — Architecture proposals, with R1a status; complete grids, candidate bounded views, indexing/recovery and Android storage strategy.
 - [`docs/RECORDING_R2_VALIDATION.md`](docs/RECORDING_R2_VALIDATION.md) — Exact feasibility/fault/backend gates and evidence required before R1b wire review/freeze.
-- [`docs/recording-r2/README.md`](docs/recording-r2/README.md) — Isolated R2 feasibility evidence, provisional framing and pending cross-platform gates; no production recorder.
+- [`docs/recording-r2/README.md`](docs/recording-r2/README.md) — R2 feasibility evidence ready for completion review, including native Windows parity; provisional framing and no production recorder.
 - [`docs/RECORDING_COMPRESSION_STUDY.md`](docs/RECORDING_COMPRESSION_STUDY.md) — Actual short live-frame lossless codec measurements, storage examples and limitations.
 - [`docs/RECORDING_IMPLEMENTATION_PLAN.md`](docs/RECORDING_IMPLEMENTATION_PLAN.md) — Accepted owner decisions, R1a→R2→R1b gates and linked R1–R7 issues; no production recording implementation started.
 

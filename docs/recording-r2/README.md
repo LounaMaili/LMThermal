@@ -1,12 +1,15 @@
 # R2 feasibility evidence
 
-**R2 INCOMPLETE.** The original live matrices failed throughput/preview gates and
-remain preserved. The measured continuation now retains every delivered valid
+**R2 READY FOR COMPLETION REVIEW.** The original live matrices failed
+throughput/preview gates and remain preserved. The measured continuation now retains every delivered valid
 STORED measurement with zero preparation/writer drops and fresh presentation.
 The resumed clean Full-STORED and explicit 4 MiB Analysis/Native/Full DEFLATE runs
 also pass throughput/freshness, with measured clean-process memory differences
-below the 64 MiB target. Real Windows parity remains pending. Passing prototype
-JUnit methods alone is not gate acceptance; memory sampling limits remain explicit.
+below the 64 MiB target. Native Windows now passes all 10 STORED/DEFLATE baseline
+outcomes and the separate optional 15-case Zstd reference run with exact Linux
+parity and immutable sources. R2 #7 stays open for completion review; R1b owner
+approval remains separate. Memory sampling and backend assurance limits remain
+explicit; historical failures are retained.
 
 - [Measured continuation and bounded candidate](CONTINUATION_RESULTS.md): original ablations, cost/copy model and staged rerun status.
 - [Continuation diagnosis plan](CONTINUATION_PLAN.md): ownership audit and staged ablations before optimization.
@@ -20,8 +23,9 @@ JUnit methods alone is not gate acceptance; memory sampling limits remain explic
   lazy seeking and sparse offsets beyond 4 GiB.
 - [Hostile inputs and restricted views](HOSTILE_VIEWS.md).
 - [Storage/backend and SAF matrix](BACKENDS.md).
-- [Same-byte real Windows validation packet and commands](WINDOWS_VALIDATION.md):
-  ready to run; not yet executed on Windows.
+- [Completed native Windows validation and commands](WINDOWS_VALIDATION.md), with
+  [sanitized machine-readable evidence](reports/windows-packet.json): baseline and
+  separate optional codec parity passed against the unchanged packet.
 - [Historical machine-readable gate summary](reports/aggregate.json), preserved
   unchanged, and [resumed candidate metrics](reports/continuation-resume-summary.json).
 - [Final regression and scope checks](REGRESSION.md).

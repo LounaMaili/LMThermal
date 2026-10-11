@@ -5,9 +5,11 @@
 
 R2 now has [isolated prototypes and an evidence packet](recording-r2/README.md).
 The [exact experimental framing annex](recording-r2/FRAMING_PROPOSAL.md) is a proposal
-for R1b, not acceptance. Both live matrices failed writer-throughput/preview gates;
-incremental/steady memory and real Windows parity remain incomplete. All applicable
-gates must pass before R2 can be complete; failed configurations remain reported.
+for R1b, not acceptance. Historical failed live matrices remain reported; the
+[measured continuation](recording-r2/CONTINUATION_RESULTS.md) and
+[native Windows packet validation](recording-r2/WINDOWS_VALIDATION.md) now satisfy
+the recommended baseline gates. R2 is ready for completion review, with memory
+sampling/backend assurance limits explicit. R1b owner wire approval remains separate.
 
 Authority: the owner explicitly supplied the decisions and semantic acceptance
 scope on 2026-10-07. This document records that scope; it does not infer acceptance

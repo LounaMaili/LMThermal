@@ -108,3 +108,30 @@ The full private live files, independent readback and recovery evidence are link
 from [the completed continuation](CONTINUATION_RESULTS.md).
 Real Windows remains pending, R2 stays open, and this resumed task changes only
 documentation/numeric reports. No new application/camera/thermometry code or merge.
+
+## Native Windows packet validation — 2026-10-11
+
+Validated source: `736aba08fa78d070d0a31b29826b7cd4b63fe2ec`, clean existing R2
+branch. Native Windows 11 Pro 25H2 build 26200.9550/x64; Python 3.12.10 (64-bit).
+The original ZIP hash matches before extraction and after validation. Fresh local
+extraction, no source-member edits or packet regeneration.
+
+| Windows check | Result |
+|---|---|
+| STORED/DEFLATE `--baseline-only` | Exit 0; 10 expected outcomes passed: 6 complete, 2 recovered, 2 corruption rejected; 5 explicit Zstd skips |
+| Separate optional all-codec run | Exit 0; 15 expected outcomes passed: 9 complete, 3 recovered, 3 corruption rejected; no skips; preinstalled reference Zstd 1.5.7 |
+| Existing Linux report comparison | All 10 baseline and all 15 optional case rows exactly equal both published reports |
+| Exact synthetic checks | Float32/masks/native/acquisition/context/gaps, restricted native views and lazy seeks passed |
+| Missing-END recovery | Each case retains 5 frames/1 gap/1 chunk and remains incomplete |
+| Committed corruption | Explicit `committed_payload_integrity` rejection for each codec |
+| Source integrity | Archive, manifest and all 15 member hashes unchanged |
+| `git diff --check` | Passed |
+
+[Sanitized numeric report](reports/windows-packet.json) and
+[Windows guide/review boundary](WINDOWS_VALIDATION.md). No unexpected failures or
+packet compatibility differences. Historical Linux/Android/JVM/process-kill/live
+suites were not rerun; their existing scoped evidence is preserved. This task
+changes only evidence/documentation, with no format/prototype or Desktop change.
+R2 is ready for completion review; no R1b acceptance, R3/product work or merge.
+
+Native-equivalent temperatures; absolute physical accuracy not yet independently validated.

@@ -3,8 +3,11 @@
 **Authoritative R2 acceptance checklist. Execution evidence is separate.**
 
 The authorized feasibility branch now contains [isolated R2 prototypes/reports](recording-r2/README.md).
-This checklist remains the acceptance gate; a prototype or prepared Windows packet
-does not imply completion. R1b wire freeze and R3 remain gated.
+This checklist remains the acceptance gate. The
+[completed native Windows execution](recording-r2/WINDOWS_VALIDATION.md) satisfies
+the last pending baseline interoperability gate; R2 is ready for completion review
+with the preserved continuation evidence and its limitations. R1b owner wire
+approval and R3 remain gated.
 
 [R1a semantics and owner decisions](LMTR_FORMAT_CANDIDATE.md) are accepted direction.
 Wire details and backend assurance remain provisional. This checklist defines what

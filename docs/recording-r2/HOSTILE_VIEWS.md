@@ -33,8 +33,10 @@ high bits, matrix cropping, coordinate rotation or packet synthesis.
 
 Android-written synthetic packets pass all three profiles/codecs on Android and
 independent Linux: complete files, masks, contexts, explicit gaps, views, recovered
-missing-END files and corrupt files. A synthetic 13×7 geometry also passes. Real
-Windows remains pending; the [same-byte packet](WINDOWS_VALIDATION.md) is ready.
+missing-END files and corrupt files. A synthetic 13×7 geometry also passes.
+Native Windows now passes the [unchanged same-byte packet](WINDOWS_VALIDATION.md),
+including restricted views and expected corruption rejection; no hostile-input
+suite or Linux/Android execution was repeated for the Windows gate.
 Recommend retaining **only this restricted view class** for R1b consideration.
 General transformations, strides, nesting and cross-frame references remain excluded.
 

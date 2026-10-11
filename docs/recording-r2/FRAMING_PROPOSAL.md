@@ -184,7 +184,7 @@ limit. Recovered files are never implicitly resumed/rewritten in place.
 | Framing integrity | IEEE CRC32(header40 + footer64); body SHA-256 and reference SHA-256(header40 + body SHA); per-block and per-logical-payload SHA-256 |
 | Commit | Complete footer after body sync, then footer sync before advancing live committed counters |
 | Baseline codec IDs | Recommend STORED=0 and RFC1950-wrapped DEFLATE=1 mandatory decoder capabilities; writer level 1 as conservative candidate |
-| Optional codec ID | Zstd=2 only as explicit required feature for recordings that use it; defer product adoption pending real Windows and live gate success |
+| Optional codec ID | Zstd=2 only as explicit required feature for recordings that use it; optional Windows parity passed, but product adoption remains deferred for R1b owner decision |
 | Preferred / hard chunk | Earliest 1 s / 32 entries / 16 MiB; aggregate decoded+metadata 64 MiB, record 65 MiB; metadata 1 MiB |
 | Index | Bounded JSON pages, 256 children, depth 8, page 512 KiB, backwards ordinal/offset links |
 | Checkpoint | Every 32 committed chunks, immutable root plus previous checkpoint; Stop seals final short chunk |
@@ -199,9 +199,11 @@ R2 artifact bytes. Complete generic/module JSON schemas, clock-domain declaratio
 required-feature names and interoperability vectors still need R1b review. Relative
 time in this prototype is host monotonic receipt relative to run origin, not sensor
 UTC; gaps have no invented receipt/acquisition clock. No R1a preservation invariant
-is relaxed. The failed live throughput/responsiveness gate blocks recommending any
-prototype configuration as a 25 FPS product default. This packet is ready for review
-of evidence, **not** for owner wire freeze or production implementation.
+is relaxed. Historical 16 MiB live failures remain preserved; the explicit 4 MiB
+continuation passes its measured gates and native Windows packet parity now passes (see
+[completed evidence](WINDOWS_VALIDATION.md)). No prototype configuration is approved
+as a 25 FPS product default. R2 is ready for completion review, **not** owner wire
+freeze or production implementation.
 
 ## Initial backend recommendation and R1b decisions
 
