@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Complete proposed recording R1b wire draft — 2026-10-12)
+
+- Proposed the complete camera-independent LMTR container/schema 1.0/envelope-1 contract: exact release framing, generic stream/segment/context/payload grammar, authoritative Float32/masks, precise clocks/gaps, codecs, integrity/index/recovery, resource/admission/idle and storage/lineage semantics. Every rule group distinguishes accepted R1a goals, scoped R2 evidence and new R1b proposals.
+- Added an owner decision/ambiguity table, local JSON shape schema, 14 explicitly noncanonical illustrative metadata scenarios and deterministic documentation-only Fedora checks. No binary LMTR/R3 fixture, production parser/serializer or device/camera test was introduced.
+- Recommended STORED/DEFLATE baseline with Zstd ID2 reserved/unassigned, measured 4 MiB HT preference distinct from queues/hard bounds, first-entry monotonic idle sealing and bounded timed checkpoints; new grammar/timer/large-module performance remains unvalidated pending owner acceptance and later implementation.
+- Updated navigation/current roadmap to the integrated, scoped-complete R2 status. R1b remains DRAFT, issue #6 open and R3/production gated. Existing LMTX v1, Android/Desktop code, R2 artifacts/reports and failed history are unchanged.
+
 ### Fixed (Celsius presentation starvation and session isolation — 2026-10-12)
 
 - Isolated the R2-proven presentation correction: one in-flight render and one conflated latest request publish useful completed measurements during continuous valid arrivals, with matching bitmap/range/readings and bounded work.

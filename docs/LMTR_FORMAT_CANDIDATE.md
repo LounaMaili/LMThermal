@@ -3,6 +3,11 @@
 **R1a product/semantic direction: owner-accepted, 2026-10-07.**
 **Complete wire contract: provisional; not published or frozen.**
 
+The [complete R1b proposal](LMTR_WIRE_V1_DRAFT.md) and
+[owner decision/ambiguity review](LMTR_R1B_OWNER_DECISIONS.md) now supply the exact
+proposed grammar. They remain DRAFT and do not change accepted R1a semantics.
+R2 #7 is closed for its tested baseline; R1 #6 remains open and R3 stays blocked.
+
 R2 now has [isolated prototypes and an evidence packet](recording-r2/README.md).
 The [exact experimental framing annex](recording-r2/FRAMING_PROPOSAL.md) is a proposal
 for R1b, not acceptance. Historical failed live matrices remain reported; the
@@ -10,7 +15,7 @@ for R1b, not acceptance. Historical failed live matrices remain reported; the
 [native Windows packet validation](recording-r2/WINDOWS_VALIDATION.md) now satisfy
 the recommended baseline gates. The [completion review](recording-r2/COMPLETION_REVIEW.md)
 now recommends owner-approved closure/integration with memory/backend limits
-explicit. #7 and #6 remain open; R1b owner wire approval remains separate.
+explicit. #7 is closed for the scoped baseline; #6 remains open for explicit R1b owner approval.
 
 Authority: the owner explicitly supplied the decisions and semantic acceptance
 scope on 2026-10-07. This document records that scope; it does not infer acceptance

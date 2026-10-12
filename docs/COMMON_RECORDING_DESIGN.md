@@ -3,6 +3,12 @@
 **Architecture draft: 2026-10-06; R1a owner acceptance recorded 2026-10-07.**
 **The complete wire contract remains provisional, not frozen or published.**
 
+Current handoff: [complete R1b DRAFT](LMTR_WIRE_V1_DRAFT.md) and
+[owner decisions](LMTR_R1B_OWNER_DECISIONS.md). R2 #7 is scoped-complete after
+focused integration; #6 stays open. This architecture retains earlier proposals
+and rationale; new exact mechanical recommendations are identified in the draft,
+not silently treated as accepted rules or applied to R2 bytes.
+
 This document preserves the architecture proposals for Android/Linux/Windows.
 The [normative candidate](LMTR_FORMAT_CANDIDATE.md) now distinguishes accepted R1a
 product/semantic direction from candidate features and provisional mechanics.

@@ -170,10 +170,14 @@ The [common recording normative candidate](docs/LMTR_FORMAT_CANDIDATE.md) record
 **owner-accepted R1a product/semantic direction**: complete grids, truthful
 Analysis/Native/Full preservation and non-intrusive storage policy. Exact wire
 mechanics remain provisional. [R2 feasibility](docs/RECORDING_R2_VALIDATION.md)
-has scoped owner-reviewed evidence (see [integration provenance](docs/recording-r2/INTEGRATION.md));
-R1b owner wire acceptance must precede release and the canonical corpus. No common
-recorder/reader is implemented; Accepted still LMTX v1 is unchanged. The
-[architecture](docs/COMMON_RECORDING_DESIGN.md), unchanged compression evidence
+is complete for the tested HT-301/Pixel 8 baseline, with preserved
+[limits and provenance](docs/recording-r2/INTEGRATION.md). The complete
+[R1b wire draft](docs/LMTR_WIRE_V1_DRAFT.md) and
+[owner decision review](docs/LMTR_R1B_OWNER_DECISIONS.md) now propose the generic
+schema, framing, clocks, codecs, limits and idle/recovery/storage rules.
+**DRAFT: no owner wire acceptance or freeze.** R1 #6 stays open; R3 canonical
+fixtures and production recording remain blocked. Accepted still LMTX v1 is unchanged.
+The [architecture](docs/COMMON_RECORDING_DESIGN.md), unchanged compression evidence
 and [R1–R7 roadmap](docs/RECORDING_IMPLEMENTATION_PLAN.md) retain the rationale.
 
 Real-device acceptance evidence for the first foundation is tracked separately in
@@ -198,6 +202,7 @@ for the original full-payload Android camera test.
 
 - [`docs/LMTX_FORMAT_V1.md`](docs/LMTX_FORMAT_V1.md) — Accepted v1.0 canonical specification for still-only `.lmtx` exchange; Android still export and Linux/Windows Desktop interoperability are complete ([producer guide](docs/ANDROID_LMTX_EXPORT.md)). [Issue #4](https://github.com/LounaMaili/LMThermal/issues/4) retains the decision/review history.
 - [`docs/ANDROID_LMTX_EXPORT.md`](docs/ANDROID_LMTX_EXPORT.md) — Save capture, immutable module evidence, SAF/share, privacy, limits and conformance tools.
+- [`docs/LMTR_WIRE_V1_DRAFT.md`](docs/LMTR_WIRE_V1_DRAFT.md) — Complete proposed R1b wire contract, DRAFT/unaccepted; [owner decisions](docs/LMTR_R1B_OWNER_DECISIONS.md), [illustrative noncanonical metadata/schema](docs/lmtr-r1b/README.md) and host checks.
 - [`docs/LMTR_FORMAT_CANDIDATE.md`](docs/LMTR_FORMAT_CANDIDATE.md) — R1a owner-accepted product/semantic direction, normative candidate and explicitly provisional recording wire details.
 - [`docs/COMMON_RECORDING_DESIGN.md`](docs/COMMON_RECORDING_DESIGN.md) — Architecture proposals, with R1a status; complete grids, candidate bounded views, indexing/recovery and Android storage strategy.
 - [`docs/RECORDING_R2_VALIDATION.md`](docs/RECORDING_R2_VALIDATION.md) — Exact feasibility/fault/backend gates and evidence required before R1b wire review/freeze.

@@ -1,0 +1,115 @@
+{
+  "status": "DRAFT_HOST_CHECKS_PASS_NOT_R3_OR_OWNER_ACCEPTANCE",
+  "review": "r1b-review-1",
+  "schema_definitions": 76,
+  "schema_refs_resolve": 299,
+  "scenarios": [
+    {
+      "id": "01",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "02",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "03",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "04",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "05",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "06",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "07",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "08",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "09",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "10",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "11",
+      "outcome": "unsupported_required_feature",
+      "passed": true
+    },
+    {
+      "id": "12",
+      "outcome": "recovered_missing_end",
+      "passed": true
+    },
+    {
+      "id": "13",
+      "outcome": "committed_payload_integrity",
+      "passed": true
+    },
+    {
+      "id": "14",
+      "outcome": "accept_metadata",
+      "passed": true
+    }
+  ],
+  "decimal_spelling_checks": 6,
+  "negative_type_json_checks": 9,
+  "semantic_negative_checks": [
+    "statistics_value",
+    "context_hash",
+    "timeline_order",
+    "view_slice",
+    "view_parent",
+    "view_feature",
+    "segment_hash"
+  ],
+  "framing_widths": {
+    "header": 40,
+    "footer": 72
+  },
+  "ieee_crc32_known_check": true,
+  "float32_signed_zero_check": true,
+  "unicode_scalar_key_order_check": true,
+  "binary_container_written": false,
+  "device_or_camera_accessed": false,
+  "unexecuted": [
+    "Kotlin/Python production implementations",
+    "canonical R3 binary corpus",
+    "real Windows new-wire validation",
+    "multi-stream camera hardware",
+    "idle timer/Stop/backend races",
+    "new grammar sustained performance or peak-memory proof"
+  ],
+  "scope": "Documentation local-shape checks and selected cross-field/byte recipes, not full LMTR/R3 conformance; prose binary/index/recovery/storage rules require future implementation validation.",
+  "inputs_sha256": {
+    "docs/LMTR_WIRE_V1_DRAFT.md": "1bdce9fec9d3efe3a101f3113a3255cc0b665493219c179932bf7c0fc5680a6e",
+    "docs/LMTR_R1B_OWNER_DECISIONS.md": "77ed0b2dc0096f8c70d3c415e691a3a8fed9abbb3546bea3f09e1272028a97b5",
+    "docs/lmtr-r1b/schema.json": "9e71e370f069232a61778c19f994252dd66a97b1ec10e6bc5ae9889aa7dfc89e",
+    "docs/lmtr-r1b/examples.json": "a7388f7fd08f71ab1bc70adfc90b273784091aa11636f403a389341ab8c80613",
+    "tools/check_lmtr_draft.py": "68c0f3a607ddf886bb6384f3a9d9de365becacb164f06ac1b27e6753741ad4fb"
+  },
+  "base_revision": "ed0e3338a72bba76a267e4701125f6f89b3f93e3"
+}
