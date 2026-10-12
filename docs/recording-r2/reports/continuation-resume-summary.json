@@ -1,0 +1,474 @@
+{
+  "executed_revision": "531b8fd0653d503309f5def0899380a939b6f6d6",
+  "matched_baseline_revision": "9f9d6097960d17188611e2da159ac4606cee148d",
+  "matched_baseline_fps": 25.00039457693461,
+  "matched_baseline_memory": {
+    "java_used": {
+      "steady_last_half_median_bytes": 121878720.0,
+      "sampled_peak_bytes": 230789312,
+      "post_gc_bytes": 110223552,
+      "sample_100ms_peak_bytes": 263180480
+    },
+    "native_heap": {
+      "steady_last_half_median_bytes": 36084208.0,
+      "sampled_peak_bytes": 50160720,
+      "post_gc_bytes": 35156944,
+      "sample_100ms_peak_bytes": 51988592
+    },
+    "pss_bytes": {
+      "steady_last_half_median_bytes": 357483520.0,
+      "sampled_peak_bytes": 481103872,
+      "post_gc_bytes": 340944896,
+      "sample_100ms_peak_bytes": null
+    },
+    "rss_bytes": {
+      "steady_last_half_median_bytes": 359053312.0,
+      "sampled_peak_bytes": 534503424,
+      "post_gc_bytes": 339468288,
+      "sample_100ms_peak_bytes": null
+    }
+  },
+  "runs": [
+    {
+      "stage": "full-stored",
+      "duration_s": 126.183,
+      "callback_fps": 24.99544312625314,
+      "accepted": 3086,
+      "saved_measurements": 3086,
+      "unavailable": 68,
+      "sequence_unobserved": 0,
+      "replaced": 0,
+      "malformed": 0,
+      "preparation_drops": 0,
+      "writer_drops": 0,
+      "preferred_chunk_bytes": 16777216,
+      "preparation_queue_max_bytes": 1108992,
+      "writer_queue_max_bytes": 3341207,
+      "stop_ms": 128,
+      "file_bytes": 2064858188,
+      "physical_bytes": 2057201664,
+      "stored_bytes": 2057201664,
+      "chunks": 127,
+      "render_fps": 24.408993287526844,
+      "display_source_age_ms": {
+        "p50": 82,
+        "p95": 104,
+        "max": 112,
+        "samples": 118
+      },
+      "throughput_gate": true,
+      "acquisition_delta_percent_vs_matched_baseline": -0.01980549013430588,
+      "chunk_encode_wall_ms": {
+        "p50": 67.120605,
+        "p95": 88.459636,
+        "max": 133.082763
+      },
+      "writer_queue_wait_wall_ms": {
+        "p50": 0.22583,
+        "p95": 56.416056,
+        "max": 164.334188
+      },
+      "writer_service_wall_max_ms": 209.498209,
+      "backlog_zero_samples": 108,
+      "backlog_samples": 120
+    },
+    {
+      "stage": "analysis-deflate-1",
+      "duration_s": 126.245,
+      "callback_fps": 24.999009861776702,
+      "accepted": 3114,
+      "saved_measurements": 3114,
+      "unavailable": 41,
+      "sequence_unobserved": 0,
+      "replaced": 0,
+      "malformed": 0,
+      "preparation_drops": 0,
+      "writer_drops": 0,
+      "preferred_chunk_bytes": 4194304,
+      "preparation_queue_max_bytes": 1108992,
+      "writer_queue_max_bytes": 887968,
+      "stop_ms": 81,
+      "file_bytes": 345242547,
+      "physical_bytes": 1377533952,
+      "stored_bytes": 338660758,
+      "chunks": 347,
+      "render_fps": 24.658402312962888,
+      "display_source_age_ms": {
+        "p50": 85,
+        "p95": 109,
+        "max": 117,
+        "samples": 118
+      },
+      "throughput_gate": true,
+      "acquisition_delta_percent_vs_matched_baseline": -0.005538773212743209,
+      "chunk_encode_wall_ms": {
+        "p50": 62.039591,
+        "p95": 74.950277,
+        "max": 85.799194
+      },
+      "writer_queue_wait_wall_ms": {
+        "p50": 0.198039,
+        "p95": 31.185506,
+        "max": 74.631592
+      },
+      "writer_service_wall_max_ms": 106.330078,
+      "backlog_zero_samples": 107,
+      "backlog_samples": 120
+    },
+    {
+      "stage": "native-deflate-1",
+      "duration_s": 126.233,
+      "callback_fps": 25.001386325287363,
+      "accepted": 3156,
+      "saved_measurements": 3156,
+      "unavailable": 0,
+      "sequence_unobserved": 0,
+      "replaced": 0,
+      "malformed": 0,
+      "preparation_drops": 0,
+      "writer_drops": 0,
+      "preferred_chunk_bytes": 4194304,
+      "preparation_queue_max_bytes": 1108992,
+      "writer_queue_max_bytes": 1995499,
+      "stop_ms": 98,
+      "file_bytes": 582573464,
+      "physical_bytes": 2094170112,
+      "stored_bytes": 574890494,
+      "chunks": 526,
+      "render_fps": 24.961777031362637,
+      "display_source_age_ms": {
+        "p50": 83,
+        "p95": 109,
+        "max": 136,
+        "samples": 120
+      },
+      "throughput_gate": true,
+      "acquisition_delta_percent_vs_matched_baseline": 0.003966930800647361,
+      "chunk_encode_wall_ms": {
+        "p50": 64.239218,
+        "p95": 79.040771,
+        "max": 104.330363
+      },
+      "writer_queue_wait_wall_ms": {
+        "p50": 0.171224,
+        "p95": 37.50594,
+        "max": 90.1073
+      },
+      "writer_service_wall_max_ms": 115.192465,
+      "backlog_zero_samples": 106,
+      "backlog_samples": 120
+    },
+    {
+      "stage": "full-deflate-1",
+      "duration_s": 126.494,
+      "callback_fps": 24.997233070343256,
+      "accepted": 3162,
+      "saved_measurements": 3162,
+      "unavailable": 0,
+      "sequence_unobserved": 0,
+      "replaced": 0,
+      "malformed": 0,
+      "preparation_drops": 0,
+      "writer_drops": 0,
+      "preferred_chunk_bytes": 4194304,
+      "preparation_queue_max_bytes": 1108992,
+      "writer_queue_max_bytes": 2004719,
+      "stop_ms": 99,
+      "file_bytes": 571617125,
+      "physical_bytes": 2107865088,
+      "stored_bytes": 563264284,
+      "chunks": 527,
+      "render_fps": 24.736351131278955,
+      "display_source_age_ms": {
+        "p50": 85,
+        "p95": 117,
+        "max": 203,
+        "samples": 120
+      },
+      "throughput_gate": true,
+      "acquisition_delta_percent_vs_matched_baseline": -0.012645826775359303,
+      "chunk_encode_wall_ms": {
+        "p50": 68.622355,
+        "p95": 92.655477,
+        "max": 140.18925
+      },
+      "writer_queue_wait_wall_ms": {
+        "p50": 0.159586,
+        "p95": 44.278687,
+        "max": 109.218913
+      },
+      "writer_service_wall_max_ms": 146.764608,
+      "backlog_zero_samples": 99,
+      "backlog_samples": 120
+    }
+  ],
+  "clean_process_memory": [
+    {
+      "stage": "analysis-stored",
+      "fresh_process": true,
+      "source_report": "android-continuation-analysis-native.json",
+      "revision": "9f9d6097960d17188611e2da159ac4606cee148d",
+      "bulk_backup_overlap": true,
+      "memory": {
+        "java_used": {
+          "steady_last_half_median_bytes": 130689216.0,
+          "sampled_peak_bytes": 262394048,
+          "post_gc_bytes": 115130560,
+          "sample_100ms_peak_bytes": 262901952
+        },
+        "native_heap": {
+          "steady_last_half_median_bytes": 34825368.0,
+          "sampled_peak_bytes": 48382864,
+          "post_gc_bytes": 34058896,
+          "sample_100ms_peak_bytes": 50172032
+        },
+        "pss_bytes": {
+          "steady_last_half_median_bytes": 360605696.0,
+          "sampled_peak_bytes": 489810944,
+          "post_gc_bytes": 345099264,
+          "sample_100ms_peak_bytes": null
+        },
+        "rss_bytes": {
+          "steady_last_half_median_bytes": 407443456.0,
+          "sampled_peak_bytes": 556396544,
+          "post_gc_bytes": 392970240,
+          "sample_100ms_peak_bytes": null
+        }
+      },
+      "process_delta_bytes_vs_baseline": {
+        "java_used": {
+          "steady_last_half_median_bytes": 8810496.0,
+          "sampled_peak_bytes": 31604736,
+          "post_gc_bytes": 4907008,
+          "sample_100ms_peak_bytes": -278528
+        },
+        "native_heap": {
+          "steady_last_half_median_bytes": -1258840.0,
+          "sampled_peak_bytes": -1777856,
+          "post_gc_bytes": -1098048,
+          "sample_100ms_peak_bytes": -1816560
+        },
+        "pss_bytes": {
+          "steady_last_half_median_bytes": 3122176.0,
+          "sampled_peak_bytes": 8707072,
+          "post_gc_bytes": 4154368
+        },
+        "rss_bytes": {
+          "steady_last_half_median_bytes": 48390144.0,
+          "sampled_peak_bytes": 21893120,
+          "post_gc_bytes": 53501952
+        }
+      },
+      "observed_owned_slots_peak_bytes": {
+        "preparation_queue_arrays": 1108992,
+        "preparation_inflight_source_arrays": 1108992,
+        "writer_queue_payload_context": 1331942,
+        "writer_inflight_payload_context": 443985,
+        "chunk_pending_payload": 11943936,
+        "chunk_encoding_arrays": 11943936,
+        "sum_observed_slots": 25219821
+      }
+    },
+    {
+      "stage": "full-stored",
+      "fresh_process": true,
+      "source_report": "android-continuation-full-stored-clean.json",
+      "revision": "531b8fd0653d503309f5def0899380a939b6f6d6",
+      "bulk_backup_overlap": false,
+      "memory": {
+        "java_used": {
+          "steady_last_half_median_bytes": 142405824.0,
+          "sampled_peak_bytes": 263909568,
+          "post_gc_bytes": 115089600,
+          "sample_100ms_peak_bytes": 268243136
+        },
+        "native_heap": {
+          "steady_last_half_median_bytes": 35199488.0,
+          "sampled_peak_bytes": 50246944,
+          "post_gc_bytes": 36943504,
+          "sample_100ms_peak_bytes": 50246944
+        },
+        "pss_bytes": {
+          "steady_last_half_median_bytes": 366633984.0,
+          "sampled_peak_bytes": 495684608,
+          "post_gc_bytes": 342131712,
+          "sample_100ms_peak_bytes": null
+        },
+        "rss_bytes": {
+          "steady_last_half_median_bytes": 399161344.0,
+          "sampled_peak_bytes": 523100160,
+          "post_gc_bytes": 380923904,
+          "sample_100ms_peak_bytes": null
+        }
+      },
+      "process_delta_bytes_vs_baseline": {
+        "java_used": {
+          "steady_last_half_median_bytes": 20527104.0,
+          "sampled_peak_bytes": 33120256,
+          "post_gc_bytes": 4866048,
+          "sample_100ms_peak_bytes": 5062656
+        },
+        "native_heap": {
+          "steady_last_half_median_bytes": -884720.0,
+          "sampled_peak_bytes": 86224,
+          "post_gc_bytes": 1786560,
+          "sample_100ms_peak_bytes": -1741648
+        },
+        "pss_bytes": {
+          "steady_last_half_median_bytes": 9150464.0,
+          "sampled_peak_bytes": 14580736,
+          "post_gc_bytes": 1186816
+        },
+        "rss_bytes": {
+          "steady_last_half_median_bytes": 40108032.0,
+          "sampled_peak_bytes": -11403264,
+          "post_gc_bytes": 41455616
+        }
+      },
+      "observed_owned_slots_peak_bytes": {
+        "preparation_queue_arrays": 1108992,
+        "preparation_inflight_source_arrays": 1108992,
+        "writer_queue_payload_context": 2004726,
+        "writer_inflight_payload_context": 668242,
+        "chunk_pending_payload": 16665600,
+        "chunk_encoding_arrays": 16665600,
+        "sum_observed_slots": 36444914
+      }
+    },
+    {
+      "stage": "analysis-deflate-1",
+      "fresh_process": true,
+      "source_report": "android-continuation-deflate-4m.json",
+      "revision": "531b8fd0653d503309f5def0899380a939b6f6d6",
+      "bulk_backup_overlap": false,
+      "memory": {
+        "java_used": {
+          "steady_last_half_median_bytes": 134650048.0,
+          "sampled_peak_bytes": 251760832,
+          "post_gc_bytes": 112636096,
+          "sample_100ms_peak_bytes": 265318592
+        },
+        "native_heap": {
+          "steady_last_half_median_bytes": 35744840.0,
+          "sampled_peak_bytes": 51187072,
+          "post_gc_bytes": 35302528,
+          "sample_100ms_peak_bytes": 51188544
+        },
+        "pss_bytes": {
+          "steady_last_half_median_bytes": 365708288.0,
+          "sampled_peak_bytes": 503160832,
+          "post_gc_bytes": 340430848,
+          "sample_100ms_peak_bytes": null
+        },
+        "rss_bytes": {
+          "steady_last_half_median_bytes": 414990336.0,
+          "sampled_peak_bytes": 552734720,
+          "post_gc_bytes": 383098880,
+          "sample_100ms_peak_bytes": null
+        }
+      },
+      "process_delta_bytes_vs_baseline": {
+        "java_used": {
+          "steady_last_half_median_bytes": 12771328.0,
+          "sampled_peak_bytes": 20971520,
+          "post_gc_bytes": 2412544,
+          "sample_100ms_peak_bytes": 2138112
+        },
+        "native_heap": {
+          "steady_last_half_median_bytes": -339368.0,
+          "sampled_peak_bytes": 1026352,
+          "post_gc_bytes": 145584,
+          "sample_100ms_peak_bytes": -800048
+        },
+        "pss_bytes": {
+          "steady_last_half_median_bytes": 8224768.0,
+          "sampled_peak_bytes": 22056960,
+          "post_gc_bytes": -514048
+        },
+        "rss_bytes": {
+          "steady_last_half_median_bytes": 55937024.0,
+          "sampled_peak_bytes": 18231296,
+          "post_gc_bytes": 43630592
+        }
+      },
+      "observed_owned_slots_peak_bytes": {
+        "preparation_queue_arrays": 1108992,
+        "preparation_inflight_source_arrays": 1108992,
+        "writer_queue_payload_context": 887965,
+        "writer_inflight_payload_context": 443984,
+        "chunk_pending_payload": 3981312,
+        "chunk_encoding_arrays": 5206372,
+        "sum_observed_slots": 11412173
+      }
+    }
+  ],
+  "limits": {
+    "preparation_queue_bytes": 4194304,
+    "writer_queue_bytes": 4194304,
+    "incremental_memory_target_bytes": 67108864
+  },
+  "limitations": [
+    "Same camera/presentation behavior as matched earlier baseline; independent clean processes, not isolated recorder allocation",
+    "Last-half median steady; Java/native sampled 100ms, PSS/RSS 1s, short peaks may be missed",
+    "Owned slots exclude object headers, text and codec scratch and can double-count overlapping references",
+    "Source gaps and invalid/held states are separate from preparation/writer drops"
+  ],
+  "physical_accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "operator_preview_confirmation": "Yes, all were usable (Full-STORED and all three DEFLATE previews with moving target)",
+  "packet": "All 15 members regenerated on installed candidate match the existing artifact and pass independent Linux validation",
+  "prior_candidate_regression": {
+    "JVM_passed": 272,
+    "Pixel_passed": 41,
+    "Pixel_opt_in_skipped": 6,
+    "process_kill_cases_passed": 8,
+    "source_unchanged_since_checks": true
+  },
+  "resumed_camera_free_checks": {
+    "Pixel_packet_context_passed": 3,
+    "Python_reader_SAF_helper_passed": 9
+  },
+  "windows": "pending real execution",
+  "live_throughput_gate": "PASS for the four resumed configurations; historical failures retained",
+  "memory_target": "PASS on observed clean-process steady/sampled-peak/post-GC differences; sampling and process-attribution limits explicit",
+  "lifecycle": {
+    "full_stored": {
+      "opened": 1,
+      "released": 1,
+      "active_owners_after": 0
+    },
+    "deflate_4m": {
+      "opened": 1,
+      "released": 1,
+      "active_owners_after": 0
+    }
+  },
+  "production_source_changes_this_resume": false,
+  "R2_status": "OPEN: real Windows remains pending",
+  "R1b_R3_started": false,
+  "independent_live_readback": {
+    "files": 4,
+    "all_complete": true,
+    "writer_counts_and_exact_byte_totals_match": true,
+    "source_immutable": true,
+    "report": "continuation-resume-readback.json"
+  },
+  "private_backup": {
+    "archive_bytes": 3564421120,
+    "files": 4,
+    "retained_outside_Git": true,
+    "earlier_failed_and_successful_evidence_preserved": true
+  },
+  "final_android_process_state": {
+    "active_instrumentation": false,
+    "active_camera_owners": 0,
+    "remaining_test_helper_closed": true,
+    "app_or_test_processes_after": 0,
+    "pairing_or_app_data_clear": false
+  },
+  "independent_live_recovery": {
+    "files": 4,
+    "all_exact_committed_prefixes_recovered": true,
+    "original_sources_immutable": true,
+    "report": "continuation-resume-recovery.json"
+  }
+}

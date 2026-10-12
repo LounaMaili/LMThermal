@@ -1,0 +1,143 @@
+{
+  "artifact": "noncanonical-r2",
+  "cases": [
+    {
+      "boundary": "body_0",
+      "ordinal": 2,
+      "actual_process_kill": true,
+      "passed": true,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 24,
+        "gaps": 0,
+        "chunks": 1,
+        "logical_sha256": "b8dbfd5fcc917205817bd6eb24e46317ecf1f9486809bb4045972d15e52cd000",
+        "source_sha256": "4727e2f690b4a425700fb138a525e95b77a92135e88bc054a37021cc8d104c58",
+        "lazy_open_bytes": 2220161,
+        "validation_read_bytes": 4439086
+      }
+    },
+    {
+      "boundary": "body_1",
+      "ordinal": 2,
+      "actual_process_kill": true,
+      "passed": true,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 24,
+        "gaps": 0,
+        "chunks": 1,
+        "logical_sha256": "b8dbfd5fcc917205817bd6eb24e46317ecf1f9486809bb4045972d15e52cd000",
+        "source_sha256": "694e26c190e3de5b5aef9fcc16cb9f910533995d3fc69cd0e37f501684746918",
+        "lazy_open_bytes": 2240671,
+        "validation_read_bytes": 4459596
+      }
+    },
+    {
+      "boundary": "body_2",
+      "ordinal": 2,
+      "actual_process_kill": true,
+      "passed": true,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 24,
+        "gaps": 0,
+        "chunks": 1,
+        "logical_sha256": "b8dbfd5fcc917205817bd6eb24e46317ecf1f9486809bb4045972d15e52cd000",
+        "source_sha256": "73a50c15df37f84e711ceadbcd4c85016f0e63e5c0bea0d7951f3247a01f6a14",
+        "lazy_open_bytes": 2528678,
+        "validation_read_bytes": 4747603
+      }
+    },
+    {
+      "boundary": "body_synced",
+      "ordinal": 2,
+      "actual_process_kill": true,
+      "passed": true,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 24,
+        "gaps": 0,
+        "chunks": 1,
+        "logical_sha256": "b8dbfd5fcc917205817bd6eb24e46317ecf1f9486809bb4045972d15e52cd000",
+        "source_sha256": "d2c9d60651c4889b1afc36aca7b3e30f1e174f4c05b336868113bf8c0cc8945f",
+        "lazy_open_bytes": 2528678,
+        "validation_read_bytes": 4747603
+      }
+    },
+    {
+      "boundary": "footer_written",
+      "ordinal": 2,
+      "actual_process_kill": true,
+      "passed": true,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 48,
+        "gaps": 1,
+        "chunks": 2,
+        "logical_sha256": "0c9b395ceb5bb9a1a88753d811057835957c9331e5c34b1a1ff19dfcbbfca77f",
+        "source_sha256": "3c695678fff448dfe400f13fedafd980d85134c7284807b7e6037949caef6edb",
+        "lazy_open_bytes": 2766652,
+        "validation_read_bytes": 6915290
+      }
+    },
+    {
+      "boundary": "footer_synced",
+      "ordinal": 2,
+      "actual_process_kill": true,
+      "passed": true,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 48,
+        "gaps": 1,
+        "chunks": 2,
+        "logical_sha256": "0c9b395ceb5bb9a1a88753d811057835957c9331e5c34b1a1ff19dfcbbfca77f",
+        "source_sha256": "3c695678fff448dfe400f13fedafd980d85134c7284807b7e6037949caef6edb",
+        "lazy_open_bytes": 2766652,
+        "validation_read_bytes": 6915290
+      }
+    },
+    {
+      "boundary": "after_chunk",
+      "ordinal": 1,
+      "actual_process_kill": true,
+      "passed": true,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 48,
+        "gaps": 1,
+        "chunks": 2,
+        "logical_sha256": "0c9b395ceb5bb9a1a88753d811057835957c9331e5c34b1a1ff19dfcbbfca77f",
+        "source_sha256": "3c695678fff448dfe400f13fedafd980d85134c7284807b7e6037949caef6edb",
+        "lazy_open_bytes": 2766652,
+        "validation_read_bytes": 6915290
+      }
+    },
+    {
+      "boundary": "after_checkpoint",
+      "ordinal": -1,
+      "actual_process_kill": true,
+      "passed": true,
+      "result": {
+        "complete": false,
+        "recovery": "missing_or_torn_end",
+        "frames": 99,
+        "gaps": 1,
+        "chunks": 5,
+        "logical_sha256": "b7787de5a0e2711002bfe22549cc54d542d12b96680f94797bab9ced12501698",
+        "source_sha256": "5d434d59d7a758472d88f0af2eb1c3e600577f893376bb1b39dbf3793cad4e70",
+        "lazy_open_bytes": 2070,
+        "validation_read_bytes": 8472243
+      }
+    }
+  ],
+  "passed": true,
+  "limitation": "Software process kill and fsync evidence do not certify physical power-loss durability"
+}

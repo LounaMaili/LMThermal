@@ -1,0 +1,82 @@
+{
+  "full-stored.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3086,
+    "gaps": 68,
+    "chunks": 127,
+    "logical_sha256": "b5e41fb5b2a14c00071d4f4b2e184c284a501d3be0fca17e978a359bd9f18266",
+    "source_sha256": "0528fac72ddc84ee0c46fee9ca7ba4f02c5ae3400a350de0e86c65660c9a30ed",
+    "lazy_open_bytes": 2096,
+    "validation_read_bytes": 6194362876,
+    "validation_wall_s": 61.53925072200218,
+    "gap_sequences": 68,
+    "gap_reasons": {
+      "RAW14_UNSETTLED": 68
+    },
+    "file_bytes": 2064858188,
+    "physical_payload_bytes": 2057201664,
+    "stored_payload_bytes": 2057201664,
+    "maximum_decoded_chunk_plus_metadata_bytes": 16726768,
+    "writer_counts_and_exact_byte_totals_match": true
+  },
+  "analysis-deflate-1.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3114,
+    "gaps": 41,
+    "chunks": 347,
+    "logical_sha256": "ff6be60c40edbe2c9224eb559814e9c47c2c3c488c1e94f1b0e68233823f92a7",
+    "source_sha256": "6d19e8e705c300c6b7f79c58ec498c9101a891348df8c400e92a39d4fcacbde5",
+    "lazy_open_bytes": 2050,
+    "validation_read_bytes": 1035059058,
+    "validation_wall_s": 41.433353538996016,
+    "gap_sequences": 41,
+    "gap_reasons": {
+      "RAW14_UNSETTLED": 41
+    },
+    "file_bytes": 345242547,
+    "physical_payload_bytes": 1377533952,
+    "stored_payload_bytes": 338660758,
+    "maximum_decoded_chunk_plus_metadata_bytes": 4001064,
+    "writer_counts_and_exact_byte_totals_match": true
+  },
+  "native-deflate-1.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3156,
+    "gaps": 0,
+    "chunks": 526,
+    "logical_sha256": "a3ec4f6f69dd25abbfa9202cf0414b08c2f5dd8e05d6ff5315f9906048c703fa",
+    "source_sha256": "aad92a96af07f9f39f078173e8adbaf2951579454adc2ca6fd237f60fa3b9234",
+    "lazy_open_bytes": 2050,
+    "validation_read_bytes": 1746614410,
+    "validation_wall_s": 59.64966202499636,
+    "gap_sequences": 0,
+    "gap_reasons": {},
+    "file_bytes": 582573464,
+    "physical_payload_bytes": 2094170112,
+    "stored_payload_bytes": 574890494,
+    "maximum_decoded_chunk_plus_metadata_bytes": 3995010,
+    "writer_counts_and_exact_byte_totals_match": true
+  },
+  "full-deflate-1.r2proto": {
+    "complete": true,
+    "recovery": null,
+    "frames": 3162,
+    "gaps": 0,
+    "chunks": 527,
+    "logical_sha256": "f2621be0c992001815fbb4fd01193896d5dfe1fe00ab82cbb131ac8b0dc9ef5f",
+    "source_sha256": "573c75d337fcf58df63d685694067ee4c90a03a3c906029529bd090db37b0ad4",
+    "lazy_open_bytes": 2098,
+    "validation_read_bytes": 1713740358,
+    "validation_wall_s": 61.058220658997016,
+    "gap_sequences": 0,
+    "gap_reasons": {},
+    "file_bytes": 571617125,
+    "physical_payload_bytes": 2107865088,
+    "stored_payload_bytes": 563264284,
+    "maximum_decoded_chunk_plus_metadata_bytes": 4014691,
+    "writer_counts_and_exact_byte_totals_match": true
+  }
+}

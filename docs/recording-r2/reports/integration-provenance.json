@@ -1,0 +1,78 @@
+{
+  "source_revision": "747b89c8a0072603a73deb81db5cdbef0ed900a1",
+  "main_base": "5174b923bcc2011228d15d648f2766e941d8684e",
+  "owner_scope": "Review accepted for scoped integration preparation; merge/closure authorization pending",
+  "reports": [
+    {
+      "path": "docs/recording-r2/reports/completion-review.json",
+      "sha256": "69af258c47c194ee2242be31c45ee2801f433538194d63348f228be79db7b7d2"
+    },
+    {
+      "path": "docs/recording-r2/reports/continuation-resume-summary.json",
+      "sha256": "accb2d84a39aed14dab2fad10e8475749e2a37f715cf58d3910729ed4d4aa9fa"
+    },
+    {
+      "path": "docs/recording-r2/reports/windows-packet.json",
+      "sha256": "a97f97eef5fe37eedda56988c730e43a698f080fc93630fe4ffad399df894899"
+    },
+    {
+      "path": "docs/recording-r2/reports/continuation-final-packet.json",
+      "sha256": "a24ad248785ae532ba4ec1a93f00b31dcba49e5239f5135f0d20ce4c00f151d9"
+    },
+    {
+      "path": "docs/recording-r2/reports/continuation-resume-readback.json",
+      "sha256": "9b86032c225d2d1360573f5e2b1a5c87fa89f0bbcb2209bfb243f1bab906edb3"
+    },
+    {
+      "path": "docs/recording-r2/reports/continuation-resume-recovery.json",
+      "sha256": "32dbc73ec3d18834b341decda7342d76e19d61f45ec06d86070cffa33468f4c5"
+    },
+    {
+      "path": "docs/recording-r2/reports/continuation-short-chunk-process-kill.json",
+      "sha256": "14d1ef4c2f173a50f95bb2f952ece39330fa819a6574945ebbe17b9f78e367a2"
+    },
+    {
+      "path": "docs/recording-r2/reports/continuation-regression.json",
+      "sha256": "f22913b1b15da8a172527dfe852644d805d2548bf11f766bb0b9d9804b0109fc"
+    }
+  ],
+  "historical_references": {
+    "docs/recording-r2/CONTINUATION_PLAN.md": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/CONTINUATION_PLAN.md",
+    "docs/recording-r2/TEST_PLAN.md": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/TEST_PLAN.md",
+    "docs/recording-r2/ANDROID_BENCHMARK.md": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/ANDROID_BENCHMARK.md",
+    "docs/recording-r2/reports/aggregate.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/aggregate.json",
+    "docs/recording-r2/reports/android-final-packet.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-final-packet.json",
+    "tools/recording_r2/README.md": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/tools/recording_r2/README.md",
+    "docs/recording-r2/reports/android-continuation-deflate-4m.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-continuation-deflate-4m.json",
+    "docs/recording-r2/reports/android-continuation-full-stored-clean.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-continuation-full-stored-clean.json",
+    "docs/recording-r2/reports/android-continuation-stage1.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-continuation-stage1.json",
+    "docs/recording-r2/reports/continuation-cost-summary.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/continuation-cost-summary.json",
+    "docs/recording-r2/reports/thermometry-cost.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/thermometry-cost.json",
+    "docs/recording-r2/reports/linux-packet.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/linux-packet.json",
+    "docs/recording-r2/reports/sparse-kotlin.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/sparse-kotlin.json",
+    "docs/recording-r2/reports/sparse-python.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/sparse-python.json",
+    "docs/recording-r2/reports/android-first-detach.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-first-detach.json",
+    "docs/recording-r2/reports/android-saf-success.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-saf-success.json",
+    "docs/recording-r2/reports/android-saf-cancel.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-saf-cancel.json",
+    "docs/recording-r2/reports/android-saf-permission.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-saf-permission.json",
+    "docs/recording-r2/reports/android-continuation-ablations.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-continuation-ablations.json",
+    "docs/recording-r2/reports/android-continuation-original-files.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-continuation-original-files.json",
+    "docs/recording-r2/reports/continuation-process-kill.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/continuation-process-kill.json",
+    "docs/recording-r2/reports/android-continuation-analysis-native.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-continuation-analysis-native.json",
+    "docs/recording-r2/reports/continuation-analysis-native-readback.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/continuation-analysis-native-readback.json",
+    "docs/recording-r2/reports/continuation-stage1-readback.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/continuation-stage1-readback.json",
+    "docs/recording-r2/reports/android-continuation-deflate-16m.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-continuation-deflate-16m.json",
+    "docs/recording-r2/reports/continuation-deflate-16m-readback.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/continuation-deflate-16m-readback.json",
+    "docs/recording-r2/reports/continuation-resume-preflight.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/continuation-resume-preflight.json",
+    "docs/recording-r2/reports/continuation-resume-controls.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/continuation-resume-controls.json",
+    "docs/recording-r2/reports/android-first-codecs.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-first-codecs.json",
+    "docs/recording-r2/reports/android-repeat-codecs.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/android-repeat-codecs.json",
+    "docs/recording-r2/reports/process-kill.json": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/reports/process-kill.json"
+  },
+  "prototype_packet": {
+    "url": "https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/artifacts/android-r2-packet.zip",
+    "sha256": "49cc244c60ca51b71c4d1ee38b4360e7e4bc8f490216ad4887f0fd1b770117cc",
+    "bytes": 678802,
+    "canonical": false
+  }
+}

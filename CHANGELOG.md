@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Reviewed R2 evidence integration preparation — 2026-10-12)
+
+- Integrated durable scoped HT-301/Pixel 8 completion, throughput/sampled-memory, Linux/native Windows parity, framing/recovery/backend limits and R1b recommendations from reviewed R2 tip `747b89c`, with byte-identical curated JSON evidence and commit-pinned historical source/report/artifact references.
+- Recorded owner acceptance of the review for integration preparation, pending separate merge/closure authorization. Distinguished 4 MiB preferred chunks, unchanged queues, larger hard file ceilings and sampled memory targets; retained failures, deferred Zstd and unresolved idle-flush/generic-schema decisions.
+- Kept disposable prototypes, build wiring, private recordings and presentation code out of this branch. R1a and LMTX v1 semantics remain unchanged; no wire acceptance, R3 or production recorder.
+
 ### Changed (Recording R1a owner decisions and planning — 2026-10-07)
 
 - Recorded explicit owner acceptance of the next-stage Analysis default/visible first-use choice/remembered per-module selection, deferred expert checkboxes, Full / Research meaning and helpful storage policy. Unknown capacity warns and allows Start; known insufficient startup+reserve blocks; write refusal preserves prior valid commits without counting pending frames saved.
