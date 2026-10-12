@@ -212,7 +212,11 @@ implemented separately below. See
 
 ## Android Celsius presentation milestone (2026-10-03)
 
-A valid current measurement feeds a separate bounded latest-request renderer. White
+A valid current measurement feeds a separate bounded latest-request renderer.
+The Android presenter completes one in-flight render with one conflated pending
+request and checks the owner's read-only invalidation generation at publication;
+rapid same-device reopen cannot reuse an earlier session's completed render.
+See [presentation worker guards](ANDROID_CELSIUS_PRESENTATION.md#bounded-worker-and-observability). White
 hot, Black hot, Inferno, Iron-like/OpenCV HOT and Turbo match Desktop color tables.
 Auto uses linear 2nd/98th percentiles with a centered minimum 1 °C span. Locked bounds
 are exact finite minimum < maximum (default 25–45 °C). Only display levels clip;

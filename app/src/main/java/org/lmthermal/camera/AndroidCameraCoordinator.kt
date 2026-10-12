@@ -41,6 +41,10 @@ class AndroidCameraCoordinator(private val context: Context,
         technicalFailure = { Log.e("LMThermalModules", "Module ownership/open failure", it) },
         event = { ownership = it; evidence.record(it + mapOf("owner_id" to ownerId, "monotonic_ms" to SystemClock.elapsedRealtime())) })
     val state = owner.state
+    /** Presentation can reject an earlier session even when the same device reopens rapidly. */
+    fun presentationGeneration(snapshot: CameraSessionState<Bitmap>): Long? = owner.presentationGeneration(snapshot)
+    /** Only a short presentation-state write is permitted inside the ownership guard. */
+    fun publishPresentation(generation: Long, publish: () -> Unit) = owner.publishPresentation(generation, publish)
     private var foreground = false
     /** Retained UI policy can bind screen-off without holding an Activity reference. */
     internal var screenOff: () -> Unit = { leaveForeground() }

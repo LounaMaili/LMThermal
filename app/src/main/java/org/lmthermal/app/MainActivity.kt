@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatDelegate
  */
 class CameraViewModel(application: Application, val camera: AndroidCameraCoordinator) : AndroidViewModel(application) {
     constructor(application: Application) : this(application, AndroidCameraCoordinator(application))
-    val presentation = CelsiusPresenter(application, camera.state, camera::measurementEvidence, camera::cursorEvidence)
+    val presentation = CelsiusPresenter(application, camera.state, camera::measurementEvidence, camera::cursorEvidence, camera::presentationGeneration, camera::publishPresentation)
     val exporter = CaptureExporter(application)
     val uiLifetime = CameraUiLifetime(camera::leaveForeground, camera::recordLifecycle)
     init { camera.screenOff = uiLifetime::screenOff }

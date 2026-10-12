@@ -83,17 +83,42 @@ coordinates and measurement state are unchanged.
 
 ## Bounded worker and observability
 
-A `combine`/`collectLatest` worker conflates camera/settings requests. It permits one
-render in flight and replaces obsolete requests. Completion checks current camera
-snapshot and settings before publication; disposal cancels work and clears output.
-Acquisition never waits for Compose. Valid measurements skip redundant acquisition-
-side grayscale rendering. Transport, session, thermometry arithmetic and fresh LUT
-construction remain unchanged.
+A camera/settings collector offers one conflated latest pending request. A
+separate worker finishes one useful in-flight render, then takes the newest request.
+Continuous valid arrivals do not cancel useful work or require exact-current-frame
+identity at publication; bitmap, range and readings share the same owned completed
+measurement. The old `collectLatest`/identity path could starve every completion
+under 100 ms rendering and 10 ms arrivals.
+
+Publication checks current valid streaming state, module/device/geometry/settings,
+nondecreasing sequence/receipt and local generation. Replacement/unavailable/error
+clears output; disposal cancels the scope and clears it. Synchronous rendering need
+not stop instantly, but cancelled/invalidated work cannot restore Celsius.
+
+The composition root additionally supplies the camera owner's **existing synchronous
+invalidation generation**, paired with its exact published snapshot under the owner
+lock. The final generation check and short presentation-state publication also
+hold that invalidation lock; Close/open cannot slip between them. Rendering and
+bitmap work remain outside it. These read-only guards change no camera/session behavior.
+Device identity and frame counters cannot identify a session: StateFlow may conflate
+a rapid Close/open. A deterministic blocked-render test reproduced an old-session
+completion leaking into a same-device successor on the R2 scheduling candidate.
+The owner generation now forms part of the render key, even if no intermediate
+CLOSED snapshot reaches the presenter. Standalone sources default to observed
+invalidation; owned sources must pass their synchronous guard, as the production
+ViewModel does. No frame bytes, controls, timing or coordinate transform are
+introduced by this metadata bridge.
+
+One in-flight plus one pending request bounds display work. Recorder retention is
+independent; acquisition never waits for Compose. Transport, thermometry, USB
+initialization and native measurement coordinates are unchanged. Historical finite
+Pixel pressure evidence is [pinned on the retained R2 branch](https://github.com/LounaMaili/LMThermal/blob/747b89c8a0072603a73deb81db5cdbef0ed900a1/docs/recording-r2/COMPLETION_REVIEW.md#separate-production-presentation-review);
+it is not a guarantee of indefinite responsiveness or another physical camera.
 
 Debug-only, bounded `presentation.jsonl` records numeric render timings, settings,
 range, cursor samples, callback FPS, acquisition replacements and completed renders
-rejected as superseded. This last counter excludes coroutine-cancelled requests;
-it is not a total dropped-render count. No image payloads or scene hashes are saved.
+rejected as superseded. This counts invalidated renders skipped at consumption/
+publication, not every pending request replaced in the conflated slot. No image payloads or scene hashes are saved.
 Render timing includes core range/color work, bitmap construction and dispatch wait;
 thermometry evaluation is sampled separately. Hardware results and timing distributions
 are in [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md).
@@ -115,7 +140,26 @@ immutability, exact percentile references, range validation/rounding, 256 colors
 palette and all full-image pixels for two matrices × two range modes × five palettes.
 Pixel instrumentation repeats full color parity/mapping and exercises the actual
 latest render worker's settings replacement and unavailable/disposal cancellation.
+`CelsiusStarvationTest` and `CelsiusReplacementTest` control slow/blocking renders,
+newer valid input, Close/unavailable/error, module/device/geometry/settings changes,
+conflated same-device reopen, owner generation pairing, disposal and temperature-only
+160×120 modules. These are camera-free regressions, not physical calibration.
 Test fixtures/dependencies are excluded from the product APK.
+
+### Isolated integration validation — 2026-10-12
+
+The rapid same-device/conflated-Close regression failed on the R2 scheduling
+candidate before the read-only owner-generation guard and passes after it.
+The final isolated branch passes **232 core + 21 Android JVM tests**, both debug
+app/test APK builds, lint (zero errors), shared-boundary checks (25 sources), and
+localization parity/self-tests (110 English/French keys; ten checker tests).
+The paired Pixel 8 executes **15 camera-free ART presentation/module/ROI tests**,
+including continuous arrivals, earlier-session rejection, settings/disposal,
+temperature-only generic geometry, ROI replacement and unchanged same-frame ROI
+statistics across palette/range changes. An intermediate overbroad output clear
+failed the latter ART test; clearing was restricted to source/session changes and
+the final suite passes. No USB opening or physical HT-301 test was needed.
+These tests verify scheduling/ownership, not independent physical accuracy.
 
 The module foundation adds alternate-resolution mapping/rendering tests and Android
 160×120 simulation/optional-sample presentation tests. Core palette enums contain

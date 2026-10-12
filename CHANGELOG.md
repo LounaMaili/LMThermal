@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (Celsius presentation starvation and session isolation — 2026-10-12)
+
+- Isolated the R2-proven presentation correction: one in-flight render and one conflated latest request publish useful completed measurements during continuous valid arrivals, with matching bitmap/range/readings and bounded work.
+- Reproduced a rapid same-device reopen leak with a deterministic blocked render and conflated Close; paired the existing owner invalidation generation with its snapshot through a read-only presentation guard. Replacement/settings/unavailable/disposal invalidate completion; device identity is not session identity.
+- Added controlled replacement/reopen, slow-source, cancellation and temperature-only generic-module regressions. No recorder/test-prototype build wiring, protocol, acquisition, thermometry, USB initialization, source coordinate or LMTX/LMTR semantic change.
+
 ### Changed (Recording R1a owner decisions and planning — 2026-10-07)
 
 - Recorded explicit owner acceptance of the next-stage Analysis default/visible first-use choice/remembered per-module selection, deferred expert checkboxes, Full / Research meaning and helpful storage policy. Unknown capacity warns and allows Start; known insufficient startup+reserve blocks; write refusal preserves prior valid commits without counting pending frames saved.
