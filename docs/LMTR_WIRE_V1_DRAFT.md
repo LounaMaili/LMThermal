@@ -4,7 +4,7 @@
 
 | Property | Proposed value |
 |---|---|
-| Review identifier / date | `r1b-review-1` / 2026-10-12 |
+| Review identifier / date | `r1b-review-2` / 2026-10-12; targeted corrections to review-1, still unaccepted |
 | Family / extension / format / kind | LMThermal Recording / `.lmtr` / `lmthermal-recording` / `recording` |
 | Container / schema / envelope | Container 1.0 / schema 1.0 / envelope revision 1 |
 | Status | **DRAFT**; issue [#6](https://github.com/LounaMaili/LMThermal/issues/6) remains open |
@@ -83,9 +83,9 @@ MUST be rejected, not treated as an unknown extension.
 
 | Alias | Exact definition |
 |---|---|
-| `D` | JSON string `0|[1-9][0-9]*`, numeric value 0..9223372036854775807; no plus, leading zero, decimal or exponent |
+| `D` | JSON string `0\|[1-9][0-9]*`, numeric value 0..9223372036854775807; no plus, leading zero, decimal or exponent |
 | `D+` | `D` excluding zero |
-| `I` | JSON integer token 0..2147483647; boolean/fraction/exponent tokens are not this type |
+| `I` | JSON token `0\|[1-9][0-9]*`, value 0..2147483647; boolean, `-0`, fraction and exponent tokens are not this type |
 | `Version` | `{major:I,minor:I}`, major 1..65535, minor 0..65535 |
 | `Id` | 1..128 ASCII bytes, `[a-z0-9][a-z0-9._-]*`, no `..` substring; not a path |
 | `Namespace` | `Id` with at least two dot-separated components, each `[a-z0-9][a-z0-9_-]*` |
@@ -103,10 +103,18 @@ JSON follows [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259), with stricter U
 no BOM, duplicate decoded keys, lone surrogates, comments, trailing text, NaN or
 infinity. Root is exactly one object. Depth counts root container as 1, maximum 32.
 Total properties plus array elements <=65536; decoded strings <=16384 UTF-8 bytes.
-Decimal tokens <=1024 ASCII bytes, <=1024 significant digits and adjusted decimal
-exponent -4096..4096; zero has exponent 0. These new explicit decimal limits permit
-exact binary32/64 evidence and bounded high-precision optional metadata. Reject
-out-of-limit numbers before allocating expanded decimal strings. Parse optional
+Both incoming decimal tokens and their §3.2 canonical number spelling must be
+<=1024 ASCII bytes; reject a value whose canonical spelling exceeds that bound,
+even if a shorter input spelling fits. This makes the accepted numeric domain
+closed under canonical writing and rereading. Coefficients have <=1024 digits, including lexical
+leading/trailing zeros. The explicit exponent, when present, has absolute value
+<=5120 **even for zero**; count its digits/compare its bounded magnitude before
+constructing Decimal/BigDecimal. The nonzero value's adjusted decimal exponent is
+-4096..4096; semantic zero has adjusted exponent 0. Review-2 bounds lexical zero
+exponents to avoid language-dependent huge-scale parsing, and clarifies coefficient
+counting. These limits permit canonical exact binary32/64 values and bounded optional
+metadata, not every unbounded equivalent spelling. Reject out-of-limit numbers
+before allocating expanded decimal strings. Parse optional
 numbers with arbitrary decimal precision (e.g. BigDecimal/Decimal), not Float64.
 
 Unknown optional JSON MUST preserve its **semantic value with sufficient numeric
@@ -119,7 +127,8 @@ fallback. No namespace lookup downloads code or follows links.
 ### 3.2 Proposed deterministic writer JSON
 
 For identical semantic metadata, writers MUST emit: UTF-8 without BOM/newline or
-insignificant whitespace; object keys sorted by Unicode scalar value; arrays in
+insignificant whitespace; object keys sorted lexicographically by their Unicode
+scalar sequences (a proper prefix sorts first); arrays in
 specified order; `true`, `false`, `null`; escape quote/backslash, encode controls
 U+0000..001F as lowercase `\u00xx`, and emit other scalar characters directly.
 No slash escaping or Unicode normalization. Decoded keys determine duplicate checks.
@@ -133,8 +142,13 @@ and signed exponent with no plus or leading zeros. Preserve a negative sign for
 nonzero values. Known `I` fields always render as integer tokens. `D` stays a string.
 Examples: `1.0 -> 1`, `1e0 -> 1`, `-0.0 -> 0`, `0.0000001 -> 1e-7`,
 `1230000000000000000000 -> 1.23e21`; **no binary floating rounding**.
-Readers accept bounded RFC JSON spellings satisfying known-field types; hashes bind
-actual stored bytes, never a reserialized interpretation. Canonical JSON is a new
+Readers accept bounded RFC JSON spellings satisfying known-field types. Body,
+block and logical-payload hashes bind their exact stored/decoded bytes. Context
+and segment IDs are different: §7 explicitly hashes **canonical semantic JSON**,
+including every retained unknown optional field, after exact parsing. Do not use
+the original noncanonical number spelling or discard unknown fields for those IDs.
+Equivalent optional `1`, `1.0`, `1e0` values have the same canonical ID; their actual
+stored bodies may have different body hashes. Canonical JSON is a new
 proposal, not RFC 8785's binary64 number model and not a tested R2 byte promise.
 
 A v1 primary temperature plane is Float32. A source that cannot preserve its
@@ -148,6 +162,37 @@ one unique whole-file SHA (UUIDs/times/codec choices also vary). Future R3 will 
 particular vectors/encoder provenance; consumers must recover exact logical bytes,
 not demand that independent compressed streams match. No compressed reference
 vectors are generated in this drafting task.
+
+### 3.3 Cross-language audit and required future R3 vectors [P]
+
+Kotlin/JVM must use exact BigDecimal coefficient/scale arithmetic without a rounding
+MathContext; Python must use exact Decimal tuple arithmetic, not context-sensitive
+`normalize()`/arithmetic at default precision. Reject lexical bounds before expanding
+values. Do not use Double/Float, `Decimal(str(double))`, binary64 JSON adapters or
+shortest float strings to preserve original decimal/calibration values. Unicode
+key comparison is by scalar/code point, **not Kotlin/Java UTF-16 String ordering**;
+reject lone surrogates before sorting or UTF-8 encoding. No NFC/NFD normalization.
+BigDecimal scale-sensitive `equals` is not semantic numeric equality; canonical
+spelling or exact numerical comparison must treat equivalent optional values alike.
+
+The following complete category checklist is required for R3 after acceptance;
+host documentation probes exercise only selected operations, not runtime conformance:
+
+| Vector family | Required coverage / expected property |
+|---|---|
+| Decimal equivalence and spelling | `1`/`1.0`/`1e0`, trailing zeros, negative values, carry-free coefficient stripping; same semantic canonical value, no rounding |
+| Notation boundaries | adjusted E=-7/-6 and 20/21; exponent plus/leading zeros on input, plain/scientific switch and lowercase exponent output |
+| Bounds before allocation | E=±4096 and adjacent rejection; lexical exponent ±5120 and adjacent rejection including zero; input and canonical token limits at 1024 and one beyond (1018 positive nines fit canonically, 1019 do not); exponent with excessive digit spelling |
+| Precision/runtime traps | >34 significant digits, >2^53 integers, long coefficients under different Python decimal contexts; no precision loss or BigDecimal scale overflow |
+| Zero versus binary authority | JSON `-0`, `-0.0`, `0e5120` canonicalize to `0`; known I rejects `-0`/`1.0`/`1e0`/booleans; source f32/f64 negative zero uses typed bits, never semantic JSON zero |
+| Strings/keys | quotes, slash/backslash, all controls, escaped duplicate keys, supplementary vs BMP scalar order, U+2028/U+2029, combining/precomposed distinction, valid pairs and rejected lone surrogates |
+| Unknown values | nested objects/arrays/null/booleans/precise numbers; array order and unknown fields retained; metadata byte/depth/item/string limits and union-known-field rejection |
+| Content versus body hashes | equivalent numeric spellings/order/escape spellings yield equal canonical context/segment IDs; changed optional values or typed bits change IDs; original byte changes alter body hashes; exclude only segment id, not unknown fields |
+| Floating evidence | exact finite min-subnormal/max-normal f32/f64 decimal roundtrip with declared source type; ±0, infinity and NaN payload bits via typed LE evidence; source matrices unchanged |
+
+R3 must test each family in independent Kotlin/Python parsing/encoding/hashing on
+the supported runtimes, plus malformed encodings and resource refusal. No binary
+R3 corpus or production canonicalizer is supplied by the present document checks.
 
 ## 4. Safety limits and refusal [E starting bounds; P complete generic profile]
 
@@ -299,6 +344,37 @@ are never executed; semantics essential to measurement cannot be optional.
 An unknown native encoding may remain opaque retained evidence when no required
 feature demands interpretation; its generic declared dtype/shape/hash still validate.
 
+### 6.1 Immutable stream inventory consequences [P]
+
+Retain the fixed inventory: slot `purpose` is immutable; an inactive slot costs only
+bounded metadata and cannot assert a device exists. A slot is a logical recording
+channel, not persistent hardware identity. The following is proposed product policy,
+not an implemented multi-camera UI or permission to initialize a camera implicitly:
+
+| Event | Required explicit behavior |
+|---|---|
+| Module/camera replacement in an existing slot with the same purpose | Close the old segment, explicitly open/initialize the new source as needed, start a new segment with actual source/session/geometry/clocks; keep slot ID and purpose |
+| Unexpected visual stream | Use a predeclared inactive visible slot, starting a new segment; otherwise offer Stop/finalize and a new recording with a suitable inventory, or explicitly leave it unrecorded |
+| Second camera added | Requires a distinct suitable predeclared slot and an implementation that actually supports simultaneous ownership; otherwise start a separate/new recording or leave it unrecorded with disclosure |
+| Purpose changes, e.g. thermal to visible | Cannot reuse the same slot under a new purpose; use a declared slot with the correct purpose or a new recording |
+| No suitable slot / more than 64 slots | Reject inclusion before any entries use it; no header patch, overloaded slot, invisible omission or silent rotation of identities |
+
+A new segment may replace the active global configuration while retaining unchanged
+sources; a format-capable inventory alone does not establish synchronized streams.
+UI must disclose new-recording/unrecorded outcomes and the actual retained roles.
+Leaving a new stream unrecorded is allowed only when consistent with the explicit
+preservation policy. A requested role cannot be silently dropped while retaining a
+Full/maximum-evidence claim; require an explicit permitted policy change/new segment
+or Stop/new recording when the inventory cannot satisfy that policy.
+Dynamic declarations would require new closure, index, recovery and compatibility
+rules; no measured need justifies that complexity in this proposed baseline.
+Adding a visual payload to an existing coherent module-owned observation is not a
+new logical stream; its actual EncodingOffer/segment/retention rules still apply.
+An independent second source must not be disguised as that observation's payload
+to evade inventory, ownership, clock or coherence requirements.
+
+### 6.2 UTC, privacy and supported single-file lineage [A goals; P grammar]
+
 UtcRecord known requires `utc` and forbids `reason`; unreliable requires `reason`
 and may contain a genuine reading; unknown requires `reason` and forbids `utc`.
 An uncertainty is present only when known, not substituted with zero. Creation
@@ -311,6 +387,11 @@ Raw/transport/visual evidence may disclose the scene even without identity metad
 `{operation:"conversion"|"reprocessing"|"continuation", parents:[Parent](1..16),
  algorithm:EvidenceValue, extensions?:Extensions}`;
 `Parent={format_id:Id,recording_id:UUID|null,file_sha256:Hash,file_bytes:D+}`.
+Each Parent identifies exactly **one actual frozen source file**, not a directory,
+dataset hash, fabricated archive, manifest standing in for chunks, or URI identity.
+The 1..16 parents represent separate supported whole-file inputs; they are not a
+16-member dataset inventory. Naming NPZ files as independent parents would not bind
+the CSV/manifest, complete membership or measurement mapping of a legacy recording.
 Continuation observations are new source data and do not invent parent entry IDs.
 Conversion requiring unavailable genuine recorder-clock witnesses is not representable
 by this v1 timeline: refuse that operation, preserve the legacy original and require
@@ -321,11 +402,44 @@ Conversion/reprocessing observations require `parent_entry` of type `ParentEntry
 `parent_index` resolves to the header's parents; `parent_entry` is forbidden without
 lineage, required on conversion/reprocessing observations and absent on genuinely
 new continuation observations; null legacy entry IDs require
-namespaced original-reference evidence. Reprocessing requires known algorithm/settings
+namespaced original-reference evidence for a supported single-file parent; optional
+extensions cannot silently enable unsupported dataset/timeline semantics. Reprocessing requires known algorithm/settings
 and new recording UUID; it never silently replaces parent Celsius. Parent absence
 on disk does not make an otherwise complete child corrupt. No external file is
 followed automatically. Post-capture analysis projects/sidecars are outside this
 wire profile; source files remain immutable and are not copied solely to add ROI.
+
+### 6.3 Historical conversion boundary and R7 [P; A immutability/truthful clocks]
+
+Historical Desktop `lmthermal-radiometric-recording` v1 is a **multi-file dataset**:
+manifest.json + timeline.csv + a variable number of committed NPZ chunks. A row's
+one-based sequence and `(chunk filename, frame_index)` identify a measurement; an
+LMTR entry ID is not that sequence. Missing/uncommitted/incomplete membership and
+existing integrity errors must remain explicit. Hashing only manifest.json, or
+inventing a concatenated single-file source, is not faithful whole-dataset lineage.
+
+Its elapsed fields are floating sampling-relative values, not original integer
+recorder-intake witnesses. Missed-deadline rows carry scheduled elapsed times and
+estimated UTC; ordinary rows have actual sample times at their recorded precision.
+Neither conversion-start clock nor integer-scaled estimated values may masquerade
+as genuine source intake/acquisition. `creation_time` can name actual conversion UTC
+without changing the historical scene's clock meaning.
+
+Recommend **approach B**: baseline v1 refuses these unsupported historical conversions
+honestly; strict legacy reading/coexistence and immutable source analysis remain
+available. R7 retains opt-in conversion as a future gated milestone, requiring a
+reviewed dataset-provenance and explicitly qualified imported-timeline feature.
+An additive schema minor + required feature is possible only if it adds explicit
+variants while preserving every existing base rule; redefining base Parent or host
+timeline semantics needs a new schema major. No feature name/bytes are assigned now.
+
+Approach A now would need bounded paged member inventories, deterministic safe
+relative member names/size/hashes and membership policy, measurement mapping to CSV
+sequence and NPZ frame/member identity, and qualified imported/estimated/unknown
+clock semantics plus reader/index behavior. Those are useful R7 design requirements,
+not an approved grammar. A zip created by a converter binds new archive bytes, not
+the original dataset identity, unless that future contract defines both explicitly.
+Do not claim conversion support based solely on current Parent/null-entry fields.
 
 ## 7. Segment/clock/context closure [A preservation; P representation]
 
@@ -382,8 +496,12 @@ EvidenceValue known requires `value` and no reason; partial requires both; all o
 states require reason and forbid value. Unknown is lack of knowledge, unsupported
 is a known capability absence, unavailable is transient access/observation absence.
 Available original floating calibration/settings/environment values MUST preserve
-their source bits: exact decimal value, or `{type:"f32le"|"f64le",bits:<8|16 lowercase
-hex digits of LE bytes>}` inside the module's JsonValue. Do not use a rounded UI
+their source bits: an exact finite decimal with its source f32/f64 type unambiguously
+declared by the module schema, or `{type:"f32le"|"f64le",bits:<8|16 lowercase
+hex digits of LE bytes>}` inside the module's JsonValue. **Negative zero, nonfinite
+values and NaN payloads require typed bits**: canonical semantic decimal zero cannot
+preserve a sign bit, and JSON has no nonfinite numbers. Positive zero may be decimal
+with the known source type; unknown type cannot be guessed. Do not use a rounded UI
 string as interpretation evidence. Unknown source numeric types stay explicitly
 unknown with original evidence when available. This newly proposed typed representation
 can retain finite/nonfinite module facts; it cannot introduce nonfinite JSON numbers.
@@ -918,14 +1036,59 @@ need future performance tests; R2's passing throughput is not silently transferr
    Codec/sync/scheduling can delay acknowledgement; pending counts/backlog remain
    truthful. Full queues produce explicit preparation/writer-overload gaps, not
    blocking acquisition. Timers do not recover source observations never received.
-4. Checkpoint after <=32 commits, or **5000000000 ns after the first committed CHUNK
-   not covered by a checkpoint**, whichever requests earlier. No repeated idle
+4. Checkpoint after <=32 commits, or **5000000000 ns after the successful footer-sync
+   acknowledgement of the first CHUNK not covered by a checkpoint**, whichever
+   requests earlier. A delayed sync is not yet a commit and cannot arm this deadline.
+   No repeated idle
    empty checkpoints. A timer can snapshot only committed index state while a later
    chunk remains pending. Stop seals/drains, closes segments, checkpoints and writes END.
 5. At low rate, one real frame can commit after its deadline without awaiting the
    next frame. At idle, the committed active prefix is recoverable but no finished
    END is invented. Explicit detach/Stop ends the session/segment where possible;
    absence of callbacks alone is not proof of missing vendor frames or UTC duration.
+
+### Synchronization and observable behavior [P policy, not tested implementation]
+
+One writer serialization owner controls chunk mutation, file appends, index state,
+acknowledged counters and terminal transition. Timers, source callbacks and UI Stop
+MUST NOT append/flush concurrently. A monotonic deadline posts a **coalesced control
+flag**, not one payload-queue item per tick. At most one seal and one checkpoint flag
+are pending, tagged with recording and pending-chunk/uncovered-index generations;
+stale generations are ignored. A separately latched idempotent termination request
+cannot be dropped because a payload queue is full. These bounded control resources
+and failure/segment closure reserve are part of admission, not extra hidden capacity.
+
+| Race/condition | Required serialized behavior and observable result |
+|---|---|
+| Idle/stopped callbacks without an explicit interruption | Seal existing complete work when due; checkpoint uncovered acknowledged work when due. No fabricated frame/gap/END and no idle empty-record loop. An already expired entry deadline is handled immediately when its prepared work reaches the owner |
+| Timer versus admission | Before extending a pending chunk, check its deadline/byte/count thresholds; seal the prior chunk once when due, then admit in order. A newly admitted singleton already past its own deadline requests sealing. New arrivals cannot postpone the first-entry deadline |
+| Timer versus Stop | The first serialized termination request closes source admission and establishes a cutoff. Drain only bounded already-admitted preparation/writer work and truthful loss facts, close segments, seal, checkpoint, append one END. Cancel/invalidate timers; late callbacks cannot append after END. Concurrent Stop is idempotent |
+| Full queues/backpressure | Reject new payload admission without blocking acquisition, record exact preparation/writer loss where known, keep owned in-flight/queue bytes charged. Timer/Stop signals use reserved control flags and remain observable. If the bounded loss-journal/closure reserve cannot represent further loss, terminate explicitly rather than silently dropping accounting |
+| Explicit source interruption | Latch the termination boundary/reason and drain admitted work; no implicit reopen/init. First nonfailure termination reason wins if Stop and detach race; a subsequent actual write/resource/source failure upgrades outcome to failed. Do not wait for a new source frame to flush/stop |
+| Delayed filesystem sync | Keep sealing/sync state and pending counts visible; no acknowledgement until both barriers succeed. Acquisition may continue only under the unchanged bounded admission/drop policy. Due controls stay coalesced, not busy-retried. The <=32-CHUNK checkpoint bound prohibits a 33rd commit before a covering checkpoint |
+| Memory pressure | Before Start, refuse an insufficient/unknown peak-live reservation. During recording, cannot evict admitted payloads or grow queues to hide pressure; stop intake with local_resource_limit and drain/finalize only within already reserved resources. If safe finalization cannot fit, preserve the verified prefix and report incomplete/failed rather than allocating an emergency whole-file buffer |
+| Sync/write failure with uncertain tail | Halt further appends on that stream; preserve prior acknowledged commits, mark pending work unsaved. Do not attempt another END past a possibly torn record or infer live success from later intact forensic bytes |
+
+Stop cutoff concerns source **intake**, not queued work's eventual disk commit time.
+Segment-end witnesses occur after prior admitted entry witnesses; final draining
+cannot reorder journal entries or invent receipt/sensor times. An observation already
+admitted but not safely committed remains pending until ack or an explicit unsaved
+failure outcome. No timeout permits discarding that ownership silently.
+
+Checkpoint flags name uncovered acknowledged commits, not pending chunk snapshots.
+A successful checkpoint covering them resets/invalidate its deadline generation;
+Stop still performs its final fresh checkpoint. The timed checkpoint is a request,
+not a sync-latency guarantee, while the <=32 commit bound is a wire obligation.
+
+Session diagnostics MUST expose sufficient evidence to test this policy: charged
+queue/in-flight bytes and backlog, pending versus acknowledged counts, seal/checkpoint
+deadlines and lateness, sealing/body/footer-sync durations, covered commit boundary,
+loss counts/reasons, intake cutoff and final Stop/close/reopen outcome. These are
+observable writer-policy diagnostics, not new compulsory per-frame wire fields.
+R3/runtime validation must cover all rows with deterministic race scheduling and
+delayed/failing backends; documentation probes do not establish timer liveness or
+memory/sync/energy performance. R2's finite ~25 FPS runs and sampled-memory limits
+remain the only measured throughput evidence.
 
 Alternative arrival-only R2 policy minimizes timer work but leaves the final frame
 pending indefinitely; timer-from-last-arrival can continually defer a busy stream;
@@ -1012,6 +1175,21 @@ verification of this documentation-only grammar, so none is required here.
 
 ## 17. Rule provenance, changes from R2 and unresolved approval
 
+### Changes from `r1b-review-1` [P corrections; still DRAFT]
+
+- Explicit single-file Parent boundary and deferred historical dataset/imported-clock
+  feature (approach B); R7 remains planned, not promised by base v1 fields.
+- Fixed stream-purpose inventory consequences for replacement, new visual/second
+  sources and exhaustion; no dynamic declarations added.
+- Bounded raw exponent including zero and canonical numeric spelling on reread,
+  explicit coefficient/known-I token rules,
+  scalar sorting and future cross-language vectors. Separate raw-byte integrity
+  from canonical semantic context/segment IDs; typed bits preserve negative zero.
+- Defined timer/Stop/admission/control-generation serialization, ack-based checkpoint
+  deadline, backpressure, memory refusal and observable failure outcomes.
+- The original fourteen examples are byte-identical; no new binary fixture/format
+  implementation. D1–D10 remain recommended packages awaiting owner acceptance.
+
 | Rule group | Origin | What still needs acceptance/validation |
 |---|---|---|
 | Full grids, exact Celsius/evidence, validity, no recomputation, truthful gaps, immutable sources, storage choices, coexistence | A | Retained without weakening; new grammar must implement them |
@@ -1039,5 +1217,9 @@ then—authorize R3 and downstream implementation. This draft PR remains unmerge
   [RFC1951](https://www.rfc-editor.org/rfc/rfc1951): codec1 wrapper and DEFLATE.
 - [RFC3339](https://www.rfc-editor.org/rfc/rfc3339): UTC syntax foundation; the strict
   UTC subset/unknown semantics here remain proposed, not inferred clock accuracy.
+- [BigDecimal library semantics](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigDecimal.html)
+  and [Python Decimal](https://docs.python.org/3/library/decimal.html): exact-value,
+  scale/context and signed-zero differences motivating the selected host probes;
+  neither library's default formatting defines this proposed wire spelling.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**

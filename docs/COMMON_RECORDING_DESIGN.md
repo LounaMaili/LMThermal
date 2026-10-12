@@ -585,6 +585,12 @@ preserves actual source capabilities: legacy recording has no full transport;
 estimated historical UTC is tagged as such rather than upgraded to acquisition
 truth. Existing still `.lmtx` loader remains independently versioned and strict.
 
+Targeted R1b review recommends [deferring historical dataset conversion](LMTR_WIRE_V1_DRAFT.md#63-historical-conversion-boundary-and-r7-p-a-immutabilitytruthful-clocks):
+base Parent binds one file and genuine intake chronology cannot represent the
+legacy manifest/CSV/NPZ bundle with estimated sampling rows. R7 remains feasible
+through a later explicitly reviewed required dataset/imported-timeline feature;
+no optional field may silently relabel that dataset or improve its clock accuracy.
+
 ## 17. Shared future conformance corpus
 
 Design only; **no sequence fixture bytes are introduced here**. Freeze one corpus

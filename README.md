@@ -197,6 +197,9 @@ for the original full-payload Android camera test.
   Capstone 5.0.9, pyelftools 0.33 and Androguard 4.1.4 are analysis-only dependencies.
 - The recording codec study uses Desktop's existing NumPy environment and reference
   `libzstd` through an analysis-only helper; it adds no Android/runtime dependency.
+- [R1b documentation checks](docs/lmtr-r1b/README.md) use Python's standard library;
+  an optional host JDK probe compares selected Decimal/BigDecimal operations only,
+  without adding an application dependency or establishing runtime conformance.
 
 ## Documentation
 

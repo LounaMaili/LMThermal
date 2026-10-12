@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/lmtr/r1b-review-1/schema",
-  "title": "DRAFT LMTR r1b-review-1 local shapes \u2014 NOT ACCEPTED, NOT R3",
+  "$id": "https://example.invalid/lmtr/r1b-review-2/schema",
+  "title": "DRAFT LMTR r1b-review-2 local shapes \u2014 NOT ACCEPTED, NOT R3",
   "description": "Local shape companion only. Prose cross-field, binary, resource, decimal/token and ordering rules remain mandatory proposals. No network resolution.",
   "$defs": {
     "I": {
       "type": "integer",
       "minimum": 0,
       "maximum": 2147483647,
-      "description": "Local numeric shape only; prose additionally requires an integer lexical token, not exponent/fraction/boolean. Schema libraries alone cannot enforce that lexical distinction."
+      "description": "Local numeric shape only; prose additionally requires a nonnegative integer lexical token (also rejecting -0), not exponent/fraction/boolean. Schema libraries alone cannot enforce that lexical distinction."
     },
     "D": {
       "type": "string",
@@ -314,6 +314,7 @@
     },
     "Parent": {
       "type": "object",
+      "description": "One actual frozen source file only; not a directory/dataset/member inventory. Historical dataset conversion needs a future required feature; optional unknown fields cannot redefine these semantics.",
       "properties": {
         "format_id": {
           "$ref": "#/$defs/Id"

@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (Targeted recording R1b review-2 corrections — 2026-10-12)
+
+- Kept the unaccepted draft structure/R1a invariants/R2 evidence; clarified single-file Parent limits and recommended deferring historical multi-file provenance/imported timeline semantics to a future required feature, preserving R7's explicit conversion gate and strict legacy coexistence.
+- Made immutable stream-purpose inventory consequences explicit for module replacement, unexpected visual/second-camera streams and exhausted slots; no dynamic declarations were added.
+- Corrected byte-hash versus canonical semantic-ID wording, bounded lexical decimal exponents including zero, clarified strict integer spelling and source-type/negative-zero bit preservation, and listed required future cross-language R3 vectors.
+- Specified serialized timer/admission/Stop/backpressure/sync/memory-refusal behavior with bounded control flags and observable outcomes. Extended documentation-only precision checks; all 14 existing illustrative cases remain byte-identical. No production code, converter, device access, canonical R3 bytes, merge or owner acceptance.
+
 ### Added (Complete proposed recording R1b wire draft — 2026-10-12)
 
 - Proposed the complete camera-independent LMTR container/schema 1.0/envelope-1 contract: exact release framing, generic stream/segment/context/payload grammar, authoritative Float32/masks, precise clocks/gaps, codecs, integrity/index/recovery, resource/admission/idle and storage/lineage semantics. Every rule group distinguishes accepted R1a goals, scoped R2 evidence and new R1b proposals.

@@ -6,7 +6,7 @@ container, accesses a camera/device, or changes source recordings. Local shape a
 selected cross-field checks supplement the complete proposed prose, not replace it.
 """
 from copy import deepcopy
-from decimal import Decimal
+from decimal import Decimal, localcontext
 from pathlib import Path
 import argparse
 import datetime
@@ -26,6 +26,26 @@ CORE = 'org.lmthermal.lmtr.core-v1'
 VIEW = 'org.lmthermal.lmtr.contiguous-native-view-v1'
 
 
+def decimal_token(token):
+    """Check lexical bounds before allocating a decimal with a potentially huge scale."""
+    if len(token) > 1024:
+        raise ValueError('decimal_token_limit')
+    match = re.fullmatch(r'(-?)(0|[1-9][0-9]*)(?:\.([0-9]+))?(?:[eE]([+-]?[0-9]+))?', token)
+    if match is None:
+        raise ValueError('decimal_syntax')
+    if len(match[2]) + len(match[3] or '') > 1024:
+        raise ValueError('decimal_coefficient_limit')
+    exponent = (match[4] or '0').lstrip('+-').lstrip('0') or '0'
+    if len(exponent) > 4 or int(exponent) > 5120:
+        raise ValueError('decimal_raw_exponent_limit')
+    value = Decimal(token)
+    if value and not -4096 <= value.adjusted() <= 4096:
+        raise ValueError('decimal_adjusted_exponent_limit')
+    if len(canonical_json(value)) > 1024:
+        raise ValueError('decimal_canonical_token_limit')
+    return value
+
+
 def parse(text):
     """Reject duplicate/nonfinite JSON while retaining exact optional decimal values."""
     def pairs(items):
@@ -38,12 +58,11 @@ def parse(text):
     def invalid(token):
         raise ValueError('nonfinite_number:' + token)
     def decimal(token):
-        value = Decimal(token)
-        if len(token) > 1024 or len(value.as_tuple().digits) > 1024 or value and not -4096 <= value.adjusted() <= 4096:
-            raise ValueError('decimal_limit')
-        return value
+        return decimal_token(token)
     def integer(token):
-        if len(token) > 1024: raise ValueError('integer_token_limit')
+        decimal_token(token)
+        # Preserve the lexical -0 distinction until strict known-I validation.
+        if token == '-0': return Decimal(token)
         return int(token)
     return json.loads(text, parse_float=decimal, parse_int=integer, object_pairs_hook=pairs, parse_constant=invalid)
 
@@ -55,7 +74,9 @@ def canonical_json(value):
     if value is False: return 'false'
     if isinstance(value, str):
         return '"' + ''.join('\\"' if c == '"' else '\\\\' if c == '\\' else '\\u%04x' % ord(c) if ord(c) < 32 else c for c in value) + '"'
-    if isinstance(value, (int, Decimal, float)):
+    if isinstance(value, float):
+        raise ValueError('binary_float_not_exact_json')
+    if isinstance(value, (int, Decimal)):
         number = Decimal(str(value))
         if not number.is_finite(): raise ValueError('nonfinite_number')
         if not number: return '0'
@@ -148,11 +169,11 @@ def json_limits(value, depth=0):
         if count > 65536: raise ValueError('json_items')
         return count
     if isinstance(value, str):
-        if len(value.encode('utf-8')) > 16384: raise ValueError('json_string')
         if any(0xd800 <= ord(c) <= 0xdfff for c in value): raise ValueError('surrogate')
+        if len(value.encode('utf-8')) > 16384: raise ValueError('json_string')
     elif type(value) is int or isinstance(value, Decimal):
         value = Decimal(value)
-        if not value.is_finite() or len(value.as_tuple().digits) > 1024 or value and not -4096 <= value.adjusted() <= 4096:
+        if not value.is_finite() or len(value.as_tuple().digits) > 1024 or value and not -4096 <= value.adjusted() <= 4096 or len(canonical_json(value)) > 1024:
             raise ValueError('decimal_limit')
     return 0
 
@@ -180,11 +201,15 @@ def check_case(case, definitions):
     if set(header['required_features']) - {CORE, VIEW}: raise ValueError('unsupported_required_feature')
     if not set(chunk['required_features']) <= set(header['required_features']): raise ValueError('undeclared_feature')
     if header['required_features'] != sorted(set(header['required_features'])): raise ValueError('feature_order')
+    slots = [s['id'] for s in header['streams']]
+    if slots != sorted(set(slots)): raise ValueError('stream_inventory_order')
     contexts = {c['id']: c['value'] for c in chunk['contexts']}
     for digest, value in contexts.items():
         if sha(canonical_json(value).encode()) != digest: raise ValueError('context_hash')
     segments = {s['id']: s for s in chunk['segments']}
     for segment in segments.values():
+        if any(stream['stream_id'] not in slots for stream in segment['streams']):
+            raise ValueError('undeclared_stream')
         if sha(canonical_json({k:v for k,v in segment.items() if k != 'id'}).encode()) != segment['id']:
             raise ValueError('segment_hash')
     physical = {}; decoded_slices = {}; physical_roles = {}; active = None; last_time = -1; observed = {}
@@ -287,7 +312,10 @@ def check_case(case, definitions):
 
 def main():
     """Record reproducible host checks and their explicitly limited validation scope."""
-    parser = argparse.ArgumentParser(); parser.add_argument('--report', type=Path); args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--report', type=Path)
+    parser.add_argument('--jvm', action='store_true', help='Run optional host BigDecimal/scalar probes, not Kotlin/ART conformance')
+    args = parser.parse_args()
     schema = parse((ROOT/'docs/lmtr-r1b/schema.json').read_text()); examples = parse((ROOT/'docs/lmtr-r1b/examples.json').read_text())
     definitions = schema['$defs']; refs = re.findall(r'"\$ref"\s*:\s*"#\/\$defs\/([^\"]+)"', json.dumps(schema))
     assert all(name in definitions for name in refs)
@@ -318,13 +346,27 @@ def main():
         (3, lambda c:next(p for p in c['chunk']['entries'][1]['payloads'] if p['kind']=='view').update(parent_payload_id='native_samples')),
         (3, lambda c:c['chunk'].update(required_features=[CORE])),
         (7, lambda c:c['chunk']['segments'][0].update(start_entry='7')),
+        (0, lambda c:c['header']['streams'][0].update(id='undeclared-replacement')),
     ]:
         bad = deepcopy(examples['cases'][case_index]); mutate(bad)
         try: check_case(bad, definitions)
         except ValueError as error: semantic_negatives.append(str(error))
         else: raise AssertionError('semantic mutation accepted')
-    numeric = {'1.0' :'1','1e0':'1','-0.0':'0','0.0000001':'1e-7','1230000000000000000000':'1.23e21','1.0000000000000000000000000000000000001':'1.0000000000000000000000000000000000001'}
-    for token, expected in numeric.items(): assert canonical_json(Decimal(token)) == expected
+    numeric = {
+        '1':'1', '1.0':'1', '1e0':'1', '-0':'0', '-0.0':'0', '0e5120':'0', '0e-5120':'0',
+        '0.0000001':'1e-7', '0.000001':'0.000001', '1e20':'100000000000000000000', '1e21':'1e21',
+        '-1200.00':'-1200', '1E+0004096':'1e4096', '1e-4096':'1e-4096',
+        '1230000000000000000000':'1.23e21', '9007199254740993':'9007199254740993',
+        '1.0000000000000000000000000000000000001':'1.0000000000000000000000000000000000001',
+        '9' * 1018: '9.' + '9' * 1017 + 'e1017',
+        '1e+' + '0' * 1000 + '1':'10',
+    }
+    for precision in [6, 28, 80]:
+        with localcontext() as context:
+            context.prec = precision
+            for token, expected in numeric.items():
+                assert canonical_json(decimal_token(token)) == expected
+                assert decimal_token(expected) == decimal_token(token)
     unicode_order = canonical_json({'\U0001f600':1,'\ue000':2})
     assert unicode_order.index('\ue000') < unicode_order.index('\U0001f600')
     # Float32 sign is a binary fact; canonical JSON -0 is intentionally semantic zero.
@@ -335,24 +377,58 @@ def main():
     assert zlib.crc32(b'123456789') == 0xcbf43926
     # Deliberately malformed documentation metadata must be rejected without a file/device.
     failures = 0
-    for value in [True, Decimal('1.0'), -1, 2147483648]:
+    for value in [True, Decimal('1.0'), parse('-0'), -1, 2147483648]:
         try: validate({'$ref':'#/$defs/I'}, value, definitions)
         except ValueError: failures += 1
     for value in ['01','-1',str(1<<63)]:
         try: validate({'$ref':'#/$defs/D'}, value, definitions)
         except ValueError: failures += 1
-    assert failures == 7
+    assert failures == 8
     for text in ['{"x":1,"x":2}', '{"x":NaN}']:
         try: parse(text)
         except ValueError: failures += 1
         else: raise AssertionError('bad JSON accepted')
-    assert failures == 9
-    result={'status':'DRAFT_HOST_CHECKS_PASS_NOT_R3_OR_OWNER_ACCEPTANCE','review':'r1b-review-1','schema_definitions':len(definitions),'schema_refs_resolve':len(refs),'scenarios':cases,'decimal_spelling_checks':len(numeric),'negative_type_json_checks':failures,'semantic_negative_checks':semantic_negatives,'framing_widths':{'header':40,'footer':72},'ieee_crc32_known_check':True,'float32_signed_zero_check':True,'unicode_scalar_key_order_check':True,'binary_container_written':False,'device_or_camera_accessed':False,'unexecuted':['Kotlin/Python production implementations','canonical R3 binary corpus','real Windows new-wire validation','multi-stream camera hardware','idle timer/Stop/backend races','new grammar sustained performance or peak-memory proof'],'scope':'Documentation local-shape checks and selected cross-field/byte recipes, not full LMTR/R3 conformance; prose binary/index/recovery/storage rules require future implementation validation.'}
+    assert failures == 10
+    precision_negatives = ['1e4097', '1e-4097', '0e5121', '0e-5121', '0e999999999999999999',
+                          '9' * 1025, '9' * 1019, '0.' + '0' * 1023 + '1', '1e+' + '0' * 1024 + '1']
+    for token in precision_negatives:
+        try: decimal_token(token)
+        except ValueError: pass
+        else: raise AssertionError('bad decimal accepted')
+    try: canonical_json(0.1)
+    except ValueError: pass
+    else: raise AssertionError('rounded binary float accepted as exact metadata')
+    try: json_limits(parse('{"x":"\\ud800"}'))
+    except ValueError: pass
+    else: raise AssertionError('lone surrogate accepted')
+    # Canonical semantic IDs and raw byte integrity deliberately have different domains.
+    equivalent = [parse(text) for text in ['{"optional":1}', '{"optional":1.0}', '{"optional":1e0}']]
+    assert len({sha(canonical_json(v).encode()) for v in equivalent}) == 1
+    assert sha(b'{"optional":1}') != sha(b'{"optional":1.0}')
+    assert sha(canonical_json(equivalent[0]).encode()) != sha(b'{"optional":2}')
+    native_probes = []
+    for code, bits in [('f','01000000'), ('f','ffff7f7f'), ('d','0100000000000000'), ('d','ffffffffffffef7f')]:
+        raw = bytes.fromhex(bits); value = struct.unpack('<'+code, raw)[0]
+        exact = Decimal.from_float(value)
+        spelling = canonical_json(exact)
+        assert struct.pack('<'+code, float(decimal_token(spelling))) == raw
+        native_probes.append({'type':code,'bits_le':bits,'canonical':spelling})
+    jvm = {'executed':False,'scope':'Optional selected host library operations, not Kotlin/ART JSON, schema or runtime conformance'}
+    if args.jvm:
+        source = ROOT/'tools/LmtrJsonLibraryProbe.java'
+        tokens = list(numeric) + [p['canonical'] for p in native_probes]
+        output = subprocess.check_output(['java',str(source),*tokens],text=True).splitlines()
+        assert output[:-1] == [canonical_json(decimal_token(t)) for t in tokens]
+        assert output[-1] == 'scalar_order_and_exact_float_bits_pass'
+        jvm.update(executed=True,decimal_operations=len(tokens),scalar_order=True,native_signed_zero_bits=True,
+                   runtime=subprocess.check_output(['java','-version'],stderr=subprocess.STDOUT,text=True).splitlines()[0])
+    assert sha((ROOT/'docs/lmtr-r1b/examples.json').read_bytes()) == 'a7388f7fd08f71ab1bc70adfc90b273784091aa11636f403a389341ab8c80613'
+    result={'status':'DRAFT_HOST_CHECKS_PASS_NOT_R3_OR_OWNER_ACCEPTANCE','review':'r1b-review-2','schema_definitions':len(definitions),'schema_refs_resolve':len(refs),'scenarios':cases,'original_14_examples_byte_identical':True,'decimal_spelling_checks':len(numeric),'decimal_context_precisions':[6,28,80],'precision_negative_checks':len(precision_negatives)+2,'semantic_content_vs_byte_hash_check':True,'exact_finite_native_decimal_roundtrips':len(native_probes),'jvm_library_probes':jvm,'negative_type_json_checks':failures,'semantic_negative_checks':semantic_negatives,'framing_widths':{'header':40,'footer':72},'ieee_crc32_known_check':True,'float32_signed_zero_check':True,'unicode_scalar_key_order_check':True,'binary_container_written':False,'device_or_camera_accessed':False,'unexecuted':['Kotlin/ART and Python production JSON/schema/hash pipelines','canonical R3 binary corpus','real Windows new-wire validation','multi-stream camera hardware','idle timer/Stop/backend races','new grammar sustained performance or peak-memory proof'],'scope':'Documentation local-shape checks and selected cross-field/byte/library recipes, not full LMTR/R3 conformance; prose binary/index/recovery/storage rules require future implementation validation.'}
     result['inputs_sha256'] = {p:sha((ROOT/p).read_bytes()) for p in [
         'docs/LMTR_WIRE_V1_DRAFT.md','docs/LMTR_R1B_OWNER_DECISIONS.md',
-        'docs/lmtr-r1b/schema.json','docs/lmtr-r1b/examples.json','tools/check_lmtr_draft.py']}
+        'docs/lmtr-r1b/schema.json','docs/lmtr-r1b/examples.json','tools/check_lmtr_draft.py','tools/LmtrJsonLibraryProbe.java']}
     result['base_revision'] = 'ed0e3338a72bba76a267e4701125f6f89b3f93e3'
     if args.report: args.report.write_text(json.dumps(result,indent=2)+'\n')
-    print('Draft host checks pass:',len(cases),'scenarios;',len(definitions),'schema definitions;',len(numeric),'exact-decimal checks;',failures + len(semantic_negatives),'negative checks. No binary fixture/device.')
+    print('Draft host checks pass:',len(cases),'unchanged scenarios;',len(definitions),'schema definitions;',len(numeric),'exact-decimal checks;',failures + len(semantic_negatives) + len(precision_negatives) + 2,'negative checks; JVM library probe:',jvm['executed'],'. No binary fixture/device.')
 
 if __name__ == '__main__': main()

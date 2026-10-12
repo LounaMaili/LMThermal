@@ -254,6 +254,14 @@ and opt-in legacy conversion. This is later product work, not required to prove 
 first common recording's full-grid authority. Persist analysis independently of
 large immutable sources; new recalculated recordings retain source lineage.
 
+The [R1b targeted review](LMTR_R1B_OWNER_DECISIONS.md#historical-conversion-a-versus-b-recommend-b)
+recommends a separate required feature/revision for multi-file dataset provenance
+and explicitly qualified imported clocks before R7 conversion. Base v1 single-file
+Parent/intake fields do not themselves support historical directory/NPZ conversion.
+R7 is not cancelled or implicitly implemented; its additional contract must preserve
+source membership/sample identity, original timing precision and estimated/unknown
+facts. An additive minor must preserve base semantics; reinterpretation needs a major.
+
 Acceptance: no mandatory cached per-frame ROI stats, no gaps filled with previous
 values, no invented transport/time accuracy in legacy conversions, explicit derived
 algorithm/source identity, no source rewrite, and still export follows Accepted
