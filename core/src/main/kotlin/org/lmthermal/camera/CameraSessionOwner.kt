@@ -52,6 +52,19 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
         latest.value = snapshot
         return generation
     }
+    /** Presentation-only ownership guard. Pair the existing generation with the exact
+     * published snapshot under the invalidation lock; StateFlow may conflate Close/open.
+     * This exposes no protocol data and changes neither acquisition nor session lifetime.
+     */
+    @Synchronized fun presentationGeneration(snapshot: CameraSessionState<P>): Long? =
+        generation.takeIf { state.value === snapshot }
+    /** Hold the existing invalidation lock only for the final presentation publication.
+     * Rendering stays outside this lock. Close/open cannot slip between its check
+     * and publication; the callback must not perform blocking work or camera actions.
+     */
+    @Synchronized fun publishPresentation(expectedGeneration: Long, publish: () -> Unit) {
+        if (generation == expectedGeneration) publish()
+    }
     /** Read-only detection can update an idle screen but cannot replace or initialize a live session. */
     fun detected(selection: CameraSelection<P>) {
         if (state.value.lifecycle in setOf(CameraLifecycle.OPENING, CameraLifecycle.PERMISSION_PENDING, CameraLifecycle.STREAMING)) return

@@ -76,7 +76,14 @@ speculative manual NUC, settings, visible-light or recording capability is adver
 `CameraSessionOwner<P>` owns the sole `CameraSession<P>` and observation job.
 Opening a replacement synchronously clears old visible data, then serializes
 **awaited old close before new open** with a mutex. A generation token prevents
-obsolete opening, actions or source publications from reviving data. If release
+obsolete opening, actions or source publications from reviving data. A read-only
+`presentationGeneration(snapshot)` pairs that existing token with the exact current
+snapshot under the owner lock. The composition root passes it to the independent
+Celsius worker, protecting rapid same-device reopen even if StateFlow conflates
+Close. `publishPresentation(generation, callback)` encloses only the final short
+state write under that invalidation lock, preventing Close/open between check and
+publication; no rendering or blocking work belongs there. These guards change no
+session lifetime, protocol or acquisition behavior. If release
 fails, ownership is retained and the new factory is blocked until release succeeds.
 Cancellation cannot abandon an already-owned source halfway through release.
 
