@@ -1,7 +1,8 @@
 # Common recording implementation roadmap and issues
 
 **R1a product/semantic direction accepted, 2026-10-07. Wire contract provisional.**
-R1–R7 issues track future work; no recorder/reader/UI implementation is started.
+R1–R7 issues track the product work. R2 has isolated disposable prototypes and
+[evidence](recording-r2/README.md); no production recorder/reader/UI or R3 corpus is started.
 
 Design: [COMMON_RECORDING_DESIGN.md](COMMON_RECORDING_DESIGN.md).
 Evidence: [RECORDING_COMPRESSION_STUDY.md](RECORDING_COMPRESSION_STUDY.md).
@@ -13,14 +14,16 @@ accepted still decision history; it is not silently expanded into sequences.
 
 ## GitHub issue registry
 
-All seven issues remain open. R1a is complete, but R1 must stay open for R1b.
+R2 #7 and R1 #6 remain open pending owner integration/closure and R1b approval.
+The [completion review](recording-r2/COMPLETION_REVIEW.md) finds the recommended
+baseline feasibility gates satisfied with limitations. R1a is complete.
 The native GitHub blocking graph uses R2 → R1 (R1b), so R2 is not blocked by the
 already-completed R1a stage. This avoids a circular R1/R2 issue dependency.
 
 | Stage | Tracking issue | Current gate |
 |---|---|---|
-| R1 | [LMThermal #6](https://github.com/LounaMaili/LMThermal/issues/6) | R1a complete; R1b awaits R2 |
-| R2 | [LMThermal #7](https://github.com/LounaMaili/LMThermal/issues/7) | Ready for separately authorized feasibility; not run here |
+| R1 | [LMThermal #6](https://github.com/LounaMaili/LMThermal/issues/6) | R1a complete; R1b handoff prepared, awaiting owner approval and R2 closure |
+| R2 | [LMThermal #7](https://github.com/LounaMaili/LMThermal/issues/7) | Baseline reviewed and ready for closure approval; remains open, no merge |
 | R3 | [LMThermal #8](https://github.com/LounaMaili/LMThermal/issues/8) | Blocked by R2 and R1b acceptance in R1 |
 | R4 | [LMThermal #9](https://github.com/LounaMaili/LMThermal/issues/9) | Blocked by R3 and its prior gates |
 | R5 | [LMThermal-Desktop #2](https://github.com/LounaMaili/LMThermal-Desktop/issues/2) | Development blocked by R3; real R4 output also required for interoperability completion |
@@ -63,7 +66,8 @@ review. `.lmtr` / `lmthermal-recording` are not stable published identifiers yet
 
 ## R1 — Freeze common radiometric recording semantics and later wire contract
 
-**Repository:** LMThermal. **Status:** R1a complete; keep open for R1b, which awaits R2.
+**Repository:** LMThermal. **Status:** R1a complete; R1b technical handoff ready
+following R2 review, but #6 stays open and wire approval/R2 closure remain owner actions.
 
 Scope: record the owner-approved [R1a normative candidate](LMTR_FORMAT_CANDIDATE.md)
 and product/semantic decisions separately from exact mechanics. Keep LMTX v1
@@ -89,14 +93,19 @@ Acceptance:
 ## R2 — Validate recording framing, codecs and Android storage/recovery
 
 **Repository:** LMThermal, with Desktop read-only or a separate focused validation
-branch if required. **Status:** R1a satisfies entry; ready for a separately authorized
-feasibility task, not started here. R2 returns evidence to R1b before stable release.
+branch if required. **Status:** the authorized R2 feasibility task has executed.
+The [R2 execution packet](recording-r2/README.md) now records
+prototypes, measurements and the [completed review](recording-r2/COMPLETION_REVIEW.md).
+Recommended baseline gates are satisfied with limitations. R2 remains open pending
+explicit integration/closure approval and returns evidence to R1b before stable release.
 
 Scope: controlled prototypes/benchmarks and provider fault tests, using owned
 current measurements and saved frames. Compare STORED/DEFLATE-1/Zstd-3 on genuine
 changing scenes, masks, settings changes and alternate geometry. Validate the
-draft one-second/16 MiB preferred chunk, draft 64 MiB hard budget and byte-bounded
-handoff against actual Android peak heap and 25 FPS acquisition/thermometry cost.
+original one-second/16 MiB chunk proposal and the successful explicit 4 MiB
+HT-301/DEFLATE repeat. Recommend that preferred target subject to R1b, separately
+from the 4 MiB queues, provisional 64 MiB decoded chunk/65 MiB record ceilings and
+sampled 64 MiB incremental-memory target.
 These constants remain provisional. No new thermometry algorithm or unsafe USB fault.
 
 Acceptance:

@@ -8,8 +8,9 @@ The [normative candidate](LMTR_FORMAT_CANDIDATE.md) now distinguishes accepted R
 product/semantic direction from candidate features and provisional mechanics.
 MUST/SHOULD statements here outside that accepted scope remain proposals, not
 changes to an existing format. No common recorder, reader, UI or conformance
-fixture is implemented. [R2 feasibility](RECORDING_R2_VALIDATION.md) must precede
-R1b owner review/final wire freeze and the canonical R3 corpus.
+fixture is implemented for production. [R2 feasibility](RECORDING_R2_VALIDATION.md)
+now has disposable prototypes and a [completed scoped review](recording-r2/COMPLETION_REVIEW.md);
+R1b owner wire approval and the canonical R3 corpus still remain separate future steps.
 
 The [Accepted LMTX v1.0 still contract](LMTX_FORMAT_V1.md) remains unchanged.
 Its format ID is `lmthermal-exchange`, extension `.lmtx`, and `kind=still` only.
@@ -195,7 +196,7 @@ row-major iteration, source Float32 extrema, first row-major tie, Float64 sum/me
 valid/total counts and absent min/max/mean when valid count is zero. Cached
 statistics are non-authoritative and include algorithm/source references.
 
-### Restricted payload views — candidate pending R2
+### Restricted payload views — scoped R2 proof, pending R1b
 
 Permit **one contiguous exact byte view** of a materialized payload from the
 **same frame and chunk**, not a view of another view. Each descriptor names a
@@ -380,10 +381,13 @@ The final mandatory codec set, numeric IDs, wrappers and exact chunk/framing
 constants are deliberately not frozen by R1a; R2 evidence and R1b review decide them.
 
 Seal a chunk at the first of **1 second of observed timeline**, **32 frame/slot
-entries**, or **16 MiB aggregate uncompressed bytes** (including metadata). Flush
+entries**, or a configured preferred aggregate uncompressed target (including
+metadata). R2 recommends **4 MiB for tested HT-301/DEFLATE**, subject to R1b;
+the original 16 MiB proposal and unchanged prototype default remain documented. Flush
 earlier on context/resource limits or Stop. Gap runs may compact known scheduled
-ranges but not invented observations. Low-rate recording therefore commits each
-second rather than retaining many seconds of uncommitted evidence. A single large
+ranges but not invented observations. The prototype checks the time threshold at
+observation admission; an idle wall-clock flush deadline has not been demonstrated
+and needs a final policy. A single large
 frame may exceed the preferred byte target but must fit the hard 64 MiB chunk/frame
 budgets; it forms a singleton chunk. These are draft bounds, not promised Android
 heap usage. Very high-rate modules may make subsecond chunks.
@@ -396,9 +400,10 @@ memory and lost-tail/corruption radius; the study does not justify that as defau
 
 Compression is off acquisition/UI threads. Writer owns bounded chunks; queued
 frames are bounded **by bytes**, not just count. Suggested HT starting budget:
-two 16 MiB chunk buffers plus a 4 MiB handoff and codec scratch, aiming below
-64 MiB incremental recorder memory. Avoid extra stack/copy duplication; benchmark
-peak heap explicitly. Larger generic singleton chunks must negotiate a local
+configured bounded chunk buffers, separate 4 MiB preparation/writer handoffs,
+accounted in-flight data and codec scratch. R2 clean-process observations satisfy
+the sampled 64 MiB incremental target with explicit attribution/sampling limits;
+this is not an absolute heap guarantee. Avoid extra copies. Larger generic singleton chunks must negotiate a local
 resource budget or refuse the profile before Start. Decoder holds at most two
 normal chunks, decoding only needed roles; limits alone are not memory guarantees.
 
@@ -536,7 +541,7 @@ Large recordings have no still-like 256 MiB whole-file ceiling.
 | File offsets/lengths/counters | `2^63-1`; checked sums/products/ranges and actual file size before seek/allocation |
 | Primary frame geometry | Positive dimensions each <=16384; product <=4194304 pixels (16 MiB f32 temperature); exact shape byte count |
 | Native samples | Supported dtype, <=16 channels; exact shape/length; aggregate frame payload <=64 MiB |
-| Physical payload block / chunk | <=64 MiB aggregate uncompressed chunk including metadata; <=65 MiB stored record including framing/expansion; preferred target 16 MiB |
+| Physical payload block / chunk | <=64 MiB aggregate uncompressed chunk including metadata; <=65 MiB stored record including framing/expansion; 4 MiB preferred recommended for tested HT-301/DEFLATE, generic policy subject to R1b |
 | Metadata | <=1 MiB UTF-8 per header/chunk/state set; JSON depth <=32; <=65536 total values; duplicate keys/nonfinite numbers rejected |
 | Index page / checkpoint / END | <=512 KiB each; <=256 entries/fanout, tree depth <=8; no full-index allocation; checked nonoverlapping ranges and backwards references |
 | Chunk frame/slot entries | <=1024 hard limit; preferred <=32; bounded compact gap ranges use checked counters |

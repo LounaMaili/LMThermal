@@ -1,0 +1,103 @@
+{
+  "review_date": "2026-10-12",
+  "reviewed_revision": "6592c6455fc47a3caa6ca003938447c8b1788b28",
+  "main_comparison_revision": "5174b923bcc2011228d15d648f2766e941d8684e",
+  "executable_revision": "531b8fd0653d503309f5def0899380a939b6f6d6",
+  "status": "READY_FOR_OWNER_INTEGRATION_CLOSURE_APPROVAL",
+  "essential_recommended_baseline_R2_test_missing": false,
+  "gates": {
+    "A": {
+      "verdict": "PASS WITH LIMITATIONS",
+      "evidence_reports": [
+        "continuation-resume-summary.json",
+        "android-continuation-deflate-4m.json",
+        "continuation-cost-summary.json"
+      ],
+      "limitations": "Finite HT-301/Pixel runs; sampled memory, not absolute or universal bounds"
+    },
+    "B": {
+      "verdict": "PASS",
+      "evidence_reports": [
+        "android-final-packet.json",
+        "continuation-final-packet.json",
+        "linux-packet.json",
+        "windows-packet.json"
+      ],
+      "limitations": "Published noncanonical packet; optional Zstd production adoption deferred"
+    },
+    "C": {
+      "verdict": "PASS WITH LIMITATIONS",
+      "evidence_reports": [
+        "sparse-kotlin.json",
+        "sparse-python.json",
+        "continuation-resume-readback.json"
+      ],
+      "limitations": "Large singleton memory/idle flush policy need R1b; bounded index/recovery limits"
+    },
+    "D": {
+      "verdict": "PASS WITH LIMITATIONS",
+      "evidence_reports": [
+        "continuation-short-chunk-process-kill.json",
+        "continuation-resume-recovery.json",
+        "android-first-detach.json"
+      ],
+      "limitations": "Software filesystem/process fault assurance, not physical power-loss certification"
+    },
+    "E": {
+      "verdict": "PASS",
+      "evidence_reports": [
+        "continuation-final-packet.json",
+        "windows-packet.json",
+        "continuation-regression.json"
+      ],
+      "limitations": "Restricted views/tested prototype bounds, not complete generic schema or final R3 corpus"
+    },
+    "F": {
+      "verdict": "PASS WITH LIMITATIONS",
+      "evidence_reports": [
+        "android-saf-success.json",
+        "android-saf-cancel.json",
+        "android-saf-permission.json"
+      ],
+      "limitations": "App-owned local canonical storage and small verified local export only; unsupported remote/direct/multi-GB SAF excluded"
+    }
+  },
+  "consistency_checks": {
+    "archive_sha256": "49cc244c60ca51b71c4d1ee38b4360e7e4bc8f490216ad4887f0fd1b770117cc",
+    "archive_manifest_and_15_members_match_stored_Windows_proof": true,
+    "Linux_expected_outcomes": 15,
+    "native_Windows_baseline_expected_outcomes": 10,
+    "baseline_Zstd_skips": 5,
+    "optional_Windows_all_codec_expected_outcomes": 15,
+    "optional_Windows_Zstd_version": "1.5.7",
+    "executed_case_rows_exactly_match_both_Linux_reports": true,
+    "complete_live_readback_files": 4,
+    "exact_live_recovery_copies": 4,
+    "unchanged_candidate_JVM_passes": 272,
+    "unchanged_candidate_general_Pixel_passes": 41,
+    "actual_process_kill_passes": 8
+  },
+  "review_checks": "Stored report/count/hash comparison, source/dependency/test-coverage audit, Markdown/diff checks; no Android/Linux/Windows test rerun",
+  "production_source_diff": [
+    "app/src/main/java/org/lmthermal/app/CelsiusPresenter.kt"
+  ],
+  "presentation_recommendation": "Separate focused integration of justified starvation fix and its regressions; add blocked source-replacement/reopen race coverage in integration review",
+  "integration_recommendation": "Focused durable documentation/evidence integration plus separate presentation-fix review; retain pinned R2 branch/history, exclude disposable prototype build wiring/APIs",
+  "preferred_chunk_recommendation": {
+    "tested_configuration": "HT-301/DEFLATE-1",
+    "bytes": 4194304,
+    "subject_to_R1b": true,
+    "prototype_default_bytes_unchanged": 16777216,
+    "separate_preparation_queue_bytes": 4194304,
+    "separate_writer_queue_bytes": 4194304,
+    "hard_decoded_chunk_plus_metadata_bytes": 67108864,
+    "hard_record_bytes": 68157440,
+    "sampled_incremental_memory_target_bytes": 67108864
+  },
+  "issue7": "OPEN awaiting explicit owner integration/closure approval",
+  "issue6": "OPEN for explicit R1b approval",
+  "wire_accepted": false,
+  "R3_started": false,
+  "production_recording_started": false,
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}
