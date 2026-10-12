@@ -132,18 +132,25 @@ unsupported required codecs, including during recovery; it does not downgrade ro
 ## Chunk policy and memory
 
 Seal **before** adding the next entry when elapsed observed timeline reaches 1 s,
-32 entries, or adding bytes would reach the preferred 16 MiB physical target. Seal
+32 entries, or adding bytes would reach the configured preferred physical target.
+The executable default remains 16 MiB; the evidence-backed recommendation is
+**4 MiB for the tested HT-301/DEFLATE configuration**, subject to R1b approval. Seal
 immediately for a singleton already meeting the target. Charge serialized contexts to preferred admission; complete descriptor/closure
 overhead is bounded at final encoding, so the preferred target remains approximate.
 Hard decoded physical+metadata <=64 MiB, record <=65 MiB. Final Stop seals a short
 chunk. Context changes and gap/mask entries retain closure. Bounds precede allocation.
+The time threshold is checked when an observation arrives; the prototype does not
+provide an idle wall-clock flush timer. R1b must settle low-rate/idle commit timing.
 
 The final prototype has a 4 MiB nonblocking handoff charging payload plus serialized
 context/queued-gap bytes and one writer thread. One separate pending overload-gap
-closure is bounded to 1 MiB. The measured revisions charged only payload to the
-queue; this final admission correction has not passed a new sustained live matrix.
-Ordinary HT incremental-memory engineering target is 64 MiB; actual measured
-heap/native/RSS and source-state conflation must be reported. Large singleton
+closure is bounded to 1 MiB. The historical payload-only admission was corrected;
+the completed continuation charges context/gap bytes and adds a separate 4 MiB
+preparation queue, accounting for one in-flight item per worker separately.
+Ordinary HT incremental-memory engineering target is 64 MiB. Clean-process steady,
+sampled-peak and post-GC differences now remain below that target (largest steady
+RSS +53.35 MiB), with the exact sampling/attribution limits in the
+[completion review](COMPLETION_REVIEW.md). This is not an absolute bound. Large singleton
 success does not imply ordinary-budget support. R1b must approve a memory admission
 policy for larger geometries; hard file limits alone cannot ensure memory safety.
 
@@ -185,12 +192,12 @@ limit. Recovered files are never implicitly resumed/rewritten in place.
 | Commit | Complete footer after body sync, then footer sync before advancing live committed counters |
 | Baseline codec IDs | Recommend STORED=0 and RFC1950-wrapped DEFLATE=1 mandatory decoder capabilities; writer level 1 as conservative candidate |
 | Optional codec ID | Zstd=2 only as explicit required feature for recordings that use it; optional Windows parity passed, but product adoption remains deferred for R1b owner decision |
-| Preferred / hard chunk | Earliest 1 s / 32 entries / 16 MiB; aggregate decoded+metadata 64 MiB, record 65 MiB; metadata 1 MiB |
+| Preferred / hard chunk | Recommend 4 MiB preferred for tested HT-301/DEFLATE, with 1 s observed timeline/32 entries; executable default remains 16 MiB. Separate hard decoded+metadata 64 MiB, record 65 MiB, metadata 1 MiB; generic/idle policy needs R1b approval |
 | Index | Bounded JSON pages, 256 children, depth 8, page 512 KiB, backwards ordinal/offset links |
 | Checkpoint | Every 32 committed chunks, immutable root plus previous checkpoint; Stop seals final short chunk |
 | END | Truthful committed entries/chunks, final root/checkpoint/reason, emitted only after successful drain/seal; absent END never implies completion |
 | Views | Retain only independently hashed same-frame/same-chunk contiguous native into a materialized acquisition parent |
-| Android budget | 4 MiB nonblocking owned handoff; **64 MiB ordinary incremental writer target remains unmet/unproven**, not a supported-configuration claim |
+| Android budget | Separate 4 MiB preparation/writer queues plus accounted in-flight work. Measured ordinary HT differences satisfy the sampled 64 MiB incremental target, not an absolute/universal RAM bound; large geometry needs local admission |
 | Initial canonical backend | App-private local file with tested sync/read-only reopening; optional verified SAF export; no direct arbitrary-provider recording guarantee |
 | Recovery | Verified committed prefix, bounded tail search and suffix traversal above; explicit integrity failure for promised payload corruption |
 

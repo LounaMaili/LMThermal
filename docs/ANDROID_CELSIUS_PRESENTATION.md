@@ -97,8 +97,10 @@ state and nondecreasing source sequence/receipt time; disposal cancels and clear
 One in-flight plus one pending request bounds display work; recording must use its
 own explicit retention/drop policy. Acquisition never waits for Compose. Valid
 measurements skip acquisition-side grayscale. Transport/session/thermometry are
-unchanged. This scheduling regression passes on the JVM Android runtime; sustained
-Pixel recording-pressure freshness still requires the continuation live tests.
+unchanged. JVM/ART scheduling regressions and the completed finite Pixel
+recording-pressure runs support freshness; see the [separate production-fix review](recording-r2/COMPLETION_REVIEW.md#separate-production-presentation-review).
+Focused replacement/reopen race coverage remains an integration follow-up, not
+proof of indefinite responsiveness or another real camera.
 
 Debug-only, bounded `presentation.jsonl` records numeric render timings, settings,
 range, cursor samples, callback FPS, acquisition replacements and completed renders

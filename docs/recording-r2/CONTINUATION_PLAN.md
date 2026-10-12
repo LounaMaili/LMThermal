@@ -1,5 +1,9 @@
 # R2 throughput diagnosis — predeclared continuation, 2026-10-10
 
+Historical predeclared diagnosis/repeat plan. Current completed evidence and
+recommendations are in the [completion review](COMPLETION_REVIEW.md); the original
+pending statements below describe when each experiment was planned.
+
 Base: `8a0d1ce0232f4a2f9c2eb6a911eae148c16fc051`, existing
 `test/recording-r2-feasibility`. Prior failed evidence and packet remain intact.
 No R1b/R3/product recorder or camera/thermometry change is authorized here.

@@ -1,5 +1,9 @@
 # R2 predeclared test plan — 2026-10-07
 
+Historical predeclared plan: retain the original thresholds/order below. Current
+measured recommendations and scoped verdicts are in the
+[completion review](COMPLETION_REVIEW.md), including the later 4 MiB DEFLATE target.
+
 **Disposable feasibility work; all bytes are noncanonical R2 artifacts.**
 Tracking: [R2 #7](https://github.com/LounaMaili/LMThermal/issues/7), feeding
 [R1 #6](https://github.com/LounaMaili/LMThermal/issues/6) for R1b. The authoritative

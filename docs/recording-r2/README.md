@@ -1,15 +1,24 @@
 # R2 feasibility evidence
 
-**R2 READY FOR COMPLETION REVIEW.** The original live matrices failed
+**R2 REVIEWED — READY FOR OWNER INTEGRATION/CLOSURE APPROVAL.** The
+[completion review](COMPLETION_REVIEW.md) records gate-by-gate verdicts, separate
+production-fix review, integration recommendation and R1b handoff. No issue is
+closed and no wire approval or merge is inferred. The original live matrices failed
 throughput/preview gates and remain preserved. The measured continuation now retains every delivered valid
 STORED measurement with zero preparation/writer drops and fresh presentation.
 The resumed clean Full-STORED and explicit 4 MiB Analysis/Native/Full DEFLATE runs
 also pass throughput/freshness, with measured clean-process memory differences
 below the 64 MiB target. Native Windows now passes all 10 STORED/DEFLATE baseline
 outcomes and the separate optional 15-case Zstd reference run with exact Linux
-parity and immutable sources. R2 #7 stays open for completion review; R1b owner
+parity and immutable sources. R2 #7 stays open pending owner approval; R1b owner
 approval remains separate. Memory sampling and backend assurance limits remain
 explicit; historical failures are retained.
+
+Recommend **4 MiB preferred chunks only for the tested HT-301/DEFLATE configuration**,
+subject to R1b. This differs from the two 4 MiB queues, sampled 64 MiB incremental
+memory target and larger hard file ceilings; the executable default stays 16 MiB.
+The [review summary](reports/completion-review.json) supplements rather than rewrites
+the historical numeric snapshots.
 
 - [Measured continuation and bounded candidate](CONTINUATION_RESULTS.md): original ablations, cost/copy model and staged rerun status.
 - [Continuation diagnosis plan](CONTINUATION_PLAN.md): ownership audit and staged ablations before optimization.

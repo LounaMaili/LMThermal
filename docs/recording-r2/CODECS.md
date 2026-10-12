@@ -100,9 +100,12 @@ DEFLATE-1 remains the conservative provisional writer candidate. The original an
 optimized 16 MiB Native failures remain preserved; the explicit 4 MiB preferred
 target now passes all three sustained profiles with unchanged queues, integrity
 and acquisition cadence. See [the resumed evidence](CONTINUATION_RESULTS.md#fresh-continuation-after-the-expired-readiness-window).
-Real Windows packet parity is satisfied; R2 is ready for completion review. R1b
+Real Windows packet parity is satisfied; the [completion review](COMPLETION_REVIEW.md)
+recommends owner-approved closure for the scoped baseline. R1b
 owner acceptance is still required; the prototype default remains 16 MiB and no
 final wire/default is frozen here.
+Recommend 4 MiB as the preferred chunk target for that measured HT-301/DEFLATE
+configuration, not a universal camera constraint or a queue/decoded-limit change.
 Zstd shows faster standalone encoding and modest extra size reduction, but neither
 that nor Desktop numbers overrides live overload/latency. **Defer product adoption**;
 if later approved, require explicit feature negotiation for codec2, never silent fallback.

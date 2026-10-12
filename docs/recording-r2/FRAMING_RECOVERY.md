@@ -8,8 +8,10 @@ and [predeclared plan](TEST_PLAN.md). The implementation is test/tool-only.
 - Forward HEADER/CHUNK/INDEX_PAGE/CHECKPOINT/END; body sync, complete footer and
   footer sync precede commit counters. No complete-file rewrite on Stop.
 - Chunk closure retains contexts/settings, masks, authoritative Celsius and explicit
-  gaps. Seals at the earliest observed 1 s, 32 slots or preferred 16 MiB physical
-  target; final short chunks, low-rate 2 s observations and mask/context changes pass.
+  gaps. Default remains 16 MiB; the measured HT-301/DEFLATE repeat explicitly uses
+  a 4 MiB preferred target, with 1 s observed timeline/32 slots. Final short chunks,
+  low-rate 2 s observations and mask/context changes pass. Admission checks the
+  timeline threshold; no idle wall-clock flush timer is claimed.
 - Full materializes Celsius plus transport; native is an independently hashed
   same-frame contiguous view. No physical duplicate raw plane.
 - JVM lazy index test spans 600 chunks; one seek reads under 1 MiB. Fixed fanout 256,

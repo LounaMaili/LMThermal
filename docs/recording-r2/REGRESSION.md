@@ -1,5 +1,10 @@
 # R2 regression and scope checks
 
+Current status: [completion review, 2026-10-12](COMPLETION_REVIEW.md). The dated
+checks/pending statements below are historical snapshots. This documentation-only
+review verified committed report/hash consistency and scope without repeating
+completed JVM/Android/Linux/Windows tests; `git diff --check` passes.
+
 ## Historical 2026-10-07 checks
 
 Final checks on 2026-10-07, using the repository JDK/Gradle environment:

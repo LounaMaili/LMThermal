@@ -6,6 +6,10 @@ release fixtures. This result does not approve the R1b wire contract or a produc
 recording configuration. R2 #7 remains open for review; R1 #6 remains open for its
 separate owner decisions.
 
+The [completion review, 2026-10-12](COMPLETION_REVIEW.md) now recommends scoped
+closure after explicit integration/closure approval. The execution below remains
+unchanged evidence; no Windows test was repeated for that review.
+
 ## Recorded execution
 
 The clean checkout was on `test/recording-r2-feasibility`, at

@@ -1,5 +1,9 @@
 # R2 measured continuation — 2026-10-10
 
+Current conclusion: [completion review, 2026-10-12](COMPLETION_REVIEW.md). The
+dated intermediate pending/failure statements below are preserved history, not
+outstanding baseline gates. #7 remains open for owner integration/closure approval.
+
 **Noncanonical test prototype. R2 remains open; no R1b/R3/product recorder.**
 The [original failed matrices](ANDROID_BENCHMARK.md) and old packet are preserved.
 This continuation follows the [predeclared plan](CONTINUATION_PLAN.md).

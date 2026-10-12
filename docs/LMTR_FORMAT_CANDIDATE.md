@@ -8,8 +8,9 @@ The [exact experimental framing annex](recording-r2/FRAMING_PROPOSAL.md) is a pr
 for R1b, not acceptance. Historical failed live matrices remain reported; the
 [measured continuation](recording-r2/CONTINUATION_RESULTS.md) and
 [native Windows packet validation](recording-r2/WINDOWS_VALIDATION.md) now satisfy
-the recommended baseline gates. R2 is ready for completion review, with memory
-sampling/backend assurance limits explicit. R1b owner wire approval remains separate.
+the recommended baseline gates. The [completion review](recording-r2/COMPLETION_REVIEW.md)
+now recommends owner-approved closure/integration with memory/backend limits
+explicit. #7 and #6 remain open; R1b owner wire approval remains separate.
 
 Authority: the owner explicitly supplied the decisions and semantic acceptance
 scope on 2026-10-07. This document records that scope; it does not infer acceptance
@@ -31,11 +32,11 @@ merge, successful prototype or desktop benchmark is not final wire acceptance.
 |---|---|
 | Owner product choices in §2 | Accepted for the next design/development stage |
 | Full-grid, roles, retention, stored-temperature authority, losslessness, clocks/gaps, immutable source and coexistence in §§3–6 | Accepted semantic direction (R1a) |
-| Previously committed valid chunks remain recoverable; pending frames are never claimed saved; storage failure stops intake | Accepted recovery goals, with backend assurance to be established by R2 |
-| HT-301 deduplication in §7 | Preferred module-specific direction; restricted views remain a candidate feature pending R2 |
+| Previously committed valid chunks remain recoverable; pending frames are never claimed saved; storage failure stops intake | Accepted recovery goals; scoped R2 local API/filesystem evidence is available, with final backend assurance subject to R1b |
+| HT-301 deduplication in §7 | Restricted candidate views passed the scoped R2 evidence; final feature grammar/acceptance still requires R1b |
 | `.lmtr`, `lmthermal-recording`, `kind=recording`, recording schema/container generation | Separate recording identity is the accepted direction; literal identifiers/version are provisional until final review |
 | Precise JSON field layout, binary encodings/framing, checksum/index/commit mechanics, codecs and numerical resource ceilings | Candidate technical details, not frozen |
-| Android sustained throughput, power/memory and storage-backend durability | Not established by the desktop codec study; R2 must provide evidence |
+| Android throughput/memory and backend assurance | Scoped R2 review passes the tested HT-301/local-file baseline; finite-run, sampling and provider limitations remain explicit; no universal durability or physical accuracy claim |
 
 The accepted [LMTX v1.0 still contract](LMTX_FORMAT_V1.md) is unchanged. It remains
 `lmthermal-exchange`, `.lmtx`, `kind=still`, with its own canonical specification.
@@ -228,9 +229,11 @@ published stable identifiers**. Long append-only recordings differ fundamentally
 from stills in container, limits, index, recovery and publication. Existing still
 readers MUST NOT misinterpret them as still captures.
 
-The architecture's append-only design, preferred ~1-second/16 MiB chunks, draft
-hard bounds, checkpoint/index tree and codec recommendations are inputs to R2,
-not frozen wire constants. The following require R2 evidence and R1b acceptance:
+The original ~1-second/16 MiB proposal is preserved in R2 history. R2 now
+recommends **4 MiB preferred chunks for tested HT-301/DEFLATE**, separately from
+4 MiB queues, hard file ceilings and sampled memory targets. Generic/camera-
+independent policy, checkpoint/index mechanics and codecs remain subject to R1b;
+the prototype default remains 16 MiB. The following require explicit acceptance:
 
 - Magic bytes; exact record/header/footer layout and length encoding.
 - Checksum fields and coverage, hashes/framing binding, commit marker encoding.

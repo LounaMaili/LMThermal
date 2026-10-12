@@ -5,9 +5,9 @@
 The authorized feasibility branch now contains [isolated R2 prototypes/reports](recording-r2/README.md).
 This checklist remains the acceptance gate. The
 [completed native Windows execution](recording-r2/WINDOWS_VALIDATION.md) satisfies
-the last pending baseline interoperability gate; R2 is ready for completion review
-with the preserved continuation evidence and its limitations. R1b owner wire
-approval and R3 remain gated.
+the last pending baseline interoperability gate. The [completion review](recording-r2/COMPLETION_REVIEW.md)
+now finds the recommended baseline gates satisfied with limitations; R2 is ready
+for explicit integration/closure approval. #7 remains open; R1b and R3 remain gated.
 
 [R1a semantics and owner decisions](LMTR_FORMAT_CANDIDATE.md) are accepted direction.
 Wire details and backend assurance remain provisional. This checklist defines what
@@ -85,8 +85,11 @@ provisional until R1b; a successful optional Zstd experiment is not automatic ad
 
 ## Gate C — Forward-only chunks and indexing
 
-Prototype forward-only append with the architecture's preferred ~1-second/16 MiB
-byte target and bounded hard ceilings. Include ordinary/short/final chunks,
+Prototype forward-only append with bounded hard ceilings. The initial experiment
+used a preferred ~1-second/16 MiB target; its 16 MiB DEFLATE failure and later
+successful explicit 4 MiB HT-301/DEFLATE target must both remain recorded. This
+preferred target is distinct from queue capacity and hard format ceilings; any
+final generic policy requires R1b approval. Include ordinary/short/final chunks,
 singleton larger frames within hard bounds, metadata/context closure, masks and
 known gap runs. Test actual maximum allocations, not only declared limits.
 

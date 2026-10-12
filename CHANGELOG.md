@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R2 completion review and integration preparation — 2026-10-12)
+
+- Reviewed all R2 A–F gates against preserved Android/Linux/native Windows evidence; the tested HT-301/STORED/4 MiB DEFLATE/app-owned-file baseline is ready for owner integration/closure approval with finite-run, sampled-memory, recovery and provider limits explicit. No completed platform/hardware tests were repeated.
+- Reconciled stale preferred-chunk, memory and roadmap recommendations: recommend 4 MiB only for tested HT-301/DEFLATE, distinguish queue capacity and hard file ceilings, preserve the default 16 MiB and failed history, and identify the unimplemented idle wall-clock flush policy for R1b.
+- Audited the production Celsius publication fix separately; recommend focused documentation/evidence integration and a separate presentation fix with regression coverage, retaining disposable prototypes/history. Prepared the unresolved camera-independent R1b contract checklist. No application/format change, branch integration, issue closure, wire acceptance, R3 or product recorder.
+
 ### Added (R2 native Windows interoperability — 2026-10-11)
 
 - Validated the clean R2 checkout at `736aba08fa78d070d0a31b29826b7cd4b63fe2ec` on native Windows 11 Pro 25H2 build 26200.9550/x64 with Python 3.12.10. Verified the original archive SHA-256 before extraction and retained it unchanged.

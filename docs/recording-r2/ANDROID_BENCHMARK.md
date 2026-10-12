@@ -4,8 +4,9 @@ The historical failed runs below remain intact. The [measured continuation](CONT
 
 **Historical Gate A FAILED.** The original configurations below are not approved.
 The separate continuation now passes the tested STORED/4 MiB DEFLATE throughput
-and freshness workloads; R2 remains open for real Windows validation. Historical
-tables and failure evidence below are unchanged.
+and freshness workloads, and native Windows parity now passes. The
+[completion review](COMPLETION_REVIEW.md) recommends closure subject to owner
+approval; #7 remains open. Historical tables and failure evidence below are unchanged.
 
 Pixel 8, Android 17/API 37, arm64-v8a, real HT-301 in an explicitly initialized ready session. Test-only consumers/writers; production acquisition, thermometry, controls, coordinates and UI were unchanged. Each complete stage followed the predeclared 20 s warmup and approximately 120 s observation. The operator was asked to move a hand/object during the stages and reported severe visible-image latency. Distinct image fingerprints are reported, but are not a calibrated target or a per-stage scene annotation. Private scene bytes are preserved outside Git; reports contain numeric evidence only.
 
@@ -85,6 +86,9 @@ The repeat had no malformed-frame counter increments during its nine stages; acq
 - The initial blank connection historically requiring replug remains separate; no camera/session workaround was introduced. The interrupted baseline is documented rather than hidden.
 - Hardware/live Stop and normal detach passed bounded finalization. [Detach](reports/android-first-detach.json): 1037 ms, no post-detach measurement or reinitialization. Software sync/kill tests do not certify physical power-loss durability.
 
-The evidence supports further test-only profiling/admission work and lower-rate experiments, not a silent profile downgrade, ROI crop or production recording release. Real Windows and the failed live/memory gates remain prerequisites to R2 completion.
+At this historical stage, live/memory/Windows gates were unresolved. The later
+[continuation](CONTINUATION_RESULTS.md) and [completion review](COMPLETION_REVIEW.md)
+resolve the recommended baseline with explicit limits. These failed runs still do
+not support silent profile downgrade, ROI cropping or production recording release.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.

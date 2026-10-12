@@ -43,8 +43,8 @@ General transformations, strides, nesting and cross-frame references remain excl
 ## Boundaries
 
 Bounds do not prove practical memory for every allowed large geometry. The sparse
-large singleton used ~229.6 MB Java heap in the JVM test. Normal HT live throughput
-and UI failure are independently reported. No production deployment or physical
+large singleton used ~229.6 MB Java heap in the JVM test. Historical HT throughput/UI failures and later successful scoped continuation
+are independently reported; see [the completion review](COMPLETION_REVIEW.md). No production deployment or physical
 calibration claim follows from parser/byte parity.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.

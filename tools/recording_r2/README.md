@@ -5,6 +5,11 @@ See [predeclared plan](../../docs/recording-r2/TEST_PLAN.md). No camera controls
 thermometry algorithms live here. The independent Python reader accepts only this
 prototype revision; its constants are a proposal for R1b, not a frozen contract.
 
+The [completion review](../../docs/recording-r2/COMPLETION_REVIEW.md) records the
+passed scoped baseline, 4 MiB HT-301/DEFLATE preference and separate presentation
+integration recommendation. Keep disposable R2 source/harnesses out of production
+integration; retain their pinned evidence branch. #7/#6 stay open for owner actions.
+
 ## Build / test
 
 Use the repository's existing JDK 17 / Gradle environment:
