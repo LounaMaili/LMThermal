@@ -170,7 +170,8 @@ The [common recording normative candidate](docs/LMTR_FORMAT_CANDIDATE.md) record
 **owner-accepted R1a product/semantic direction**: complete grids, truthful
 Analysis/Native/Full preservation and non-intrusive storage policy. Exact wire
 mechanics remain provisional. [R2 feasibility](docs/RECORDING_R2_VALIDATION.md)
-must precede R1b owner wire acceptance and the canonical corpus. No common
+has scoped owner-reviewed evidence (see [integration provenance](docs/recording-r2/INTEGRATION.md));
+R1b owner wire acceptance must precede release and the canonical corpus. No common
 recorder/reader is implemented; Accepted still LMTX v1 is unchanged. The
 [architecture](docs/COMMON_RECORDING_DESIGN.md), unchanged compression evidence
 and [R1–R7 roadmap](docs/RECORDING_IMPLEMENTATION_PLAN.md) retain the rationale.
