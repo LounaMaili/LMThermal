@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 field failure publication)
+
+- Stop the bounded field run if its private metric writer fails and prevent a failed/missing terminal readback from enabling a longer run. Preserve diagnostic classification and original files; baseline without a capture does not manufacture a source-immutability verdict.
+
 ### Added (R4 operator-gated field preparation)
 
 - Add a separate test-only arm64 field APK reusing the existing single HT acquisition/preview owner, authoritative observer, adapter and recorder with explicit Start/Stop, app-owned bounded files, private streaming source oracles and read-only terminal recovery. Production app has no recorder dependency or recording UI.

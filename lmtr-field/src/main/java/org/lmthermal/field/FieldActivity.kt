@@ -50,6 +50,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     private var directory:File?=null
     private var header:Obj?=null
     private var finishing=false
+    private var diagnosticFailure:String?=null
     private val stopRequestNs=java.util.concurrent.atomic.AtomicLong()
     private val stopRequestWallNs=java.util.concurrent.atomic.AtomicLong()
     private var closeWallNs:Long?=null
@@ -105,7 +106,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                 check(preflight.permitted){"Known insufficient storage: ${preflight.requiredFreeBytes} bytes required"}
                 val id=UUID.randomUUID().toString()
                 val root=File(getApplication<Application>().filesDir,"r4-field/$id");check(root.mkdirs())
-                directory=root;storageCap=preflight.storageCapBytes;oracleBytes=java.util.concurrent.atomic.AtomicLong();traceBytes=java.util.concurrent.atomic.AtomicLong();stopRequestNs.set(0);stopRequestWallNs.set(0);closeWallNs=null;metrics=FieldMetrics();runStart=SystemClock.elapsedRealtimeNanos();initialStatistics=camera.state.value.statistics;latestStatistics=initialStatistics;measured=seconds<=20
+                directory=root;diagnosticFailure=null;storageCap=preflight.storageCapBytes;oracleBytes=java.util.concurrent.atomic.AtomicLong();traceBytes=java.util.concurrent.atomic.AtomicLong();stopRequestNs.set(0);stopRequestWallNs.set(0);closeWallNs=null;metrics=FieldMetrics();runStart=SystemClock.elapsedRealtimeNanos();initialStatistics=camera.state.value.statistics;latestStatistics=initialStatistics;measured=seconds<=20
                 // Both intake and timeline origin use the exact API used by HT receipt, including suspend.
                 val selectedClock=FieldClock(SystemClock::elapsedRealtimeNanos);clock=selectedClock;header=selectedClock.header()
                 File(root,"preflight.json").writeBytes(LmtrJson.encode(preflight.report()+mapOf("run_id" to id,
@@ -131,8 +132,9 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                 }
                 status.value="${profile?.wire ?: "Baseline"}: $id; bounded $seconds s, Stop is always available"
                 sampler=scope.launch {
-                    val trace=File(root,"samples.jsonl").bufferedWriter()
+                    var trace:BufferedWriter?=null
                     try {
+                        val localTrace=File(root,"samples.jsonl").bufferedWriter();trace=localTrace
                         while(isActive && SystemClock.elapsedRealtimeNanos()-runStart<seconds*1000000000L) {
                             val snapshot=engine?.snapshot()
                             val state=camera.state.value
@@ -147,11 +149,19 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                                 "malformed" to state.statistics.malformed.toString(),"recorder" to snapshot?.let(::fieldSnapshot),
                                 "thermal" to runCatching { File("/sys/class/thermal/thermal_zone0/temp").readText().trim() }.getOrNull())
                             val sampleBytes=LmtrJson.encode(sample);check(sampleBytes.size<=65536)
-                            trace.write(sampleBytes.toString(Charsets.UTF_8));trace.newLine();trace.flush();traceBytes.addAndGet(sampleBytes.size+1L)
+                            localTrace.write(sampleBytes.toString(Charsets.UTF_8));localTrace.newLine();localTrace.flush();traceBytes.addAndGet(sampleBytes.size+1L)
                             if(snapshot?.state in listOf("finalized","failed"))break
                             delay(1000)
                         }
-                    } finally {trace.close()}
+                    } catch(cancelled:CancellationException) { throw cancelled }
+                    catch(error:Exception) {
+                        diagnosticFailure=error.javaClass.simpleName
+                        engine?.stop("field_metrics_failed",true);requestStop()
+                    } finally {
+                        runCatching {trace?.close()}.onFailure {
+                            diagnosticFailure=it.javaClass.simpleName;engine?.stop("field_metrics_failed",true);requestStop()
+                        }
+                    }
                     finishSafely()
                 }
             } catch(error:Exception) {
@@ -217,14 +227,18 @@ class FieldModel(application:Application):AndroidViewModel(application) {
             "observed_stop_request_elapsed_ns" to (stopRequestNs.get()-runStart).toString(),"stop_request_call_wall_ns" to stopRequestWallNs.get().toString(),
             "backend_close_wall_ns" to closeWallNs?.toString(),"stop_cutoff_authority" to "engine_serialized_witness_request_window_not_assumed_first_on_source_failure",
             "recorder_snapshot" to current?.snapshot()?.let(::fieldSnapshot),"finalized" to result?.finalized,"termination_status" to result?.status,
-            "termination_reason" to result?.reason,"reopen" to reopened,"source_sha256" to before,"source_unchanged" to (before==after),
+            "termination_reason" to result?.reason,"reopen" to reopened,"source_sha256" to before,"source_unchanged" to if(before==null)null else (before==after),"diagnostic_failure" to diagnosticFailure,
             "clock_correlation" to "source_receipt_and_recorder_intake_use_Android_elapsedRealtimeNanos_same_boot",
             "utc_sensor_resolution" to "unknown","warning" to NativeEquivalentThermometry.WARNING)
         File(root,"private-report.json").writeBytes(LmtrJson.encode(report))
         val inventory=root.listFiles().orEmpty().filter { it.isFile }.sortedBy { it.name }.map {
             mapOf("file" to it.name,"bytes" to it.length().toString(),"sha256" to fileHash(it)) }
         File(root,"inventory.json").writeBytes(LmtrJson.encode(mapOf("files" to inventory)))
-        engine=null;clock=null;finishing=false;busy.value=false;status.value="Stopped and read-only checked: ${root.name}; private files retained; inspect before longer run"
+        engine=null;clock=null;finishing=false
+        val refused=diagnosticFailure!=null || fieldReopenFailed(reopened,capture.exists())
+        busy.value=refused
+        status.value=if(refused)"Diagnostic/read-only check failed: ${root.name}; originals retained; no longer run before inspection"
+            else "Stopped and read-only checked: ${root.name}; private files retained; inspect before longer run"
     }
     fun memoryPressure() { engine?.memoryPressure() }
     override fun onCleared() { route.stop();lifetime.dispose();presenter.dispose();camera.dispose();scope.launch { sampler?.cancelAndJoin();finishSafely();scope.cancel() } }

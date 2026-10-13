@@ -1,7 +1,7 @@
 {
   "status": "passed_host_phase_a",
   "physical_executed": false,
-  "jvm_tests": 397,
+  "jvm_tests": 398,
   "python_contract_tests": 64,
   "field_python_tests": 8,
   "art_current_revision": "pending_exact_commit_runtime",
@@ -10,7 +10,7 @@
     "lmtr-field assembleDebug/lintDebug",
     "isolated lmtr-art packaging"
   ],
-  "field_helpers_jvm_tests": 17,
+  "field_helpers_jvm_tests": 18,
   "existing_room_engineering_readbacks": [
     {
       "profile": "analysis",

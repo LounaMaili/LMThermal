@@ -46,7 +46,10 @@ be certified by a timeout. A Stop timeout retains files/worker ownership, refuse
 new run and requires local inspection. A failed writer result is not permission to
 reuse a source owner/oracle: both worker threads must exit. Each deferred offer binds
 its original run clock/writer/storage counters so it cannot write into a later run. Failed/incomplete sources are never deleted,
-repaired in place or resumed. Read-only full reopen follows Stop.
+repaired in place or resumed. Read-only full reopen follows Stop. Metrics-writer creation/append/close failure
+requests an honest interrupted Stop; failed/missing readback blocks another longer
+run until inspection. Baseline uses conservative Full storage preflight despite
+writing no LMTR payload; this is an upper-bound admission choice.
 
 ## Mandatory clock audit
 
@@ -199,7 +202,7 @@ must stay local. Do not upload the entire private report or trace.
 
 ## Camera-free Phase A verification
 
-[Phase A host receipt](field-preparation-validation.json) records 397 JVM and 64+8
+[Phase A host receipt](field-preparation-validation.json) records 398 JVM and 64+8
 Python tests, three original-owner profile readbacks, build/lint and unchanged corpus
 checks. [Earlier host readbacks](field-host-initial-readbacks.json) remain separate.
 Current ART execution is a separate exact-source CI gate, not inferred from packaging.

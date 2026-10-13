@@ -116,4 +116,10 @@ class FieldProtocolTest {
             assertEquals(before,LmtrChunk.sha(file.readBytes()))
         } finally {release.countDown();engine.stop();engine.awaitStop(10000);directory.deleteRecursively()}
     }
+    @Test fun failedOrMissingReadbackBlocksLongerRunButBaselineNeedsNoFile() {
+        assertTrue(fieldReopenFailed(mapOf("classification" to "readback_failed"),true))
+        assertTrue(fieldReopenFailed(null,true))
+        assertFalse(fieldReopenFailed(null,false))
+        assertFalse(fieldReopenFailed(mapOf("status" to "recovered"),true))
+    }
 }

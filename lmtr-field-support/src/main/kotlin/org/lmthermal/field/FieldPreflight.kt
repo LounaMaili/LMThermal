@@ -92,3 +92,6 @@ object FieldPreflightCli {
             FieldPreflight(it,146,free).report() })).toString(Charsets.UTF_8))
     }
 }
+
+/** Failure evidence is never a positive gate to launch a longer physical run. Baseline has no file. */
+fun fieldReopenFailed(report:Obj?,recording:Boolean):Boolean = recording && (report==null || report["classification"]=="readback_failed")
