@@ -76,8 +76,10 @@ Negative coverage:
   nonfinite valid temperature and negative-zero invalid filler.
 
 Index/checkpoint corruption is currently an explicit navigation error in these
-negative vectors. It does not claim that automatic repair or a fully implemented
-separate salvage/rebuilt-index workflow exists. Fixtures expecting recovered
-prefixes are independently distinguished from these corruption cases.
+negative vectors' normal/full path. Additional cross-runtime tests explicitly
+request recovery for these same files and verify truthful `navigation_rebuilt`
+prefixes. Separate `scan` tests expose independently verified ranges and known
+integrity damage; no in-place repair, arbitrary damaged-framing discovery or rebuilt
+index cache is claimed. Missing/torn-prefix expectations remain distinct.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**

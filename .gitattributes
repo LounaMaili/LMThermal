@@ -9,3 +9,13 @@ core/src/test/resources/thermometry/*.f32 binary
 core/src/test/resources/presentation/*.argb binary
 core/src/test/resources/presentation/*.levels binary
 core/src/test/resources/lmtx/*.lmtx binary
+
+# Canonical LMTR bytes and hash-pinned plans must survive native Windows checkouts.
+lmtr-contract/src/test/resources/lmtr/files/*.lmtr binary
+lmtr-contract/src/test/resources/lmtr/manifest.json -text
+lmtr-contract/src/test/resources/lmtr/plans/*.json -text
+lmtr-contract/src/test/resources/lmtr-examples.json -text
+lmtr-contract/src/main/resources/lmtr-schema.json -text
+# Reference-source provenance uses exact LF bytes on every checkout.
+tools/lmtr_v1/*.py text eol=lf
+tools/generate_lmtr_corpus.py text eol=lf

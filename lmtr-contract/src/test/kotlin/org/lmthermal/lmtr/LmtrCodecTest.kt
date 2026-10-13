@@ -83,7 +83,7 @@ class LmtrCodecTest {
         failure("invalid_payload") { LmtrCodec.decode(valid + byteArrayOf(0), 1, 5, 5) }
         failure("invalid_payload") { LmtrCodec.decode(valid + valid, 1, 10, 10) }
         val damaged = valid.copyOf(); damaged[damaged.lastIndex] = (damaged.last().toInt() xor 1).toByte()
-        failure("invalid_payload") { LmtrCodec.decode(damaged, 1, 5, 5) }
+        failure("committed_payload_integrity") { LmtrCodec.decode(damaged, 1, 5, 5) }
     }
 
     @Test fun dictionariesRawDeflateGzipAndMalformedHeaderReject() {

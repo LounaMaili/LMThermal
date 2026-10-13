@@ -14,11 +14,12 @@ python3 -m tools.lmtr_v1 check new-file.lmtr
 python3 -m tools.lmtr_v1 check new-file.lmtr --entry 1
 python3 -m tools.lmtr_v1 check new-file.lmtr --full
 python3 -m tools.lmtr_v1 check incomplete.lmtr --recover --full
+python3 -m tools.lmtr_v1 scan damaged.lmtr
 ```
 
 `canon` emits UTF-8 canonical bytes with no newline. Other commands emit one JSON
 result; a rejected operation exits 2. Opening is read-only. `opened_records`,
-`selected_chunks`, `full` and `full_verified_prefix` are distinct scopes. A valid
+`selected_chunks`, `full`, `full_verified_prefix` and explicit `salvaged_chunks` are distinct scopes. A valid
 END records declared completion, not external producer close acknowledgement.
 `--entry` verifies all logical data in its selected CHUNK, not just one pixel.
 `--recover` follows bounded tail/predecessor limits; `--full` additionally verifies
@@ -51,10 +52,13 @@ relax record JSON's 16 KiB string bound; every wire body is checked separately.
 - Full streaming validation uses this bounded reporting budget; it does not claim
   indefinite-runtime or arbitrary-duration memory certification. Unknown optional
   extensions are retained semantically, not interpreted as module algorithms.
-- Fast recovery is intentionally conservative when committed framing/navigation
-  is damaged. It may refuse with an explicit error rather than offer a general
-  salvage scan. Recovery from a checkpoint without `--full` does not certify its
-  unvisited prefix or reconstruct every prior source-counter observation.
+- Fast recovery reconstructs trusted-body navigation damage from bounded checked
+  predecessor links; committed source corruption remains fatal. Explicit `scan`
+  exposes independently verified ranges and records source integrity damage without
+  certifying global chronology/index/completion. Its API is cancellable between
+  records. Broken framing stops safely; arbitrary-range discovery and an external
+  rebuilt-index cache are not implemented. Checkpoint recovery without `--full`
+  does not certify its unvisited prefix or every prior source-counter observation.
 - No asynchronous recorder admission/timers, live frame acquisition, filesystem
   barriers/power loss, SAF providers, Kotlin/ART execution or native Windows run
   is demonstrated by these tools. The host writer does not advertise production

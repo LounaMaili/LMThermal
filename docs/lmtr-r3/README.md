@@ -8,6 +8,8 @@ No production Android or Desktop recorder/importer is implemented here.
 
 - [Progress and remaining gates](IMPLEMENTATION_PLAN.md)
 - [Canonical synthetic corpus](CORPUS.md)
+- [Architecture, APIs and explicit limits](IMPLEMENTATION_GUIDE.md)
+- [Native Windows protocol — pending](WINDOWS_VALIDATION.md)
 - [Independent Python tools](../../tools/lmtr_v1/README.md)
 - `lmtr-contract/`: pure Kotlin/JVM library and structured CLI, no Android dependency.
 
@@ -27,6 +29,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_sparse.py \
   --java "$JAVA_HOME/bin/java" \
   --classpath "$(cat lmtr-contract/build/runtime-classpath.txt)" \
   --report docs/lmtr-r3/linux-sparse-validation.json
+PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_recovery_memory.py \
+  --java "$JAVA_HOME/bin/java" \
+  --classpath "$(cat lmtr-contract/build/runtime-classpath.txt)" \
+  --report docs/lmtr-r3/linux-recovery-memory-validation.json
 ./gradlew --offline :core:test :app:assembleDebug :app:lintDebug
 PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_acceptance.py
 git diff --check
@@ -43,6 +49,7 @@ Kotlin CLI (arguments separated by `|` for this Gradle task):
 ./gradlew --offline :lmtr-contract:lmtr -PlmtrArgs='check|example.lmtr|--full'
 ./gradlew --offline :lmtr-contract:lmtr -PlmtrArgs='check|example.lmtr|--entry|1'
 ./gradlew --offline :lmtr-contract:lmtr -PlmtrArgs='check|incomplete.lmtr|--recover|--full'
+./gradlew --offline :lmtr-contract:lmtr -PlmtrArgs='scan|damaged.lmtr'
 ```
 
 ## Honest scope
@@ -58,7 +65,8 @@ gaps. Baseline STORED and bounded RFC1950 DEFLATE are supported; Zstd remains re
 Unknown optional JSON remains exact semantic data. Original binary payloads, valid
 negative zero, invalid positive-zero filler and mask authority remain distinct.
 
-General salvage/rebuilt-index scanning, full platform/backend conformance, real
+An explicit cancellable read-only salvage scan exists; arbitrary damaged-framing
+range discovery/rebuilt-index caching, full platform/backend conformance, real
 native Windows and ART execution remain separate gates. Local reporting/clock/cache
 budgets are disclosed implementation limits, not changes to accepted format limits.
 R3 is not declared complete; R4/R5/R6/R7 are not started.

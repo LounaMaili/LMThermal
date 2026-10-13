@@ -291,3 +291,58 @@ class WireTests(unittest.TestCase):
         write_plan(plan(),self.path); original=self.path.read_bytes()
         with self.assertRaises(FileExistsError):write_plan(plan(),self.path)
         self.assertEqual(self.path.read_bytes(),original)
+
+class RecoveryNavigationTests(unittest.TestCase):
+    """Shared binary negatives target read-only navigation rebuilding, not source repair."""
+    def test_damaged_index_and_checkpoint_recover_verified_source_prefix(self):
+        root=ROOT/'lmtr-contract/src/test/resources/lmtr/files'
+        for name in ('committed-index-damage','committed-checkpoint-damage'):
+            path=root/(name+'.lmtr');before=path.read_bytes()
+            with Reader(path) as reader: result=reader.check(full=True,recover=True)
+            self.assertEqual(result['status'],'recovered');self.assertEqual(result['reason'],'navigation_rebuilt')
+            self.assertEqual(result['integrity_scope'],'full_verified_prefix');self.assertTrue(result['unknown_tail'])
+            self.assertIsNone(result['declared_end_status']);self.assertEqual(result['summary']['entries'],'3')
+            self.assertEqual(path.read_bytes(),before)
+    def test_navigation_recovery_does_not_hide_committed_chunk_integrity(self):
+        path=ROOT/'lmtr-contract/src/test/resources/lmtr/files/committed-body-corrupt.lmtr'
+        with Reader(path) as reader,self.assertRaises(ContractError) as failure:reader.check(full=True,recover=True)
+        self.assertEqual(failure.exception.code,'committed_payload_integrity')
+
+
+class SalvageTests(unittest.TestCase):
+    """Cancellation and salvage are external read-only state, never ordinary playback."""
+    def test_explicit_scan_preserves_damage_and_valid_later_ranges(self):
+        source=ROOT/'lmtr-contract/src/test/resources/lmtr/files/multi-chunk-context-closure.lmtr'
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'damaged.lmtr'; data=bytearray(source.read_bytes())
+            with Reader(source) as reader: first=reader.record(reader.header_end)
+            data[first['offset']+40]^=1;path.write_bytes(data);before=path.read_bytes()
+            with Reader(path) as reader: result=reader.salvage()
+            self.assertEqual(result['status'],'integrity_damaged');self.assertEqual(result['integrity_scope'],'salvaged_chunks')
+            self.assertEqual(result['failures'][0]['error'],'committed_payload_integrity')
+            self.assertEqual(len(result['ranges']),1);self.assertIsNone(result['declared_end_status'])
+            self.assertEqual(path.read_bytes(),before)
+    def test_scan_cancels_without_mutating_or_declaring_completion(self):
+        path=ROOT/'lmtr-contract/src/test/resources/lmtr/files/illustration-01-stored.lmtr';before=path.read_bytes()
+        with Reader(path) as reader: result=reader.salvage(cancelled=lambda:True)
+        self.assertTrue(result['cancelled']);self.assertEqual(result['ranges'],[])
+        self.assertEqual(result['reason'],'explicit_scan_cancelled');self.assertEqual(path.read_bytes(),before)
+
+
+class StatisticsResourceTests(unittest.TestCase):
+    """Public statistics keeps exact bytes and refuses malformed shapes before iteration."""
+    def test_invalid_public_statistics_inputs_reject_explicitly(self):
+        from tools.lmtr_v1.metadata import statistics
+        for data,mask,width,bounds in [(b'123',None,1,None),(bytes(4),bytes([2]),1,None),(bytes(4),None,0,None),(bytes(4),None,1,(0,0,2,1))]:
+            with self.subTest(width=width,bounds=bounds),self.assertRaises(ContractError):statistics(data,mask,width,bounds)
+
+
+class JsonByteBudgetTests(unittest.TestCase):
+    """Raw and canonical metadata limits are separate from per-number/string limits."""
+    def test_metadata_input_byte_boundary_and_canonical_expansion_refuse(self):
+        self.assertEqual(loads(b'{}'+b' '*(1048576-2)),{})
+        with self.assertRaises(ContractError) as failure:loads(b'{}'+b' '*(1048577-2))
+        self.assertEqual(failure.exception.code,'resource_limit')
+        value=loads(b'{"x":['+b','.join([b'1e20']*50000)+b']}')
+        with self.assertRaises(ContractError) as failure:dumps(value)
+        self.assertEqual(failure.exception.code,'resource_limit')

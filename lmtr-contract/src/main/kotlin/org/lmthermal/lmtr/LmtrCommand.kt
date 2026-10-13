@@ -11,7 +11,21 @@ object LmtrCommand {
             when(args[0]) {
                 "canon" -> { System.out.write(LmtrJson.encode(LmtrJson.parse(File(args[1]).readBytes())));return }
                 "write-plan" -> { demand(args.size==3,"invalid_metadata");println(LmtrJson.encode(LmtrWriter.writePlan(LmtrJson.parse(File(args[1]).readBytes()),File(args[2]))).toString(Charsets.UTF_8)) }
+                "scan" -> {
+                    demand(args.size==2,"invalid_metadata")
+                    println(LmtrJson.encode(LmtrReader(File(args[1])).use { it.salvage() }).toString(Charsets.UTF_8))
+                }
                 "check" -> {
+                    // Unsupported future seek/filter options must not silently
+                    // produce a narrower read than the operator requested.
+                    var cursor=2
+                    while(cursor<args.size) {
+                        when(args[cursor]) {
+                            "--full","--recover" -> cursor++
+                            "--entry" -> { demand(cursor+1<args.size,"invalid_metadata");cursor+=2 }
+                            else -> throw LmtrFailure("invalid_metadata")
+                        }
+                    }
                     val full="--full" in args;val recover="--recover" in args
                     val index=args.indexOf("--entry");val entry=if(index>=0)args.getOrNull(index+1)?.toLongOrNull()?:throw LmtrFailure("invalid_metadata")else null
                     val result=LmtrReader(File(args[1])).use { it.check(full,entry,recover) }

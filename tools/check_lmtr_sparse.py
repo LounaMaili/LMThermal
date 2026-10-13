@@ -39,7 +39,7 @@ def zero_hash(prefix=b'', length=PAYLOAD):
     return digest.digest()
 
 
-def construct(path):
+def construct(path,require_large_offset=True):
     """Emit complete contiguous envelopes with sparse physical zero-valued payloads."""
     template = loads((ROOT / 'lmtr-contract/src/test/resources/lmtr/plans/illustration-01-stored.json').read_bytes())
     head = template['header']; head['recording_id'] = '00000000-0000-4000-8000-000000000600'; head['streams'][0]['purpose'] = 'opaque'
@@ -57,7 +57,7 @@ def construct(path):
     observation['measurement'] = {'status': 'unsupported', 'reason': 'synthetic_opaque_no_temperature'}
     observation['retention']['temperature'] = {'status': 'unsupported', 'reason': 'synthetic_opaque_no_temperature'}
     observation['retention']['acquisition'] = {'status': 'present'}
-    payload_hash = zero_hash().hex()
+    payload_hash = zero_hash(length=PAYLOAD).hex()
     payload = {'id': 'acquisition', 'role': 'acquisition', 'kind': 'materialized', 'block_id': 'b0', 'offset': '0', 'length': str(PAYLOAD), 'hash': payload_hash, 'encoding_id': encoding, 'dtype': 'bytes', 'byte_order': 'not_applicable', 'shape': [PAYLOAD], 'layout': 'opaque', 'unit': None, 'geometry': None, 'lossiness': 'lossless'}
     observation['payloads'] = [payload]
     block = {'id': 'b0', 'role': 'acquisition', 'encoding_id': encoding, 'dtype': 'bytes', 'byte_order': 'not_applicable', 'offset': '0', 'stored': str(PAYLOAD), 'decoded': str(PAYLOAD), 'codec': 0, 'hash': payload_hash}
@@ -107,12 +107,13 @@ def construct(path):
         root = checkpoint()
         end = {'recording_id': head['recording_id'], 'root': root, 'checkpoint': previous_checkpoint, 'summary': summary, 'status': 'completed', 'reason': 'normal_stop', 'finalization_time': {'status': 'known', 'clock_source': 'synthetic_utc', 'utc': '2026-10-13T00:00:00Z'}, 'error': None}
         SHAPES.check('End', end); append(5, dumps(end), end)
-    assert int(last_chunk['offset']) > 2**32
+    if require_large_offset: assert int(last_chunk['offset']) > 2**32
     return {'chunks': CHUNKS, 'target_entry': CHUNKS, 'target_chunk_offset': last_chunk['offset'], 'target_logical_hash': zero_hash(length=FINAL_PAYLOAD).hex(), 'summary': summary}
 
 
 def validate(path, expected, kotlin=None, full=False):
     """Compare selected/readback results independently while preserving narrow integrity scope."""
+    before=path.stat()
     with Reader(path) as reader:
         result = reader.check(entry=expected['target_entry'])
         assert result['status'] == 'valid' and result['integrity_scope'] == 'selected_chunks'
@@ -124,29 +125,39 @@ def validate(path, expected, kotlin=None, full=False):
         result['peak_process_rss_kib'] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         assert result['source_byte_size'] > 2**32 and result['source_allocated_bytes'] < 16 * MIB
         assert result['peak_process_rss_kib'] < 128 * 1024, 'selected-access process exceeded explicit test budget'
-    if full:
-        with Reader(path) as reader: checked = reader.check(full=True)
-        assert checked['status'] == 'valid' and checked['summary'] == expected['summary']
-        result['full_streaming_integrity'] = 'pass'
-        result['peak_full_process_rss_kib'] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     if kotlin:
-        command = [kotlin[0], '-Xmx512m', '-cp', kotlin[1], 'org.lmthermal.lmtr.LmtrCommand', 'check', str(path), '--entry', str(CHUNKS)]
+        command = [kotlin[0], '-Xmx256m', '-cp', kotlin[1], 'org.lmthermal.lmtr.LmtrCommand', 'check', str(path), '--entry', str(CHUNKS)]
         process = subprocess.run(command, capture_output=True, text=True, timeout=180)
         assert process.returncode == 0, process.stdout + process.stderr
+        # Run JVM probes before the large Python full scan: child ru_maxrss can
+        # otherwise inherit the parent's pre-exec high-water mark on Unix.
+        result['kotlin_selected_peak_child_rss_kib']=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
         checked = json.loads(process.stdout)
         assert checked['status'] == 'valid' and checked['integrity_scope'] == 'selected_chunks'
         assert checked['summary'] == expected['summary'] and checked['logical_hashes'] == result['logical_hashes']
         assert int(checked.get('selected_chunks', checked.get('chunks_decoded'))) == 1
         assert int(checked.get('records_read', 0)) <= 16
         refusal = subprocess.run(command[:-1] + ['1'], capture_output=True, text=True, timeout=180)
+        result['kotlin_selected_and_refusal_cumulative_peak_child_rss_kib']=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
         refusal_result = json.loads(refusal.stdout)
         assert refusal.returncode == 2 and refusal_result.get('error') == 'local_resource_limit', refusal.stdout + refusal.stderr
         result['kotlin_large_chunk_refusal'] = 'local_resource_limit_under_default_budget'
         result['kotlin_records_read'] = int(checked.get('records_read', 0))
         result['kotlin_chunks_decoded'] = int(checked.get('selected_chunks', checked.get('chunks_decoded')))
-        result['kotlin_max_heap_bytes'] = 512 * MIB
+        result['kotlin_max_heap_bytes'] = 256 * MIB
         result['kotlin_default_working_budget_bytes'] = 128 * MIB
-        result['kotlin_selected_access'] = 'pass_with_512m_heap'
+        result['kotlin_selected_access'] = 'pass_with_256m_heap'
+    if full:
+        with Reader(path) as reader: checked = reader.check(full=True)
+        assert checked['status'] == 'valid' and checked['summary'] == expected['summary']
+        result['full_streaming_integrity'] = 'pass'
+        result['peak_full_process_rss_kib'] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    after=path.stat()
+    assert (before.st_size,before.st_mtime_ns,before.st_blocks)==(after.st_size,after.st_mtime_ns,after.st_blocks)
+    result['source_immutability']='size,mtime_ns,allocated blocks unchanged after read-only validation'
+    result['platform']='Linux'
+    result['normative_commit']='8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f'
+    result['accuracy_warning']='Native-equivalent temperatures; absolute physical accuracy not yet independently validated.'
     result['target_chunk_offset'] = expected['target_chunk_offset']
     result['limitations'] = ['synthetic zero-filled opaque evidence, not physical disk-write throughput', 'single selected 16-byte chunk after70large chunks; not a general admission guarantee', 'no real Windows filesystem execution', 'optional full streaming check is separate from selected scope', 'no backend power-loss or live memory/timer certification']
     return result

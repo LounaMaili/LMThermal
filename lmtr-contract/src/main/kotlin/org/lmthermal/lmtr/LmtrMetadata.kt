@@ -63,6 +63,7 @@ object LmtrMetadata {
 
     /** Negotiate versions/features after local shapes; retain explicit stream/lineage facts. */
     private fun headerChecks(obj: Obj) {
+        obj["format"]?.let { format -> if(format is String)demand(format=="lmthermal-recording","unsupported_format") }
         local("Header", obj)
         demand(LmtrJson.encode(obj).size <= 1048576, "metadata_limit")
         for (key in listOf("container_version", "schema_version")) {

@@ -25,6 +25,7 @@ FAST_TAIL=68157512
 JSON_LIMITS={1:1024*1024,3:512*1024,4:512*1024,5:512*1024}
 
 
+# Create one promised envelope; body hash and header/footer CRC have separate domains.
 def encode_record(kind, body, ordinal, previous):
     require(1<=kind<=5 and len(body)+112<=HARD_RECORD,'record bounds','resource_limit')
     h=HEADER.pack(MAGIC,1,kind,0,ordinal,len(body),previous)
@@ -34,6 +35,7 @@ def encode_record(kind, body, ordinal, previous):
     return h+body+f
 
 
+# Require one bounded RFC1950 stream, exact decoded length and no trailing bytes.
 def inflate(stored, length):
     require(len(stored)>=6,'short zlib','invalid_payload')
     cmf,flg=stored[:2]
@@ -47,13 +49,16 @@ def inflate(stored, length):
     return result
 
 
+# Retain zero counters for every immutable declared stream, including unused slots.
 def blank_summary(head):
     zero={r:'0' for r in ROLES}
     keys=['observations','temperature_planes','measurable_planes','gap_events','known_missing_observations','unknown_gap_events']
     return {'chunks':'0','entries':'0',**{k:'0' for k in keys},'physical_payload_bytes':'0','logical_bytes':zero.copy(),'streams':[{'stream_id':s['id'],**{k:'0' for k in keys},'logical_bytes':zero.copy()} for s in head['streams']], 'first_entry':None,'last_entry':None,'first_timeline_ns':None,'last_timeline_ns':None}
 
 
+# Count only committed physical chunks and original logical payload roles.
 def add_chunk(summary, metadata):
+    # Counters remain decimal strings; integer addition never rounds through binary floats.
     def inc(target,key,amount=1): target[key]=str(int(target[key])+amount)
     inc(summary,'chunks'); inc(summary,'entries',len(metadata['entries']))
     inc(summary,'physical_payload_bytes',sum(int(b['decoded']) for b in metadata['blocks']))
@@ -79,6 +84,7 @@ def add_chunk(summary, metadata):
 
 class Reader:
     """Seekable bounded reader; opening never claims unvisited payload integrity."""
+    # Open and validate the source HEADER; failed construction always closes its descriptor.
     def __init__(self,path):
         self.path=Path(path); self.file=self.path.open('rb'); self.size=self.path.stat().st_size
         require(self.size<=MAX63,'file size','resource_limit')
@@ -90,30 +96,41 @@ class Reader:
         except BaseException:
             self.file.close()
             raise
+    # Release only the owned read-only file descriptor.
     def close(self): self.file.close()
+    # The reader is an owned read-only context; entry does not send device controls.
     def __enter__(self): return self
+    # Close the source even when validation or cancellation raises.
     def __exit__(self,*unused): self.close()
+    # Check file-relative bounds before a seek or allocation.
     def read(self,offset,length):
         require(0<=offset<=self.size and 0<=length<=self.size-offset,'read bounds','invalid_container')
         self.file.seek(offset); data=self.file.read(length)
         require(len(data)==length,'short read','invalid_container'); return data
+    def envelope(self,offset):
+        """Inspect fixed framing/CRC before trusting a predecessor or allocating a body."""
+        h=self.read(offset,40); magic,revision,kind,flags,ordinal,length,previous=HEADER.unpack(h)
+        require(magic==MAGIC,'record magic','unsupported_format' if offset==0 else 'invalid_container')
+        require(revision==1,'envelope revision','unsupported_envelope')
+        require(1<=kind<=5 and flags==0,'type/flags','invalid_container')
+        require(max(ordinal,length,previous)<=MAX63,'binary integer bound','resource_limit')
+        require(length+112<=HARD_RECORD,'record hard size','resource_limit')
+        f=self.read(offset+40+length,72); marker,total,repeat,prev,digest,crc,reserved=FOOTER.unpack(f)
+        require(marker==COMMIT and total==length+112 and repeat==ordinal and prev==previous and reserved==0,'footer repetitions','invalid_container')
+        require(zlib.crc32(h+f[:64])==crc,'envelope CRC','invalid_container')
+        if kind!=2: require(length<=JSON_LIMITS[kind],'metadata record size','resource_limit')
+        return {'offset':offset,'kind':kind,'ordinal':ordinal,'previous':previous,'length':total,'digest':digest,'hash':sha(h+digest)}
     def record(self,offset, expected=None):
+        """Verify a promised body and retain only bounded small navigation metadata."""
         if offset in self.cache:
             record=self.cache.pop(offset); self.cache[offset]=record
         else:
-            h=self.read(offset,40); magic,revision,kind,flags,ordinal,length,previous=HEADER.unpack(h)
-            require(magic==MAGIC,'record magic','unsupported_format' if offset==0 else 'invalid_container')
-            require(revision==1,'envelope revision','unsupported_envelope')
-            require(1<=kind<=5 and flags==0,'type/flags','invalid_container')
-            require(max(ordinal,length,previous)<=MAX63,'binary integer bound','resource_limit')
-            require(length+112<=HARD_RECORD,'record hard size','resource_limit')
-            f=self.read(offset+40+length,72); marker,total,repeat,prev,digest,crc,reserved=FOOTER.unpack(f)
-            require(marker==COMMIT and total==length+112 and repeat==ordinal and prev==previous and reserved==0,'footer repetitions','invalid_container')
-            require(zlib.crc32(h+f[:64])==crc,'envelope CRC','invalid_container')
-            if kind!=2: require(length<=JSON_LIMITS[kind],'metadata record size','resource_limit')
+            info=self.envelope(offset)
+            kind,ordinal,previous,total,digest=[info[k] for k in ('kind','ordinal','previous','length','digest')]
+            length=total-112
             body=self.read(offset+40,length)
             require(hashlib.sha256(body).digest()==digest,'committed body hash','committed_payload_integrity' if kind==2 else 'invalid_container')
-            record={'offset':offset,'kind':kind,'ordinal':ordinal,'previous':previous,'length':total,'body':body,'hash':sha(h+digest)}
+            record={'offset':offset,'kind':kind,'ordinal':ordinal,'previous':previous,'length':total,'body':body,'hash':info['hash']}
             if kind!=2:
                 record['json']=loads(body)
                 if kind==1: header(record['json'])
@@ -131,6 +148,7 @@ class Reader:
                     _,old=self.cache.popitem(last=False); self.cache_bytes-=len(old['body'])
         if expected is not None: require(record['kind']==expected,'referenced record type','invalid_container')
         return record
+    # Validate END/checkpoint closure without certifying unvisited image payloads.
     def terminal(self):
         f=self.read(self.size-72,72); marker,total,*_=FOOTER.unpack(f)
         require(marker==COMMIT and 112<=total<=HARD_RECORD and total<=self.size,'terminal footer','invalid_container')
@@ -144,6 +162,7 @@ class Reader:
         utc(data['finalization_time']); self.summary_shape(data['summary'])
         self.checkpoint_shape(checkpoint)
         return end
+    # Read exact child bounds from the referenced record, rather than trusting its parent.
     def bounds(self,record):
         if record['kind']==2:
             value=self.metadata(record)
@@ -151,12 +170,14 @@ class Reader:
         if record['kind']==3: return record['json']['first'],record['json']['last']
         if record['kind']==4: return record['json']['summary']['first_entry'],record['json']['summary']['last_entry']
         require(False,'reference bound type','invalid_container')
+    # Verify backward location, ordinal, type, hash and actual entry bounds, including cache hits.
     def reference(self,ref,owner,expected):
         offset,length,ordinal=[int(ref[k]) for k in ('offset','length','ordinal')]
         require(offset+length<=owner['offset'] and ordinal<owner['ordinal'],'forward reference','invalid_container')
         record=self.record(offset,expected)
         require(record['length']==length and record['ordinal']==ordinal and record['hash']==ref['hash'] and self.bounds(record)==(ref['first'],ref['last']),'reference fields/hash/range','invalid_container')
         return record
+    # Validate bounded chunk closure and exact contiguous physical storage before decoding.
     def metadata(self,record):
         body=record['body']; require(len(body)>=4,'chunk length prefix','invalid_container')
         length=struct.unpack_from('<I',body)[0]
@@ -174,6 +195,7 @@ class Reader:
             require(b['codec'] in self.head['codecs'] and b['codec'] in (0,1),'codec negotiation','unsupported_codec')
         require(cursor==len(body)-4-length,'stored area exact coverage','invalid_payload')
         return value
+    # Verify codec ending, decoded hash and logical payload authority before exposing data.
     def decode(self,record):
         value=self.metadata(record); prefix=4+struct.unpack_from('<I',record['body'])[0]; blocks={}
         for b in value['blocks']:
@@ -185,6 +207,7 @@ class Reader:
         require(len(self.logical)+len(result['logical_hashes'])<=65536 or record['offset'] in self.selected,'logical-hash reporting budget','local_resource_limit')
         self.logical.update(result['logical_hashes']); self.selected.add(record['offset'])
         return value,result
+    # Check local ordered/disjoint ranges and exact aggregate metadata for one page.
     def index_page(self,record):
         page=record['json']; children=page['children']; refs=[c['record'] for c in children]
         for child in children: require(child['stream_ids']==sorted(set(child['stream_ids'])),'index child sorted streams')
@@ -195,6 +218,7 @@ class Reader:
         require(all(int(c['time_first_ns'])<=int(c['time_last_ns']) for c in children) and all(int(a['time_last_ns'])<=int(b['time_first_ns']) for a,b in zip(children,children[1:])),'page time order','invalid_container')
         require(page['stream_ids']==sorted({s for c in children for s in c['stream_ids']}),'page stream union','invalid_container')
         require(int(page['entries'])==int(page['last'])-int(page['first'])+1,'page entry count','invalid_container')
+    # Traverse bounded-depth pages lazily; duplicate leaves cannot create synthetic measurements.
     def walk(self,ref,owner,entry=None,seen=None):
         seen=set() if seen is None else seen; page_record=self.reference(ref,owner,3); self.index_page(page_record); page=page_record['json']
         chunks=entries=0
@@ -214,6 +238,7 @@ class Reader:
                 yield from self.walk(r,page_record,entry,seen)
             require(child['stream_ids']==streams and child['time_first_ns']==first and child['time_last_ns']==last,'index child metadata','invalid_container')
         if entry is None: require(int(page['chunks'])==chunks and int(page['entries'])==entries,'page child sums','invalid_container')
+    # Require declared stream inventory and exact aggregate/empty-recording counters.
     def summary_shape(self,value):
         require([s['stream_id'] for s in value['streams']]==[s['id'] for s in self.head['streams']],'summary stream inventory')
         for key in ('observations','temperature_planes','measurable_planes','gap_events','known_missing_observations','unknown_gap_events'):
@@ -221,6 +246,7 @@ class Reader:
         for role in ROLES: require(int(value['logical_bytes'][role])==sum(int(s['logical_bytes'][role]) for s in value['streams']),'summary logical counts')
         if int(value['chunks'])==0: require(value==blank_summary(self.head),'empty summary')
         else: require(value['first_entry']=='0' and int(value['last_entry'])==int(value['entries'])-1 and int(value['first_timeline_ns'])<=int(value['last_timeline_ns']),'summary bounds')
+    # Bind checkpoint roots and last chunks to actual verified immutable records.
     def checkpoint_shape(self,record):
         value=record['json']; self.summary_shape(value['summary']); nonempty=int(value['summary']['chunks'])>0
         require((value['root'] is not None)==nonempty and (value['last_chunk'] is not None)==nonempty,'checkpoint root/last closure')
@@ -229,6 +255,7 @@ class Reader:
             require(root['json']['first']==value['summary']['first_entry'] and root['json']['last']==value['summary']['last_entry'] and root['json']['entries']==value['summary']['entries'] and root['json']['chunks']==value['summary']['chunks'],'root summary','invalid_container')
             last=self.reference(value['last_chunk'],record,2); require(self.bounds(last)[1]==value['summary']['last_entry'],'last chunk bound','invalid_container')
         if value['previous_checkpoint'] is not None: self.reference(value['previous_checkpoint'],record,4)
+    # Stream physical records and every historical snapshot before comparing the final index.
     def full(self,end):
         summary=blank_summary(self.head); timeline=Timeline(); offsets=set(); last_chunk=None; previous=MAX63; ordinal=0; cursor=0; pending=0; latest_checkpoint=None
         while cursor<self.size:
@@ -256,6 +283,7 @@ class Reader:
             reached={r['offset'] for r,_ in self.walk(end['json']['root'],end)}
             require(reached==offsets,'root indexes every CHUNK exactly once','invalid_container')
         return summary
+    # Keep opening, selected access, full integrity and prefix recovery as distinct scopes.
     def check(self,full=False,entry=None,recover=False):
         try: end=self.terminal()
         except ContractError as error:
@@ -270,52 +298,100 @@ class Reader:
             summary=end['json']['summary']; scope='selected_chunks'
         else: summary=end['json']['summary']; scope='opened_records'
         return {'status':'valid','declared_end_status':end['json']['status'],'integrity_scope':scope,'summary':summary,'logical_hashes':self.logical,'validated_records':len(self.validated_records),'selected_chunks':len(self.selected)}
-    def recovery(self,full,cause):
-        """Bounded tail predecessor discovery, then read-only verification of prefix.
+    def salvage(self,cancelled=lambda:False):
+        """Explicit cancellable scan of independently verified CHUNK ranges.
 
-Fast discovery is bounded independently of a separately requested full scan.
-Checkpoint-indexed prefix is lazy unless --full was explicitly requested.
+This never certifies global chronology, final index or source completeness. Bad
+committed source bodies remain listed as integrity damage; no missing observation
+is synthesized. Broken framing stops traversal without guessing a next offset.
 """
-        lower=max(self.header_end,self.size-FAST_TAIL); tail=self.read(lower,self.size-lower); at=len(tail); candidates=0; last=None
-        while True:
-            position=tail.rfind(COMMIT,0,at)
-            if position<0: break
-            candidates+=1; require(candidates<=1024,'candidate recovery bound','recovery_limit'); at=position
-            if position+72>len(tail): continue
-            footer=FOOTER.unpack(tail[position:position+72]); total=footer[1]; offset=lower+position+72-total
-            if not 112<=total<=HARD_RECORD or offset<0: continue
-            try: last=self.record(offset); break
+        cursor=0; ordinal=0; previous=MAX63; ranges=[]; failures=[]; cancelled_now=False
+        while cursor<self.size:
+            if cancelled(): cancelled_now=True;break
+            require(len(ranges)+len(failures)<65536,'salvage reporting budget','local_resource_limit')
+            try:
+                envelope=self.envelope(cursor)
+                require(envelope['ordinal']==ordinal and envelope['previous']==previous,'scan physical chain','invalid_container')
             except ContractError as error:
-                if error.code in ('unsupported_codec','unsupported_required_feature','committed_payload_integrity'): raise
-        if last is None:
+                failures.append({'offset':str(cursor),'error':error.code,'kind':'unknown_framing'});break
+            try:
+                record=self.record(cursor)
+                if record['kind']==2:
+                    metadata,_=self.decode(record)
+                    ranges.append({'offset':str(cursor),'first_entry':metadata['entries'][0]['entry_id'],'last_entry':metadata['entries'][-1]['entry_id'],'first_timeline_ns':metadata['entries'][0]['timeline_ns'],'last_timeline_ns':metadata['entries'][-1]['timeline_ns']})
+            except ContractError as error:
+                if error.code in ('unsupported_required_feature','unsupported_codec','local_resource_limit','resource_limit'): raise
+                failures.append({'offset':str(cursor),'error':error.code,'kind':'chunk' if envelope['kind']==2 else 'navigation'})
+            previous=cursor; ordinal+=1;cursor+=envelope['length']
+        return {'status':'integrity_damaged' if failures else 'recovered','integrity_scope':'salvaged_chunks','unknown_tail':True,'declared_end_status':None,'reason':'explicit_scan_cancelled' if cancelled_now else 'explicit_scan_no_global_certification','verified_prefix_bytes':str(cursor),'ranges':ranges,'failures':failures,'logical_hashes':self.logical,'cancelled':cancelled_now,'accuracy_warning':'Native-equivalent temperatures; absolute physical accuracy not yet independently validated.'}
+
+    def recovery(self,full,cause):
+        """Bounded verified-envelope walk; navigation damage never erases source corruption.
+
+Only fixed framing authenticates predecessor links. Rebuildable metadata may be
+skipped; every complete source CHUNK remains promised and must validate. A full
+prefix scope requires independent indexed prefix and suffix journal verification.
+"""
+        lower=max(0,self.size-FAST_TAIL); end=self.size; candidates=0; anchor=None
+        while end>lower and anchor is None:
+            start=max(lower,end-65536); window=self.read(start,end-start); at=len(window)
+            while True:
+                position=window.rfind(COMMIT,0,at)
+                if position<0: break
+                at=position; candidates+=1
+                require(candidates<=1024,'candidate recovery bound','recovery_limit')
+                footer=start+position
+                if self.size-footer<72: continue
+                total=FOOTER.unpack(self.read(footer,72))[1]
+                if not 112<=total<=HARD_RECORD or total>footer+72: continue
+                try:
+                    possible=self.envelope(footer+72-total)
+                    if possible['offset']+possible['length']==footer+72: anchor=possible;break
+                except ContractError: pass
+            if start==lower: break
+            end=start+7
+        if anchor is None:
             require(self.size-self.header_end<=FAST_TAIL,'tail has no verifiable anchor','recovery_limit')
-            last=self.record(0)
-        chain=[]; suffix=0; current=last
-        for count in range(1024):
-            if current['kind'] in (1,4): break
-            chain.append(current)
-            if current['kind']==2: suffix+=1; require(suffix<=64,'suffix CHUNK bound','recovery_limit')
-            previous=self.record(current['previous']); require(previous['offset']+previous['length']==current['offset'] and previous['ordinal']+1==current['ordinal'],'recovery predecessor','invalid_container'); current=previous
+            anchor=self.envelope(0)
+        suffix=[]; current=anchor; base=None; timeline=None; boundary=self.header_end; navigation_damage=False
+        for _ in range(1024):
+            try: record=self.record(current['offset'])
+            except ContractError:
+                if current['kind'] in (1,2): raise
+                record=None; navigation_damage=True
+            if record is not None and record['kind']==2:
+                require(len(suffix)<64,'suffix CHUNK bound','recovery_limit')
+                self.decode(record); suffix.append(current)
+            if record is not None and record['kind']==4:
+                try:
+                    self.checkpoint_shape(record)
+                    candidate_timeline=Timeline(); recalculated=blank_summary(self.head)
+                    for _,metadata in self.walk(record['json']['root'],record) if record['json']['root'] else []:
+                        if full: candidate_timeline.accept(metadata);add_chunk(recalculated,metadata)
+                    if full: require(recalculated==record['json']['summary'],'recovered checkpoint summary')
+                    base=deepcopy(record['json']['summary']);timeline=candidate_timeline if full else None
+                    boundary=record['offset']+record['length'];break
+                except ContractError as error:
+                    if error.code in ('committed_payload_integrity','unsupported_required_feature','unsupported_codec','local_resource_limit'): raise
+                    navigation_damage=True
+            if current['offset']==0:
+                timeline=Timeline();break
+            previous=self.envelope(current['previous'])
+            require(previous['offset']+previous['length']==current['offset'] and previous['ordinal']+1==current['ordinal'],'recovery predecessor','invalid_container')
+            current=previous
         else: require(False,'predecessor recovery bound','recovery_limit')
-        summary=blank_summary(self.head); scope='selected_chunks'; timeline=None
-        if current['kind']==4:
-            self.checkpoint_shape(current); summary=deepcopy(current['json']['summary'])
-            if full:
-                timeline=Timeline(); recalculated=blank_summary(self.head)
-                for _,metadata in self.walk(current['json']['root'],current) if current['json']['root'] else []:
-                    timeline.accept(metadata); add_chunk(recalculated,metadata)
-                require(recalculated==summary,'recovered checkpoint summary')
-        else: timeline=Timeline()
-        for record in reversed(chain):
-            if record['kind']==2:
-                metadata,_=self.decode(record)
-                require(int(metadata['entries'][0]['entry_id'])==int(summary['entries']) and (summary['last_timeline_ns'] is None or int(metadata['entries'][0]['timeline_ns'])>=int(summary['last_timeline_ns'])),'recovered suffix order/time')
-                if timeline: timeline.accept(metadata)
-                add_chunk(summary,metadata)
-        if full: scope='full_verified_prefix'
-        return {'status':'recovered','verified_prefix_bytes':str(last['offset']+last['length']),'last_verified_entry':summary['last_entry'],'last_verified_timeline_ns':summary['last_timeline_ns'],'declared_end_status':None,'unknown_tail':True,'integrity_scope':scope,'reason':'missing_or_torn_end','opening_error':cause.code,'summary':summary,'logical_hashes':self.logical,'validated_records':len(self.validated_records),'selected_chunks':len(self.selected)}
+        summary=base if base is not None else blank_summary(self.head)
+        for envelope in reversed(suffix):
+            # Suffix state is fixed framing only, never up to64 retained large bodies.
+            record=self.record(envelope['offset'])
+            metadata,_=self.decode(record)
+            require(int(metadata['entries'][0]['entry_id'])==int(summary['entries']) and (summary['last_timeline_ns'] is None or int(metadata['entries'][0]['timeline_ns'])>=int(summary['last_timeline_ns'])),'recovered suffix order/time')
+            if timeline: timeline.accept(metadata)
+            add_chunk(summary,metadata);boundary=max(boundary,record['offset']+record['length'])
+        return {'status':'recovered','verified_prefix_bytes':str(boundary),'last_verified_entry':summary['last_entry'],'last_verified_timeline_ns':summary['last_timeline_ns'],'declared_end_status':None,'unknown_tail':True,'integrity_scope':'full_verified_prefix' if full else 'selected_chunks','reason':'navigation_rebuilt' if navigation_damage else 'missing_or_torn_end','opening_error':cause.code,'summary':summary,'logical_hashes':self.logical,'validated_records':len(self.validated_records),'selected_chunks':len(self.selected)}
 
 
+# Bind navigation to immutable envelope identity and actual metadata bounds.
 def make_ref(record,first=None,last=None):
     if record is None: return None
     if first is None:
@@ -337,6 +413,7 @@ def recipe_bytes(recipe):
     require(False,'unsupported recipe kind')
 
 
+# Materialize owned synthetic recipes and independently verify native views before publication.
 def prepare_chunk(item,head):
     metadata=deepcopy(item['metadata']); incoming={b['id']:b for b in item.get('blocks',[])}
     if 'payload_recipes' in item:

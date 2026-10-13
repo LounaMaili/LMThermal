@@ -10,16 +10,20 @@ import re
 from pathlib import Path
 
 MAX63 = 2**63 - 1
+MAX_JSON_BYTES = 1048576
 
 class ContractError(ValueError):
+    # Initialize exact error/schema state without loading any remote dependency.
     def __init__(self, code, detail):
         self.code, self.detail = code, detail
         super().__init__(code + ': ' + detail)
 
+# Emit a stable contract error; invalid data must never become a benign frame gap.
 def require(condition, detail, code='invalid_metadata'):
     if not condition:
         raise ContractError(code, detail)
 
+# Render exact semantic Decimal values independently of caller precision or lexical spelling.
 def decimal_text(value):
     require(type(value) in (int, Decimal), 'binary floats are not exact JSON authority')
     number = Decimal(value) if type(value) is int else value
@@ -48,6 +52,7 @@ def decimal_text(value):
     require(len(output) <= 1024, 'canonical decimal token', 'resource_limit')
     return output
 
+# Reject lexical bounds before Decimal expansion and retain strict integer token semantics.
 def _number(token, integer=False):
     require(len(token) <= 1024, 'numeric token', 'resource_limit')
     parts = re.fullmatch(r'(-?)(0|[1-9][0-9]*)(?:\.([0-9]+))?(?:[eE]([+-]?[0-9]+))?', token)
@@ -59,6 +64,7 @@ def _number(token, integer=False):
     decimal_text(number)
     return int(token) if integer and token != '-0' else number
 
+# Charge aggregate elements, scalar UTF8 strings and depth before canonical serialization.
 def bounded(value, depth=0, counter=None):
     counter = [0] if counter is None else counter
     if isinstance(value, (dict, list)):
@@ -79,13 +85,16 @@ def bounded(value, depth=0, counter=None):
     else:
         require(value is None or type(value) is bool, 'not an exact JSON value')
 
+# Parse exact UTF8 JSON, rejecting duplicate decoded keys and nonfinite numbers.
 def loads(data, root_object=True):
+    # Duplicate key detection uses decoded strings, including escaped aliases.
     def pairs(items):
         result = {}
         for key, value in items:
             require(key not in result, 'duplicate decoded JSON key')
             result[key] = value
         return result
+    require(len(data if isinstance(data,bytes) else data.encode('utf-8',errors='surrogatepass'))<=MAX_JSON_BYTES,'metadata JSON bytes','resource_limit')
     try:
         if isinstance(data, bytes):
             data = data.decode('utf-8', errors='strict')
@@ -99,8 +108,10 @@ def loads(data, root_object=True):
     bounded(result)
     return result
 
+# Emit accepted scalar-key ordering and exact decimal spelling without binary float conversion.
 def dumps(value):
     bounded(value)
+    # Recursively emit already bounded JSON values without Unicode normalization.
     def emit(v):
         if v is None: return 'null'
         if type(v) is bool: return 'true' if v else 'false'
@@ -109,16 +120,21 @@ def dumps(value):
             return '"' + ''.join('\\"' if c == '"' else '\\\\' if c == '\\' else '\\u%04x' % ord(c) if ord(c) < 32 else c for c in v) + '"'
         if isinstance(v, list): return '[' + ','.join(emit(x) for x in v) + ']'
         return '{' + ','.join(emit(k) + ':' + emit(v[k]) for k in sorted(v)) + '}'
-    return emit(value).encode('utf-8')
+    output=emit(value).encode('utf-8')
+    require(len(output)<=MAX_JSON_BYTES,'canonical JSON bytes','resource_limit')
+    return output
 
 class Shapes:
     """Local official shape interpreter plus lexical primitives; no remote resolution."""
+    # Initialize exact error/schema state without loading any remote dependency.
     def __init__(self, schema_path=None):
         path = schema_path or Path(__file__).resolve().parents[2] / 'docs/lmtr-v1/schema.json'
         # The package lives tools/lmtr_v1: parents[2] is repository root.
         self.defs = json.loads(Path(path).read_text())['$defs']
+    # Keep opening, selected access, full integrity and prefix recovery as distinct scopes.
     def check(self, name, value):
         self._check({'$ref': '#/$defs/' + name}, value, name)
+    # Apply frozen local schema shapes; semantic and byte integrity require separate validation.
     def _check(self, shape, value, path):
         if '$ref' in shape:
             name = shape['$ref'].split('/')[-1]

@@ -19,8 +19,8 @@ precision, semantic IDs, binary integrity, cross-field/time/index/view limits.
 
 The [historical review companions](../lmtr-r1b/README.md) and 14 noncanonical
 illustrations remain unchanged evidence, not a canonical R3 binary corpus. R3
-must add its separately tracked corpus, independent implementations and real-platform
-proof. Owner wire acceptance is not implementation conformity or end-user release.
+now has [isolated contract tools and a canonical synthetic corpus](../lmtr-r3/README.md),
+with platform/runtime proof and some conformance coverage still pending. Owner wire acceptance is not implementation conformity or end-user release.
 Compatibility/version changes follow the canonical specification, not local edits.
 
 Editorial equivalence is reproducible from repository root:

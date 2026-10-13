@@ -11,6 +11,12 @@ All notable changes to LMThermal will be documented in this file.
 - Fixed test-discovered edge cases in empty reference bounds, synthetic Float32 recipes, snapshot fanout/body admission and historical index-page validation. Kept exact binary signed-zero/mask authority and precise unknown optional JSON semantics.
 - Documented reproducible host commands, implemented scope and remaining Windows/ART, general salvage and asynchronous recorder/backend durability gates. R3 #8 remains open; no R3 merge, production recorder, camera/thermometry change or physical-calibration claim.
 
+### Fixed (R3 recovery, resource and interoperability continuation — 2026-10-13)
+
+- Preserved and published the interrupted R3 checkpoint; added immutable navigation-damage recovery, explicit cancellable salvage with narrow verified-range scope, checkpoint-chain guards and regressions. Known committed source corruption remains an integrity failure and is never fabricated as a missing observation.
+- Replaced retained recovery suffix bodies with bounded fixed references; added an independent 17-CHUNK/128 MiB source-prefix memory/parity stress. Removed image-sized Python statistics temporaries, aligned strict JSON input/canonical byte budgets and version/codec error classes, and rejected unsupported Kotlin CLI options instead of silently ignoring requested seek semantics.
+- Recorded real Fedora sparse access beyond 4 GiB with independent full Python integrity, sampled memory and explicit Kotlin local refusal for a large chunk. Added cross-runtime version/codec/recovery/scan vectors, native Windows instructions and byte-preserving corpus/source checkout attributes; native Windows/ART and remaining runtime gates stay pending.
+
 ### Changed (Explicit LMTR R1b acceptance — 2026-10-13)
 
 - Recorded explicit owner acceptance of complete r1b-review-2, D1–D10 and historical-conversion approach B; published `docs/LMTR_WIRE_V1.md` as the normative frozen R3 specification with unchanged reviewed rule body/constants and byte-equivalent local shape definitions.

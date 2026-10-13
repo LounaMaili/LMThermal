@@ -18,36 +18,46 @@ VIEW = 'org.lmthermal.lmtr.contiguous-native-view-v1'
 FEATURES = {CORE, VIEW}
 SHAPES = Shapes()
 
+# Hash exact supplied bytes without semantic JSON reserialization.
 def sha(data): return hashlib.sha256(data).hexdigest()
+# Convert a previously shape-validated decimal-string counter exactly.
 def number(value): return int(value)
+# Order physical blocks by the accepted role/encoding/dtype/endian tuple.
 def group(block): return (ROLES.index(block['role']), block['encoding_id'], DTYPES.index(block['dtype']), ORDERS.index(block['byte_order']))
+# Refuse unsorted or duplicate source data instead of silently normalizing its meaning.
 def sorted_unique(items, key=lambda x:x): require([key(x) for x in items] == sorted(set(key(x) for x in items)), 'ordered unique list')
 
+# Reject missing core or unsupported mandatory interpretations before accepting content.
 def features(items):
     sorted_unique(items)
     require(CORE in items, 'missing core feature')
     require(set(items) <= FEATURES, 'required feature not supported', 'unsupported_required_feature')
 
+# Keep known versus unavailable time evidence explicit; no fabricated UTC fallback.
 def utc(value):
     status = value['status']
     require(('utc' in value) if status == 'known' else ('reason' in value), 'UTC evidence closure')
     require('reason' not in value if status == 'known' else True, 'known UTC has reason')
     require('utc' not in value if status == 'unknown' else True, 'unknown UTC has reading')
 
+# Enforce known/partial/unavailable evidence unions and their required explanations.
 def evidence(value):
     status = value['status']
     require(('value' in value) == (status in ('known', 'partial')), 'evidence value closure')
     require(('reason' in value) == (status != 'known'), 'evidence reason closure')
 
+# Negotiate only declared extension wrappers; optional nested JSON remains opaque data.
 def extensions(value, declared):
     for key, extension in value.get('extensions', {}).items():
         required = extension['required_feature']
         require(required is None or required in declared, 'extension feature undeclared')
 
+# Validate native dimensions and bounded pixel products without presentation transforms.
 def geometry(value):
     if value is not None:
         require(value['width_px'] * value['height_px'] <= 4194304, 'geometry pixels', 'resource_limit')
 
+# Validate identity, capabilities, immutable inventory and supported wire interpretation.
 def header(value):
     require(isinstance(value,dict),'HEADER object')
     if isinstance(value.get('format'),str): require(value['format']=='lmthermal-recording','format','unsupported_format')
@@ -71,18 +81,33 @@ def header(value):
         if value['lineage']['operation'] == 'reprocessing':
             require(value['lineage']['algorithm']['status'] == 'known', 'reprocessing algorithm')
 
+# Compute deterministic row-major finite-valid results from original Float32 bytes.
 def statistics(data, mask, width, bounds=None):
-    values = [x[0] for x in struct.iter_unpack('<f', data)]
-    x1,y1,x2,y2 = bounds or (0,0,width,len(values)//width)
-    selected = [(i,v) for i,v in enumerate(values) if x1 <= i%width < x2 and y1 <= i//width < y2 and mask[i]]
-    result = {'pixel_count':(x2-x1)*(y2-y1),'valid_pixel_count':len(selected)}
-    if selected:
-        low = min(selected, key=lambda p:p[1]); high = max(selected, key=lambda p:p[1])
-        total = 0.0
-        for _,value in selected: total += value
-        result.update(min=low[1],max=high[1],mean=total/len(selected),min_xy=[low[0]%width,low[0]//width],max_xy=[high[0]%width,high[0]//width])
+    require(type(width) is int and 0<width<=16384 and len(data)%4==0,'matrix dimensions','invalid_payload')
+    pixels=len(data)//4
+    require(0<pixels<=4194304 and pixels%width==0 and pixels//width<=16384,'matrix product','resource_limit')
+    require(mask is None or len(mask)==pixels and all(bit in (0,1) for bit in mask),'statistics validity mask','invalid_payload')
+    rectangle=bounds if bounds is not None else (0,0,width,pixels//width)
+    require(len(rectangle)==4,'ROI dimensions','invalid_payload')
+    x1,y1,x2,y2=rectangle
+    require(0<=x1<x2<=width and 0<=y1<y2<=pixels//width,'ROI bounds','invalid_payload')
+    # Avoid image-sized Python float/tuple lists: one row-major accumulator keeps
+    # a valid large grid from silently multiplying its allocation cost.
+    count=0;total=0.0;low=math.inf;high=-math.inf;low_index=high_index=0
+    for y in range(y1,y2):
+        for x in range(x1,x2):
+            index=y*width+x
+            if mask is not None and mask[index]==0: continue
+            value=struct.unpack_from('<f',data,index*4)[0]
+            require(math.isfinite(value),'valid finite temperature','invalid_payload')
+            if value<low:low=value;low_index=index
+            if value>high:high=value;high_index=index
+            total+=value;count+=1
+    result={'pixel_count':(x2-x1)*(y2-y1),'valid_pixel_count':count}
+    if count:result.update(min=low,max=high,mean=total/count,min_xy=[low_index%width,low_index//width],max_xy=[high_index%width,high_index//width])
     return result
 
+# Compare advisory cached statistics with the authoritative source matrix.
 def check_statistics(cache, actual):
     for field in ('pixel_count','valid_pixel_count','min_xy','max_xy'):
         require(cache.get(field) == actual.get(field), 'statistics ' + field, 'invalid_payload')
@@ -287,7 +312,9 @@ def chunk(value, blocks, head):
 
 class Timeline:
     """Constant-active-state ordered validation; context definitions are chunk-local."""
+    # Retain bounded current-segment state; no duration-sized frame history is allocated.
     def __init__(self): self.next=0; self.time=0; self.active=None; self.sequences={}; self.pending_gaps={}; self.devices={}; self.definition=None; self.clocks={}
+    # Track contiguous recorder-intake chronology and explicit counters without deriving sensor time.
     def accept(self, chunk):
         definitions={s['id']:s for s in chunk['segments']}
         for e in chunk['entries']:

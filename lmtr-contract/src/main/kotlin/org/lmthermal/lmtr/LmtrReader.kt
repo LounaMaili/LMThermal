@@ -29,6 +29,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
 
     override fun close() { file.close() }
 
+    /** Read a bounded promised body; navigation damage and source-byte damage remain distinct. */
     private fun read(offset: Long): Record {
         recordsRead++
         try { return LmtrFraming.read(file, offset, minOf(workingBudget, LmtrFraming.MAX_RECORD_BYTES-112)) }
@@ -41,15 +42,18 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         }
     }
 
+    /** Decode exact metadata and validate its declared local shape without inventing defaults. */
     private fun obj(record: Record, shape: String): Obj {
         val value = LmtrJson.parse(record.body); LmtrMetadata.local(shape,value); return value
     }
 
+    /** Parse a checked immutable reference before any target seek. */
     private fun reference(value: Any?): RecordRef {
         val r=value.obj();LmtrMetadata.local("Ref",r)
         return RecordRef(r["offset"].d(),r["length"].d(),r["ordinal"].d(),r["first"]?.d(),r["last"]?.d(),r["hash"].text())
     }
 
+    /** Require backward ordinal/offset identity even when metadata caches are used elsewhere. */
     private fun resolve(ref: RecordRef, owner: Record, type: Int): Record {
         demand(ref.ordinal < owner.ordinal && LmtrChunk.add(ref.offset,ref.length) <= owner.offset,"invalid_container")
         val record=read(ref.offset)
@@ -57,6 +61,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         return record
     }
 
+    /** Verify every logical payload before exposing hashes; reporting state has its own budget. */
     private fun chunk(record: Record): ChunkData {
         chunksDecoded++
         val data=LmtrChunk.decode(record.body,header,workingBudget)
@@ -66,6 +71,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         return data
     }
 
+    /** Bind actual final END bytes to the referenced checkpoint without certifying unvisited pixels. */
     private fun terminal(): Pair<Record,Obj> {
         demand(file.length()>=112,"invalid_container")
         val footer=file.length()-72;file.seek(footer+8);val bytes=ByteArray(8);file.readFully(bytes)
@@ -85,6 +91,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         return end to value
     }
 
+    /** Check exact empty/nonempty root closure and framed last/prior references lazily. */
     private fun checkpoint(record: Record, cp: Obj) {
         demand(cp["recording_id"]==header["recording_id"],"invalid_metadata")
         val summary=cp["summary"].obj();val count=summary["chunks"].d()
@@ -110,6 +117,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         }
     }
 
+    /** Validate ordered page unions and cap retained navigation to two pages per depth. */
     private fun page(ref: RecordRef, owner: Record): Pair<Record,Obj> {
         val cached=pages[ref.offset]
         val pair=cached ?: resolve(ref,owner,LmtrFraming.INDEX).let { it to obj(it,"IndexPage") }
@@ -139,6 +147,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         return pair
     }
 
+    /** Compare recorded ranges/time/streams to the actual child metadata, never guessed source clocks. */
     private fun childMatches(child: Obj, meta: Obj) {
         val entries=meta["entries"].arr().map { it.obj() };val ref=reference(child["record"])
         demand(ref.first==entries.first()["entry_id"].d() && ref.last==entries.last()["entry_id"].d() && child["time_first_ns"].d()==entries.first()["timeline_ns"].d() && child["time_last_ns"].d()==entries.last()["timeline_ns"].d(),"invalid_container")
@@ -181,6 +190,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
             page["stream_ids"].arr().map { it.text() }==streams.toList() && page["chunks"].d()==chunks && page["entries"].d()==entries,"invalid_metadata")
     }
 
+    /** Traverse one bounded-depth entry path and verify its complete containing CHUNK. */
     private fun select(ref: RecordRef, owner: Record, entry: Long): ChunkData {
         val (record,p)=page(ref,owner);demand(entry in p["first"].d()..p["last"].d(),"invalid_metadata")
         val child=p["children"].arr().map { it.obj() }.first { c -> val r=reference(c["record"]);entry in r.first!!..r.last!! }
@@ -192,6 +202,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         val data=chunk(resolve(r,record,LmtrFraming.CHUNK));childMatches(child,data.metadata);return data
     }
 
+    /** Check reachable child sums; optional state independently validates a recovered source prefix. */
     private fun verifyTree(ref: RecordRef, owner: Record, state: JournalState? = null, summary: SummaryAccumulator? = null): Pair<Long,Long> {
         val (record,p)=page(ref,owner);var chunks=0L;var entries=0L
         for(child in p["children"].arr().map { it.obj() }) {
@@ -218,15 +229,27 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         if(entry!=null) { demand(entry>=0 && summary["entries"].d()>entry,"invalid_metadata");select(reference(value["root"]),end,entry) }
         if(full) {
             val state=JournalState();val actual=SummaryAccumulator(header);var offset=0L;var ordinal=0L;var previous=LmtrFraming.SENTINEL
-            var sinceCheckpoint=0;var sawEnd=false
+            var sinceCheckpoint=0;var sawEnd=false;var lastChunkRef:Obj?=null;var lastCheckpointRef:Obj?=null
             while(offset<file.length()) {
                 val record=read(offset);demand(record.ordinal==ordinal && record.previous==previous,"invalid_container")
                 when(record.type) {
                     LmtrFraming.HEADER -> demand(offset==0L,"invalid_container")
-                    LmtrFraming.CHUNK -> { demand(!sawEnd && sinceCheckpoint<32,"invalid_container");val data=chunk(record);state.accept(data.metadata);actual.accept(data.metadata);sinceCheckpoint++ }
+                    LmtrFraming.CHUNK -> { demand(!sawEnd && sinceCheckpoint<32,"invalid_container");val data=chunk(record);state.accept(data.metadata);actual.accept(data.metadata);sinceCheckpoint++
+                        val entries=data.metadata["entries"].arr().map { it.obj() }
+                        lastChunkRef=RecordRef(record.offset,record.length,record.ordinal,entries.first()["entry_id"].d(),entries.last()["entry_id"].d(),record.refHash).json()
+                    }
                     LmtrFraming.INDEX -> verifyPhysicalPage(record)
-                    LmtrFraming.CHECKPOINT -> { val cp=obj(record,"Checkpoint");checkpoint(record,cp);demand(LmtrJson.encode(cp["summary"]).contentEquals(LmtrJson.encode(actual.json())),"invalid_metadata");sinceCheckpoint=0 }
-                    LmtrFraming.END -> { demand(state.activeSegment==null && offset==end.offset && LmtrChunk.add(offset,record.length)==file.length(),"invalid_container");sawEnd=true }
+                    LmtrFraming.CHECKPOINT -> {
+                        val cp=obj(record,"Checkpoint");checkpoint(record,cp)
+                        demand(LmtrJson.encode(cp["summary"]).contentEquals(LmtrJson.encode(actual.json())),"invalid_metadata")
+                        demand(LmtrJson.encode(cp["last_chunk"]).contentEquals(LmtrJson.encode(lastChunkRef)) &&
+                            LmtrJson.encode(cp["previous_checkpoint"]).contentEquals(LmtrJson.encode(lastCheckpointRef)),"invalid_container")
+                        val current=actual.json()
+                        lastCheckpointRef=RecordRef(record.offset,record.length,record.ordinal,current["first_entry"]?.d(),current["last_entry"]?.d(),record.refHash).json()
+                        sinceCheckpoint=0
+                    }
+                    LmtrFraming.END -> { demand(state.activeSegment==null && sinceCheckpoint==0 && offset==end.offset && LmtrChunk.add(offset,record.length)==file.length() &&
+                        LmtrJson.encode(value["checkpoint"]).contentEquals(LmtrJson.encode(lastCheckpointRef)),"invalid_container");sawEnd=true }
                 }
                 previous=offset;offset=LmtrChunk.add(offset,record.length);ordinal=LmtrChunk.add(ordinal,1)
             }
@@ -234,6 +257,44 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
             value["root"]?.let { verifyTree(reference(it),end) }
         }
         return report("valid",if(full)"full" else if(entry!=null)"selected_chunks" else "opened_records",summary,value["status"].text(),false)
+    }
+
+    /**
+     * Explicit cancellable salvage exposes independently valid CHUNK ranges only.
+     * It never certifies global chronology/index/completion or invents missing rows.
+     * Complete source corruption stays visible. Broken framing stops the scan;
+     * no guessed next record offset or source modification is permitted.
+     */
+    fun salvage(cancelled: () -> Boolean = { false }): Obj {
+        var cursor=0L;var ordinal=0L;var previous=LmtrFraming.SENTINEL;var stopped=false
+        val ranges=mutableListOf<Obj>();val failures=mutableListOf<Obj>()
+        while(cursor<file.length()) {
+            if(cancelled()) { stopped=true;break }
+            demand(ranges.size+failures.size<65536,"local_resource_limit")
+            val envelope=try {
+                LmtrFraming.inspect(file,cursor).also {
+                    demand(it.ordinal==ordinal && it.previous==previous,"invalid_container")
+                }
+            } catch(e:LmtrFailure) {
+                failures.add(mapOf("offset" to cursor.toString(),"error" to e.code,"kind" to "unknown_framing"));break
+            }
+            try {
+                val record=read(cursor)
+                if(record.type==LmtrFraming.CHUNK) {
+                    val data=chunk(record);val entries=data.metadata["entries"].arr().map { it.obj() }
+                    ranges.add(mapOf("offset" to cursor.toString(),"first_entry" to entries.first()["entry_id"],"last_entry" to entries.last()["entry_id"],
+                        "first_timeline_ns" to entries.first()["timeline_ns"],"last_timeline_ns" to entries.last()["timeline_ns"]))
+                } else obj(record,when(record.type) { LmtrFraming.HEADER->"Header";LmtrFraming.INDEX->"IndexPage";LmtrFraming.CHECKPOINT->"Checkpoint";else->"End" })
+            } catch(e:LmtrFailure) {
+                if(e.code in listOf("unsupported_required_feature","unsupported_codec","local_resource_limit","resource_limit"))throw e
+                failures.add(mapOf("offset" to cursor.toString(),"error" to e.code,"kind" to if(envelope.type==LmtrFraming.CHUNK)"chunk" else "navigation"))
+            }
+            previous=cursor;cursor=LmtrChunk.add(cursor,envelope.length);ordinal=LmtrChunk.add(ordinal,1)
+        }
+        return linkedMapOf("status" to if(failures.isNotEmpty())"integrity_damaged" else "recovered","integrity_scope" to "salvaged_chunks",
+            "unknown_tail" to true,"declared_end_status" to null,"reason" to if(stopped)"explicit_scan_cancelled" else "explicit_scan_no_global_certification",
+            "verified_prefix_bytes" to cursor.toString(),"ranges" to ranges,"failures" to failures,"logical_hashes" to hashes.toMap(),"cancelled" to stopped,
+            "accuracy_warning" to "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.")
     }
 
     /** Locate a CRC-verified footer in the bounded tail without allocating the whole tail. */
@@ -261,15 +322,15 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
     /** Bounded suffix recovery: committed CHUNK corruption never becomes a normal gap. */
     private fun recovery(full: Boolean): Obj {
         var prefixState = JournalState(); var prefixActual = SummaryAccumulator(header)
-        var current=candidate();val chunks=mutableListOf<Record>();var records=0;var boundary:Long?=null
+        var current=candidate();val chunks=mutableListOf<RecordEnvelope>();var records=0;var boundary:Long?=null;var navigationDamage=false
         var baseSummary:Obj?=null;var baseLast:Long?=null;var baseTime:Long?=null
         while(true) {
             records++;demand(records<=1024,"recovery_limit")
             val record=try { read(current.offset) } catch(e: LmtrFailure) {
                 if(current.type==LmtrFraming.CHUNK || current.type==LmtrFraming.HEADER)throw e
-                null // Only framing-verified navigation is rebuildable.
+                navigationDamage=true;null // Only framing-verified navigation is rebuildable.
             }
-            if(record!=null && record.type==LmtrFraming.CHUNK) { demand(chunks.size<64,"recovery_limit");chunk(record);chunks.add(record) }
+            if(record!=null && record.type==LmtrFraming.CHUNK) { demand(chunks.size<64,"recovery_limit");chunk(record);chunks.add(current) }
             if(record!=null && record.type==LmtrFraming.CHECKPOINT) {
                 try { val cp=obj(record,"Checkpoint");checkpoint(record,cp)
                     val candidateState=JournalState();val candidateActual=SummaryAccumulator(header)
@@ -277,13 +338,18 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
                     if(full)demand(LmtrJson.encode(cp["summary"]).contentEquals(LmtrJson.encode(candidateActual.json())),"invalid_metadata")
                     prefixState=candidateState;prefixActual=candidateActual
                     baseSummary=cp["summary"].obj();baseLast=baseSummary["last_entry"]?.d();baseTime=baseSummary["last_timeline_ns"]?.d();boundary=LmtrChunk.add(record.offset,record.length);break
-                } catch(e:LmtrFailure) { if(e.code=="unsupported_required_feature" || e.code=="unsupported_codec" || e.code=="local_resource_limit")throw e }
+                } catch(e:LmtrFailure) { if(e.code=="committed_payload_integrity" || e.code=="unsupported_required_feature" || e.code=="unsupported_codec" || e.code=="local_resource_limit")throw e
+                    navigationDamage=true
+                }
             }
             if(current.offset==0L) { boundary=read(0).length;break }
             current=LmtrFraming.inspect(file,current.previous)
         }
         var last=baseLast;var time=baseTime;var suffixEntries=0L
-        for(record in chunks.asReversed()) {
+        for(envelope in chunks.asReversed()) {
+            // Keep only fixed envelopes in the bounded suffix list; retaining
+            // 64 full bodies would defeat the local per-chunk allocation budget.
+            val record=read(envelope.offset)
             val data=chunk(record);val entries=data.metadata["entries"].arr().map { it.obj() }
             demand(entries.first()["entry_id"].d()==(last?.let { LmtrChunk.add(it,1) } ?: 0L),"invalid_metadata")
             demand(time==null || entries.first()["timeline_ns"].d()>=time,"invalid_metadata")
@@ -291,13 +357,14 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
             last=entries.last()["entry_id"].d();time=entries.last()["timeline_ns"].d();suffixEntries=LmtrChunk.add(suffixEntries,entries.size.toLong())
             boundary=maxOf(boundary!!,LmtrChunk.add(record.offset,record.length))
         }
-        return linkedMapOf("status" to "recovered", "reason" to "missing_or_torn_end", "integrity_scope" to if(full)"full_verified_prefix" else "selected_chunks",
+        return linkedMapOf("status" to "recovered", "reason" to if(navigationDamage)"navigation_rebuilt" else "missing_or_torn_end", "integrity_scope" to if(full)"full_verified_prefix" else "selected_chunks",
             "unknown_tail" to true, "declared_end_status" to null,"verified_prefix_bytes" to boundary!!.toString(),
             "last_verified_entry" to last?.toString(),"last_verified_timeline_ns" to time?.toString(),
             "declared_checkpoint_summary" to baseSummary,"summary" to if(full)prefixActual.json() else null,"verified_suffix_entries" to suffixEntries.toString(),
             "logical_hashes" to hashes.toMap(),"records_read" to recordsRead.toString(),"chunks_decoded" to chunksDecoded.toString())
     }
 
+    /** Separate verified reader scope from producer-declared END completion. */
     private fun report(status:String,scope:String,summary:Obj,endStatus:String,unknownTail:Boolean):Obj = linkedMapOf(
         "status" to status,"integrity_scope" to scope,"declared_end_status" to endStatus,"unknown_tail" to unknownTail,
         "summary" to summary,"logical_hashes" to hashes.toMap(),"records_read" to recordsRead.toString(),"chunks_decoded" to chunksDecoded.toString(),

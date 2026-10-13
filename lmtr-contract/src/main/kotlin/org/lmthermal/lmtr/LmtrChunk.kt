@@ -100,7 +100,7 @@ object LmtrChunk {
     /** Compute finite-valid row-major results without replacing any source bit pattern. */
     fun statistics(temperature: ByteArray, mask: ByteArray?, width: Int, height: Int,
                    bounds: List<Int> = listOf(0, 0, width, height)): Obj {
-        demand(width>0 && height>0 && width.toLong()*height<=16777216L,"resource_limit")
+        demand(width in 1..16384 && height in 1..16384 && width.toLong()*height<=4194304L,"resource_limit")
         val pixels=width.toLong()*height
         demand(temperature.size.toLong()==pixels*4 && (mask==null || mask.size.toLong()==pixels),"invalid_payload")
         demand(bounds.size==4,"invalid_metadata")

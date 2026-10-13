@@ -2,8 +2,10 @@
   "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
   "base_main": "fe029363062cdf54d6cefa9d4f24265e80188091",
   "canonical_plan_byte_comparisons": 33,
+  "codec_adversarial_cross_cases": 3,
+  "compatibility_runtime_cases": 5,
   "compressed_byte_equality": "not required; exact logical bytes and descriptor hashes compared",
-  "corpus_manifest_sha256": "d27106ff1e025d51eaf0fe8438738fff138b207befdf0666272e5d1916ee2e27",
+  "corpus_manifest_sha256": "bf4508898067125b90a2c823b2048839f4852d51036153287f2fc70c0b6aaca9",
   "independent_python_full_cases": 51,
   "java": "openjdk version \"17.0.20.1\" 2026-08-18",
   "json_vectors": [
@@ -201,20 +203,42 @@
       "error": "resource_limit",
       "id": "elements-65536",
       "status": "error"
+    },
+    {
+      "canonical_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "id": "json-bytes-1048575",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "id": "json-bytes-1048576",
+      "status": "valid"
+    },
+    {
+      "error": "resource_limit",
+      "id": "json-bytes-1048577",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "canonical-expansion-budget",
+      "status": "error"
     }
   ],
   "jvm_heap_cap_bytes": 268435456,
   "kotlin_to_python_full_positive_cases": 33,
+  "navigation_recovery_cross_cases": 2,
   "normative_commit": "8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f",
   "pending": [
     "real native Windows",
     "ART runtime",
     "asynchronous recorder timers/backend durability",
-    "general salvage scanning"
+    "arbitrary damaged framing range discovery/external index cache"
   ],
   "platform": "Linux",
   "python": "3.14.8",
   "python_to_kotlin_full_cases": 51,
+  "read_only_scan_cross_cases": 4,
   "source_immutability": "all corpus sources and Kotlin-produced files unchanged by read/recovery",
   "status": "passed"
 }

@@ -7,15 +7,18 @@ No independently compressed zlib bytes are assumed identical.
 """
 import argparse
 from decimal import Decimal, localcontext
+from copy import deepcopy
 import hashlib
 import json
 import os
 from pathlib import Path
 import platform
 import subprocess
+import struct
 import tempfile
 
 from lmtr_v1 import Reader, ContractError, dumps, loads
+from lmtr_v1.container import encode_record
 
 ROOT=Path(__file__).resolve().parents[1]
 CORPUS=ROOT/'lmtr-contract/src/test/resources/lmtr'
@@ -70,13 +73,15 @@ def json_vectors():
     for n in (16383,16384,16385):vectors.append(('string-'+str(n),('{"x":"'+'a'*n+'"}').encode(),None if n<=16384 else 'resource_limit'))
     for n in (31,32,33):vectors.append(('depth-'+str(n),('{"x":'+'['*(n-1)+'0'+']'*(n-1)+'}').encode(),None if n<=32 else 'resource_limit'))
     for n in (65534,65535,65536):vectors.append(('elements-'+str(n),('{"x":['+','.join(['0']*n)+']}').encode(),None if n<=65535 else 'resource_limit'))
+    for size in (1048575,1048576,1048577):vectors.append(('json-bytes-'+str(size),b'{}'+b' '*(size-2),None if size<=1048576 else 'resource_limit'))
+    vectors.append(('canonical-expansion-budget',b'{"x":['+b','.join([b'1e20']*50000)+b']}', 'resource_limit'))
     return vectors
 
 
 def run(java,classpath):
     """Validate both directions and publish only measured results."""
     manifest=json.loads((CORPUS/'manifest.json').read_bytes())
-    python_read=0;kotlin_read=0;rewrites=0;canonical=0;json_results=[]
+    python_read=0;kotlin_read=0;rewrites=0;canonical=0;json_results=[];navigation=0;scans=0;compatibility=0;codecs=0
     with tempfile.TemporaryDirectory(prefix='lmtr-r3-interop-') as directory:
         temporary=Path(directory)
         for case in manifest['cases']:
@@ -103,6 +108,56 @@ def run(java,classpath):
                 assert canonical_result.returncode==0,canonical_result.stdout
                 assert canonical_result.stdout==dumps(loads(plan.read_bytes()))
                 canonical+=1
+        compressed=CORPUS/'files/illustration-01-deflate1.lmtr'
+        with Reader(compressed) as reader:
+            header_record=reader.record(0);chunk_record=reader.record(header_record['length']);metadata=reader.metadata(chunk_record)
+        area=4+struct.unpack_from('<I',chunk_record['body'])[0]
+        for mutation,error in [('adler','committed_payload_integrity'),('truncated','invalid_payload'),('trailing','invalid_payload')]:
+            altered=deepcopy(metadata);parts=[]
+            for block in metadata['blocks']:
+                begin=area+int(block['offset']);parts.append(chunk_record['body'][begin:begin+int(block['stored'])])
+            if mutation=='adler':parts[0]=parts[0][:-1]+bytes([parts[0][-1]^1])
+            elif mutation=='truncated':parts[0]=parts[0][:-1]
+            else:parts[0]+=b'\x00'
+            offset=0
+            for block,data in zip(altered['blocks'],parts):block['offset']=str(offset);block['stored']=str(len(data));offset+=len(data)
+            encoded=dumps(altered);body=struct.pack('<I',len(encoded))+encoded+b''.join(parts)
+            path=temporary/(mutation+'.lmtr');path.write_bytes(compressed.read_bytes()[:header_record['length']]+encode_record(2,body,1,0))
+            try:
+                with Reader(path) as reader: reader.check(full=True,recover=True)
+                raise AssertionError('Python codec accepted '+mutation)
+            except ContractError as failure:assert failure.code==error,(mutation,failure.code,error)
+            actual=report_command(java,classpath,'check',path,'--full','--recover')
+            assert actual.get('error')==error,(mutation,actual,error);codecs+=1
+        seed=CORPUS/'files/illustration-01-stored.lmtr'
+        with Reader(seed) as reader: original=reader.record(0)
+        unknown=report_command(java,classpath,'check',seed,'--time','1000')
+        assert unknown.get('error')=='invalid_metadata','unsupported CLI seek silently ignored'
+        for field,value,error in [('format','org.example.other','unsupported_format'),('schema_major',2,'unsupported_major'),('container_major',2,'unsupported_major'),('schema_minor',1,None),('container_minor',1,None)]:
+            header=deepcopy(original['json'])
+            if field=='format':header[field]=value
+            else:header[field.split('_')[0]+'_version'][field.split('_')[1]]=value
+            destination=temporary/(field+'.lmtr')
+            destination.write_bytes(encode_record(1,dumps(header),0,2**63-1)+seed.read_bytes()[original['length']:])
+            try:
+                with Reader(destination) as reader: reference=reader.check(full=True)
+            except ContractError as failure:reference={'status':'error','error':failure.code}
+            actual=report_command(java,classpath,'check',destination,'--full')
+            if error:assert reference.get('error')==actual.get('error')==error,(field,reference,actual)
+            else:compare(reference,actual)
+            compatibility+=1
+        for name in ('committed-index-damage','committed-checkpoint-damage'):
+            source=CORPUS/'files'/(name+'.lmtr');before=sha(source)
+            with Reader(source) as reader: expected=reader.check(full=True,recover=True)
+            actual=report_command(java,classpath,'check',source,'--full','--recover')
+            compare(expected,actual);assert sha(source)==before;navigation+=1
+        for name in ('illustration-01-stored','committed-body-corrupt','committed-index-damage','committed-checkpoint-damage'):
+            source=CORPUS/'files'/(name+'.lmtr');before=sha(source)
+            with Reader(source) as reader: expected=reader.salvage()
+            actual=report_command(java,classpath,'scan',source)
+            for field in ('status','integrity_scope','unknown_tail','declared_end_status','reason','verified_prefix_bytes','ranges','failures','logical_hashes','cancelled'):
+                assert expected[field]==actual[field],(name,field,expected[field],actual[field])
+            assert sha(source)==before;scans+=1
         for name,data,error in json_vectors():
             vector=temporary/'json-vector.json';vector.write_bytes(data)
             runtime=command(java,classpath,'canon',vector)
@@ -122,11 +177,11 @@ def run(java,classpath):
     version=subprocess.run([java,'-version'],capture_output=True,text=True,check=True).stderr.splitlines()[0]
     return {'status':'passed','normative_commit':'8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f','base_main':'fe029363062cdf54d6cefa9d4f24265e80188091',
             'corpus_manifest_sha256':sha(CORPUS/'manifest.json'),'python_to_kotlin_full_cases':kotlin_read,'independent_python_full_cases':python_read,
-            'kotlin_to_python_full_positive_cases':rewrites,'canonical_plan_byte_comparisons':canonical,'json_vectors':json_results,
+            'kotlin_to_python_full_positive_cases':rewrites,'canonical_plan_byte_comparisons':canonical,'compatibility_runtime_cases':compatibility,'codec_adversarial_cross_cases':codecs,'navigation_recovery_cross_cases':navigation,'read_only_scan_cross_cases':scans,'json_vectors':json_results,
             'java':version,'python':platform.python_version(),'platform':platform.system(),'jvm_heap_cap_bytes':268435456,
             'source_immutability':'all corpus sources and Kotlin-produced files unchanged by read/recovery',
             'compressed_byte_equality':'not required; exact logical bytes and descriptor hashes compared',
-            'pending':['real native Windows','ART runtime','asynchronous recorder timers/backend durability','general salvage scanning'],
+            'pending':['real native Windows','ART runtime','asynchronous recorder timers/backend durability','arbitrary damaged framing range discovery/external index cache'],
             'accuracy_warning':WARNING}
 
 

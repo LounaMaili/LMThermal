@@ -35,7 +35,7 @@ object LmtrCodec {
         try {
             inflater.setInput(stored); val result = ByteArray(decoded.toInt()); var pos = 0
             while (!inflater.finished() && pos < result.size) {
-                val n = try { inflater.inflate(result, pos, result.size - pos) } catch (_: Exception) { throw LmtrFailure("invalid_payload") }
+                val n = try { inflater.inflate(result, pos, result.size - pos) } catch (_: java.util.zip.DataFormatException) { throw LmtrFailure("committed_payload_integrity") }
                 if (n == 0) { demand(!inflater.needsDictionary() && !inflater.needsInput(), "invalid_payload"); throw LmtrFailure("invalid_payload") }
                 pos += n
             }
@@ -43,7 +43,7 @@ object LmtrCodec {
             // final bounded probe. Any extra decoded byte is an expansion attack.
             if (!inflater.finished()) {
                 val extra = ByteArray(1)
-                val n = try { inflater.inflate(extra) } catch (_: Exception) { throw LmtrFailure("invalid_payload") }
+                val n = try { inflater.inflate(extra) } catch (_: java.util.zip.DataFormatException) { throw LmtrFailure("committed_payload_integrity") }
                 demand(n == 0 && inflater.finished(), "invalid_payload")
             }
             demand(pos.toLong() == decoded && inflater.finished() && inflater.remaining == 0 && !inflater.needsDictionary(), "invalid_payload")

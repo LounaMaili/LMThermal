@@ -14,12 +14,12 @@ R3 branch `feat/lmtr-r3-contract-conformance`; #8 stays open, no R3 merge or R4/
 - [x] 6. Bounded STORED and single RFC1950 DEFLATE streams.
 - [x] 7. Entry IDs/intake clocks/source times/sequences/gaps/retention.
 - [x] 8. Same-observation/chunk materialized-parent native view integrity.
-- [x] 9. Bounded paged index/navigation/checkpoints/summaries.
+- [ ] 9. Paged index/checkpoint primitives tested; time/stream seek and exhaustive depth limits pending.
 - [ ] 10. END/finalization and truthful read-only recovery/errors.
 - [x] 11. Small deterministic synthetic canonical fixture inventory/provenance.
 - [x] 12. Kotlin-write/Python-read and Python-write/Kotlin-read exact logical parity.
 - [x] 13. Negative/hostile lengths/metadata/features/codecs/views/recovery cases.
-- [ ] 14. On-demand sparse >4 GiB and bounded lazy-memory/offset checks.
+- [x] 14. On-demand Fedora sparse >4 GiB, lazy access and explicit local-budget refusal demonstrated (sampled scope).
 - [x] 15. Clean JVM/Python/applicable core regression and deterministic regeneration.
 - [ ] 16. Real native Windows canonical LMTR validation (unavailable here; remains gate).
 
@@ -64,3 +64,50 @@ navigation-damage recovery/rebuilt-index/full salvage coverage is still being
 completed. Item 14's on-demand sparse tool exists; its durable rerun/report and
 resource measurements remain pending at this checkpoint. No asynchronous recorder
 timer/admission/storage backend, Windows or ART claim follows.
+
+## Continuation after the pushed recovery checkpoint
+
+Checkpoint `0554c49cf538eb615e5878f79df430a0cba09a3c` is preserved on the same
+branch; [draft PR #14](https://github.com/LounaMaili/LMThermal/pull/14) is open.
+No implementation was restarted and no R1b workflow was repeated.
+
+Final host coverage: **60 R3 JVM tests**, **54 Python tests**, all with zero failures;
+**51 corpus cases per reader**, **33 Kotlin-write/Python-full-read**, **33 canonical
+plan byte comparisons**, **43 JSON runtime vectors**, **5 version cases**,
+**3 DEFLATE adversarial cases**, **2 explicit navigation recovery cases** and
+**4 explicit read-only scan cases**. Final rebuild used `:lmtr-contract:clean`;
+core/build/lint gates remain green (232 core tests). Unsupported CLI options reject.
+
+[Interop evidence](linux-interop-validation.json) and [sparse evidence](linux-sparse-validation.json)
+retain measured results. Sparse source size is 4,404,323,163 bytes with the selected
+CHUNK at 4,404,298,782; only 593,920 physical bytes are allocated. Both readers
+select one CHUNK; Kotlin visits five records and Python six. Python additionally
+fully validates the 71-CHUNK sparse source. Source size/mtime/allocated blocks do
+not change. Exact RSS figures are sampled observations, not universal ceilings.
+
+Item 10 is **partially implemented/tested**: full finalized integrity, immutable
+missing/torn prefix recovery, bounded navigation rebuilding and explicit cancellable
+salvage are implemented. Salvage exposes only independently valid ranges and retains
+known source corruption; it does not certify global completeness. Arbitrary damaged-
+framing range discovery, a disposable rebuilt-index cache, exhaustive fast-tail/
+predecessor/cancellation boundary proof remain pending. Item 9's entry-ID seek works;
+monotonic-time and stream-filter seek do not yet exist. No wire semantics changed.
+
+**Unimplemented:** asynchronous timer/admission/queue/Stop/backend durability or
+export guarantees, production camera/application integration, time/stream seek,
+arbitrary damaged-framing discovery/rebuilt-index cache. **Partially tested:**
+maximum index depth and fast-recovery budgets, every accepted module/resource
+combination and cancellation latency. **External pending gates:** real native
+Windows/NTFS and ART runtime. [Native Windows protocol](WINDOWS_VALIDATION.md)
+is prepared, not executed. R3 #8 remains open; R4/R5/R6/R7 are not started.
+
+
+A final resource audit found another real retention risk: recovery stored up to 64
+full suffix bodies. Both implementations now retain fixed envelopes and reread
+one body at a time. [The targeted recovery stress](linux-recovery-memory-validation.json)
+checks17 CHUNKs/134,279,895 source bytes, exact full-prefix/hash parity, source
+immutability,128 MiB capped JVM and17,076,055 traced Python peak bytes (<80 MiB).
+An initial parameterized stress source incorrectly reused a 60 MiB default payload
+hash after selecting 8 MiB chunks; both readers correctly rejected it as committed
+integrity damage. The generator now hashes its explicit selected size; no failure
+was reclassified or assertion weakened. The huge temporary artifacts are not in Git.
