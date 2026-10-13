@@ -12,6 +12,9 @@ object RecordingInteropProbe {
     @JvmStatic fun main(args:Array<String>) {
         val root=File(args.single());require(root.mkdirs())
         val cases=mutableListOf<Obj>()
+        fun expected(o:PreparedObservation):Obj=mapOf("stream_id" to o.streamId,"sequence" to o.sequence.toString(),
+            "session_id" to o.stream.value()["session_id"],"context_hash" to LmtrChunk.sha(LmtrJson.encode(o.context.value())),
+            "payloads" to o.payloads.associate { it.role to mapOf("hash" to LmtrChunk.sha(it.bytes()),"length" to it.size.toString()) })
         fun run(name:String,profile:RecordingProfile,codec:Int,m:SimulatedRecordingModule,view:Boolean=false,
             second:SimulatedRecordingModule?=null,geometryChange:Boolean=false) {
             val modules=listOfNotNull(m,second);val file=File(root,"$name.lmtr")
@@ -51,7 +54,9 @@ object RecordingInteropProbe {
         time.set(1000000000);e.wakeTimers();while(e.snapshot().acknowledged==0L){check(System.nanoTime()<deadline);Thread.sleep(2)}
         e.admit(m.observation(1));e.stop();check(!e.awaitStop(10000)!!.finalized)
         val recovery=LmtrReader(file).use { it.check(full=true,recover=true) }
-        cases.add(mapOf("name" to "torn-tail","file" to file.name,"sha256" to LmtrChunk.sha(file.readBytes()),"kotlin" to recovery,"expected" to emptyList<Any>()))
+        val prefixExpected=listOf(expected(RecordingProfiles.select(m.observation(0),RecordingProfile.FULL)))
+        cases.add(mapOf("name" to "torn-tail","file" to file.name,"sha256" to LmtrChunk.sha(file.readBytes()),
+            "kotlin" to recovery,"verify_prefix_payloads" to true,"expected" to prefixExpected))
         val navFile=File(root,"navigation-failure.lmtr");val navBase=LocalRecorderBackend(navFile)
         val navBackend=object:RecorderBackend {
             override val destination=navFile
@@ -67,7 +72,43 @@ object RecordingInteropProbe {
         nav.admit(m.observation(0));navClock.set(10000000);nav.stop();check(!nav.awaitStop(10000)!!.finalized)
         check(nav.snapshot().acknowledged==1L)
         cases.add(mapOf("name" to "navigation-failure","file" to navFile.name,"sha256" to LmtrChunk.sha(navFile.readBytes()),
-            "kotlin" to LmtrReader(navFile).use { it.check(full=true,recover=true) },"expected" to emptyList<Any>()))
+            "kotlin" to LmtrReader(navFile).use { it.check(full=true,recover=true) },"verify_prefix_payloads" to true,
+            "expected" to prefixExpected))
+        // Mixed unrepresented loss must preserve an actual acknowledged source prefix, never END.
+        val lostFile=File(root,"unjournaled-loss.lmtr");val cap=m.observation(0).ownedBytes
+        val lostClock=java.util.concurrent.atomic.AtomicLong(0);val block=java.util.concurrent.atomic.AtomicBoolean(false)
+        val entered=java.util.concurrent.CountDownLatch(1);val release=java.util.concurrent.CountDownLatch(1)
+        val lost=RecorderEngine(SimulatedRecordingModule.header(listOf(m)),listOf(m.stream),RecordingProfile.FULL,
+            RecorderLimits(preparationBytes=cap,writerBytes=cap,maxObservationBytes=cap,preferredChunkBytes=cap*4,controlBytes=32768),
+            LocalRecorderBackend(lostFile),now=lostClock::get,prepareHook={
+                if(block.get()){entered.countDown();check(release.await(5,java.util.concurrent.TimeUnit.SECONDS));throw IOException("later preparation error")}
+            })
+        fun waitFor(predicate:()->Boolean){val end=System.nanoTime()+10000000000;while(!predicate()){check(System.nanoTime()<end);Thread.sleep(2)}}
+        try {
+            lost.admit(m.observation(0));waitFor{lost.snapshot().pendingBytes>0};lostClock.set(1000000000);lost.wakeTimers()
+            waitFor{lost.snapshot().acknowledged==1L};block.set(true)
+            lost.admit(m.observation(1));check(entered.await(5,java.util.concurrent.TimeUnit.SECONDS));lost.admit(m.observation(2))
+            check(lost.admit(m.observation(3))==Admission.PREPARATION_OVERLOAD)
+            check(lost.admit(m.observation(4))==Admission.REFUSED);lost.failSource("acquisition_error");val stopped=lost.stop()
+            release.countDown();check(!lost.awaitStop(10000)!!.finalized);check(lost.snapshot().acknowledged==1L)
+            val hash=LmtrChunk.sha(lostFile.readBytes());val prefix=LmtrReader(lostFile).use { it.check(full=true,recover=true) }
+            check(prefix["unknown_tail"]==true && prefix["declared_end_status"]==null)
+            check(prefix["summary"].obj()["observations"]=="1");check(stopped===lost.stop())
+            check(hash==LmtrChunk.sha(lostFile.readBytes()))
+            cases.add(mapOf("name" to "unjournaled-loss","file" to lostFile.name,"sha256" to hash,"recover" to true,
+                "verify_prefix_payloads" to true,"expected_gaps" to emptyList<Any>(),"kotlin" to prefix,
+                "expected" to prefixExpected))
+        } finally {release.countDown();lost.stop()}
+        // A represented failure is different: its known-count gap can honestly finalize failed.
+        val failedFile=File(root,"represented-source-failure.lmtr")
+        val failed=RecorderEngine(SimulatedRecordingModule.header(listOf(m)),listOf(m.stream),RecordingProfile.FULL,
+            RecorderLimits(maxObservationBytes=1048576),LocalRecorderBackend(failedFile),now={0L})
+        failed.admit(RecordingOffer(m.id,0,FrozenJson(m.stream),cap){throw IllegalArgumentException("bad current source")})
+        val failedResult=failed.awaitStop(10000)!!;check(failedResult.finalized && failedResult.status=="failed")
+        cases.add(mapOf("name" to "represented-source-failure","file" to failedFile.name,"sha256" to LmtrChunk.sha(failedFile.readBytes()),
+            "kotlin" to LmtrReader(failedFile).use { it.check(full=true) },"expected" to emptyList<Any>(),
+            "expected_gaps" to listOf(mapOf("category" to "source_loss","reason" to "source_loss","count" to "1",
+                "observation_first" to "0","observation_last" to "0"))))
         File(root,"source-manifest.json").writeBytes(LmtrJson.encode(mapOf("cases" to cases)))
     }
 }

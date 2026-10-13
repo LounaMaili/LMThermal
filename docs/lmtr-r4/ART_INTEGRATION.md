@@ -172,3 +172,9 @@ The continuation source probe hashes its original JSONL oracle and checks source
 receipt/acquisition/sequence facts independently. Common intake ticks must lie between
 genuine pre/post callback witnesses. Snapshot counters include charged in-flight and
 pending peaks, independently of queue peaks; these are accounting metrics, not ART/RSS.
+
+The actual engine probe now emits 14 engineering cases, including mixed unjournaled
+loss after an acknowledged CHUNK and an honestly finalized failed source with a known
+count gap. Independent Python compares original payload hashes/contexts/sequences in
+the recovered prefix (including prior torn/navigation cases) and exact gap reasons/ranges.
+No-END/unknown-tail and source hash preservation remain required.

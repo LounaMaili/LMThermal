@@ -29,11 +29,12 @@ def readback(output):
         before = hashlib.sha256(path.read_bytes()).hexdigest()
         assert before == case['sha256']
         with Reader(path) as reader:
-            report = reader.check(full=True, recover=case['name'] in ('torn-tail', 'navigation-failure'))
+            recovery = case.get('recover', case['name'] in ('torn-tail', 'navigation-failure'))
+            report = reader.check(full=True, recover=recovery)
             for field in ('status', 'integrity_scope', 'summary', 'logical_hashes', 'declared_end_status'):
                 if field in case['kotlin']:
                     assert report.get(field) == case['kotlin'][field], (case['name'], field)
-            if case['name'] not in ('torn-tail', 'navigation-failure'):
+            if not recovery or case.get('verify_prefix_payloads', False):
                 if 'expected_jsonl' in case:
                     oracle_bytes = (output / case['expected_jsonl']).read_bytes()
                     if 'expected_jsonl_sha256' in case:
@@ -43,13 +44,18 @@ def readback(output):
                     originals = iter(case['expected'])
                 observed = 0
                 # Full validation above establishes chronology. Inspect actual independent decoded bytes.
+                gaps = iter(case['expected_gaps']) if 'expected_gaps' in case else None
                 at = 0
-                while at < reader.size:
+                end = int(report['verified_prefix_bytes']) if recovery else reader.size
+                while at < end:
                     record = reader.record(at)
                     if record['kind'] == 2:
                         meta, decoded = reader.decode(record)
                         segments = {s['id']: s for s in meta['segments']}
                         for entry in meta['entries']:
+                            if entry['kind'] == 'gap' and gaps is not None:
+                                expected_gap = next(gaps)
+                                assert all(entry[field] == value for field, value in expected_gap.items())
                             if entry['kind'] != 'observation':
                                 continue
                             source = next(originals)
@@ -75,8 +81,11 @@ def readback(output):
                             observed += 1
                     at += record['length']
                 assert next(originals, None) is None
+                if gaps is not None:
+                    assert next(gaps, None) is None
             else:
                 observed = int(report['summary']['observations'])
+            if recovery:
                 assert report['unknown_tail'] and report['declared_end_status'] is None
         assert hashlib.sha256(path.read_bytes()).hexdigest() == before
         rows.append(dict(name=case['name'], sha256=before, observations=observed,

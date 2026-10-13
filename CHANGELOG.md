@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 independent mixed-failure prefix evidence)
+
+- Extend the existing engine probe with an acknowledged prefix followed by unjournaled loss/multiple errors and an honestly finalized represented source failure. Python now checks original payload bytes in verified recovered prefixes and exact known-gap reasons/ranges, preserving all older outputs and the immutable canonical corpus.
+
 ### Added (R4 clock/oracle and resource-peak continuation)
 
 - Add source-oracle SHA-256, exact original receipt/acquisition/schedule/device/source facts and genuine callback intake bounds to finite source stress; independent Python checks these without changing wire metadata. Expose charged preparation/writer in-flight and pending peaks alongside existing queue peaks; no capacity increase or ART/RSS claim.
