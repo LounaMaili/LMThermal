@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 emulator matrix literal)
+
+- Correct the API35 image target to a literal matrix value; expressions apply only when consuming the completed matrix. This is CI provisioning only.
+
 ### Changed (R4 API26 emulator provisioning)
 
 - Use the official minimal AOSP x86_64 image for camera-free API26 tests after repeated pre-test Google image archive-download failures; API35 remains Google APIs. Tests need no Google services; keep all earlier failures and runtime gates unchanged.
