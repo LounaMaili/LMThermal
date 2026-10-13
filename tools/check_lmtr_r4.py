@@ -17,6 +17,11 @@ def validate(java, classpath, directory):
     output = directory / 'generated'
     subprocess.run([java, '-Xmx256m', '-cp', classpath,
                     'org.lmthermal.recorder.RecordingInteropProbe', str(output)], check=True)
+    return readback(output)
+
+
+def readback(output):
+    """Verify either host- or ART-produced synthetic files with the independent reader."""
     manifest = loads((output / 'source-manifest.json').read_bytes())
     rows = []
     for case in manifest['cases']:
@@ -70,10 +75,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--java', default=str(Path(os.environ.get('JAVA_HOME', '')) / 'bin/java'))
     parser.add_argument('--report', type=Path, required=True)
+    parser.add_argument('--existing', type=Path, help='Read actual synthetic ART output; do not invoke the JVM')
     args = parser.parse_args()
-    classpath = (ROOT / 'lmtr-recorder/build/test-runtime-classpath.txt').read_text().strip()
-    with tempfile.TemporaryDirectory(prefix='lmtr-r4-interop-') as temp:
-        report = validate(args.java, classpath, Path(temp))
+    if args.existing:
+        report = readback(args.existing)
+    else:
+        classpath = (ROOT / 'lmtr-recorder/build/test-runtime-classpath.txt').read_text().strip()
+        with tempfile.TemporaryDirectory(prefix='lmtr-r4-interop-') as temp:
+            report = validate(args.java, classpath, Path(temp))
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report))

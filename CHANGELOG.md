@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 camera-free Android runtime harness)
+
+- Added a separate test-only Android application packaging the existing LMTR contract/recorder without production UVC/JNI or changing the product arm64 ABI. It shares recorder regressions and tests exact JSON/binary/hash/codec semantics, all 51 pinned inputs and real synthetic engine output.
+- Added exact-SHA branch-restricted API 26/35 x86_64 emulator CI with pinned setup actions, read-only permissions, disabled emulator cameras and retained logs/synthetic artifacts. Independent Python can read ART-produced outputs directly; actual runtime verdicts remain pending until artifacts are reviewed.
+
 ### Added (R4 camera-free recorder foundation — 2026-10-13)
 
 - Added an isolated pure-Kotlin recorder module with owned module observations, exact Float32/masks/native/acquisition evidence, context/clock/session identities, explicit capability profiles and qualified source losses. It is not linked into the app and adds no user recording action, camera controls or thermometry change.
