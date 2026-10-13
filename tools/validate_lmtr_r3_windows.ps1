@@ -38,16 +38,18 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Could not inspect checkout branch.' }
     $Branch = [string]::Join('', $BranchLines).Trim()
     $CheckoutMode = 'branch'
-    # Actions checks out an exact SHA detached. Require its authenticated push context
-    # as well as the unchanged exact HEAD check; local detached checkouts still reject.
+    # Exact Actions event SHA is the merge candidate for pull_request, the pushed commit
+    # for push. No mutable branch checkout, elevated token or pull_request_target context.
     if ($Branch -eq '') {
-        if ($env:GITHUB_ACTIONS -ne 'true' -or $env:GITHUB_REF -ne 'refs/heads/feat/lmtr-r3-contract-conformance' -or $env:GITHUB_SHA -ne $ExpectedCommit) {
-            throw 'Detached HEAD requires the exact authorized R3 push/SHA in GitHub Actions.'
+        $AllowedPush = $env:GITHUB_EVENT_NAME -eq 'push' -and $env:GITHUB_REF -in @(
+            'refs/heads/main','refs/heads/feat/lmtr-r3-contract-conformance','refs/heads/ci/lmtr-windows-regressions')
+        $AllowedPull = $env:GITHUB_EVENT_NAME -eq 'pull_request' -and $env:GITHUB_REF -match '^refs/pull/[1-9][0-9]*/merge$'
+        if ($env:GITHUB_ACTIONS -ne 'true' -or $env:GITHUB_SHA -ne $ExpectedCommit -or -not ($AllowedPush -or $AllowedPull)) {
+            throw 'Detached HEAD requires the exact authorized push or pull_request event/SHA in GitHub Actions.'
         }
-        $Branch = 'feat/lmtr-r3-contract-conformance'
-        $CheckoutMode = 'detached_actions_push'
+        $Branch = $env:GITHUB_REF
+        $CheckoutMode = $(if ($AllowedPull) {'detached_actions_pull_request_merge'} else {'detached_actions_push'})
     }
-    if ($Branch -ne 'feat/lmtr-r3-contract-conformance') { throw "Unexpected branch: $Branch" }
     if (@(& git status --porcelain).Count -ne 0) { throw 'Working tree must be clean before validation.' }
     if (-not $env:JAVA_HOME) { throw 'Set JAVA_HOME to a JDK 17 installation.' }
     $Java = Join-Path $env:JAVA_HOME 'bin/java.exe'
