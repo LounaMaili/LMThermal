@@ -182,7 +182,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     @Synchronized private fun claimFinish():Boolean { if(!busy.value || finishing)return false;finishing=true;return true }
     /** Bounds the actual nonblocking Stop request; it is not a fabricated source-failure cutoff. */
     private fun requestStop() {
-        val start=SystemClock.elapsedRealtimeNanos();route.stop()
+        val start=SystemClock.elapsedRealtimeNanos();metrics.closeSourceWindow();route.stop()
         if(stopRequestNs.compareAndSet(0,start))stopRequestWallNs.set(SystemClock.elapsedRealtimeNanos()-start)
     }
     /** Terminal result is not permission to reuse an oracle while a failed materializer unwinds. */

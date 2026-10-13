@@ -14,6 +14,7 @@ class FieldMetrics {
     private val measurementWall=FieldDistribution();private val intervals=FieldDistribution();private val age=FieldDistribution();private val seals=FieldDistribution()
     private val codec=FieldDistribution();private var codecDecoded=0L;private var codecStored=0L
     private val encode=FieldDistribution();private val append=FieldDistribution();private val checkpoints=FieldDistribution()
+    private var sourceWindowClosed=false
     private var lastReceipt:Long?=null;private var lastPreview:Long?=null;private var lastCheckpoint:Long?=null
     private var firstReceipt:Long?=null;private var acquisitionCpuFirst:Long?=null;private var acquisitionCpuLast:Long?=null
     private var received=0L;private var valid=0L;private var unavailable=0L;private var held=0L;private var invalid=0L
@@ -23,6 +24,7 @@ class FieldMetrics {
     private var samples=0L;private var firstSample:Long?=null;private var lastSample:Long?=null
     private var cpuInitial:Map<String,Long>?=null;private var cpuLatest:Map<String,Long>?=null
     @Synchronized fun observation(v:CameraAcquiredObservation) {
+        if(sourceWindowClosed)return
         val tick=v.receivedMonotonicNs
         lastReceipt?.let { if(tick>=it)intervals.add(tick-it) }
         if(firstReceipt==null)firstReceipt=tick
@@ -35,14 +37,20 @@ class FieldMetrics {
         val cpu=Debug.threadCpuTimeNanos();if(acquisitionCpuFirst==null)acquisitionCpuFirst=cpu;acquisitionCpuLast=cpu
     }
     @Synchronized fun loss(v:CameraSourceLoss) {
+        if(sourceWindowClosed)return
         v.count?.let { sourceLoss+=it;losses[v.reason]=(losses[v.reason]?:0)+it } ?: run { unknownLoss++ }
     }
     @Synchronized fun preview(receiptMs:Long) {
+        if(sourceWindowClosed)return
         if(lastPreview==receiptMs)return
         lastPreview=receiptMs;preview++
         val latency=SystemClock.elapsedRealtimeNanos()-receiptMs*1000000
         if(latency>=0)age.add(latency)
     }
+    /** Exclude heavy post-Stop readback/hash load from the matched acquisition/preview interval.
+     * Codec/seal/drain observations remain active so finalization cost is still reported.
+     */
+    @Synchronized fun closeSourceWindow() { sourceWindowClosed=true }
     @Synchronized fun sealed(encodingNs:Long,appendNs:Long,raw:Long,body:Long) {
         encode.add(encodingNs);append.add(appendNs);seals.add(encodingNs+appendNs);decoded+=raw;stored+=body
     }
@@ -75,7 +83,7 @@ class FieldMetrics {
     }
     @Synchronized fun report():Obj {
         val elapsed=if(firstReceipt!=null && lastReceipt!=null)lastReceipt!!-firstReceipt!! else 0
-        return mapOf("observed_gate_deliveries" to received.toString(),"valid" to valid.toString(),"unavailable" to unavailable.toString(),
+        return mapOf("source_window_closed" to sourceWindowClosed,"observed_gate_deliveries" to received.toString(),"valid" to valid.toString(),"unavailable" to unavailable.toString(),
             "held" to held.toString(),"invalid" to invalid.toString(),"known_source_losses" to sourceLoss.toString(),"unknown_source_loss_signals" to unknownLoss.toString(),
             "source_loss_reasons" to losses.mapValues { it.value.toString() },"gate_fps" to if(elapsed>0)(received-1)*1e9/elapsed else null,
             "measurement_gate_wall" to measurementWall.report(),"intervals" to intervals.report(),"preview_publications" to preview.toString(),"preview_age" to age.report(),

@@ -110,7 +110,9 @@ Private `samples.jsonl` streams one bounded sample/s; fixed distributions retain
 at most 8192 values and explicitly count omitted values. Long profiles reset
 measurement aggregates after the actual first sample at/after 20 seconds; the marker
 records actual warmup elapsed time. Files/source oracles retain **all** observations,
-including warmup. Counters/snapshots labeled whole-run must not be compared as if
+including warmup. Acquisition/preview aggregates close at the Stop request, before heavy terminal
+readback/hashing; codec/seal/drain timing remains active for finalization.
+Counters/snapshots labeled whole-run must not be compared as if
 restricted to the measured approximately 126-second interval.
 
 - Native host callback received/replaced/malformed statistics and reported callback

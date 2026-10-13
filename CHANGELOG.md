@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 matched measurement window)
+
+- Close acquisition/preview aggregates at Stop so the subsequent full readback and streaming hashes cannot inflate the matched performance interval. Keep codec/seal/drain timing active and report its separate finalization scope.
+
 ### Fixed (R4 deterministic preparation-overload regression)
 
 - Preserve the genuine API26 failure at run 38450510713: the preparation-only test reserved just one writer entry and could independently drop its second already-prepared owner while HEADER sync lagged. Reserve both accepted owners in this test only, retain exact freeze/thread/two-ack assertions and add zero writer-loss assertion. Product/field queue capacities are unchanged; writer-overload coverage remains separate.
