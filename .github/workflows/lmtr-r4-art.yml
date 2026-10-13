@@ -16,7 +16,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api: [26, 35]
+        include:
+          - api: 26
+            target: default
+          - api: 35
+            target: ${{ matrix.target }}
     env:
       GRADLE_OPTS: '-Dorg.gradle.jvmargs=-Xmx1536m -Dorg.gradle.workers.max=2 -Dkotlin.daemon.jvm.options=-Xmx768m'
       PYTHONDONTWRITEBYTECODE: '1'
@@ -44,7 +48,7 @@ jobs:
         with:
           api-level: ${{ matrix.api }}
           arch: x86_64
-          target: google_apis
+          target: ${{ matrix.target }}
           disable-animations: true
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot -camera-back none -camera-front none
           script: bash tools/validate_lmtr_r4_art.sh "$RUNNER_TEMP/lmtr-art-evidence"

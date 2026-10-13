@@ -98,3 +98,10 @@ The optional owner notifications are serialized with the existing owner-generati
 invalidation lock. Close racing a late module-open completion cannot repopulate the
 recorder source after cutoff; exceptions in the optional observer cannot suppress
 camera release. Two latch-driven regressions exercise both paths without hardware.
+
+API26 now uses the official AOSP `default` x86_64 image, API35 remains `google_apis`.
+The harness requires no Google services. The API26 Google image download failed in
+successive jobs before ART execution; official SDK metadata also provides the smaller
+AOSP image. This changes only emulator provisioning, not product ABI/minimum SDK or
+test assertions. Historical failures remain evidence; the replacement job must pass
+its own instrumentation and independent file-readback gates.

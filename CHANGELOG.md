@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 API26 emulator provisioning)
+
+- Use the official minimal AOSP x86_64 image for camera-free API26 tests after repeated pre-test Google image archive-download failures; API35 remains Google APIs. Tests need no Google services; keep all earlier failures and runtime gates unchanged.
+
 ### Fixed (R4 optional owner notification races)
 
 - Serialize optional recording lifetime notifications with camera-owner generation invalidation, preventing a late open callback after immediate Close from reviving source intake. Isolate optional observer exceptions so original camera release can complete; add two deterministic owner regressions.
