@@ -35,7 +35,10 @@ def readback(output):
                     assert report.get(field) == case['kotlin'][field], (case['name'], field)
             if case['name'] not in ('torn-tail', 'navigation-failure'):
                 if 'expected_jsonl' in case:
-                    originals = (loads(line) for line in (output / case['expected_jsonl']).read_bytes().splitlines())
+                    oracle_bytes = (output / case['expected_jsonl']).read_bytes()
+                    if 'expected_jsonl_sha256' in case:
+                        assert hashlib.sha256(oracle_bytes).hexdigest() == case['expected_jsonl_sha256']
+                    originals = (loads(line) for line in oracle_bytes.splitlines())
                 else:
                     originals = iter(case['expected'])
                 observed = 0
@@ -50,9 +53,17 @@ def readback(output):
                             if entry['kind'] != 'observation':
                                 continue
                             source = next(originals)
+                            if 'expected_jsonl_sha256' in case:
+                                assert {'facts', 'intake_lower_monotonic_ns', 'intake_upper_monotonic_ns'} <= source.keys()
                             assert entry['stream_id'] == source['stream_id']
                             assert entry['observation_sequence'] == source['sequence']
                             assert entry['context_id'] == source['context_hash']
+                            if 'facts' in source:
+                                for field, expected in source['facts'].items():
+                                    assert entry[field] == expected, (case['name'], source['sequence'], field)
+                            if 'intake_lower_monotonic_ns' in source:
+                                intake = int(entry['timeline_ns']) + int(reader.head['timeline']['origin_monotonic_ns'])
+                                assert int(source['intake_lower_monotonic_ns']) <= intake <= int(source['intake_upper_monotonic_ns'])
                             stream = next(s for s in segments[entry['segment_id']]['streams'] if s['stream_id'] == source['stream_id'])
                             assert stream['session_id'] == source['session_id']
                             assert {p['role'] for p in entry['payloads']} == set(source['payloads'])
@@ -69,7 +80,9 @@ def readback(output):
                 assert report['unknown_tail'] and report['declared_end_status'] is None
         assert hashlib.sha256(path.read_bytes()).hexdigest() == before
         rows.append(dict(name=case['name'], sha256=before, observations=observed,
-                         status=report['status'], integrity_scope=report['integrity_scope'], source_unchanged=True))
+                         status=report['status'], integrity_scope=report['integrity_scope'], source_unchanged=True,
+                         original_oracle_sha256=case.get('expected_jsonl_sha256'),
+                         clock_and_intake_oracle_checked='expected_jsonl_sha256' in case))
     return dict(status='passed', cases=rows, generated_scope='noncanonical R4 engineering outputs',
                 accuracy_warning='Native-equivalent temperatures; absolute physical accuracy not yet independently validated.')
 

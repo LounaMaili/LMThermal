@@ -206,6 +206,81 @@ class RecorderEngineTest {
         release.countDown();val result=e.awaitStop(10000)!!
         assertFalse(result.finalized);assertTrue(result.failure!!.contains("Cannot certify unjournaled"))
     }
+    @Test fun representedSourceFailureThenWriterJournalExhaustionCannotFinalize() {
+        val m=SimulatedRecordingModule();val cap=m.observation(0).ownedBytes;val f=output();val base=LocalRecorderBackend(f)
+        val headerEntered=CountDownLatch(1);val headerRelease=CountDownLatch(1)
+        val prepEntered=CountDownLatch(1);val prepRelease=CountDownLatch(1)
+        val backend=object:RecorderBackend {
+            override val destination=f
+            override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record {
+                if(type==LmtrFraming.HEADER){headerEntered.countDown();check(headerRelease.await(5,TimeUnit.SECONDS))}
+                return base.append(type,ordinal,previous,body)
+            }
+            override fun close()=base.close()
+        }
+        val e=engine(m,f,limits=RecorderLimits(preparationBytes=cap*3,writerBytes=cap,maxObservationBytes=cap,
+            preferredChunkBytes=cap*4,controlBytes=32768),now={0L},hook={prepEntered.countDown();check(prepRelease.await(5,TimeUnit.SECONDS))},backend=backend)
+        try {
+            assertTrue(headerEntered.await(5,TimeUnit.SECONDS))
+            e.admit(RecordingOffer(m.id,0,FrozenJson(m.stream),cap){throw IllegalArgumentException("Bad source evidence")})
+            assertTrue(prepEntered.await(5,TimeUnit.SECONDS))
+            assertEquals(Admission.ACCEPTED,e.admit(m.observation(1)))
+            assertEquals(Admission.ACCEPTED,e.admit(m.observation(2)))
+            // Bad source reserves the sole loss entry, then the already-admitted writer
+            // backlog needs another loss reservation. A later worker error changes diagnostics.
+            prepRelease.countDown();until("worker failed after second loss refusal"){e.snapshot().error=="preparation_failed"}
+            val stopped=e.stop();assertSame(stopped,e.stop("source_detached",true));headerRelease.countDown()
+            assertFalse(e.awaitStop(10000)!!.finalized)
+            assertEquals(0L,e.snapshot().acknowledged)
+        } finally { prepRelease.countDown();headerRelease.countDown();e.stop() }
+    }
+    @Test fun stopDetachSourceErrorAndRepeatedFailureCannotClearUnrepresentedLoss() {
+        for(exit in listOf("stop","detach","source_error","memory_pressure")) {
+            val m=SimulatedRecordingModule();val cap=m.observation(0).ownedBytes;val f=output()
+            val entered=CountDownLatch(1);val release=CountDownLatch(1)
+            val e=engine(m,f,limits=RecorderLimits(preparationBytes=cap,writerBytes=cap,maxObservationBytes=cap,
+                preferredChunkBytes=cap*4,controlBytes=32768),hook={
+                    entered.countDown();check(release.await(5,TimeUnit.SECONDS));throw IOException("Later worker error")
+                })
+            try {
+                e.admit(m.observation(0));assertTrue(entered.await(5,TimeUnit.SECONDS));e.admit(m.observation(1))
+                assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(m.observation(2)))
+                assertEquals(Admission.REFUSED,e.admit(m.observation(3)))
+                val race=Thread { when(exit){
+                    "detach" -> e.stop("source_detached",true)
+                    "source_error" -> e.failSource("acquisition_error")
+                    "memory_pressure" -> e.memoryPressure()
+                    else -> e.stop()
+                } }.apply { start() }
+                val completion=e.stop();release.countDown();race.join()
+                val result=e.awaitStop(10000)!!;assertFalse(result.toString(),result.finalized)
+                val bytes=LmtrChunk.sha(f.readBytes());val acknowledged=e.snapshot().acknowledged
+                repeat(3){assertSame(completion,e.stop());assertSame(completion,e.failSource("later_error"));assertSame(result,e.awaitStop(10))}
+                assertEquals(bytes,LmtrChunk.sha(f.readBytes()));assertEquals(acknowledged,e.snapshot().acknowledged)
+            } finally { release.countDown();e.stop() }
+        }
+    }
+    @Test fun completelyJournaledSourceFailureIsHonestlyFinalizable() {
+        val m=SimulatedRecordingModule();val f=output();val e=engine(m,f)
+        e.admit(RecordingOffer(m.id,0,FrozenJson(m.stream),m.observation(0).ownedBytes){throw IllegalArgumentException("Bad current source")})
+        val result=e.awaitStop(10000)!!
+        assertTrue(result.toString(),result.finalized);assertEquals("failed",result.status)
+        assertEquals(0L,e.snapshot().acknowledged)
+        val full=LmtrReader(f).use { it.check(full=true) }
+        assertEquals("1",full["summary"].obj()["gap_events"])
+        assertEquals("1",full["summary"].obj()["known_missing_observations"])
+        assertEquals("failed",full["declared_end_status"])
+    }
+    @Test fun unexpectedPreparationExitDuringStopCannotHideAbandonedAdmission() {
+        val m=SimulatedRecordingModule();val entered=CountDownLatch(1);val release=CountDownLatch(1)
+        val e=engine(m,hook={entered.countDown();check(release.await(5,TimeUnit.SECONDS));throw IOException("Unexpected worker exit")})
+        try {
+            assertEquals(Admission.ACCEPTED,e.admit(m.observation(0)));assertTrue(entered.await(5,TimeUnit.SECONDS))
+            val completion=e.stop();assertFalse(completion.isDone);release.countDown()
+            val result=e.awaitStop(10000)!!;assertFalse(result.finalized);assertEquals(0L,e.snapshot().acknowledged)
+            assertTrue(result.failure!!.contains("Cannot certify unjournaled"))
+        } finally { release.countDown();e.stop() }
+    }
     @Test fun malformedOriginalMaskCannotReceivePromisedChunkFooter() {
         val m=SimulatedRecordingModule();val o=m.observation(0,masked=true)
         val bad=o.payloads.map { if(it.role=="validity")RecordingPayload(it.descriptor.value(),ByteArray(it.size){2}) else it }
@@ -254,8 +329,12 @@ class RecorderEngineTest {
         }
         val e=engine(m,f,backend=backend);e.admit(m.observation(0));e.stop();val result=e.awaitStop(10000)!!
         assertFalse(result.finalized);assertEquals(1L,e.snapshot().acknowledged)
+        val sourceHash=LmtrChunk.sha(f.readBytes())
         val prefix=LmtrReader(f).use { it.check(full=true,recover=true) }
         assertEquals("1",prefix["summary"].obj()["observations"])
+        assertEquals(true,prefix["unknown_tail"]);assertNull(prefix["declared_end_status"])
+        assertSame(e.stop(),e.stop("later_source_detach",true))
+        assertEquals(sourceHash,LmtrChunk.sha(f.readBytes()));assertEquals(1L,e.snapshot().acknowledged)
     }
 
     @Test fun lateSegmentClosureAndStopDoNotExtendOldChunkTimelineSpan() {

@@ -48,7 +48,8 @@ data class RecorderSnapshot(val state:String,val accepted:Long,val acknowledged:
     val writerDrops:Long,val preparationQueuedBytes:Long,val writerQueuedBytes:Long,
     val preparationInFlightBytes:Long,val writerInFlightBytes:Long,val pendingBytes:Long,
     val controlBytes:Long,val maxPreparationQueuedBytes:Long,val maxWriterQueuedBytes:Long,
-    val chunks:Long,val checkpoints:Long,val error:String?)
+    val chunks:Long,val checkpoints:Long,val error:String?,val maxPreparationInFlightBytes:Long,
+    val maxWriterInFlightBytes:Long,val maxPendingBytes:Long)
 data class RecorderResult(val finalized:Boolean,val status:String,val reason:String,val report:Obj?,val failure:String?)
 
 /** Isolated two-stage recorder. Admission transfers only pre-owned module observations.
@@ -82,6 +83,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     private val intakeSessions=mutableMapOf<String,String>()
     private var prepQueued=0L;private var writerQueued=0L;private var prepFlight=0L;private var writerFlight=0L
     private var pendingBytes=0L;private var controlUsed=0L;private var maxPrep=0L;private var maxWriter=0L
+    private var maxPrepFlight=0L;private var maxWriterFlight=0L;private var maxPending=0L
     private var accepted=0L;private var acknowledged=0L;private var prepDrops=0L;private var writerDrops=0L
     private var chunks=0L;private var checkpoints=0L
     // Sticky evidence failure: later exceptions may change the diagnostic reason, never
@@ -184,7 +186,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     fun wakeTimers() = synchronized(lock) { lock.notifyAll() }
     fun snapshot():RecorderSnapshot = synchronized(lock) {
         RecorderSnapshot(state,accepted,acknowledged,prepDrops,writerDrops,prepQueued,writerQueued,prepFlight,writerFlight,
-            pendingBytes,controlUsed,maxPrep,maxWriter,chunks,checkpoints,failure)
+            pendingBytes,controlUsed,maxPrep,maxWriter,chunks,checkpoints,failure,maxPrepFlight,maxWriterFlight,maxPending)
     }
     private fun terminateLocked(nextStatus:String,nextReason:String,error:String?) {
         if(state in listOf("finalized","failed","finalizing"))return
@@ -207,7 +209,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                 val item=synchronized(lock) {
                     while(intake.isEmpty() && !stopped)lock.wait()
                     if(intake.isEmpty())return@synchronized null
-                    intake.removeFirst().also { if(it.drop==null){prepQueued-=it.offer.chargedBytes;prepFlight=it.offer.chargedBytes} }
+                    intake.removeFirst().also { if(it.drop==null){prepQueued-=it.offer.chargedBytes;prepFlight=it.offer.chargedBytes;maxPrepFlight=maxOf(maxPrepFlight,prepFlight)} }
                 } ?: break
                 prepareHook()
                 var prepared:PreparedObservation?=null;var drop=item.drop
@@ -263,7 +265,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                 witness-firstPendingWitness!!>=SEAL_INTERVAL_NS || pendingBytes+bytes>limits.preferredChunkBytes))seal()
             pending.add(PendingEntry(entry,active!!,context,payloads))
             if(firstPendingWitness==null)firstPendingWitness=witness
-            synchronized(lock){pendingBytes+=bytes+LmtrJson.encode(entry).size}
+            synchronized(lock){pendingBytes+=bytes+LmtrJson.encode(entry).size;maxPending=maxOf(maxPending,pendingBytes)}
             if(pendingBytes>=limits.preferredChunkBytes)seal()
         }
         fun start(witness:Long,why:String) {
@@ -281,7 +283,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             while(true) {
                 val work=synchronized(lock) {
                     if(writer.isEmpty() && !(prepDone && stopped))lock.wait(WRITER_WAKE_MS)
-                    if(writer.isEmpty())null else writer.removeFirst().also { writerQueued-=it.charge;writerFlight=it.charge }
+                    if(writer.isEmpty())null else writer.removeFirst().also { writerQueued-=it.charge;writerFlight=it.charge;maxWriterFlight=maxOf(maxWriterFlight,writerFlight) }
                 }
                 if(work!=null) {
                     val current=streams.getValue(work.streamId)

@@ -160,3 +160,15 @@ The test-only `AcquisitionOwnershipCostProbe` measures the exceptional source-ca
 copy of 224255 synthetic malformed transport bytes independently of the off-worker
 HT fixture benchmark. It verifies retained bytes survive source mutation. The ART
 source probe also runs it; no physical capture or thermometry invocation is introduced.
+
+Additional deterministic tests cover both failure orderings, Stop/detach/source-error/
+memory-pressure racing a lost journal plus a later worker error, repeated Stop/source
+error after failure, and unexpected worker exit without an exhausted journal. Fully
+journaled per-item source failure remains finalizable with failed END and a known-count
+gap; ordinary represented errors are not mislabeled incomplete. Post-footer navigation
+failure retains its acknowledgment, unknown recovered tail and unchanged source hash.
+
+The continuation source probe hashes its original JSONL oracle and checks source clocks/
+receipt/acquisition/sequence facts independently. Common intake ticks must lie between
+genuine pre/post callback witnesses. Snapshot counters include charged in-flight and
+pending peaks, independently of queue peaks; these are accounting metrics, not ART/RSS.

@@ -4,6 +4,14 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 clock/oracle and resource-peak continuation)
+
+- Add source-oracle SHA-256, exact original receipt/acquisition/schedule/device/source facts and genuine callback intake bounds to finite source stress; independent Python checks these without changing wire metadata. Expose charged preparation/writer in-flight and pending peaks alongside existing queue peaks; no capacity increase or ART/RSS claim.
+
+### Added (R4 combined-failure integrity regression matrix)
+
+- Cover both preparation/journal-exhaustion orderings, racing Stop/detach/source-error/memory pressure, multiple termination errors, repeated Stop after failure and unexpected preparation exit. Assert no noncertifiable loss can produce END, while completely journaled source failure can retain an honest failed END. Strengthen post-ack navigation recovery/source immutability assertions.
+
 ### Added (R4 exceptional acquisition copy-cost probe)
 
 - Measure callback-side immutable ownership of synthetic malformed full-size transport separately from deferred HT evidence freezing; verify copied buffers cannot be mutated by the source. The host/ART test tool performs no camera access and times no parsing, thermometry, hashing, compression or I/O.

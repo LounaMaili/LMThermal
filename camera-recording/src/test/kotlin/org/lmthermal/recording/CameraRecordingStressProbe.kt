@@ -44,6 +44,11 @@ object CameraRecordingStressProbe {
             val prepared=RecordingProfiles.select(original,RecordingProfile.FULL)
             expected.add(mapOf("stream_id" to producer.id,"sequence" to n.toString(),"session_id" to identity.sessionId,
                 "context_hash" to LmtrChunk.sha(LmtrJson.encode(original.context.value())),
+                "facts" to (original.facts.value()+mapOf("receipt" to RecordingSourceMetadata.receipt(identity,receipt),
+                    "source_evidence" to mapOf("module_source_sequence" to (n*2L).toString()))).filterKeys {
+                        it in listOf("receipt","acquisition","device_sequence","scheduled","source_evidence") },
+                "intake_lower_monotonic_ns" to receipt.toString(),
+                "intake_upper_monotonic_ns" to (receipt+admissions.last()).toString(),
                 "payloads" to prepared.payloads.associate { it.role to mapOf("hash" to LmtrChunk.sha(it.bytes()),"length" to it.size.toString()) }))
             if(n%2==0){session.presentation(n.toLong());preview++}
             if(n%17==0)paletteChanges++ // Separate test presentation state: never used by source/recording.
@@ -59,7 +64,8 @@ object CameraRecordingStressProbe {
         }
         val cases=listOf(mapOf("name" to "source-25hz","file" to file.name,"sha256" to LmtrChunk.sha(file.readBytes()),
             "kotlin" to full.filterKeys { it in listOf("status","integrity_scope","summary","declared_end_status") },
-            "expected_jsonl" to "source-expected.jsonl"))
+            "expected_jsonl" to "source-expected.jsonl",
+            "expected_jsonl_sha256" to LmtrChunk.sha(File(output,"source-expected.jsonl").readBytes())))
         File(output,"source-manifest.json").writeBytes(LmtrJson.encode(mapOf("cases" to cases)))
         fun percentile(values:List<Long>,fraction:Double)=values.sorted()[(values.size-1).times(fraction).toInt()].toString()
         val report=mapOf("scope" to "finite 13x7 non-USB host source simulation, not hardware throughput",
@@ -68,6 +74,8 @@ object CameraRecordingStressProbe {
             "accepted" to snapshot.accepted.toString(),"acknowledged" to snapshot.acknowledged.toString(),"preparation_drops" to snapshot.preparationDrops.toString(),
             "writer_drops" to snapshot.writerDrops.toString(),"chunks" to snapshot.chunks.toString(),"checkpoints" to snapshot.checkpoints.toString(),
             "max_preparation_queued_bytes" to snapshot.maxPreparationQueuedBytes.toString(),"max_writer_queued_bytes" to snapshot.maxWriterQueuedBytes.toString(),
+            "max_preparation_in_flight_bytes" to snapshot.maxPreparationInFlightBytes.toString(),
+            "max_writer_in_flight_bytes" to snapshot.maxWriterInFlightBytes.toString(),"max_pending_bytes" to snapshot.maxPendingBytes.toString(),
             "admission_p50_ns" to percentile(admissions,.5),"admission_p95_ns" to percentile(admissions,.95),"admission_max_ns" to admissions.max().toString(),
             "stop_ns" to stopNs.toString(),"file_bytes" to file.length().toString(),"acknowledgments" to acknowledgments,
             "summary" to full["summary"],"accuracy_warning" to NativeEquivalentThermometry.WARNING)
