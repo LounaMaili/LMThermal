@@ -91,7 +91,7 @@ it does prevent claiming calibrated physical temperature accuracy.
 - Record thermal video sequences
 - Embed temperature data (each frame carries radiometric data)
 - Export formats:
-  - **Radiometric recording** — [R1a normative candidate](LMTR_FORMAT_CANDIDATE.md), with accepted complete-grid/evidence/profile semantics; exact wire remains provisional and recording is unimplemented.
+  - **Radiometric recording** — [R1a normative candidate](LMTR_FORMAT_CANDIDATE.md), with accepted complete-grid/evidence/profile semantics; [LMTR v1 wire](LMTR_WIRE_V1.md) is accepted; production recording is unimplemented.
   - **Standard MP4** — visual only
   - **TIFF sequence + JSON metadata** — for analysis
 
@@ -122,7 +122,7 @@ history. [Android export #5](https://github.com/LounaMaili/LMThermal/issues/5) a
 completed and closed after real Linux/Windows interoperability. See the
 [Desktop validation evidence](https://github.com/LounaMaili/LMThermal-Desktop/blob/main/docs/LMTX_IMPORT.md).
 
-### Common radiometric recording (R1a accepted direction; wire provisional)
+### Common radiometric recording (R1b wire accepted; production recording unimplemented)
 
 [LMTR_FORMAT_CANDIDATE.md](LMTR_FORMAT_CANDIDATE.md) records accepted R1a owner
 decisions and semantic direction: complete authoritative temperature grids, explicit
@@ -134,11 +134,15 @@ Unknown capacity warns and allows Start on supported storage; known insufficient
 startup+reserve blocks; write refusal preserves prior valid commits without
 claiming pending frames saved. ROI/palette never remove source pixels.
 
-[Architecture](COMMON_RECORDING_DESIGN.md) keeps bounded views and precise chunk/
-index/codec/backend mechanics provisional. [R2 gates](RECORDING_R2_VALIDATION.md)
-must precede R1b final owner wire acceptance, then the canonical corpus and blocked
-production work in [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). No recording code,
-camera/thermometry behavior or Accepted LMTX v1 semantics change.
+The [accepted LMTR v1 wire](LMTR_WIRE_V1.md) freezes bounded views, exact JSON,
+framing, payload/index/recovery and timing/storage requirements for R3. PR #13
+integrated explicit owner acceptance; R1 #6 is closed. The [isolated R3 tools](lmtr-r3/README.md)
+provide a standalone Kotlin/JVM library and independent Python reader/writer,
+synthetic canonical corpus and cross-language validation. They are not imported by
+the Android application. R3 #8 remains open for disclosed platform/runtime and
+remaining conformance gates. Production recorder/backend/UI work remains blocked
+in [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
+Accepted LMTX v1 remain unchanged.
 
 ### RJPEG (Radiometric JPEG)
 A standard JPEG file with embedded radiometric (temperature) data in EXIF/metadata chunks. This is the closest thing to a universal thermal image format:
@@ -323,5 +327,5 @@ capture. No controls, acquisition, native coordinate or thermometry semantics ch
 See [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md) for privacy, local limits,
 lifecycle/provider guarantees and shared fixtures. Desktop #1 and Android #5 are
 closed after real Linux/Windows interoperability. Future common recording follows
-the separate [R1a candidate](LMTR_FORMAT_CANDIDATE.md): accepted semantic direction,
-with wire details still provisional until R2 and R1b.
+the separate [accepted LMTR v1 contract](LMTR_WIRE_V1.md): R1b is integrated,
+with isolated R3 conformance work and production recording still unimplemented.

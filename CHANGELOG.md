@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Isolated LMTR v1 R3 conformance checkpoint — 2026-10-13)
+
+- Added a standalone Kotlin/JVM contract module and independently structured standard-library Python reference for accepted LMTR v1 exact JSON, framing/integrity, metadata, grids/masks/evidence/views, STORED/DEFLATE, chronology, paged indexing and immutable bounded-prefix recovery. Neither is wired into Android or Desktop production applications.
+- Generated 51 small synthetic canonical binary files (33 positive, 18 negative), exact provenance/SHA inventory, bidirectional runtime interoperability and numerical/adversarial checks. Added on-demand sparse-offset stress tooling; explicit selected/full scopes and local resource refusal prevent partial verification claims.
+- Fixed test-discovered edge cases in empty reference bounds, synthetic Float32 recipes, snapshot fanout/body admission and historical index-page validation. Kept exact binary signed-zero/mask authority and precise unknown optional JSON semantics.
+- Documented reproducible host commands, implemented scope and remaining Windows/ART, general salvage and asynchronous recorder/backend durability gates. R3 #8 remains open; no R3 merge, production recorder, camera/thermometry change or physical-calibration claim.
+
 ### Changed (Explicit LMTR R1b acceptance — 2026-10-13)
 
 - Recorded explicit owner acceptance of complete r1b-review-2, D1–D10 and historical-conversion approach B; published `docs/LMTR_WIRE_V1.md` as the normative frozen R3 specification with unchanged reviewed rule body/constants and byte-equivalent local shape definitions.
