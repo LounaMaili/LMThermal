@@ -1,0 +1,85 @@
+{
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "additional_host_coverage": [
+    "44indexed intake-time/stream cross queries and33positive sequential oracles",
+    "8legal index levels and9th refusal",
+    "64suffix chunks accepted and65refused",
+    "1025footer/predecessor refusal and fast-tail bound",
+    "typed ASCII whole-token matching",
+    "unrecorded finalization UTC stays unknown",
+    "Python separate append barriers with injected body-sync failure",
+    "pre-materialization recipe/chunk allocation guards"
+  ],
+  "android_debug_build": "passed_offline_no_install",
+  "android_debug_lint": "passed_offline",
+  "base_main": "fe029363062cdf54d6cefa9d4f24265e80188091",
+  "branch": "feat/lmtr-r3-contract-conformance",
+  "clean_jvm_rebuild": "passed",
+  "core": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 232
+  },
+  "corpus": {
+    "binary_bytes": 2885993,
+    "deterministic_regeneration": "passed",
+    "manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "negative_recovery": 18,
+    "positive": 33
+  },
+  "documentation_checks": [
+    "accepted reviewed semantics and76definitions unchanged",
+    "10affected Markdown local-link inventories pass",
+    "git diff --check passed"
+  ],
+  "draft_pr": "https://github.com/LounaMaili/LMThermal/pull/14",
+  "first_pushed_checkpoint": "0554c49cf538eb615e5878f79df430a0cba09a3c",
+  "jvm_r3": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 65
+  },
+  "normative_commit": "8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f",
+  "python": {
+    "failures": 0,
+    "tests": 61,
+    "warning_as_error": true
+  },
+  "remaining": [
+    "native Windows/JDK/Python and NTFS sparse validation",
+    "ART runtime",
+    "arbitrary damaged-framing range discovery and disposable rebuilt-index cache",
+    "asynchronous recording admission/timers/Stop/backend durability; no production recorder",
+    "measured cancellation latency and exhaustive mixed-corruption/resource combinations"
+  ],
+  "reports_sha256": {
+    "linux-interop-validation.json": "aaf528333b5762e877ea00c761582d9139caa75fba5c8a6020ff58525dbbab5b",
+    "linux-limit-validation.json": "ec08e2d26564bc2b3aa9723eda3586e8926952a4159ecc443925cead1f8297d3",
+    "linux-recovery-memory-validation.json": "04f13e99529705bac97fd6be9cfcdee0c599395f2733ce252035904a9d9f4aac",
+    "linux-sparse-validation.json": "d8351cfa3c46bf0bc1139955f754995b62d7844a18dc6924661785e347291d52"
+  },
+  "scope_protection": "no production Android/core/Desktop/camera/thermometry/LMTX changes; no R3 merge or issue8closure",
+  "second_pushed_checkpoint": "81ac9abb4ad645aaee33483e060f9b531348f9b3",
+  "source_sha256": {
+    "lmtr-contract/build.gradle.kts": "31acab595fd4663d64a97dadc68c03b96cb68c266c13c9245a4688a6a53450b1",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrChunk.kt": "2ff6819bda37a05915ef5864902aeb0d7572740bd697d59794fd317faa2edc1d",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrCodec.kt": "2003406a7ccc0ddf4297a6e9093af339379f24a6ffb76773ecb686d0164614f1",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrCommand.kt": "a85a176c62676ca7c9f310c5010ca8d59290a0d5bed48ed66f272cf6f7a511f0",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrFraming.kt": "678428edeab2815dbaebf55873349a75713b68bd33c40f595ed58f9a7972c4d2",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrJournal.kt": "1b1d2bbe47ec912f3eca577c98a477f04701f8d8d4ea7436f164204c489a5631",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrJson.kt": "5c8b2bdb8338f01e9c3ccb7716da8df4823208fc30b7e99e19eb33eb4e3c5b2b",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrMetadata.kt": "aeda5e8761ecbc56ddf2171ea4adb6307fb05622d88b0f203309eb38c9b8c7c2",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrReader.kt": "c61e12852836a2682fa466b1405a66ef419794f88e2a7bb762202ee53f591667",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrSchema.kt": "0829e5958aa4d0e46a5a4582b69ba9e8631403c1b0a83ec6a2124bd3bf4046a6",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrWriter.kt": "7eaf9dd8d217b402b4bd09cab534f6db97cc485dc8b7b54b4feda920254b512d",
+    "settings.gradle.kts": "1a75c30fb4fd4441b4831fd03b4fd88ed99440b43074429dd033c3fd4b6337e0",
+    "tools/lmtr_v1/__init__.py": "6b746daacebce750069257d560f4785a09eca728b6aef3f942247905f32e30ae",
+    "tools/lmtr_v1/__main__.py": "92fbecea49ad0cc3948dacc70ecdbe84696d7ae872965fe9d8ad3a5a3f9775a7",
+    "tools/lmtr_v1/container.py": "d1cd51da7b6719f7c9bfabdd92278f72caf9ba456598ea88caa547445544c9f4",
+    "tools/lmtr_v1/jsoncodec.py": "2da37a4664dcbbf50f779af11285aa0c465d1956685ffa7d6b59296bfc46641b",
+    "tools/lmtr_v1/metadata.py": "b6fa8ddf503b7fc1fa3f2026d9e466905086837ba215f41edab859177bd6e2a6"
+  },
+  "status": "verified_host_checkpoint_R3_incomplete"
+}

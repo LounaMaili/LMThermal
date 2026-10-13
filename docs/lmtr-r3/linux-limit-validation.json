@@ -1,0 +1,22 @@
+{
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "candidate_refusal": "recovery_limit",
+  "false_footer_candidates": 1025,
+  "fast_tail_bytes": 68157512,
+  "illegal_depth_levels": 9,
+  "jvm_heap_cap_bytes": 134217728,
+  "legal_depth_levels": 8,
+  "limitations": [
+    "finite synthetic host limits, not physical power-loss",
+    "cancellation latency and exhaustive mixed-corruption combinations remain separate",
+    "no native Windows/ART"
+  ],
+  "maximum_depth_full_exact_parity": true,
+  "oversized_unknown_tail": "recovery_limit",
+  "predecessor_navigation_refused": 1025,
+  "selected_chunks_at_maximum_depth": 1,
+  "source_immutability": true,
+  "status": "passed",
+  "suffix_chunks_refused": 65,
+  "verified_suffix_chunks_at_limit": 64
+}

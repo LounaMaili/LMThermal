@@ -1,0 +1,18 @@
+{
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "chunks": 17,
+  "integrity_scope": "full_verified_prefix",
+  "jvm_heap_cap_bytes": 134217728,
+  "large_chunk_bytes": 8388608,
+  "limitations": [
+    "one synthetic host suffix, not indefinite runtime certification",
+    "tracemalloc excludes some native/runtime allocations",
+    "no native Windows/ART"
+  ],
+  "prefix_sha256": "14e535e5982925ba700a7c3383b544e58f29e9f16825494e88c4ff472c96afa7",
+  "python_traced_budget_bytes": 83886080,
+  "python_traced_peak_bytes": 17076055,
+  "source_immutability": "complete-prefix SHA256 unchanged",
+  "source_prefix_bytes": 134279895,
+  "status": "passed"
+}

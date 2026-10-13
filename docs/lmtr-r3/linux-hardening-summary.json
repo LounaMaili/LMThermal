@@ -1,0 +1,100 @@
+{
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "additional_record_accesses_after_request": 0,
+  "after": {
+    "core": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 232
+    },
+    "jvm_r3": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 71
+    },
+    "python": {
+      "failures": 0,
+      "tests": 64,
+      "warning_as_error": true
+    }
+  },
+  "android_build_lint": "passed_offline; unchanged tasks mostly UP-TO-DATE; no install",
+  "before": {
+    "core": 232,
+    "jvm_r3": 65,
+    "python": 61
+  },
+  "branch": "feat/lmtr-r3-contract-conformance",
+  "cancellation_modes": [
+    "full",
+    "recovery",
+    "salvage"
+  ],
+  "clean_host_module_build": true,
+  "core_test_reexecuted_after_cleanTest": true,
+  "deferred_R4_R6": [
+    "production timer/admission/queue/Stop races",
+    "provider/export/directory persistence and close acknowledgment"
+  ],
+  "documentation_checks": [
+    "frozen acceptance equivalence 76 definitions",
+    "14 draft examples 19 precision/29 negative documentation checks",
+    "10 affected Markdown files /106 local targets",
+    "changed Python ASTs valid",
+    "git diff --check passed"
+  ],
+  "jdk": "17.0.20.1+1",
+  "new_combined_cases": 29,
+  "optional_reader_enhancements": [
+    "arbitrary damaged-framing range discovery",
+    "disposable external rebuilt-index cache"
+  ],
+  "pinned_corpus": {
+    "all_files_plans_manifest_unchanged": true,
+    "binary_bytes": 2885993,
+    "cases": 51,
+    "manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "negative_recovery": 18,
+    "original_generator_check": "passed in isolated Git-pinned 1f1a668 inputs; no repinning",
+    "positive": 33
+  },
+  "platform": "Linux-7.2.8-200.fc44.x86_64-x86_64-with-glibc2.43",
+  "pre_R4_runtime_portability": {
+    "ART": "NOT EXECUTED: adb devices empty, mDNS empty; no operator/pairing requested"
+  },
+  "python": "3.14.8",
+  "remaining_mandatory_R3": [
+    "real native Windows canonical same-byte runtime gate; NTFS large-offset portability"
+  ],
+  "reports_sha256": {
+    "linux-cancellation-validation.json": "739d212c3551ebd73026b97239ddfb030ff7522a616fde9f2d2696d05f0c54be",
+    "linux-hardening-interop-validation.json": "aaf528333b5762e877ea00c761582d9139caa75fba5c8a6020ff58525dbbab5b",
+    "linux-hardening-validation.json": "9674e254c1b6d279a5e3838e97105b09c7c9e1492d494a911101485d21176e21"
+  },
+  "scope": "no frozen wire, corpus, production application/core, Desktop, camera or thermometry change; #14 draft, #8 open",
+  "source_sha256": {
+    "lmtr-contract/build.gradle.kts": "d202c684427277d2810758db282619fd6b0b0840875dc5fb61d7e1d7c158ece0",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrMetadata.kt": "bbe530ddd0b5ae90446882f5e497b4715ca1cd712afdbe4712abbde1cebb74af",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrReader.kt": "083cb7b6fec2b780616d119dc438578830395219a917450c51d50f7e1ee4c653",
+    "lmtr-contract/src/test/kotlin/org/lmthermal/lmtr/LmtrCancellationProbe.kt": "5f49258b007838041229e31188f9c3ff2502402d3c0137e7c900ba11c9b62734",
+    "lmtr-contract/src/test/kotlin/org/lmthermal/lmtr/LmtrCancellationTest.kt": "39b9fbb04344aeeab0589157437e7cee6fe8cec703b7d9ed98d2e26b790839ab",
+    "lmtr-contract/src/test/kotlin/org/lmthermal/lmtr/LmtrLineageTest.kt": "082da7248af919170d35a520fafa18b3d0250ae4801460fd78baf6b095c6b7b6",
+    "tools/check_lmtr_cancellation.py": "ea43e25e685c5e684ba9b5ab4bc4c863e8b9b020811191ef48750e13b26d32e2",
+    "tools/check_lmtr_hardening.py": "3982523142a5bbe459545acddac264a825b3ba3c72bf03b1f9a28690893de4fc",
+    "tools/check_lmtr_ntfs.py": "3c2edbe4c2968abe6638a2e14a2aaf16b8d596363a22503c8aa210bec86e613b",
+    "tools/check_lmtr_pinned_corpus.py": "780915909d5e4d36e41f8e8b8987e73de99ce898f5e2bee073d7cdc95398abda",
+    "tools/check_lmtr_sparse.py": "aa9046a832ddae388c1ca5a6ef6b1f3e1cf5f63b6e943dd359164f01344ce2ac",
+    "tools/lmtr-r3-host/settings.gradle.kts": "b8fc2389d669799c0ce650de30fe08f10835e36f68fb6f10c9f3d72461b08573",
+    "tools/lmtr_v1/container.py": "6a27ddb4af5ef7ed1e312cf9983738fb32d2fd33d91cb0da212b56c058d37cf9",
+    "tools/lmtr_v1/metadata.py": "4726115d46429b0d537c3dfc90e0c59d86300ea33e1396d9c225542bbf762748",
+    "tools/lmtr_v1/tests/test_hardening.py": "ab662214e347c4c0b10aa7f8241d33cbcf636ade342e8b60fbab8d77d8f1ed0d",
+    "tools/validate_lmtr_r3_windows.ps1": "13a29ce90add71a8ab44e4a8a4bd341dd23583c117ecfa165b943ed0dc9554fc"
+  },
+  "starting_checkpoint": "1f1a668caf0af9c0c4d0f9ba036a88cd86cbddb0",
+  "status": "passed_executed_Fedora_gates_native_Windows_pending",
+  "windows": "NOT EXECUTED: no authorized native environment; PowerShell absent on Fedora, runner statically reviewed only; NTFS API adapter not executed",
+  "windows_adapter_core_probe": "small 3-CHUNK/2MiB sparse constructor full-integrity pass and one pre-write hook on Fedora; not NTFS evidence",
+  "zlib": "1.3.1.zlib-ng"
+}

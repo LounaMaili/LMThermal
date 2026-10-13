@@ -9,3 +9,23 @@ core/src/test/resources/thermometry/*.f32 binary
 core/src/test/resources/presentation/*.argb binary
 core/src/test/resources/presentation/*.levels binary
 core/src/test/resources/lmtx/*.lmtx binary
+
+# Canonical LMTR bytes and hash-pinned plans must survive native Windows checkouts.
+lmtr-contract/src/test/resources/lmtr/files/*.lmtr binary
+lmtr-contract/src/test/resources/lmtr/manifest.json -text
+lmtr-contract/src/test/resources/lmtr/plans/*.json -text
+lmtr-contract/src/test/resources/lmtr-examples.json -text
+lmtr-contract/src/main/resources/lmtr-schema.json -text
+# Reference-source provenance uses exact LF bytes on every checkout.
+tools/lmtr_v1/*.py text eol=lf
+tools/generate_lmtr_corpus.py text eol=lf
+
+# Host conformance helpers are source, not platform-newline-dependent evidence.
+tools/check_lmtr_*.py text eol=lf
+tools/lmtr_v1/tests/*.py text eol=lf
+tools/lmtr-r3-host/*.kts text eol=lf
+tools/validate_lmtr_r3_windows.ps1 text eol=lf
+
+# Preserve exact downloaded CI JSON receipts (including their original CRLF bytes).
+docs/lmtr-r3/windows-*.json -text -whitespace
+tools/test_lmtr_r3_windows.ps1 text eol=lf

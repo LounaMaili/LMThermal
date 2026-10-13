@@ -1,0 +1,92 @@
+{
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "artifact": {
+    "id": 11809392539,
+    "retention_days": 30,
+    "sha256": "8cf737653cab558ef45575b30557ff554ea9b63a445df7b7bd5be2269d41f32d",
+    "url": "https://github.com/LounaMaili/LMThermal/actions/runs/38392229227/artifacts/11809392539"
+  },
+  "counts": {
+    "cancellation_modes": 3,
+    "canonical_plan_comparisons": 33,
+    "codec_adversarial": 3,
+    "combined_hostile": 29,
+    "compatibility": 8,
+    "corpus_each_reader": 51,
+    "explicit_scan": 4,
+    "json_vectors": 43,
+    "jvm": 71,
+    "kotlin_write_python_full_read": 33,
+    "navigation_recovery": 2,
+    "negative_recovery": 18,
+    "positive": 33,
+    "python": 64,
+    "time_stream_queries": 44
+  },
+  "cross_Fedora_Windows": {
+    "canonical_json_vector_results_exactly_equal": true,
+    "logical_bytes_and_statistics": "compared against the same manifest oracles, not independently compressed byte identity",
+    "same_51_source_hashes_and_classifications": true
+  },
+  "deferred_R4_R6": [
+    "producer timers/queues/admission/Stop",
+    "export/provider/backend durability"
+  ],
+  "duration_seconds": 345,
+  "first_failed_run": {
+    "artifact_sha256": "e409a3e2971538d83dfd72b00bffe009169563f1dfb0258b6602731328a9c2c1",
+    "artifact_url": "https://github.com/LounaMaili/LMThermal/actions/runs/38391877487/artifacts/11808289830",
+    "classification": "PowerShell preflight null-value before tests; no LMTR conformance failure",
+    "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/38391877487",
+    "sha": "9d3bdfc181f91a7091806a2197fe4e2f58a7cf79"
+  },
+  "identity": {
+    "filesystem": "NTFS",
+    "jdk": "Eclipse Adoptium Temurin 17.0.20.1+1",
+    "platform": "Windows-2022Server-10.0.20348-SP0",
+    "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:17:50) [MSC v.1944 64 bit (AMD64)]",
+    "runner_image": "win22",
+    "runner_image_version": "20261004.326.1",
+    "windows": "Microsoft Windows NT 10.0.20348.0",
+    "zlib": "1.3.1"
+  },
+  "limitations": [
+    "finite synthetic contract scope, no indefinite/generic-camera guarantee",
+    "no backend power-loss or physical-temperature certification",
+    "raw interop pending field is a historical static checklist; actual Windows/NTFS completion is established by this run and separate NTFS report",
+    "Actions annotated Node20-targeted pinned actions running on Node24; no runtime test failures"
+  ],
+  "manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+  "no_corpus_regeneration_or_repinning": true,
+  "ntfs": {
+    "allocated_bytes": 4915200,
+    "jvm_heap_cap_bytes": 268435456,
+    "kotlin_record_reads": "5",
+    "kotlin_selected_chunks": "1",
+    "logical_bytes": 4404323163,
+    "python_full": "python_full_71_chunks_passed",
+    "python_selected_chunks": 1,
+    "source_immutability": "exact SHA/size/mtime/allocation unchanged; read-only readers",
+    "source_sha256": "6d1aada6f6a6d18272a5a9d256c7fb6b8351c595503917e96541b041bf8ad2b8",
+    "target_offset": "4404298782"
+  },
+  "optional": [
+    "arbitrary damaged-framing discovery",
+    "external rebuilt-index cache"
+  ],
+  "pre_production_ART": "NOT EXECUTED; real Android ART validation before production integration remains separately pending",
+  "raw_reports_sha256": {
+    "cancellation.json": "75ff7b82dd995166ea5f466dc7a5ae0dc70bf6d43b79151f432220f2eef09c67",
+    "hardening.json": "a4b044c9682c14541a1c3817df7a5b859c004b0bbe18f87292f4568ba1a0fd3f",
+    "interop.json": "578f9b4cc357bf51866a28d0b5e3a010b40d27f65c163cb1c2fcfc5d1a29b6b8",
+    "java-version.txt": "03b3d3169b84aeb373e8d30ea2e806811d33066a9ab9587559456e3a7572ffa9",
+    "ntfs.json": "aded8f5c2612cbe9d6b335c2db9710bf8e78a7458fb53851593e46824dd5e586",
+    "python-version.txt": "066325c06b3eca547f0c03e666e3405ab240aaaf10db45b755595f16275a3812",
+    "summary.json": "6e8534de924cda668d805e3f40c962cec18d3cffe0f89cf6dc13d45b3a198a08"
+  },
+  "remaining_mandatory_R3_gates": [],
+  "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/38392229227",
+  "status": "native_Windows_and_NTFS_R3_gates_passed",
+  "tested_commit": "9770e5a228a56884221103f7eae4b52297b8314e",
+  "workflow": ".github/workflows/lmtr-r3-windows.yml"
+}

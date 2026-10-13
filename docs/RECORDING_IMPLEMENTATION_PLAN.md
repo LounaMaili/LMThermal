@@ -1,16 +1,17 @@
 # Current R1b acceptance / R3 handoff — 2026-10-13
 
 The owner explicitly accepted [LMTR v1](LMTR_WIRE_V1.md), complete `r1b-review-2`
-D1–D10 and approach B. R1 closure requires verified main integration; R3 then
-becomes authorized/unblocked. R3 remains open pending real conformance gates;
+D1–D10 and approach B. PR #13 integrated acceptance at `fe029363`; R1 #6 is closed.
+[Isolated R3 conformance work](lmtr-r3/README.md) is authorized and in progress. R3 remains open pending real conformance gates;
 R4/R5 and later implementation are not authorized. Historical statuses below
 remain the stage-design record; acceptance is not production format release.
 
 # Common recording implementation roadmap and issues
 
-**R1a product/semantic direction accepted, 2026-10-07. Wire contract provisional.**
+**R1a accepted 2026-10-07; R1b wire accepted/integrated 2026-10-13.**
 R1–R7 issues track the product work. R2 has isolated disposable prototypes and
-[evidence](recording-r2/README.md); no production recorder/reader/UI or R3 corpus is started.
+[evidence](recording-r2/README.md); production recorder/reader/UI are unimplemented.
+R3 has a synthetic canonical corpus and isolated JVM/Python tools.
 
 Design: [COMMON_RECORDING_DESIGN.md](COMMON_RECORDING_DESIGN.md).
 Evidence: [RECORDING_COMPRESSION_STUDY.md](RECORDING_COMPRESSION_STUDY.md).
@@ -23,8 +24,9 @@ accepted still decision history; it is not silently expanded into sequences.
 ## GitHub issue registry
 
 R2 #7 is closed for the tested HT-301/Pixel 8 baseline after focused integration.
-R1 #6 remains open with the [complete R1b DRAFT](LMTR_WIRE_V1_DRAFT.md) and
-[owner decision review](LMTR_R1B_OWNER_DECISIONS.md); no wire acceptance is inferred.
+R1 #6 is closed after explicit owner acceptance of `r1b-review-2` and integration
+of [LMTR v1](LMTR_WIRE_V1.md). The [historical draft](LMTR_WIRE_V1_DRAFT.md) and
+[owner decision record](LMTR_R1B_OWNER_DECISIONS.md) remain unchanged review history.
 The [completion review](recording-r2/COMPLETION_REVIEW.md) finds the recommended
 baseline feasibility gates satisfied with limitations. R1a is complete.
 The native GitHub blocking graph uses R2 → R1 (R1b), so R2 is not blocked by the
@@ -32,9 +34,9 @@ already-completed R1a stage. This avoids a circular R1/R2 issue dependency.
 
 | Stage | Tracking issue | Current gate |
 |---|---|---|
-| R1 | [LMThermal #6](https://github.com/LounaMaili/LMThermal/issues/6) | R1a complete; complete R1b DRAFT ready for explicit owner contract review |
+| R1 | [LMThermal #6](https://github.com/LounaMaili/LMThermal/issues/6) | R1a/R1b accepted; PR #13 integrated; closed |
 | R2 | [LMThermal #7](https://github.com/LounaMaili/LMThermal/issues/7) | Scoped baseline complete/closed; focused evidence/presentation integrated; original prototypes remain separate |
-| R3 | [LMThermal #8](https://github.com/LounaMaili/LMThermal/issues/8) | R2 prerequisite resolved; blocked by explicit R1b acceptance in R1 |
+| R3 | [LMThermal #8](https://github.com/LounaMaili/LMThermal/issues/8) | Unblocked; isolated contract/corpus implementation in progress; open until all conformance gates |
 | R4 | [LMThermal #9](https://github.com/LounaMaili/LMThermal/issues/9) | Blocked by R3 and its prior gates |
 | R5 | [LMThermal-Desktop #2](https://github.com/LounaMaili/LMThermal-Desktop/issues/2) | Development blocked by R3; real R4 output also required for interoperability completion |
 | R6 | [LMThermal #10](https://github.com/LounaMaili/LMThermal/issues/10) | Blocked by both R4 and R5 |
@@ -45,7 +47,7 @@ already-completed R1a stage. This avoids a circular R1/R2 issue dependency.
 ```text
 R1a owner-approved product/semantic direction [complete]
   └── R2 framing, codec and storage feasibility
-        └── R1b focused owner wire review / final freeze [R1 remains open]
+        └── R1b owner-approved final freeze [integrated; R1 closed]
               └── R3 canonical corpus / pure contract primitives
                     ├── R4 Android acquisition recorder
                     └── R5 Linux/Windows reader and offline adapter

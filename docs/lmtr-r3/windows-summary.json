@@ -1,0 +1,17 @@
+{
+  "status": "passed requested native gates; operator must review retained reports",
+  "branch": "feat/lmtr-r3-contract-conformance",
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "source_immutability": "clean checkout and per-fixture SHA checks; manifest unchanged",
+  "checkout_mode": "detached_actions_push",
+  "jvm_tests": 71,
+  "jvm_errors": 0,
+  "ntfs_sparse": "executed; see ntfs.json",
+  "jvm_skipped": 0,
+  "jvm_failures": 0,
+  "report_filesystem": "NTFS",
+  "manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+  "python_tests": 64,
+  "windows": "Microsoft Windows NT 10.0.20348.0",
+  "commit": "9770e5a228a56884221103f7eae4b52297b8314e"
+}

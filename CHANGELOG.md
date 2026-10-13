@@ -4,6 +4,39 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R3 native Windows CI validation — 2026-10-13)
+
+- Added a branch-restricted, exact-SHA Windows GitHub Actions protocol with JDK17, Python3.13, bounded resources, read-only token permissions and persistent success/failure artifacts. It executes the existing independent suites and native NTFS sparse/full-integrity gate without camera or Android dependencies.
+- Preserved the first native CI failure before tests and hardened no-output Git handling with explicit arrays and detailed failure-location artifacts.
+- Recorded actual GitHub-hosted Windows Server2022/NTFS success:71JVM/64Python,51case classifications per reader,33independent rewrites, matching43JSON vectors,29hostile cases, cancellation and sparse >4GiB/full71CHUNK integrity. Exact raw receipts and passing/failed run/artifact hashes are retained; ART stays unexecuted.
+- Added four native preflight rejection guards for wrong SHA/ref/context and dirty source.
+- Restricted detached checkout acceptance to the exact authorized Actions push branch/ref/SHA and retained strict HEAD/clean-source checks; report summaries now include Python counts and checkout mode. The frozen wire, canonical corpus and production applications remain unchanged.
+
+### Fixed (R3 final hardening and platform preparation — 2026-10-13)
+
+- Added independently checked mixed-corruption, historical checkpoint/page, feature/view and lineage attacks without modifying the 51 pinned fixtures or their original manifest. Enforced Python signed-64 reference arithmetic/self-parent rejection and both readers' approach-B/null-entry lineage boundaries.
+- Added cooperative full/recovery cancellation with truthful non-success propagation, callback restoration and measured record-boundary cleanup; large synchronous hashes/decompression remain non-preemptive. Preserved prior reports and added new hardening/cancellation checkpoints.
+- Prepared an SDK-independent host build, reviewed native Windows PowerShell runner and optional bounded-disk NTFS sparse adapter. Native Windows/ART are explicitly NOT EXECUTED here; optional reader enhancements and R4/R6 producer/backend duties are separated from R3 contract requirements. No frozen wire, production application, camera or thermometry changes.
+
+### Added (Isolated LMTR v1 R3 conformance checkpoint — 2026-10-13)
+
+- Added a standalone Kotlin/JVM contract module and independently structured standard-library Python reference for accepted LMTR v1 exact JSON, framing/integrity, metadata, grids/masks/evidence/views, STORED/DEFLATE, chronology, paged indexing and immutable bounded-prefix recovery. Neither is wired into Android or Desktop production applications.
+- Generated 51 small synthetic canonical binary files (33 positive, 18 negative), exact provenance/SHA inventory, bidirectional runtime interoperability and numerical/adversarial checks. Added on-demand sparse-offset stress tooling; explicit selected/full scopes and local resource refusal prevent partial verification claims.
+- Fixed test-discovered edge cases in empty reference bounds, synthetic Float32 recipes, snapshot fanout/body admission and historical index-page validation. Kept exact binary signed-zero/mask authority and precise unknown optional JSON semantics.
+- Documented reproducible host commands, implemented scope and remaining Windows/ART, general salvage and asynchronous recorder/backend durability gates. R3 #8 remains open; no R3 merge, production recorder, camera/thermometry change or physical-calibration claim.
+
+### Fixed (R3 recovery, resource and interoperability continuation — 2026-10-13)
+
+- Preserved and published the interrupted R3 checkpoint; added immutable navigation-damage recovery, explicit cancellable salvage with narrow verified-range scope, checkpoint-chain guards and regressions. Known committed source corruption remains an integrity failure and is never fabricated as a missing observation.
+- Replaced retained recovery suffix bodies with bounded fixed references; added an independent 17-CHUNK/128 MiB source-prefix memory/parity stress. Removed image-sized Python statistics temporaries, aligned strict JSON input/canonical byte budgets and version/codec error classes, and rejected unsupported Kotlin CLI options instead of silently ignoring requested seek semantics.
+- Recorded real Fedora sparse access beyond 4 GiB with independent full Python integrity, sampled memory and explicit Kotlin local refusal for a large chunk. Added cross-runtime version/codec/recovery/scan vectors, native Windows instructions and byte-preserving corpus/source checkout attributes; native Windows/ART and remaining runtime gates stay pending.
+
+### Added (R3 indexed intake-time and stream selection — 2026-10-13)
+
+- Added independent bounded Kotlin/Python seek APIs and CLI commands selecting the first recorded entry at/after the common recorder-intake time, optionally filtered by declared stream participation. Original sensor clocks stay separate; explicit segment events and not-found results remain truthful.
+- Compared every positive fixture to sequential chronology oracles and added bidirectional runtime seek cases. Exercised eight-level indexing and explicit candidate/predecessor/suffix/tail recovery limits; aligned depth refusal and strict typed-token newline validation.
+- Kept absent finalization UTC unknown rather than borrowing earlier creation UTC. Added Python body/footer sync barriers with an injected incomplete-append regression, explicit storage errors and pre-allocation bounds for synthetic recipes. No wire, application, measurement or camera behavior changed; remaining platform/runtime conformance gates stay open.
+
 ### Changed (Explicit LMTR R1b acceptance — 2026-10-13)
 
 - Recorded explicit owner acceptance of complete r1b-review-2, D1–D10 and historical-conversion approach B; published `docs/LMTR_WIRE_V1.md` as the normative frozen R3 specification with unchanged reviewed rule body/constants and byte-equivalent local shape definitions.
