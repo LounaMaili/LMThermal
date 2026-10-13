@@ -15,10 +15,16 @@ trap 'adb -e logcat -d > "$reports_dir/logcat.txt" || true' EXIT
 adb -e install -r lmtr-art/build/outputs/apk/debug/lmtr-art-debug.apk
 adb -e install -r lmtr-art/build/outputs/apk/androidTest/debug/lmtr-art-debug-androidTest.apk
 adb -e shell am instrument -w -r org.lmthermal.art.test/androidx.test.runner.AndroidJUnitRunner | tee "$reports_dir/instrumentation.txt"
-grep -Eq '^OK \([1-9][0-9]* tests?\)' "$reports_dir/instrumentation.txt"
-if grep -Eq 'FAILURES!!!|INSTRUMENTATION_FAILED' "$reports_dir/instrumentation.txt"; then exit 1; fi
+# Preserve independently readable synthetic evidence even when another assertion fails.
+# Failure remains the final verdict; extraction/readback must never turn it into success.
+instrumentation_verdict=1
+if grep -Eq '^OK \([1-9][0-9]* tests?\)' "$reports_dir/instrumentation.txt" &&
+   ! grep -Eq 'FAILURES!!!|INSTRUMENTATION_FAILED' "$reports_dir/instrumentation.txt"; then
+  instrumentation_verdict=0
+fi
 adb -e exec-out run-as org.lmthermal.art tar cf - files/r4 > "$reports_dir/synthetic.tar"
 tar xf "$reports_dir/synthetic.tar" -C "$reports_dir"
 python3 tools/check_lmtr_r4.py --existing "$reports_dir/files/r4/generated" --report "$reports_dir/python-readback.json"
 python3 tools/check_lmtr_r4.py --existing "$reports_dir/files/r4/source/generated" --report "$reports_dir/python-source-readback.json"
 test -z "$(git status --porcelain)"
+exit "$instrumentation_verdict"

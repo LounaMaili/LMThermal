@@ -84,6 +84,9 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     private var pendingBytes=0L;private var controlUsed=0L;private var maxPrep=0L;private var maxWriter=0L
     private var accepted=0L;private var acknowledged=0L;private var prepDrops=0L;private var writerDrops=0L
     private var chunks=0L;private var checkpoints=0L
+    // Sticky evidence failure: later exceptions may change the diagnostic reason, never
+    // restore permission to certify END after a delivered/admitted item lost its journal.
+    private var unrepresentedLoss=false
     private var stopped=false;private var prepDone=false;private var lastWitness=origin
     private var terminationWitness:Long?=null
     private var failureCode="local_resource_limit"
@@ -191,6 +194,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     }
     private fun reserveControlLocked():Boolean {
         if(controlUsed+controlCharge>limits.controlBytes) {
+            unrepresentedLoss=true
             terminateLocked("failed","loss_journal_exhausted","loss_journal_exhausted");return false
         }
         controlUsed+=controlCharge;return true
@@ -226,8 +230,8 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;lock.notifyAll()
                 }
             }
-        } catch(_:InterruptedException) { synchronized(lock){terminateLocked("failed","preparation_interrupted","preparation_interrupted")} }
-        catch(_:Exception) { synchronized(lock){terminateLocked("failed","preparation_failed","preparation_failed")} }
+        } catch(_:InterruptedException) { synchronized(lock){unrepresentedLoss=true;terminateLocked("failed","preparation_interrupted","preparation_interrupted")} }
+        catch(_:Exception) { synchronized(lock){unrepresentedLoss=true;terminateLocked("failed","preparation_failed","preparation_failed")} }
         finally { synchronized(lock){prepFlight=0;prepDone=true;lock.notifyAll()} }
     }
 
@@ -305,7 +309,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                 if(firstUncoveredAck!=null && tick-firstUncoveredAck!!>=CHECKPOINT_INTERVAL_NS)checkpoint()
                 if(synchronized(lock){stopped && prepDone && writer.isEmpty()})break
             }
-            check(reason!="loss_journal_exhausted") { "Cannot certify unjournaled delivered loss" }
+            synchronized(lock) { check(!unrepresentedLoss) { "Cannot certify unjournaled delivered/admitted loss" } }
             val cutoff=synchronized(lock){terminationWitness!!}
             if(active!=null)add(event("segment_end",timeline(cutoff),mapOf("reason" to reason)),witness=cutoff)
             seal()

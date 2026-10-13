@@ -4,6 +4,21 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 exceptional acquisition copy-cost probe)
+
+- Measure callback-side immutable ownership of synthetic malformed full-size transport separately from deferred HT evidence freezing; verify copied buffers cannot be mutated by the source. The host/ART test tool performs no camera access and times no parsing, thermometry, hashing, compression or I/O.
+
+### Fixed (R4 noncertifiable loss remains sticky)
+
+- Retain synthetic ART outputs/readbacks after a failing assertion while preserving the strict non-success verdict.
+- Preserve a sticky unrepresented-loss condition when the loss journal is exhausted or a preparation worker fails unexpectedly. A later exception may change diagnostics but cannot authorize END for abandoned evidence. Actual isolated API26 ART exposed the prior reason-overwrite race; add a deterministic mixed-failure regression, preserving the failed run and original assertions.
+
+### Added (R4 authoritative-source validation receipts)
+
+- Recorded 374 passing JVM tests, 64 Python tests, Android build/lint, unchanged accepted wire and all 51 pinned fixtures. Actual API26/API35 owner-guard checkpoints passed 55 ART tests each with independent Python readback of 12 engine files and 75 synthetic source observations per API; emulator evidence is not Pixel8/HT performance.
+- Recorded an exact-SHA 120-second 25 Hz non-USB host repeat: 3000 retained observations, 38 explicitly unavailable planes, zero preparation/writer drops, 118 chunks, 23 checkpoints and 184.802 ms Stop. Published sanitized queue/admission/copy-cost/integrity receipts and preserved earlier reporter/infrastructure failures and prior reports.
+- Updated source/lifecycle/configuration/roadmap documentation and kept physical adapter/cadence/freshness/memory/recovery gates pending. No product recording UI, controls, thermometry, frozen contract, canonical fixture or Desktop change.
+
 ### Fixed (R4 ART build isolation)
 
 - Add a camera-free Gradle entry point excluding production app configuration and its NDK/CMake/UVC requirements, after an API26 job booted but failed provisioning an unrelated product NDK. Reuse the exact same contract, recorder and adapter sources; preserve the failure and product ABI.
@@ -37,14 +52,14 @@ All notable changes to LMThermal will be documented in this file.
 ### Added (R4 camera-free Android runtime harness)
 
 - Added a separate test-only Android application packaging the existing LMTR contract/recorder without production UVC/JNI or changing the product arm64 ABI. It shares recorder regressions and tests exact JSON/binary/hash/codec semantics, all 51 pinned inputs and real synthetic engine output.
-- Added exact-SHA branch-restricted API 26/35 x86_64 emulator CI with pinned setup actions, read-only permissions, disabled emulator cameras and retained logs/synthetic artifacts. Independent Python can read ART-produced outputs directly; actual runtime verdicts remain pending until artifacts are reviewed.
+- Added exact-SHA branch-restricted API 26/35 x86_64 emulator CI with pinned setup actions, read-only permissions, disabled emulator cameras and retained logs/synthetic artifacts. Independent Python can read ART-produced outputs directly; the initial packaging checkpoint was pending until runtime artifacts were reviewed; the later receipts above record actual scope.
 
 ### Added (R4 camera-free recorder foundation — 2026-10-13)
 
 - Added an isolated pure-Kotlin recorder module with owned module observations, exact Float32/masks/native/acquisition evidence, context/clock/session identities, explicit capability profiles and qualified source losses. It is not linked into the app and adds no user recording action, camera controls or thermometry change.
 - Implemented bounded asynchronous preparation/writer stages, separately accounted in-flight/pending/control reservations, truthful overload gaps, first-intake idle sealing and post-ack checkpoints, global segment transitions, idempotent cutoff/drain, local append/close/reopen and preserved incomplete files on uncertain failures.
 - Extracted the existing R3 writer/index into a shared incremental session used by both fixture and recorder paths, with private owned state and poisoned-owner guards. Wire/schema and all 51 pinned fixtures are unchanged.
-- Added deterministic non-USB simulations, failure/race tests and independent Python full readback of actual engineering outputs. ART has no available authorized device/emulator; module/lifecycle/live recording acceptance remains pending in open #9.
+- Added deterministic non-USB simulations, failure/race tests and independent Python full readback of actual engineering outputs. At this initial foundation checkpoint ART had no available authorized device/emulator; later source/lifecycle/ART receipts above supersede that availability status, while physical live acceptance remains pending in open #9.
 
 ### Changed (R3 integration — 2026-10-13)
 

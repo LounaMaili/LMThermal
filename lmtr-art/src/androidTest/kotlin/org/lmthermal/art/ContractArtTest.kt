@@ -44,8 +44,9 @@ class ContractArtTest {
         }
     }
     @Test fun authoritativeSourceAdapterProducesSyntheticReadback() {
-        org.lmthermal.recording.CameraRecordingStressProbe.main(arrayOf(
-            File(instrumentation.targetContext.filesDir,"r4/source/generated").absolutePath,"3"))
+        val output=File(instrumentation.targetContext.filesDir,"r4/source/generated")
+        org.lmthermal.recording.CameraRecordingStressProbe.main(arrayOf(output.absolutePath,"3"))
+        org.lmthermal.recording.AcquisitionOwnershipCostProbe.measure(File(output,"ownership-copy-cost.json"))
     }
     @Test fun realEngineOutputsArePreservedForIndependentHostReadback() {
         // Only synthetic data enters this explicitly exported directory; no camera is instantiated.

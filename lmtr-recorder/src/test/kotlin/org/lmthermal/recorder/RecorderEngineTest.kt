@@ -193,6 +193,19 @@ class RecorderEngineTest {
         assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(m.observation(2)))
         assertEquals(Admission.REFUSED,e.admit(m.observation(3)));release.countDown();assertFalse(e.awaitStop(10000)!!.finalized)
     }
+    @Test fun laterPreparationFailureCannotClearUnjournaledLossEvidence() {
+        val m=SimulatedRecordingModule();val cap=m.observation(0).ownedBytes
+        val entered=CountDownLatch(1);val release=CountDownLatch(1)
+        val e=engine(m,limits=RecorderLimits(preparationBytes=cap,writerBytes=cap,maxObservationBytes=cap,
+            preferredChunkBytes=cap*4,controlBytes=32768),hook={
+                entered.countDown();check(release.await(5,TimeUnit.SECONDS));throw IOException("Injected preparation failure")
+            })
+        e.admit(m.observation(0));assertTrue(entered.await(5,TimeUnit.SECONDS))
+        e.admit(m.observation(1));assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(m.observation(2)))
+        assertEquals(Admission.REFUSED,e.admit(m.observation(3)))
+        release.countDown();val result=e.awaitStop(10000)!!
+        assertFalse(result.finalized);assertTrue(result.failure!!.contains("Cannot certify unjournaled"))
+    }
     @Test fun malformedOriginalMaskCannotReceivePromisedChunkFooter() {
         val m=SimulatedRecordingModule();val o=m.observation(0,masked=true)
         val bad=o.payloads.map { if(it.role=="validity")RecordingPayload(it.descriptor.value(),ByteArray(it.size){2}) else it }

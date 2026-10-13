@@ -86,8 +86,8 @@ so this helper cannot accidentally install/run against a physical paired phone.
 Third checkpoint run [38412292500](https://github.com/LounaMaili/LMThermal/actions/runs/38412292500)
 on `10a4014238d28af58bf3a405cacf9ac76df03bf6` is preserved. API26 failed during
 SDK system-image download (`Error on ZipFile unknown archive`), before any emulator
-or test execution. API35 verdicts and the final runtime receipt must be inspected
-separately; an infrastructure failure is not a passing API26 gate.
+or test execution. API35 passed 53 ART tests and both independent readbacks; this infrastructure
+failure was not a passing API26 gate.
 
 The synthetic UI cadence now updates `CameraPreview`, not an acquisition-statistics
 counter. Recorder-clock scale is one nanosecond but its actual resolution remains
@@ -112,3 +112,51 @@ to install the product NDK and failed before tests. `tools/lmtr-r4-art` reuses t
 same module sources with pinned AGP/Kotlin versions and needs only JDK17/SDK35;
 no NDK/CMake/UVC/JNI dependency is configured. This fixes an integration-tool boundary,
 not a recorder assertion. The product root build/ABI remains unchanged.
+
+## Reviewed owner-guard runtime checkpoint
+
+[Run 38414074626](https://github.com/LounaMaili/LMThermal/actions/runs/38414074626),
+exact source `b5c9dca80ce174f0ff5125c9f42e1bce66921115`, passed **55 tests on each
+API26/API35 x86_64 emulator**, including the two owner race/observer regressions.
+[Receipt](art-owner-checkpoint.json) retains model/ABI/SDK, source SHA, report/archive
+hashes and both independent Python readbacks per API: 12 actual engine files (ten
+completed, two bounded recovered prefixes) plus 75 source observations. Logical
+Float32/mask/native/acquisition bytes, contexts/sequences and source immutability pass.
+Canonical assets are all 51 unchanged R3 inputs; no new canonical corpus is generated.
+
+API26 reports Android SDK built for x86_64 (`x86_64,x86`), API35 reports
+sdk_gphone64_x86_64 (`x86_64,arm64-v8a`); `java.vm.name` is `Dalvik` on ART. This is
+actual Android instrumentation, not a JVM inference or Pixel8/HT-301 test. The shared
+33 engine +17 source/lifecycle +5 ART-specific tests cover idle/Stop/queue/recovery,
+storage faults, source epochs, exact bytes/masks, feature/version corpus rejection and
+close/reopen. They do not execute every host JSON/adversarial vector on ART, measure
+ART/RSS peaks, prove infinite schedules or certify filesystem/power-loss durability.
+
+[Run 38414323583](https://github.com/LounaMaili/LMThermal/actions/runs/38414323583)
+on `d79a0361754bc8d145aa5ab07be663a8fafcf060` also passed both API jobs, 55 tests
+per API and both readbacks after the literal matrix correction. Earlier API26 failures
+and the rejected matrix-expression run are preserved; no failed run is relabeled.
+The final isolated-build run is a separate exact-SHA gate recorded below when reviewed.
+
+## Isolated-build failure preserved
+
+[Run 38415016892](https://github.com/LounaMaili/LMThermal/actions/runs/38415016892)
+on `7b587e246455e246651f2547c1a059163763f4ae` passed API35 (55 tests and both
+readbacks), but API26 executed all 55 with one failed assertion: exhausted-loss-reserve
+must preserve an incomplete source. A later preparation exception could overwrite the
+reason used as the no-END guard. The engine now retains a sticky unrepresented-loss
+flag under its intake lock; unexpected worker failure also prevents certifying abandoned
+admitted work. A deterministic mixed-failure regression protects this without weakening
+the original assertion. This is a genuine recorder bug, not infrastructure or a wire
+change. Historical passing checkpoints do not erase this failure; final ART must retest.
+
+The harness now extracts its synthetic `files/r4` outputs even after a test assertion
+failure, while returning that failure after independent readback. It does not export
+unrelated test-private caches/fixture frames; successful file parity cannot override a
+failed test verdict. The earlier isolated API26 failure has logs but no extracted files,
+because its old harness exited at the assertion gate.
+
+The test-only `AcquisitionOwnershipCostProbe` measures the exceptional source-callback
+copy of 224255 synthetic malformed transport bytes independently of the off-worker
+HT fixture benchmark. It verifies retained bytes survive source mutation. The ART
+source probe also runs it; no physical capture or thermometry invocation is introduced.
