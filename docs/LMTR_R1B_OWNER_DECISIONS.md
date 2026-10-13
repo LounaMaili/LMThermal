@@ -1,3 +1,31 @@
+# R1b explicit owner acceptance — 2026-10-13
+
+The owner explicitly accepts the complete **`r1b-review-2`**, D1–D10 and **approach B**,
+as reviewed at `2c18401af7ef45319a7c025f136d94939e5bee03`. The [accepted normative
+LMTR v1 contract](LMTR_WIRE_V1.md) is frozen for R3; no end-user release/runtime
+conformance or automatic R3 merge is implied. PR #13 integration and #6 closure
+are authorized only after final checks and actual main integration.
+
+| Accepted decision | Scope |
+|---|---|
+| D1 | Identity, versions, envelope and compatibility |
+| D2 | 64 immutable-purpose stream slots and segment rules |
+| D3 | Exact canonical JSON and semantic context/segment IDs |
+| D4 | Recorder-intake chronology separate from original clocks |
+| D5 | STORED/DEFLATE baseline; production Zstd deferred |
+| D6 | Strict bounded same-observation/chunk native views |
+| D7 | Hard file limits distinct from preferences/queues/local admission |
+| D8 | Monotonic idle policy, serialized Stop and checkpoint behavior |
+| D9 | Bounded index/integrity/read-only recovery |
+| D10 | Local authority, verified export, immutability and historical conversion B |
+
+The following complete review register is preserved as **historical rationale**;
+its prior pending/DRAFT statements do not override the explicit acceptance above.
+R7 remains planned: faithful multi-file dataset provenance and qualified imported
+timelines require a separately reviewed extension; base v1 must not invent them.
+
+---
+
 # LMTR R1b — owner decision review
 
 **DRAFT / `r1b-review-2` / 2026-10-12. No R1b owner acceptance is recorded.**

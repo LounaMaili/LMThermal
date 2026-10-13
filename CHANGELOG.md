@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (Explicit LMTR R1b acceptance — 2026-10-13)
+
+- Recorded explicit owner acceptance of complete r1b-review-2, D1–D10 and historical-conversion approach B; published `docs/LMTR_WIRE_V1.md` as the normative frozen R3 specification with unchanged reviewed rule body/constants and byte-equivalent local shape definitions.
+- Preserved the original review document, decisions, illustrative metadata and R2 history; distinguished wire acceptance from implementation conformity/end-user release. Updated canonical references/registry/roadmap; authorized integration and R1 closure remain gated on successful checks and actual main integration.
+- R3 pure Kotlin/Python contract work is authorized after integration. No production camera/thermometry/UI, Desktop implementation, LMTX v1, recording prototypes or runtime dependencies were changed by acceptance.
+
 ### Changed (Targeted recording R1b review-2 corrections — 2026-10-12)
 
 - Kept the unaccepted draft structure/R1a invariants/R2 evidence; clarified single-file Parent limits and recommended deferring historical multi-file provenance/imported timeline semantics to a future required feature, preserving R7's explicit conversion gate and strict legacy coexistence.

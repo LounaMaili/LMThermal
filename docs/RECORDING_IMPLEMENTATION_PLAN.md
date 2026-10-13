@@ -1,3 +1,11 @@
+# Current R1b acceptance / R3 handoff — 2026-10-13
+
+The owner explicitly accepted [LMTR v1](LMTR_WIRE_V1.md), complete `r1b-review-2`
+D1–D10 and approach B. R1 closure requires verified main integration; R3 then
+becomes authorized/unblocked. R3 remains open pending real conformance gates;
+R4/R5 and later implementation are not authorized. Historical statuses below
+remain the stage-design record; acceptance is not production format release.
+
 # Common recording implementation roadmap and issues
 
 **R1a product/semantic direction accepted, 2026-10-07. Wire contract provisional.**

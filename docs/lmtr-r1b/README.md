@@ -1,5 +1,11 @@
 # LMTR R1b review companions
 
+Historical review packet at `2c18401af7ef45319a7c025f136d94939e5bee03`.
+The owner accepted review-2 on 2026-10-13; the [canonical contract](../LMTR_WIRE_V1.md)
+and [accepted registry](../lmtr-v1/README.md) now govern R3. The stored review report
+hashes describe the reviewed snapshots, not later editorial acceptance prefixes.
+Draft labels below remain historical and do not revoke explicit owner acceptance.
+
 **DRAFT `r1b-review-2`; NONCANONICAL metadata; no owner acceptance or R3 corpus.**
 
 - [Complete proposed contract](../LMTR_WIRE_V1_DRAFT.md).

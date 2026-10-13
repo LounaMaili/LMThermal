@@ -1,3 +1,11 @@
+# Accepted R1b reference — 2026-10-13
+
+The [canonical LMTR v1 specification](LMTR_WIRE_V1.md) now records explicit owner
+acceptance of `r1b-review-2`, D1–D10 and approach B. The review/architecture text
+below remains historical rationale. Wire acceptance is frozen for R3, without
+claiming implementation or end-user release. R1 closure follows main integration;
+production R4/R5 remain unauthorized.
+
 # LMThermal Recording — normative candidate, R1a
 
 **R1a product/semantic direction: owner-accepted, 2026-10-07.**
