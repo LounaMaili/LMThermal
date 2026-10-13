@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 authoritative acquisition and lifecycle integration)
+
+- Added an optional module-owned acquisition observation channel before UI StateFlow conflation, with genuine nanosecond receipt witnesses, qualified native callback loss signals and immutable source owners. HT-301's existing gate/control/thermometry path is unchanged; the channel is inert without explicit subscription.
+- Added a separate camera-recording adapter module, deferred owned-evidence admission on the existing recorder preparation worker, exact HT-301 Float32/native/transport/settings/calibration evidence and guarded Start/Stop/lifecycle integration. The product does not link the adapter/recorder or expose recording UI.
+- Added session-generation guards, source-error outcomes, callback isolation, owner close/replacement/background/rotation/screen-off tests and an expanded ART harness. Fixed test-only evidence extraction after Gradle's automatic target uninstall; the first API26/API35 run passed 37 ART tests per emulator but its extraction gate failed and is preserved.
+
 ### Added (R4 camera-free Android runtime harness)
 
 - Added a separate test-only Android application packaging the existing LMTR contract/recorder without production UVC/JNI or changing the product arm64 ABI. It shares recorder regressions and tests exact JSON/binary/hash/codec semantics, all 51 pinned inputs and real synthetic engine output.

@@ -91,6 +91,8 @@ data class CameraSessionState<P>(
 /** One owned source. close must await acquisition release before another source may open. */
 interface CameraSession<P> {
     val state: StateFlow<CameraSessionState<P>>
+    /** Optional acquisition route. No consumer subscribes implicitly on Connect or UI collection. */
+    val observations: CameraObservationSource? get() = null
     suspend fun perform(action: CameraAction)
     suspend fun close(reason: CameraCloseReason)
 }

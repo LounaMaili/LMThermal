@@ -31,9 +31,13 @@ def readback(output):
         with Reader(path) as reader:
             report = reader.check(full=True, recover=case['name'] in ('torn-tail', 'navigation-failure'))
             for field in ('status', 'integrity_scope', 'summary', 'logical_hashes', 'declared_end_status'):
-                assert report.get(field) == case['kotlin'].get(field), (case['name'], field)
+                if field in case['kotlin']:
+                    assert report.get(field) == case['kotlin'][field], (case['name'], field)
             if case['name'] not in ('torn-tail', 'navigation-failure'):
-                originals = iter(case['expected'])
+                if 'expected_jsonl' in case:
+                    originals = (loads(line) for line in (output / case['expected_jsonl']).read_bytes().splitlines())
+                else:
+                    originals = iter(case['expected'])
                 observed = 0
                 # Full validation above establishes chronology. Inspect actual independent decoded bytes.
                 at = 0

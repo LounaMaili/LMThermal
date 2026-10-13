@@ -7,3 +7,7 @@ project(":lmtr-contract").projectDir = file("../../lmtr-contract")
 
 include(":lmtr-recorder")
 project(":lmtr-recorder").projectDir = file("../../lmtr-recorder")
+
+include(":core", ":camera-recording")
+project(":core").projectDir=file("../../core")
+project(":camera-recording").projectDir=file("../../camera-recording")

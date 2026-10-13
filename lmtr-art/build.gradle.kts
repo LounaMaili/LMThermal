@@ -9,11 +9,14 @@ android {
     kotlinOptions { jvmTarget = "17" }
     sourceSets.getByName("androidTest").apply {
         java.srcDir("../lmtr-recorder/src/test/kotlin")
+        java.srcDir("../camera-recording/src/test/kotlin")
+        resources.srcDir("../core/src/test/resources")
         assets.srcDir("../lmtr-contract/src/test/resources")
     }
 }
 dependencies {
-    implementation(project(":lmtr-contract")); implementation(project(":lmtr-recorder"))
+    implementation(project(":lmtr-contract")); implementation(project(":lmtr-recorder")); implementation(project(":camera-recording")); implementation(project(":core"))
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     androidTestImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

@@ -11,12 +11,28 @@ object Ht301ExportEvidence {
     fun freeze(measurement: RadiometricMeasurement): SourceExportEvidence {
         val raw = measurement.source.imageBytes()
         require(raw.indices.step(2).all { i -> ((raw[i].toInt() and 255) or ((raw[i + 1].toInt() and 255) shl 8)) < Ht301Layout.RAW14_LIMIT })
+        val metadata = interpretation(measurement)
+        val path = "extensions/" + NAMESPACE + "/metadata.json"
+        return SourceExportEvidence(listOf(
+            EvidencePayload("native", "data/native.u16le", "native_samples", "application/octet-stream", OwnedMember(raw),
+                mapOf("encoding" to "ht301.raw14", "dtype" to "u16", "byte_order" to "little",
+                    "shape" to listOf(Ht301Layout.IMAGE_HEIGHT, Ht301Layout.WIDTH), "order" to "row_major", "coordinate_space" to "native")),
+            EvidencePayload("acquisition", "data/acquisition.bin", "acquisition", "application/octet-stream",
+                OwnedMember(measurement.source.transportBytes()), mapOf("encoding" to "ht301.uvc-yuyv-transport")),
+            EvidencePayload("ht301-metadata", path, "extension_json", "application/json", OwnedMember(LmtxJson.encode(metadata)))),
+            listOf(mapOf("id" to NAMESPACE, "schema_version" to mapOf("major" to 1, "minor" to 0), "metadata_payload_id" to "ht301-metadata")),
+            listOf(NAMESPACE), mapOf("native_samples" to "supported", "acquisition_payload" to "supported", "calibration_settings" to "supported"),
+            mapOf("kind" to "native_equivalent", "physical_accuracy" to "not_independently_validated",
+                "warning" to NativeEquivalentThermometry.WARNING))
+    }
+    /** Already-evaluated interpretation facts shared by still and recording adapters. No raw/image copying. */
+    fun interpretation(measurement:RadiometricMeasurement):JsonObject {
         val p = measurement.parameters; val t = measurement.lookupTrace; val c = t.configuration; val e = t.environment
         fun point(p: TemperaturePoint): JsonObject = buildMap {
             put("raw_index", p.index); put("native_equivalent_c", p.celsius)
             if (p.x != null && p.y != null) put("xy", listOf(p.x, p.y))
         }
-        val metadata = mapOf(
+        return mapOf(
             "transport" to mapOf("payload_id" to "acquisition", "image_bytes" to Ht301Layout.IMAGE_BYTES,
                 "trailer_bytes" to Ht301Layout.TRAILER_BYTES, "rows" to Ht301Layout.TRANSPORT_HEIGHT),
             "frame_relationship" to mapOf("sequence" to measurement.sequence.toString(), "native_payload_id" to "native"),
@@ -36,17 +52,6 @@ object Ht301ExportEvidence {
             "algorithm_id" to "org.lmthermal.ht301.native-equivalent-normal",
             "algorithm_version_status" to "not_exposed",
             "physical_accuracy" to "not_independently_validated", "warning" to NativeEquivalentThermometry.WARNING)
-        val path = "extensions/" + NAMESPACE + "/metadata.json"
-        return SourceExportEvidence(listOf(
-            EvidencePayload("native", "data/native.u16le", "native_samples", "application/octet-stream", OwnedMember(raw),
-                mapOf("encoding" to "ht301.raw14", "dtype" to "u16", "byte_order" to "little",
-                    "shape" to listOf(Ht301Layout.IMAGE_HEIGHT, Ht301Layout.WIDTH), "order" to "row_major", "coordinate_space" to "native")),
-            EvidencePayload("acquisition", "data/acquisition.bin", "acquisition", "application/octet-stream",
-                OwnedMember(measurement.source.transportBytes()), mapOf("encoding" to "ht301.uvc-yuyv-transport")),
-            EvidencePayload("ht301-metadata", path, "extension_json", "application/json", OwnedMember(LmtxJson.encode(metadata)))),
-            listOf(mapOf("id" to NAMESPACE, "schema_version" to mapOf("major" to 1, "minor" to 0), "metadata_payload_id" to "ht301-metadata")),
-            listOf(NAMESPACE), mapOf("native_samples" to "supported", "acquisition_payload" to "supported", "calibration_settings" to "supported"),
-            mapOf("kind" to "native_equivalent", "physical_accuracy" to "not_independently_validated",
-                "warning" to NativeEquivalentThermometry.WARNING))
     }
+
 }

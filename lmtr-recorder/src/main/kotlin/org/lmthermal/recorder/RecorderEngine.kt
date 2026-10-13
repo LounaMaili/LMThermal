@@ -73,7 +73,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     private val header=FrozenJson(header).value()
     private val origin=this.header["timeline"].obj()["origin_monotonic_ns"].d()
     private val lock=Object()
-    private data class Intake(val observation:RecordingObservation,val witness:Long,val drop:String?=null,val loss:FrozenJson?=null)
+    private data class Intake(val offer:RecordingOffer,val witness:Long,val drop:String?=null,val loss:FrozenJson?=null)
     private data class Work(val observation:PreparedObservation?,val streamId:String,val sequence:Long,val witness:Long,
         val stream:FrozenJson,val drop:String?,val charge:Long,val loss:FrozenJson?=null)
     private val intake=ArrayDeque<Intake>();private val writer=ArrayDeque<Work>()
@@ -86,6 +86,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     private var chunks=0L;private var checkpoints=0L
     private var stopped=false;private var prepDone=false;private var lastWitness=origin
     private var terminationWitness:Long?=null
+    private var failureCode="local_resource_limit"
     private var status="completed";private var reason="user_stop";private var failure:String?=null
     private var state="recording"
     private val completion=CompletableFuture<RecorderResult>()
@@ -114,30 +115,36 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         preparationThread.start();writerThread.start()
     }
 
-    /** Non-blocking admission; refused/overloaded deliveries never masquerade as saved measurements. */
-    fun admit(observation:RecordingObservation):Admission = synchronized(lock) {
+    /** Existing owned-byte admission stays source compatible; no data is regenerated. */
+    fun admit(observation:RecordingObservation):Admission {
+        if(observation.stream.byteSize+observation.context.byteSize+observation.facts.byteSize>MAX_OBSERVATION_METADATA_BYTES)
+            return synchronized(lock){terminateLocked("failed","admission_refused","oversize_metadata");Admission.REFUSED}
+        return admit(RecordingOffer(observation.streamId,observation.sequence,observation.stream,observation.ownedBytes){observation})
+    }
+    /** Bounded source admission retains an immutable owner, not an acquisition/UI buffer lease. */
+    fun admit(offer:RecordingOffer):Admission = synchronized(lock) {
         if(stopped)return@synchronized Admission.STOPPED
         val witness=now();require(witness>=lastWitness && witness>=origin) { "Intake clock regressed" };lastWitness=witness
-        if(observation.streamId !in streams || observation.ownedBytes>limits.maxObservationBytes || observation.stream.byteSize+observation.context.byteSize+observation.facts.byteSize>MAX_OBSERVATION_METADATA_BYTES) {
+        if(offer.streamId !in streams || offer.chargedBytes>limits.maxObservationBytes || offer.stream.byteSize>MAX_OBSERVATION_METADATA_BYTES) {
             terminateLocked("failed","admission_refused","unsupported_or_oversize_observation");return@synchronized Admission.REFUSED
         }
-        val session=observation.stream.value()["session_id"].text()
-        val next=if(intakeSessions[observation.streamId]==session)nextSequence[observation.streamId] else null
-        intakeSessions[observation.streamId]=session
-        if(next!=null && observation.sequence!=next) {
+        val session=offer.stream.value()["session_id"].text()
+        val next=if(intakeSessions[offer.streamId]==session)nextSequence[offer.streamId] else null
+        intakeSessions[offer.streamId]=session
+        if(next!=null && offer.sequence!=next) {
             terminateLocked("failed","admission_refused","source_sequence_requires_explicit_gap");return@synchronized Admission.REFUSED
         }
-        nextSequence[observation.streamId]=Math.addExact(observation.sequence,1)
-        if(prepQueued+observation.ownedBytes>limits.preparationBytes) {
+        nextSequence[offer.streamId]=Math.addExact(offer.sequence,1)
+        if(prepQueued+offer.chargedBytes>limits.preparationBytes) {
             if(!reserveControlLocked())return@synchronized Admission.REFUSED
-            // Payload ownership is released immediately; the gap keeps only small qualified source facts.
-            val small=RecordingObservation(observation.streamId,observation.sequence,observation.stream.value(),observation.context.value(),observation.facts.value(),emptyList())
-            intake.add(Intake(small,witness,"preparation_overload"));prepDrops++;lock.notifyAll()
+            intake.add(Intake(lightOffer(offer.streamId,offer.sequence,offer.stream),witness,"preparation_overload"));prepDrops++;lock.notifyAll()
             return@synchronized Admission.PREPARATION_OVERLOAD
         }
-        intake.add(Intake(observation,witness));prepQueued+=observation.ownedBytes;accepted++
+        intake.add(Intake(offer,witness));prepQueued+=offer.chargedBytes;accepted++
         maxPrep=maxOf(maxPrep,prepQueued);lock.notifyAll();Admission.ACCEPTED
     }
+    /** Loss entries release the heavy owner immediately; their materializer is never called. */
+    private fun lightOffer(id:String,sequence:Long,stream:FrozenJson)=RecordingOffer(id,sequence,stream,1){error("Loss must not materialize source data")}
     /** Admit bounded original loss evidence in the same intake ordering as observations. */
     fun admitLoss(loss:RecordingLoss):Admission = synchronized(lock) {
         if(stopped)return@synchronized Admission.STOPPED
@@ -153,14 +160,16 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             nextSequence[loss.streamId]=Math.addExact(last!!,1)
         }
         if(!reserveControlLocked())return@synchronized Admission.REFUSED
-        val vehicle=RecordingObservation(loss.streamId,first?:0,loss.stream.value(),emptyMap(),mapOf(
-            "receipt" to null,"acquisition" to null,"scheduled" to null,"device_sequence" to null,"measurement" to null),emptyList())
-        intake.add(Intake(vehicle,witness,"source_loss",loss.facts));lock.notifyAll();Admission.ACCEPTED
+        intake.add(Intake(lightOffer(loss.streamId,first?:0,loss.stream),witness,"source_loss",loss.facts));lock.notifyAll();Admission.ACCEPTED
     }
     /** First normal termination wins. Resource failures can upgrade it, never reopen intake. */
     fun stop(reason:String="user_stop", interrupted:Boolean=false):CompletableFuture<RecorderResult> = synchronized(lock) {
         if(!stopped)terminateLocked(if(interrupted)"interrupted" else "completed",reason,null)
         completion
+    }
+    /** Source/adapter failure terminates explicitly; it is not preparation/writer overload. */
+    fun failSource(reason:String):CompletableFuture<RecorderResult> = synchronized(lock) {
+        terminateLocked("failed",reason,reason);failureCode="source_failure";completion
     }
     /** Memory-pressure callback stops admission; no queue growth or implicit crop/downgrade. */
     fun memoryPressure():CompletableFuture<RecorderResult> = synchronized(lock) {
@@ -194,22 +203,26 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                 val item=synchronized(lock) {
                     while(intake.isEmpty() && !stopped)lock.wait()
                     if(intake.isEmpty())return@synchronized null
-                    intake.removeFirst().also { if(it.drop==null){prepQueued-=it.observation.ownedBytes;prepFlight=it.observation.ownedBytes} }
+                    intake.removeFirst().also { if(it.drop==null){prepQueued-=it.offer.chargedBytes;prepFlight=it.offer.chargedBytes} }
                 } ?: break
                 prepareHook()
                 var prepared:PreparedObservation?=null;var drop=item.drop
-                try { if(drop==null)prepared=RecordingProfiles.select(item.observation,profile) }
-                catch(_:Exception) { drop="preparation_overload";synchronized(lock){prepDrops++;reserveControlLocked();terminateLocked("failed","invalid_module_evidence","invalid_module_evidence")} }
+                try { if(drop==null) {
+                    val original=item.offer.materialize()
+                    require(original.stream.byteSize+original.context.byteSize+original.facts.byteSize<=MAX_OBSERVATION_METADATA_BYTES)
+                    prepared=RecordingProfiles.select(original,profile)
+                } }
+                catch(_:Exception) { drop="source_loss";synchronized(lock){reserveControlLocked();terminateLocked("failed","invalid_module_evidence","invalid_module_evidence")} }
                 synchronized(lock) {
-                    if(prepared!=null && writerQueued+item.observation.ownedBytes>limits.writerBytes) {
+                    if(prepared!=null && writerQueued+item.offer.chargedBytes>limits.writerBytes) {
                         if(!reserveControlLocked()) { prepFlight=0;throw IllegalStateException("loss_journal_exhausted") }
                         prepared=null;drop="writer_overload";writerDrops++
                     }
                     if(state=="failed"){prepFlight=0;return}
-                    val stream=prepared?.stream ?: FrozenJson(item.observation.stream.value()+("policy" to mapOf(
-                        "level" to profile.wire,"choice" to "explicit","requested_roles" to RecordingProfiles.requested(profile,item.observation.stream.value()["capabilities"].obj()))))
-                    val charge=if(prepared==null)0L else item.observation.ownedBytes
-                    writer.add(Work(prepared,item.observation.streamId,item.observation.sequence,item.witness,stream,drop,charge,item.loss))
+                    val stream=prepared?.stream ?: FrozenJson(item.offer.stream.value()+("policy" to mapOf(
+                        "level" to profile.wire,"choice" to "explicit","requested_roles" to RecordingProfiles.requested(profile,item.offer.stream.value()["capabilities"].obj()))))
+                    val charge=if(prepared==null)0L else item.offer.chargedBytes
+                    writer.add(Work(prepared,item.offer.streamId,item.offer.sequence,item.witness,stream,drop,charge,item.loss))
                     writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;lock.notifyAll()
                 }
             }
@@ -298,7 +311,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             seal()
             val terminal=synchronized(lock){state="finalizing";status to reason}
             append.finish(terminal.first,terminal.second,mapOf("status" to "unknown","clock_source" to "host_utc","reason" to "not_recorded"),
-                if(terminal.first=="failed")mapOf("code" to "local_resource_limit","message" to (failure?:terminal.second)) else null)
+                if(terminal.first=="failed")mapOf("code" to failureCode,"message" to (failure?:terminal.second)) else null)
             backendCloseAttempted=true;backend.close()
             val report=LmtrReader(backend.destination).use { it.check(full=false) }
             synchronized(lock){state="finalized"}

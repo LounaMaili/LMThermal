@@ -13,7 +13,8 @@ import org.lmthermal.core.LatestFrameState
 class CameraSessionOwner<P>(private val scope: CoroutineScope,
     private val activeChanged: (CameraSession<P>?) -> Unit = {},
     private val technicalFailure: (Throwable) -> Unit = {},
-    private val event: (Map<String, Any?>) -> Unit = {}) {
+    private val event: (Map<String, Any?>) -> Unit = {},
+    private val lifetime:CameraSessionLifetime<P>? = null) {
     private val mutex = Mutex()
     private val latest = LatestFrameState(CameraSessionState<P>())
     val state = latest.asStateFlow()
@@ -36,6 +37,7 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
     /** A fatal source ERROR or action failure must release too. Schedule outside the collector/mutex so close can await it. */
     @Synchronized private fun failed(token: Long, error: CameraError) {
         if (token != generation) return
+        lifetime?.invalidated(CameraCloseReason.FAILED)
         invalidate(unavailable(state.value, CameraLifecycle.ERROR, CameraStatus(CameraStatusCode.ERROR), error))
         scope.launch {
             mutex.withLock {
@@ -98,6 +100,7 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
     }
     /** Explicit request. A stale/cancelled open is closed before it can publish or accept actions. */
     fun open(candidate: CameraCandidate<P>): Job {
+        lifetime?.invalidated(CameraCloseReason.REPLACED)
         val token = invalidate(CameraSessionState(module = candidate.module.metadata, device = candidate.device,
             lifecycle = CameraLifecycle.OPENING, status = CameraStatus(CameraStatusCode.OPENING),
             actions = setOf(CameraAction.CLOSE)))
@@ -110,7 +113,7 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
                     val session = candidate.module.open(candidate.device)
                     if (token != generation) { session.close(CameraCloseReason.REPLACED); return@withLock }
                     active = session; activeGeneration = token; sessionId = ++nextSession; opens++
-                    activeChanged(session); record("session_opened")
+                    activeChanged(session); lifetime?.opened(session); record("session_opened")
                     collector = scope.launch {
                         session.state.collect { snapshot ->
                             if (!valid(candidate, snapshot)) {
@@ -153,6 +156,7 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
     }
     /** Clear current data synchronously, then await release. A newer open is serialized after that release. */
     fun close(reason: CameraCloseReason = CameraCloseReason.USER): Job {
+        lifetime?.invalidated(reason)
         val previous = state.value
         val token = invalidate(unavailable(previous, CameraLifecycle.CLOSED, CameraStatus(CameraStatusCode.CLOSED)))
         return scope.launch {

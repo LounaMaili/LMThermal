@@ -43,6 +43,10 @@ class ContractArtTest {
             assertArrayEquals(bytes,file.readBytes())
         }
     }
+    @Test fun authoritativeSourceAdapterProducesSyntheticReadback() {
+        org.lmthermal.recording.CameraRecordingStressProbe.main(arrayOf(
+            File(instrumentation.targetContext.filesDir,"r4/source/generated").absolutePath,"3"))
+    }
     @Test fun realEngineOutputsArePreservedForIndependentHostReadback() {
         // Only synthetic data enters this explicitly exported directory; no camera is instantiated.
         RecordingInteropProbe.main(arrayOf(File(instrumentation.targetContext.filesDir,"r4/generated").absolutePath))

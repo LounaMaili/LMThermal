@@ -109,3 +109,16 @@ class RecordingLoss(val streamId:String,stream:Obj,facts:Obj) {
         require(this.stream.byteSize+this.facts.byteSize<=16384)
     }
 }
+
+/** Deferred freezing of an already immutable module owner. Admission charges its declared peak
+ * retained/prepared bytes before queuing; freezing runs only on the existing preparation worker.
+ * The callback must not perform thermometry, USB, hashing, compression or I/O. It may copy exact
+ * owned source evidence. Never use a borrowed/recycled-buffer lambda here.
+ */
+class RecordingOffer(val streamId:String,val sequence:Long,val stream:FrozenJson,val chargedBytes:Long,
+    private val freeze:()->RecordingObservation) {
+    init { require(sequence>=0 && chargedBytes>0);require(stream.value()["stream_id"]==streamId) }
+    fun materialize():RecordingObservation = freeze().also {
+        require(it.streamId==streamId && it.sequence==sequence && it.stream.same(stream) && it.ownedBytes<=chargedBytes)
+    }
+}

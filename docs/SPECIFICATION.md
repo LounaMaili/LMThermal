@@ -337,3 +337,12 @@ without returning successful partial measurements. See the
 [hardening/API and platform boundary](lmtr-r3/HARDENING_REVIEW.md). The frozen
 LMTR v1 specification and production Android/legacy Desktop semantics are unchanged;
 native Windows validation remains an external R3 gate.
+
+### R4 source/lifecycle experimental extension
+
+The [R4 integration guide](lmtr-r4/ART_INTEGRATION.md) describes the optional authoritative
+observation route before UI conflation, module-owned deferred freezing and generation-bound
+lifetime adapter. Only the test harness links the adapter/recorder. Product camera controls,
+thermometry, single ownership, explicit Connect/initialize and native coordinates remain
+unchanged; no recorder UI or background service is enabled. ART and host evidence are scoped
+separately from pending real HT-301/Pixel8 acceptance.
