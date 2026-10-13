@@ -150,4 +150,51 @@ class CameraRecordingLifecycleTest {
         assertEquals(0L,e.snapshot().preparationDrops);assertEquals(0L,e.snapshot().writerDrops)
     }
 
+    @Test fun closeRacingLateOpenCannotReviveRecorderSource()=runBlocking {
+        val (session, adapter, binding)=setup()
+        binding.invalidated(CameraCloseReason.USER)
+        val scope=CoroutineScope(SupervisorJob()+Dispatchers.Default)
+        val entered=CountDownLatch(1);val release=CountDownLatch(1)
+        val device=object:CameraDeviceIdentity{override val key="same_device"}
+        val module=object:CameraModule<Unit> {
+            override val metadata=session.hub.identity.module
+            override fun probe(device:CameraDeviceIdentity)=CameraProbeResult.SUPPORTED
+            override suspend fun open(device:CameraDeviceIdentity)=RecordingTestSession(CameraObservationHub(adapter.identity),device)
+        }
+        val owner=CameraSessionOwner(scope,activeChanged={current->
+            if(current!=null){entered.countDown();check(release.await(5,TimeUnit.SECONDS))}
+        },lifetime=binding)
+        try {
+            val opening=owner.open(CameraCandidate(device,module))
+            assertTrue(entered.await(5,TimeUnit.SECONDS))
+            val closing=owner.close();release.countDown();opening.join();closing.join()
+            // The captured module open completed after immediate Close invalidated its epoch.
+            val refused=testEngine(adapter.producer,file())
+            assertFalse(binding.start(refused));assertTrue(refused.awaitStop(10000)!!.finalized)
+            assertEquals(CameraLifecycle.CLOSED,owner.state.value.lifecycle)
+        } finally { release.countDown();scope.cancel() }
+    }
+    @Test fun brokenOptionalLifetimeObserverCannotBlockCameraRelease()=runBlocking {
+        val (session,_,_)=setup();val scope=CoroutineScope(SupervisorJob()+Dispatchers.Default)
+        val device=object:CameraDeviceIdentity{override val key="same_device"}
+        val owned=RecordingTestSession(CameraObservationHub(session.hub.identity),device)
+        val module=object:CameraModule<Unit> {
+            override val metadata=session.hub.identity.module
+            override fun probe(device:CameraDeviceIdentity)=CameraProbeResult.SUPPORTED
+            override suspend fun open(device:CameraDeviceIdentity)=owned
+        }
+        var failures=0
+        val observer=object:CameraSessionLifetime<Unit> {
+            override fun opened(session:CameraSession<Unit>){error("Broken optional observer")}
+            override fun invalidated(reason:CameraCloseReason){error("Broken optional observer")}
+        }
+        val owner=CameraSessionOwner(scope,technicalFailure={failures++},lifetime=observer)
+        try {
+            owner.open(CameraCandidate(device,module)).join()
+            owner.close().join()
+            assertEquals(1,owned.closes);assertEquals(CameraLifecycle.CLOSED,owner.state.value.lifecycle)
+            assertEquals(3,failures)
+        } finally { scope.cancel() }
+    }
+
 }

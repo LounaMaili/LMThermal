@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 optional owner notification races)
+
+- Serialize optional recording lifetime notifications with camera-owner generation invalidation, preventing a late open callback after immediate Close from reviving source intake. Isolate optional observer exceptions so original camera release can complete; add two deterministic owner regressions.
+
 ### Fixed (R4 synthetic clock and preview evidence)
 
 - Keep synthetic preview cadence independent of camera acquisition statistics and leave actual common-clock resolution unknown instead of equating nanosecond units with measured precision. Preserve the third API26 pre-test SDK image-download failure.

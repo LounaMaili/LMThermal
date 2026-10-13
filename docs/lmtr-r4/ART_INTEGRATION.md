@@ -93,3 +93,8 @@ The synthetic UI cadence now updates `CameraPreview`, not an acquisition-statist
 counter. Recorder-clock scale is one nanosecond but its actual resolution remains
 unknown (`null`); the test does not manufacture measured clock precision. These
 metadata corrections leave the accepted wire and canonical inputs unchanged.
+
+The optional owner notifications are serialized with the existing owner-generation
+invalidation lock. Close racing a late module-open completion cannot repopulate the
+recorder source after cutoff; exceptions in the optional observer cannot suppress
+camera release. Two latch-driven regressions exercise both paths without hardware.
