@@ -6,7 +6,11 @@ import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-/** Read-only selected/full access. Scope is explicit; opening never certifies unvisited payloads. */
+/**
+ * Read-only selected/full access. Opening never certifies unvisited payloads.
+ * One serialized owner operates each reader; file position/caches are not thread-safe.
+ * A cancellation callback may read an external atomic notification, without concurrent reads.
+ */
 class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Closeable {
     private val file = RandomAccessFile(path, "r")
     val header: Obj
@@ -15,6 +19,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
     var chunksDecoded = 0L; private set
     private val hashes = linkedMapOf<String,String>()
     private val hashReportLimit = 65536
+    private var cancellation: () -> Boolean = { false }
 
     init {
         try {
@@ -31,6 +36,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
 
     /** Read a bounded promised body; navigation damage and source-byte damage remain distinct. */
     private fun read(offset: Long): Record {
+        demand(!cancellation(), "cancelled")
         recordsRead++
         try { return LmtrFraming.read(file, offset, minOf(workingBudget, LmtrFraming.MAX_RECORD_BYTES-112)) }
         catch(e:LmtrFailure) {
@@ -222,9 +228,22 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         return chunks to entries
     }
 
-    /** Normal open, selected access or complete physical/index/payload verification. */
-    fun check(full: Boolean = false, entry: Long? = null, recover: Boolean = false): Obj {
-        val terminal=try { terminal() } catch(e: LmtrFailure) { if(recover)return recovery(full) else throw e }
+    /**
+     * Normal/selected/full verification; cooperative cancellation is polled before record reads.
+     * Cancellation returns no successful partial report. Hashing/decompression of one admitted
+     * record is synchronous; no hard deadline or interruption inside that operation is promised.
+     * The caller owns close/use even on failure; each invocation restores its callback.
+     */
+    fun check(full: Boolean = false, entry: Long? = null, recover: Boolean = false,
+              cancelled: () -> Boolean = { false }): Obj {
+        val previousCancellation = cancellation
+        cancellation = cancelled
+        try { return checkInternal(full, entry, recover) }
+        finally { cancellation = previousCancellation }
+    }
+
+    private fun checkInternal(full: Boolean, entry: Long?, recover: Boolean): Obj {
+        val terminal=try { terminal() } catch(e: LmtrFailure) { if(recover && e.code!="cancelled")return recovery(full) else throw e }
         val (end,value)=terminal;val summary=value["summary"].obj()
         if(entry!=null) { demand(entry>=0 && summary["entries"].d()>entry,"invalid_metadata");select(reference(value["root"]),end,entry) }
         if(full) {
@@ -368,7 +387,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
         while(true) {
             records++;demand(records<=1024,"recovery_limit")
             val record=try { read(current.offset) } catch(e: LmtrFailure) {
-                if(current.type==LmtrFraming.CHUNK || current.type==LmtrFraming.HEADER)throw e
+                if(e.code=="cancelled" || current.type==LmtrFraming.CHUNK || current.type==LmtrFraming.HEADER)throw e
                 navigationDamage=true;null // Only framing-verified navigation is rebuildable.
             }
             if(record!=null && record.type==LmtrFraming.CHUNK) { demand(chunks.size<64,"recovery_limit");chunk(record);chunks.add(current) }
@@ -379,7 +398,7 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
                     if(full)demand(LmtrJson.encode(cp["summary"]).contentEquals(LmtrJson.encode(candidateActual.json())),"invalid_metadata")
                     prefixState=candidateState;prefixActual=candidateActual
                     baseSummary=cp["summary"].obj();baseLast=baseSummary["last_entry"]?.d();baseTime=baseSummary["last_timeline_ns"]?.d();boundary=LmtrChunk.add(record.offset,record.length);break
-                } catch(e:LmtrFailure) { if(e.code=="committed_payload_integrity" || e.code=="unsupported_required_feature" || e.code=="unsupported_codec" || e.code=="local_resource_limit")throw e
+                } catch(e:LmtrFailure) { if(e.code=="cancelled" || e.code=="committed_payload_integrity" || e.code=="unsupported_required_feature" || e.code=="unsupported_codec" || e.code=="local_resource_limit")throw e
                     navigationDamage=true
                 }
             }

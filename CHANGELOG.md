@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R3 final hardening and platform preparation — 2026-10-13)
+
+- Added independently checked mixed-corruption, historical checkpoint/page, feature/view and lineage attacks without modifying the 51 pinned fixtures or their original manifest. Enforced Python signed-64 reference arithmetic/self-parent rejection and both readers' approach-B/null-entry lineage boundaries.
+- Added cooperative full/recovery cancellation with truthful non-success propagation, callback restoration and measured record-boundary cleanup; large synchronous hashes/decompression remain non-preemptive. Preserved prior reports and added new hardening/cancellation checkpoints.
+- Prepared an SDK-independent host build, reviewed native Windows PowerShell runner and optional bounded-disk NTFS sparse adapter. Native Windows/ART are explicitly NOT EXECUTED here; optional reader enhancements and R4/R6 producer/backend duties are separated from R3 contract requirements. No frozen wire, production application, camera or thermometry changes.
+
 ### Added (Isolated LMTR v1 R3 conformance checkpoint — 2026-10-13)
 
 - Added a standalone Kotlin/JVM contract module and independently structured standard-library Python reference for accepted LMTR v1 exact JSON, framing/integrity, metadata, grids/masks/evidence/views, STORED/DEFLATE, chronology, paged indexing and immutable bounded-prefix recovery. Neither is wired into Android or Desktop production applications.

@@ -17,3 +17,11 @@ tasks.register("writeRuntimeClasspath") {
     outputs.file(output)
     doLast { output.get().asFile.writeText(sourceSets["main"].runtimeClasspath.asPath) }
 }
+
+// The cancellation measurement probe stays in test classes, outside the library/CLI artifact.
+tasks.register("writeTestRuntimeClasspath") {
+    dependsOn("testClasses")
+    val output=layout.buildDirectory.file("test-runtime-classpath.txt")
+    outputs.file(output)
+    doLast { output.get().asFile.writeText(sourceSets["test"].runtimeClasspath.asPath) }
+}

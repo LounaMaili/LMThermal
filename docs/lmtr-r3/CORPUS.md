@@ -83,3 +83,13 @@ integrity damage; no in-place repair, arbitrary damaged-framing discovery or reb
 index cache is claimed. Missing/torn-prefix expectations remain distinct.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## Preserved generation receipt after hardening
+
+The 51 files/plans and original manifest stay pinned at `1f1a668`; current-source
+regeneration would change source-provenance hashes. Use
+`python3 tools/check_lmtr_pinned_corpus.py` for the original generator `--check` in
+an isolated temporary checkout. This checks historical reproducibility; current
+readers/writers are separately checked for conformance. Never regenerate/publish
+the corpus merely to repin a changed reference source. See
+[hardening evidence](HARDENING_REVIEW.md) for new temporary hostile combinations.

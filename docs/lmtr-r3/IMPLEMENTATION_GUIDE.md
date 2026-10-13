@@ -50,7 +50,7 @@ is not a camera acquisition API or part of wire JSON.
   `salvaged_chunks`; it never certifies global sequence/index/completion. Bad
   committed chunks remain failures with `integrity_damaged`. Broken framing stops
   without a guessed next offset. Cancellation is available through both reader
-  APIs between records; CLI termination closes descriptors through process/context
+  APIs between records, including `check(..., cancelled=callback)` for full/recovery checks; CLI termination closes descriptors through process/context
   ownership. A large single operation has no certified cancellation latency.
   `verified_prefix_bytes` in scan is a structural traversal boundary, not a claim
   that damaged payload bytes within that interval verified.
@@ -75,7 +75,7 @@ at two per depth; parsed-object overhead is separate from the 8 MiB raw-page bou
 Python bounds record/decoded lengths, navigation cache and reporting/clock state.
 Statistics use one row-major accumulator, avoiding image-sized Python float/tuple
 lists. Diagnostic bookkeeping caps 65,536 records/logical hashes; current clock-
-domain state caps 4,096 definitions. These are disclosed tool limits, not file-duration
+domain state caps 65,536 Python definitions (Kotlin uses a separate 4,096-definition local budget). These are disclosed tool limits, not file-duration
 limits. Host synthetic writers are not production memory-admission controllers.
 
 The on-demand [sparse report](linux-sparse-validation.json) records selected access
@@ -108,3 +108,13 @@ as tracked in [the checklist](IMPLEMENTATION_PLAN.md). R3 #8 stays open; PR #14 
 draft. R4/R5/R6/R7 and application integration are not started.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## Current hardening and gate classification
+
+[HARDENING_REVIEW](HARDENING_REVIEW.md) supersedes the earlier undifferentiated
+remaining-work list: general damaged-framing salvage/cache are optional; async
+producer and backend/export guarantees belong to R4/R6. Required R3 host recovery
+primitives are tested, while native Windows remains a required unexecuted gate.
+Cooperative full/recovery checks propagate cancellation without numerical success;
+one admitted synchronous operation cannot be interrupted. New reports preserve old
+checkpoint evidence and pinned corpus provenance.

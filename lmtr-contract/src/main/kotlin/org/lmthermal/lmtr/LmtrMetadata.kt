@@ -78,7 +78,11 @@ object LmtrMetadata {
         val namespaces = privacy["consented_namespaces"].arr().map { it.text() }; sortedUnique(namespaces)
         obj["lineage"]?.obj()?.let { lineage ->
             if (lineage["operation"] == "reprocessing") demand(lineage["algorithm"].obj()["status"] == "known", "lineage_algorithm")
-            for (parent in objects(lineage["parents"])) demand(parent["recording_id"] != obj["recording_id"], "lineage_self_parent")
+            for (parent in objects(lineage["parents"])) {
+                // Approach B defers directory/NPZ dataset identity; a Parent binds one real file.
+                demand(parent["format_id"] != "lmthermal-radiometric-recording", "unsupported_required_feature")
+                demand(parent["recording_id"] != obj["recording_id"], "lineage_self_parent")
+            }
         }
         extensions("Header", obj, obj["required_features"].arr().map { it.text() }.toSet())
     }
@@ -359,7 +363,7 @@ object LmtrMetadata {
         demand(o.containsKey("parent_entry") == conversion, "parent_entry")
         o["parent_entry"]?.obj()?.let {
             demand(it["parent_index"].i() < lineage!!["parents"].arr().size, "parent_reference")
-            if (it["entry_id"] == null) demand(o.containsKey("extensions"), "legacy_parent_reference")
+            if (it["entry_id"] == null) demand(o["extensions"]?.obj()?.isNotEmpty() == true, "legacy_parent_reference")
         }
         o["analysis"]?.obj()?.let { analysis(it, geometry, measurable, measurement) }
         o["presentation"]?.obj()?.let {

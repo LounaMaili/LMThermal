@@ -170,7 +170,7 @@ The [Accepted LMTR v1 wire contract](docs/LMTR_WIRE_V1.md) records explicit owne
 acceptance of `r1b-review-2`, D1–D10 and historical conversion approach B on
 2026-10-13. Wire rules are frozen for R3, while implementation conformance and
 end-user recording release remain unproven. Scoped R2 evidence/history is preserved;
-R1b was integrated through PR #13 and #6 is closed. The isolated [R3 implementation](docs/lmtr-r3/README.md) now provides pure JVM and independent Python contract tools plus synthetic canonical files; #8 remains open for outstanding conformance gates. Production recording/R4/R5 are not implemented
+R1b was integrated through PR #13 and #6 is closed. The isolated [R3 implementation](docs/lmtr-r3/README.md) now provides pure JVM and independent Python contract tools plus synthetic canonical files; #8 remains open for outstanding conformance gates. The [current R3 hardening matrix](docs/lmtr-r3/HARDENING_REVIEW.md) separates contract/platform gates from optional recovery and R4/R6 duties. Production recording/R4/R5 are not implemented
 or authorized here. Accepted LMTX still v1 remains unchanged. The
 [decision history](docs/LMTR_R1B_OWNER_DECISIONS.md), [architecture](docs/COMMON_RECORDING_DESIGN.md)
 and [R1–R7 roadmap](docs/RECORDING_IMPLEMENTATION_PLAN.md) retain review/provenance.

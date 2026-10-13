@@ -7,7 +7,7 @@ schema is used for shapes; exact JSON, framing, semantic closure, codecs, payloa
 statistics, references and chronology have independent executable checks here.
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tools.lmtr_v1.tests.test_reference -v
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/lmtr_v1/tests -t . -v
 python3 -m tools.lmtr_v1 canon metadata.json
 python3 -m tools.lmtr_v1 write-plan plan.json new-file.lmtr
 python3 -m tools.lmtr_v1 check new-file.lmtr
@@ -71,3 +71,9 @@ relax record JSON's 16 KiB string bound; every wire body is checked separately.
   Stop/durability conformance. These gates require separate evidence.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+Full/recovery APIs accept `cancelled=callback`; cancellation raises `ContractError`
+with tool-local code `cancelled` and no successful partial report. Polls occur before
+record access, not inside one synchronous hash/decompression. Callers must use the
+context manager or close in `finally`. See [measured boundary behavior and gate
+classification](../../docs/lmtr-r3/HARDENING_REVIEW.md).

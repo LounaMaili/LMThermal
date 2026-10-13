@@ -9,6 +9,7 @@ No production Android or Desktop recorder/importer is implemented here.
 - [Progress and remaining gates](IMPLEMENTATION_PLAN.md)
 - [Canonical synthetic corpus](CORPUS.md)
 - [Architecture, APIs and explicit limits](IMPLEMENTATION_GUIDE.md)
+- [Hardening, cancellation and current gap matrix](HARDENING_REVIEW.md)
 - [Native Windows protocol — pending](WINDOWS_VALIDATION.md)
 - [Independent Python tools](../../tools/lmtr_v1/README.md)
 - `lmtr-contract/`: pure Kotlin/JVM library and structured CLI, no Android dependency.
@@ -20,11 +21,11 @@ Use JDK 17 and the repository's existing Gradle cache/toolchain. Set `JAVA_HOME`
 machine paths. No APK installation, ADB, camera or thermometry calculation occurs.
 
 ```bash
-./gradlew --offline :lmtr-contract:test :lmtr-contract:writeRuntimeClasspath
-PYTHONDONTWRITEBYTECODE=1 python3 -W error -m unittest tools.lmtr_v1.tests.test_reference -v
-PYTHONDONTWRITEBYTECODE=1 python3 tools/generate_lmtr_corpus.py --check
+./gradlew --offline -p tools/lmtr-r3-host :lmtr-contract:test :lmtr-contract:writeRuntimeClasspath :lmtr-contract:writeTestRuntimeClasspath
+PYTHONDONTWRITEBYTECODE=1 python3 -W error -m unittest discover -s tools/lmtr_v1/tests -t . -v
+PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_pinned_corpus.py
 PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_conformance.py \
-  --report docs/lmtr-r3/linux-interop-validation.json
+  --report interop-current.json
 PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_sparse.py \
   --java "$JAVA_HOME/bin/java" \
   --classpath "$(cat lmtr-contract/build/runtime-classpath.txt)" \
@@ -77,3 +78,9 @@ budgets are disclosed implementation limits, not changes to accepted format limi
 R3 is not declared complete; R4/R5/R6/R7 are not started.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+Current source changes retain the old manifest generation receipt; the pinned
+regeneration helper executes original `--check` without overwriting historical
+fixtures or reports. General damaged-framing discovery/cache are optional, and
+producer timers/Stop/backend guarantees belong to R4/R6, as distinguished in the
+[current matrix](HARDENING_REVIEW.md).

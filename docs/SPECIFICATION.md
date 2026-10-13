@@ -329,3 +329,11 @@ lifecycle/provider guarantees and shared fixtures. Desktop #1 and Android #5 are
 closed after real Linux/Windows interoperability. Future common recording follows
 the separate [accepted LMTR v1 contract](LMTR_WIRE_V1.md): R1b is integrated,
 with isolated R3 conformance work and production recording still unimplemented.
+
+### Isolated R3 reader hardening
+
+The pure LMTR reader APIs support cooperative cancellation for full/recovery checks
+without returning successful partial measurements. See the
+[hardening/API and platform boundary](lmtr-r3/HARDENING_REVIEW.md). The frozen
+LMTR v1 specification and production Android/legacy Desktop semantics are unchanged;
+native Windows validation remains an external R3 gate.

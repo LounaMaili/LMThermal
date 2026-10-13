@@ -78,6 +78,10 @@ def header(value):
     extensions(value, value['required_features'])
     if 'lineage' in value:
         evidence(value['lineage']['algorithm'])
+        # Approach B cannot bind the historical directory/NPZ dataset as one Parent file.
+        for parent in value['lineage']['parents']:
+            require(parent['format_id']!='lmthermal-radiometric-recording','legacy dataset conversion requires future reviewed semantics','unsupported_required_feature')
+            require(parent['recording_id']!=value['recording_id'],'self parent')
         if value['lineage']['operation'] == 'reprocessing':
             require(value['lineage']['algorithm']['status'] == 'known', 'reprocessing algorithm')
 
@@ -206,7 +210,10 @@ def chunk(value, blocks, head):
         if scheduled: require(scheduled['first_slot']==scheduled['last_slot'],'observation many scheduled slots')
         lineage=head.get('lineage')
         require(('parent_entry' in entry)==(bool(lineage) and lineage['operation'] in ('conversion','reprocessing')),'parent entry closure')
-        if 'parent_entry' in entry: require(entry['parent_entry']['parent_index']<len(lineage['parents']),'parent index')
+        if 'parent_entry' in entry:
+            require(entry['parent_entry']['parent_index']<len(lineage['parents']),'parent index')
+            if entry['parent_entry']['entry_id'] is None:
+                require(bool(entry.get('extensions')),'null parent entry requires namespaced original-reference evidence')
         if lineage and lineage['operation']=='reprocessing':
             require(contexts[entry['context_id']]['value']['algorithm']['status']=='known' and contexts[entry['context_id']]['value']['settings']['status']=='known','reprocessing requires known algorithm/settings')
         payloads=entry['payloads']; require(len({p['id'] for p in payloads})==len(payloads),'payload ID unique')

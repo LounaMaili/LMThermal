@@ -15,7 +15,7 @@ R3 branch `feat/lmtr-r3-contract-conformance`; #8 stays open, no R3 merge or R4/
 - [x] 7. Entry IDs/intake clocks/source times/sequences/gaps/retention.
 - [x] 8. Same-observation/chunk materialized-parent native view integrity.
 - [x] 9. Bounded paged entry/time/stream navigation, checkpoints and actual maximum depth tested (finite host scope).
-- [ ] 10. END/finalization and truthful read-only recovery/errors.
+- [x] 10. Pure contract END/finalization and bounded truthful read-only recovery/errors (finite host scope; platform gates below).
 - [x] 11. Small deterministic synthetic canonical fixture inventory/provenance.
 - [x] 12. Kotlin-write/Python-read and Python-write/Kotlin-read exact logical parity.
 - [x] 13. Negative/hostile lengths/metadata/features/codecs/views/recovery cases.
@@ -155,3 +155,19 @@ Final current results supersede earlier checkpoint counters:65 JVM R3 tests,
 8 version/lexical,3 codec,44 time/stream,2 navigation-recovery and 4 scan cross cases.
 All reported numbers are tied to durable reports; R3 remains open/incomplete for
 native Windows/ART and disclosed runtime/mixed-corruption/backend gates.
+
+## Final hardening checkpoint
+
+See [the current gap matrix and independent audit](HARDENING_REVIEW.md) for required
+R3 versus optional recovery, ART, native Windows and R4/R6 boundaries. The previous
+checkpoint paragraphs above are preserved history, not the current gate grouping.
+Mixed-corruption, lineage, checked arithmetic and measured cooperative cancellation
+are covered in new durable reports. Native Windows remains NOT EXECUTED; ART was
+unavailable through authorized ADB without intervention. No production code or frozen
+wire/corpus change. R3 #8 stays open and PR #14 stays draft.
+
+Final hardening totals: **71 JVM R3**, **64 Python**, **232 core**, all passing;
+**29** additional independently checked temporary hostile combinations and measured
+full/recovery/salvage cancellation. [New summary](linux-hardening-summary.json) and
+[interop continuation](linux-hardening-interop-validation.json) preserve earlier
+checkpoint files. The 51 fixtures and original manifest hash remain unchanged.

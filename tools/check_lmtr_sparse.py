@@ -12,7 +12,10 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import resource
+try:
+    import resource
+except ImportError:  # Native NTFS adapter uses construct only, never Unix RSS/st_blocks.
+    resource = None
 import struct
 import subprocess
 import tempfile
@@ -39,7 +42,7 @@ def zero_hash(prefix=b'', length=PAYLOAD):
     return digest.digest()
 
 
-def construct(path,require_large_offset=True):
+def construct(path,require_large_offset=True,sparse_prepare=None):
     """Emit complete contiguous envelopes with sparse physical zero-valued payloads."""
     template = loads((ROOT / 'lmtr-contract/src/test/resources/lmtr/plans/illustration-01-stored.json').read_bytes())
     head = template['header']; head['recording_id'] = '00000000-0000-4000-8000-000000000600'; head['streams'][0]['purpose'] = 'opaque'
@@ -63,6 +66,7 @@ def construct(path,require_large_offset=True):
     block = {'id': 'b0', 'role': 'acquisition', 'encoding_id': encoding, 'dtype': 'bytes', 'byte_order': 'not_applicable', 'offset': '0', 'stored': str(PAYLOAD), 'decoded': str(PAYLOAD), 'codec': 0, 'hash': payload_hash}
     ordinal = 0; previous = 2**63 - 1; refs = []; previous_checkpoint = None; last_chunk = None; summary = blank_summary(head)
     with path.open('xb') as output:
+        if sparse_prepare is not None:sparse_prepare(output)
         def append(kind, body, metadata=None, sparse_length=0):
             nonlocal ordinal, previous
             offset = output.tell(); body_size = len(body) + sparse_length

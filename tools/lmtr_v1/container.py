@@ -90,6 +90,7 @@ class Reader:
     def __init__(self,path):
         self.path=Path(path); self.file=self.path.open('rb'); self.size=self.path.stat().st_size
         require(self.size<=MAX63,'file size','resource_limit')
+        self.cancellation=lambda:False
         self.cache=OrderedDict(); self.cache_bytes=0; self.validated_records=set(); self.logical={}; self.selected=set()
         try:
             record=self.record(0)
@@ -124,6 +125,7 @@ class Reader:
         return {'offset':offset,'kind':kind,'ordinal':ordinal,'previous':previous,'length':total,'digest':digest,'hash':sha(h+digest)}
     def record(self,offset, expected=None):
         """Verify a promised body and retain only bounded small navigation metadata."""
+        require(not self.cancellation(), "cooperative reader cancellation", "cancelled")
         if offset in self.cache:
             record=self.cache.pop(offset); self.cache[offset]=record
         else:
@@ -180,6 +182,7 @@ class Reader:
     # Verify backward location, ordinal, type, hash and actual entry bounds, including cache hits.
     def reference(self,ref,owner,expected):
         offset,length,ordinal=[int(ref[k]) for k in ('offset','length','ordinal')]
+        require(0<=offset<=MAX63 and 0<=length<=MAX63-offset,'reference arithmetic','resource_limit')
         require(offset+length<=owner['offset'] and ordinal<owner['ordinal'],'forward reference','invalid_container')
         record=self.record(offset,expected)
         require(record['length']==length and record['ordinal']==ordinal and record['hash']==ref['hash'] and self.bounds(record)==(ref['first'],ref['last']),'reference fields/hash/range','invalid_container')
@@ -291,10 +294,20 @@ class Reader:
             require(reached==offsets,'root indexes every CHUNK exactly once','invalid_container')
         return summary
     # Keep opening, selected access, full integrity and prefix recovery as distinct scopes.
-    def check(self,full=False,entry=None,recover=False):
+    def check(self,full=False,entry=None,recover=False,cancelled=lambda:False):
+        """Poll before record access, never publish a successful partial full-check report.
+
+One admitted synchronous hash/decompression is not interruptible. The caller owns
+context/close, including on cancellation. Restore callbacks even on failed recovery.
+"""
+        previous=self.cancellation;self.cancellation=cancelled
+        try: return self._check(full,entry,recover)
+        finally: self.cancellation=previous
+
+    def _check(self,full=False,entry=None,recover=False):
         try: end=self.terminal()
         except ContractError as error:
-            if not recover: raise
+            if not recover or error.code=="cancelled": raise
             return self.recovery(full,error)
         if full:
             summary=self.full(end); scope='full'
@@ -396,8 +409,8 @@ prefix scope requires independent indexed prefix and suffix journal verification
         suffix=[]; current=anchor; base=None; timeline=None; boundary=self.header_end; navigation_damage=False
         for _ in range(1024):
             try: record=self.record(current['offset'])
-            except ContractError:
-                if current['kind'] in (1,2): raise
+            except ContractError as error:
+                if error.code=="cancelled" or current['kind'] in (1,2): raise
                 record=None; navigation_damage=True
             if record is not None and record['kind']==2:
                 require(len(suffix)<64,'suffix CHUNK bound','recovery_limit')
@@ -412,7 +425,7 @@ prefix scope requires independent indexed prefix and suffix journal verification
                     base=deepcopy(record['json']['summary']);timeline=candidate_timeline if full else None
                     boundary=record['offset']+record['length'];break
                 except ContractError as error:
-                    if error.code in ('committed_payload_integrity','unsupported_required_feature','unsupported_codec','local_resource_limit'): raise
+                    if error.code in ('cancelled','committed_payload_integrity','unsupported_required_feature','unsupported_codec','local_resource_limit'): raise
                     navigation_damage=True
             if current['offset']==0:
                 timeline=Timeline();break

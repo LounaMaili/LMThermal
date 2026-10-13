@@ -19,3 +19,9 @@ lmtr-contract/src/main/resources/lmtr-schema.json -text
 # Reference-source provenance uses exact LF bytes on every checkout.
 tools/lmtr_v1/*.py text eol=lf
 tools/generate_lmtr_corpus.py text eol=lf
+
+# Host conformance helpers are source, not platform-newline-dependent evidence.
+tools/check_lmtr_*.py text eol=lf
+tools/lmtr_v1/tests/*.py text eol=lf
+tools/lmtr-r3-host/*.kts text eol=lf
+tools/validate_lmtr_r3_windows.ps1 text eol=lf
