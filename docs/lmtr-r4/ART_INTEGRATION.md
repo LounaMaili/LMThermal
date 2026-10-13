@@ -204,3 +204,24 @@ commits do not imply another unreviewed runtime result. Physical Pixel8/HT-301 s
 
 
 The [field preparation](FIELD_VALIDATION.md) adds the same test-only clock/resource/source-route helpers to the emulator suite and three existing-room pre-transform oracle readbacks. Exact new runtime receipts are tracked separately; the arm64 field APK is neither installed nor executed by this camera-disabled workflow.
+
+
+## Field-preparation checkpoints and a scheduling failure
+
+[Run 38449569251](https://github.com/LounaMaili/LMThermal/actions/runs/38449569251)
+on `e1ab47a2951203da76acc1f733cb4ae2ce2d5d76` passed **79 tests per API26/API35**,
+14 engine files, 75 synthetic source observations and three original-owner existing-room
+profile readbacks per API. This remains a scoped passing checkpoint, not current physical acceptance.
+
+[Run 38450510713](https://github.com/LounaMaili/LMThermal/actions/runs/38450510713)
+on `f2230c0e9de1a694d55b4d37e114d5b873d34f15` executed **80 tests**: API35 passed;
+API26 failed `sourceFreezeRunsOnExistingPreparationWorkerAndOverloadDoesNotFreezeRejectedOwner`,
+expected two acknowledgments but observed one. Its independent engine/source/field
+readbacks still passed; they do not override the failed assertion. The preparation-only
+test reserved one writer slot: while HEADER sync lagged, the second prepared owner
+could legitimately encounter writer overload. The test now reserves both accepted
+writer entries, keeping its one-slot preparation queue, exact two freezes/preparation
+thread/two acknowledgments and adding zero writer drops. This isolates the intended
+preparation assertion without changing any product/field capacity or writer-overload
+behavior/coverage. Final exact-source ART must pass independently. Historical failed
+logs/artifacts are retained privately and linked here, never relabeled.

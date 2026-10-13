@@ -134,13 +134,18 @@ class CameraRecordingLifecycleTest {
         val p=SimulatedRecordingModule();val stream=FrozenJson(p.stream);val f=file()
         val entered=CountDownLatch(1);val release=CountDownLatch(1);var freezes=0;var thread:String?=null
         val e=RecorderEngine(SimulatedRecordingModule.header(listOf(p)),listOf(p.stream),RecordingProfile.FULL,
-            RecorderLimits(preparationBytes=65536,writerBytes=65536,maxObservationBytes=65536),LocalRecorderBackend(f),
+            // This test isolates preparation rejection. Reserve both accepted owners downstream,
+            // otherwise a slow HEADER sync can cause an unrelated writer-overload race.
+            RecorderLimits(preparationBytes=65536,writerBytes=131072,maxObservationBytes=65536),LocalRecorderBackend(f),
             prepareHook={entered.countDown();release.await(5,TimeUnit.SECONDS)})
         fun offer(n:Long)=RecordingOffer(p.id,n,stream,65536){freezes++;thread=Thread.currentThread().name;p.observation(n)}
         e.admit(offer(0));assertTrue(entered.await(5,TimeUnit.SECONDS));e.admit(offer(1))
         assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(offer(2)));assertEquals(0,freezes)
         e.stop();release.countDown();val result=e.awaitStop(10000)!!;assertTrue(result.finalized)
-        assertEquals(2,freezes);assertEquals("lmtr-preparation",thread);assertEquals(2L,e.snapshot().acknowledged)
+        assertEquals(2,freezes)
+        assertEquals("lmtr-preparation",thread)
+        assertEquals(0L,e.snapshot().writerDrops)
+        assertEquals(2L,e.snapshot().acknowledged)
     }
     @Test fun incorrectDeferredEvidenceFailsSourceWithoutClaimingWriterOverload() {
         val p=SimulatedRecordingModule();val e=testEngine(p,file())
