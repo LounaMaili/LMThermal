@@ -113,3 +113,12 @@ Workflow existence alone is not a pass: actual execution is linked above, withou
 regenerating the51pinned fixtures. Four preflight guards separately reject wrong
 HEAD, wrong detached ref/context SHA and dirty source; their output is retained
 with subsequent CI artifacts.
+
+## Follow-up regression workflow
+
+The focused CI follow-up enables main pushes and PR merge candidates for contract/tool
+changes, retaining read-only permissions, pinned actions and artifacts. Detached source
+requires the exact event SHA, an allowed push ref or `pull_request` merge ref, and a clean
+checkout. `pull_request_target`, mismatched SHA/ref and local detached contexts reject.
+Named local branches may validate their exact explicitly requested SHA. This changes
+CI scheduling/preflight only; the accepted R3 run remains 38393731476 on fb857b6.

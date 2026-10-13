@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (LMTR Windows regression CI follow-up)
+
+- Run the existing native Windows contract protocol on main and PR merge candidates for relevant paths, validating exact event SHA and clean source with read-only permissions and retained artifacts. Added rejection of privileged PR event contexts; frozen corpus and production code are unchanged.
+
 ### Added (R3 native Windows CI validation — 2026-10-13)
 
 - Added a branch-restricted, exact-SHA Windows GitHub Actions protocol with JDK17, Python3.13, bounded resources, read-only token permissions and persistent success/failure artifacts. It executes the existing independent suites and native NTFS sparse/full-integrity gate without camera or Android dependencies.

@@ -2,7 +2,11 @@ name: LMTR R3 native Windows
 
 on:
   push:
-    branches: [feat/lmtr-r3-contract-conformance]
+    branches: [main, feat/lmtr-r3-contract-conformance, ci/lmtr-windows-regressions]
+    paths: ["lmtr-contract/**", "tools/**", ".github/workflows/lmtr-r3-windows.yml", "gradle/**", "gradlew*", ".gitattributes"]
+  pull_request:
+    branches: [main]
+    paths: ["lmtr-contract/**", "tools/**", ".github/workflows/lmtr-r3-windows.yml", "gradle/**", "gradlew*", ".gitattributes"]
 
 permissions:
   contents: read
@@ -24,7 +28,7 @@ jobs:
       # Bound cold Gradle/Kotlin builds; runtime probes have their own heap caps.
       GRADLE_OPTS: '-Dorg.gradle.jvmargs=-Xmx1536m -Dorg.gradle.workers.max=2 -Dkotlin.daemon.jvm.options=-Xmx768m'
     steps:
-      - name: Checkout exact pushed commit
+      - name: Checkout exact event commit
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.sha }}
@@ -47,6 +51,7 @@ jobs:
             run_url = "https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID"
             sha = $env:GITHUB_SHA
             ref = $env:GITHUB_REF
+            event = $env:GITHUB_EVENT_NAME
             run_attempt = $env:GITHUB_RUN_ATTEMPT
             runner_image = $env:ImageOS
             runner_image_version = $env:ImageVersion

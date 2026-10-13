@@ -37,6 +37,11 @@ try {
     $env:GITHUB_SHA='0'*40
     Expect-Rejection 'wrong-detached-context-sha' 'Detached HEAD requires *' $Actual
 } finally { $env:GITHUB_SHA=$OriginalSha }
+$OriginalEvent=$env:GITHUB_EVENT_NAME
+try {
+    $env:GITHUB_EVENT_NAME='pull_request_target'
+    Expect-Rejection 'wrong-event' 'Detached HEAD requires *' $Actual
+} finally { $env:GITHUB_EVENT_NAME=$OriginalEvent }
 # Only this uniquely owned sentinel is removed; no existing file is overwritten/discarded.
 $Sentinel=Join-Path $Root ('lmtr-r3-guard-' + [guid]::NewGuid().ToString('N') + '.tmp')
 try {
@@ -45,4 +50,4 @@ try {
 } finally { if (Test-Path $Sentinel) { Remove-Item -LiteralPath $Sentinel } }
 if (@(& git -C $Root status --porcelain).Count -ne 0) { throw 'Guard probes left source changes.' }
 @{status='passed';sha=$Actual;tests=$Results} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $ReportDirectory 'guards.json') -Encoding utf8
-Write-Host 'Four strict detached/SHA/clean-source regression guards passed.'
+Write-Host 'Five strict detached/SHA/clean-source regression guards passed.'
