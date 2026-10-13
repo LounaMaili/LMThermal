@@ -29,9 +29,14 @@ try {
         if ($Code -ne 0) { throw "$Executable failed ($Code); see $Log" }
         $Output | Write-Host
     }
-    $Head = (& git rev-parse HEAD).Trim()
-    if ($LASTEXITCODE -ne 0 -or $Head -ne $ExpectedCommit) { throw "Expected $ExpectedCommit; actual $Head" }
-    $Branch = ([string](& git branch --show-current)).Trim()
+    $HeadLines = @(& git rev-parse HEAD)
+    if ($LASTEXITCODE -ne 0 -or $HeadLines.Count -ne 1) { throw 'Could not read exactly one Git HEAD.' }
+    $Head = [string]::Join('', $HeadLines).Trim()
+    if ($Head -ne $ExpectedCommit) { throw "Expected $ExpectedCommit; actual $Head" }
+    # Native commands may emit no object for detached HEAD; join an explicit array.
+    $BranchLines = @(& git branch --show-current)
+    if ($LASTEXITCODE -ne 0) { throw 'Could not inspect checkout branch.' }
+    $Branch = [string]::Join('', $BranchLines).Trim()
     $CheckoutMode = 'branch'
     # Actions checks out an exact SHA detached. Require its authenticated push context
     # as well as the unchanged exact HEAD check; local detached checkouts still reject.
@@ -90,4 +95,11 @@ try {
        accuracy_warning='Native-equivalent temperatures; absolute physical accuracy not yet independently validated.'
     } | ConvertTo-Json -Depth 8 | Out-File -LiteralPath (Join-Path $Reports 'summary.json') -Encoding utf8
     Write-Host "Validation reports: $Reports"
+} catch {
+    # Preserve the exact script location even for preflight/harness failures before tests start.
+    @{ status='failed'; expected_commit=$ExpectedCommit; error=$_.Exception.Message;
+       script_stack=$_.ScriptStackTrace; position=$_.InvocationInfo.PositionMessage
+    } | ConvertTo-Json -Depth 5 | Out-File -LiteralPath (Join-Path $Reports 'failure.json') -Encoding utf8
+    Write-Host $_.ScriptStackTrace
+    throw
 } finally { Pop-Location }
