@@ -346,3 +346,95 @@ class JsonByteBudgetTests(unittest.TestCase):
         value=loads(b'{"x":['+b','.join([b'1e20']*50000)+b']}')
         with self.assertRaises(ContractError) as failure:dumps(value)
         self.assertEqual(failure.exception.code,'resource_limit')
+
+class TimeSeekTests(unittest.TestCase):
+    """Small-fixture sequential oracle is independent of indexed seek traversal."""
+    def test_time_stream_seek_matches_original_entries_in_every_positive_case(self):
+        corpus=ROOT/'lmtr-contract/src/test/resources/lmtr';manifest=json.loads((corpus/'manifest.json').read_text())
+        for case in manifest['cases']:
+            if case['classification']!='positive':continue
+            path=corpus/case['file'];entries=[]
+            with Reader(path) as reader:
+                cursor=0
+                while cursor<reader.size:
+                    record=reader.record(cursor)
+                    if record['kind']==2:
+                        metadata=reader.metadata(record);segments={s['id']:s for s in metadata['segments']}
+                        for entry in metadata['entries']:
+                            streams={s['stream_id'] for s in segments[entry['segment_id']]['streams']} if entry['kind'] in ('segment_start','segment_end') else {entry['stream_id']}
+                            entries.append((entry,streams))
+                    cursor+=record['length']
+                filters=[None]+[s['id'] for s in reader.head['streams']]
+            last=int(entries[-1][0]['timeline_ns']) if entries else 0
+            for time in {0,last//2,last,last+1}:
+                for stream in filters:
+                    expected=next((e for e,streams in entries if int(e['timeline_ns'])>=time and (stream is None or stream in streams)),None)
+                    with Reader(path) as reader:result=reader.seek(time,stream)
+                    with self.subTest(case=case['id'],time=time,stream=stream):
+                        for key,source in [('selected_entry_id','entry_id'),('selected_timeline_ns','timeline_ns'),('selected_entry_kind','kind')]:self.assertEqual(result[key],expected[source] if expected else None)
+                        self.assertEqual(result['seek_result'],'found' if expected else 'not_found')
+    def test_query_domain_refuses_negative_and_undeclared_stream(self):
+        path=ROOT/'lmtr-contract/src/test/resources/lmtr/files/illustration-01-stored.lmtr'
+        for time,stream in [(-1,None),(0,'undeclared')]:
+            with Reader(path) as reader,self.assertRaises(ContractError):reader.seek(time,stream)
+
+
+class LexicalFieldTests(unittest.TestCase):
+    """Typed ASCII primitives do not inherit regex-dollar's trailing-newline exception."""
+    def test_known_field_tokens_reject_trailing_newline(self):
+        from tools.lmtr_v1.jsoncodec import Shapes
+        shapes=Shapes()
+        for kind,value in [('D','0'),('Id','primary'),('Namespace','org.example.app'),('Hash','a'*64),('UUID','00000000-0000-4000-8000-000000000001')]:
+            shapes.check(kind,value)
+            with self.subTest(kind=kind),self.assertRaises(ContractError):shapes.check(kind,value+'\n')
+
+
+class FinalizationTruthTests(unittest.TestCase):
+    """Known creation UTC is not evidence of publication/Stop UTC."""
+    def test_writer_defaults_unrecorded_finalization_to_unknown(self):
+        source=plan();source.pop('finalization_time',None)
+        source['header']['creation_time']={'status':'known','clock_source':'synthetic_utc','utc':'2026-10-13T00:00:00Z'}
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'new.lmtr';write_plan(source,path)
+            with Reader(path) as reader:time=reader.terminal()['json']['finalization_time']
+            self.assertEqual(time['status'],'unknown');self.assertEqual(time['reason'],'not_recorded')
+
+
+class AppendBarrierTests(unittest.TestCase):
+    """An injected body-sync failure must not publish a promised CHUNK/footer/END."""
+    def test_failed_body_barrier_retains_incomplete_source_without_saved_measurement(self):
+        from unittest.mock import patch
+        from tools.lmtr_v1 import container
+        actual=container.os.fsync;calls=[0]
+        def barrier(fd):
+            calls[0]+=1
+            if calls[0]==3:raise OSError('injected chunk body barrier failure')
+            actual(fd)
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'failed.lmtr'
+            with patch.object(container.os,'fsync',side_effect=barrier),self.assertRaises(OSError):write_plan(plan(),path)
+            before=path.read_bytes()
+            with Reader(path) as reader:result=reader.check(full=True,recover=True)
+            self.assertEqual(result['status'],'recovered');self.assertEqual(result['summary']['chunks'],'0')
+            self.assertIsNone(result['declared_end_status']);self.assertTrue(result['unknown_tail'])
+            self.assertEqual(result['logical_hashes'],{});self.assertEqual(path.read_bytes(),before)
+
+
+class RecipeAllocationTests(unittest.TestCase):
+    """Malformed synthetic counts cannot allocate far beyond the accepted chunk budget."""
+    def test_large_counts_and_trailers_refuse_before_allocation(self):
+        from tools.lmtr_v1.container import recipe_bytes
+        for recipe in [{'kind':'f32_constant','count':2**63,'value':1},{'kind':'u16_constant','count':2**63,'value':1},{'kind':'transport','native':{'kind':'hex','hex':'00'},'trailer_bytes':2**63}]:
+            with self.subTest(kind=recipe['kind']),self.assertRaises(ContractError) as failure:recipe_bytes(recipe)
+            self.assertEqual(failure.exception.code,'resource_limit')
+        with self.assertRaises(ContractError):recipe_bytes({'kind':'f32_constant','count':True,'value':1})
+
+
+class PlanBudgetAdmissionTests(unittest.TestCase):
+    """Declared whole-chunk refusal precedes potentially unsafe recipe materialization."""
+    def test_total_budget_refuses_before_missing_recipes(self):
+        from unittest.mock import patch
+        source=plan();item=source['chunks'][0];item['metadata']['blocks'][0].update(decoded='67108864',stored='67108864');item['payload_recipes']={}
+        with tempfile.TemporaryDirectory() as directory,patch('tools.lmtr_v1.container.recipe_bytes',side_effect=AssertionError('materialized before admission')):
+            with self.assertRaises(ContractError) as failure:write_plan(source,Path(directory)/'refused.lmtr')
+            self.assertEqual(failure.exception.code,'resource_limit')

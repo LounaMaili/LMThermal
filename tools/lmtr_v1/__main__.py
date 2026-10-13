@@ -13,6 +13,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__); sub=parser.add_subparsers(dest='command',required=True)
     canon=sub.add_parser('canon'); canon.add_argument('input')
     check=sub.add_parser('check'); check.add_argument('file'); check.add_argument('--recover',action='store_true'); check.add_argument('--full',action='store_true'); check.add_argument('--entry',type=int)
+    seek=sub.add_parser('seek'); seek.add_argument('file');seek.add_argument('timeline_ns',type=int);seek.add_argument('--stream')
     scan=sub.add_parser('scan'); scan.add_argument('file')
     write=sub.add_parser('write-plan'); write.add_argument('plan'); write.add_argument('output')
     args=parser.parse_args()
@@ -24,11 +25,14 @@ def main():
             plan=json.loads(Path(args.plan).read_text(),parse_float=Decimal)
             result=write_plan(plan,args.output)
         else:
-            with Reader(args.file) as reader: result=reader.salvage() if args.command=='scan' else reader.check(args.full,args.entry,args.recover)
+            with Reader(args.file) as reader: result=reader.salvage() if args.command=='scan' else reader.seek(args.timeline_ns,args.stream) if args.command=='seek' else reader.check(args.full,args.entry,args.recover)
     except ContractError as error:
         result={'status':'error','error':error.code,'detail':error.detail,'integrity_scope':'none'}
         print(json.dumps(result,sort_keys=True)); return 2
-    except (OSError,ValueError,KeyError,struct.error) as error:
+    except OSError as error:
+        result={'status':'error','error':'storage_failure','detail':str(error),'integrity_scope':'none'}
+        print(json.dumps(result,sort_keys=True)); return 2
+    except (ValueError,KeyError,struct.error) as error:
         result={'status':'error','error':'invalid_plan_or_io' if args.command=='write-plan' else 'invalid_container','detail':str(error),'integrity_scope':'none'}
         print(json.dumps(result,sort_keys=True)); return 2
     print(json.dumps(result,sort_keys=True)); return 0

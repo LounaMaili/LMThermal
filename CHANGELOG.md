@@ -17,6 +17,12 @@ All notable changes to LMThermal will be documented in this file.
 - Replaced retained recovery suffix bodies with bounded fixed references; added an independent 17-CHUNK/128 MiB source-prefix memory/parity stress. Removed image-sized Python statistics temporaries, aligned strict JSON input/canonical byte budgets and version/codec error classes, and rejected unsupported Kotlin CLI options instead of silently ignoring requested seek semantics.
 - Recorded real Fedora sparse access beyond 4 GiB with independent full Python integrity, sampled memory and explicit Kotlin local refusal for a large chunk. Added cross-runtime version/codec/recovery/scan vectors, native Windows instructions and byte-preserving corpus/source checkout attributes; native Windows/ART and remaining runtime gates stay pending.
 
+### Added (R3 indexed intake-time and stream selection — 2026-10-13)
+
+- Added independent bounded Kotlin/Python seek APIs and CLI commands selecting the first recorded entry at/after the common recorder-intake time, optionally filtered by declared stream participation. Original sensor clocks stay separate; explicit segment events and not-found results remain truthful.
+- Compared every positive fixture to sequential chronology oracles and added bidirectional runtime seek cases. Exercised eight-level indexing and explicit candidate/predecessor/suffix/tail recovery limits; aligned depth refusal and strict typed-token newline validation.
+- Kept absent finalization UTC unknown rather than borrowing earlier creation UTC. Added Python body/footer sync barriers with an injected incomplete-append regression, explicit storage errors and pre-allocation bounds for synthetic recipes. No wire, application, measurement or camera behavior changed; remaining platform/runtime conformance gates stay open.
+
 ### Changed (Explicit LMTR R1b acceptance — 2026-10-13)
 
 - Recorded explicit owner acceptance of complete r1b-review-2, D1–D10 and historical-conversion approach B; published `docs/LMTR_WIRE_V1.md` as the normative frozen R3 specification with unchanged reviewed rule body/constants and byte-equivalent local shape definitions.

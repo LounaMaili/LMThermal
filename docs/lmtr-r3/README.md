@@ -33,6 +33,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_recovery_memory.py \
   --java "$JAVA_HOME/bin/java" \
   --classpath "$(cat lmtr-contract/build/runtime-classpath.txt)" \
   --report docs/lmtr-r3/linux-recovery-memory-validation.json
+PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_limits.py \
+  --java "$JAVA_HOME/bin/java" \
+  --classpath "$(cat lmtr-contract/build/runtime-classpath.txt)" \
+  --report docs/lmtr-r3/linux-limit-validation.json
 ./gradlew --offline :core:test :app:assembleDebug :app:lintDebug
 PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_acceptance.py
 git diff --check
@@ -50,6 +54,7 @@ Kotlin CLI (arguments separated by `|` for this Gradle task):
 ./gradlew --offline :lmtr-contract:lmtr -PlmtrArgs='check|example.lmtr|--entry|1'
 ./gradlew --offline :lmtr-contract:lmtr -PlmtrArgs='check|incomplete.lmtr|--recover|--full'
 ./gradlew --offline :lmtr-contract:lmtr -PlmtrArgs='scan|damaged.lmtr'
+./gradlew --offline :lmtr-contract:lmtr -PlmtrArgs='seek|example.lmtr|1000000|--stream|primary'
 ```
 
 ## Honest scope

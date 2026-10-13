@@ -81,7 +81,7 @@ def json_vectors():
 def run(java,classpath):
     """Validate both directions and publish only measured results."""
     manifest=json.loads((CORPUS/'manifest.json').read_bytes())
-    python_read=0;kotlin_read=0;rewrites=0;canonical=0;json_results=[];navigation=0;scans=0;compatibility=0;codecs=0
+    python_read=0;kotlin_read=0;rewrites=0;canonical=0;json_results=[];navigation=0;scans=0;compatibility=0;codecs=0;seeks=0
     with tempfile.TemporaryDirectory(prefix='lmtr-r3-interop-') as directory:
         temporary=Path(directory)
         for case in manifest['cases']:
@@ -146,6 +146,43 @@ def run(java,classpath):
             if error:assert reference.get('error')==actual.get('error')==error,(field,reference,actual)
             else:compare(reference,actual)
             compatibility+=1
+        for field in ('timeline_origin','stream_id','producer_namespace'):
+            header=deepcopy(original['json'])
+            if field=='timeline_origin':header['timeline']['origin_monotonic_ns']+='\n'
+            elif field=='stream_id':header['streams'][0]['id']+='\n'
+            else:header['producer']['application_id']+='\n'
+            path=temporary/(field+'.lmtr');path.write_bytes(encode_record(1,dumps(header),0,2**63-1))
+            try:
+                with Reader(path):pass
+                raise AssertionError('Python typed token accepted trailing newline')
+            except ContractError as failure:assert failure.code=='invalid_metadata',(field,failure.code)
+            actual=report_command(java,classpath,'check',path,'--full')
+            assert actual.get('error')=='invalid_metadata',(field,actual)
+            compatibility+=1
+        for name in ('illustration-01-stored','illustration-09-stored','multi-chunk-context-closure','context-change','qualified-sensor-clock','empty-recording'):
+            source=CORPUS/'files'/(name+'.lmtr');before=sha(source);oracle=[]
+            with Reader(source) as reader:
+                cursor=0
+                while cursor<reader.size:
+                    record=reader.record(cursor)
+                    if record['kind']==2:
+                        metadata=reader.metadata(record);segments={s['id']:s for s in metadata['segments']}
+                        for entry in metadata['entries']:
+                            involved={s['stream_id'] for s in segments[entry['segment_id']]['streams']} if entry['kind'] in ('segment_start','segment_end') else {entry['stream_id']}
+                            oracle.append((entry,involved))
+                    cursor+=record['length']
+                filters=[None]+[s['id'] for s in reader.head['streams']]
+            last=int(oracle[-1][0]['timeline_ns']) if oracle else 0
+            for time in sorted({0,last//2,last,last+1}):
+                for stream in filters:
+                    target=next((e for e,streams in oracle if int(e['timeline_ns'])>=time and (stream is None or stream in streams)),None)
+                    with Reader(source) as reader: expected=reader.seek(time,stream)
+                    actual=report_command(java,classpath,'seek',source,str(time),*(['--stream',stream] if stream else []))
+                    compare(expected,actual)
+                    for field in ('seek_result','selected_entry_id','selected_timeline_ns','selected_entry_kind','requested_stream_id'):assert expected[field]==actual[field],(name,time,stream,field)
+                    assert actual['selected_entry_id']==(target['entry_id'] if target else None)
+                    seeks+=1
+            assert sha(source)==before
         for name in ('committed-index-damage','committed-checkpoint-damage'):
             source=CORPUS/'files'/(name+'.lmtr');before=sha(source)
             with Reader(source) as reader: expected=reader.check(full=True,recover=True)
@@ -177,7 +214,7 @@ def run(java,classpath):
     version=subprocess.run([java,'-version'],capture_output=True,text=True,check=True).stderr.splitlines()[0]
     return {'status':'passed','normative_commit':'8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f','base_main':'fe029363062cdf54d6cefa9d4f24265e80188091',
             'corpus_manifest_sha256':sha(CORPUS/'manifest.json'),'python_to_kotlin_full_cases':kotlin_read,'independent_python_full_cases':python_read,
-            'kotlin_to_python_full_positive_cases':rewrites,'canonical_plan_byte_comparisons':canonical,'compatibility_runtime_cases':compatibility,'codec_adversarial_cross_cases':codecs,'navigation_recovery_cross_cases':navigation,'read_only_scan_cross_cases':scans,'json_vectors':json_results,
+            'kotlin_to_python_full_positive_cases':rewrites,'canonical_plan_byte_comparisons':canonical,'compatibility_runtime_cases':compatibility,'codec_adversarial_cross_cases':codecs,'navigation_recovery_cross_cases':navigation,'time_stream_seek_cross_cases':seeks,'read_only_scan_cross_cases':scans,'json_vectors':json_results,
             'java':version,'python':platform.python_version(),'platform':platform.system(),'jvm_heap_cap_bytes':268435456,
             'source_immutability':'all corpus sources and Kotlin-produced files unchanged by read/recovery',
             'compressed_byte_equality':'not required; exact logical bytes and descriptor hashes compared',

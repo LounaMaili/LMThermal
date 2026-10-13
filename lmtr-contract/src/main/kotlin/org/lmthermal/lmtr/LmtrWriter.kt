@@ -80,6 +80,20 @@ object LmtrWriter {
                 }
                 for (item in plan["chunks"].arr().map { it.obj() }) {
                     val original=item["metadata"].obj();val recipes=item["payload_recipes"].obj()
+                    // Plans have provisional stored offsets/hashes, not wire
+                    // metadata. Admit local shapes and declared byte intervals
+                    // before recipes; validate full closure after actual encoding.
+                    val declaredBlocks=original["blocks"].arr().map { it.obj() }
+                    for(block in declaredBlocks)demand(block["codec"].i() in 0..1,"unsupported_codec")
+                    LmtrMetadata.local("Chunk",original)
+                    val declaredBytes=declaredBlocks.fold(0L) { total,block -> LmtrChunk.add(total,block["decoded"].d()) }
+                    demand(LmtrChunk.add(declaredBytes,4L+LmtrJson.encode(original).size)<=67108864L,"resource_limit")
+                    val declaredById=declaredBlocks.associateBy { it["id"].text() }
+                    for(entry in original["entries"].arr().map { it.obj() })if(entry["kind"]=="observation")
+                        for(p in entry["payloads"].arr().map { it.obj() })if(p["kind"]=="materialized") {
+                            val block=declaredById[p["block_id"].text()] ?: throw LmtrFailure("invalid_metadata")
+                            demand(LmtrChunk.add(p["offset"].d(),p["length"].d())<=block["decoded"].d(),"invalid_payload")
+                        }
                     val owned=linkedMapOf<String,ByteArray>()
                     val entries=original["entries"].arr().map { it.obj() }.map { entry ->
                         if(entry["kind"]!="observation")entry else {
@@ -139,9 +153,11 @@ object LmtrWriter {
                 }
                 demand(state.activeSegment==null,"invalid_metadata")
                 val (cpRecord,cp)=checkpoint();val s=summary.json()
+                // Earlier creation UTC is not evidence of this Stop/publication.
+                // Missing finalization-clock input must remain explicitly unknown.
                 val end=linkedMapOf<String,Any?>("recording_id" to header["recording_id"],"root" to cp["root"],
                     "checkpoint" to RecordRef(cpRecord.offset,cpRecord.length,cpRecord.ordinal,s["first_entry"]?.d(),s["last_entry"]?.d(),cpRecord.refHash).json(),
-                    "summary" to s,"status" to "completed","reason" to "synthetic_fixture_stop","finalization_time" to (plan["finalization_time"]?:header["creation_time"]),"error" to null)
+                    "summary" to s,"status" to "completed","reason" to "synthetic_fixture_stop","finalization_time" to (plan["finalization_time"]?:mapOf("status" to "unknown","clock_source" to "host_utc","reason" to "not_recorded")),"error" to null)
                 LmtrMetadata.local("End",end);append(LmtrFraming.END,LmtrJson.encode(end))
             }
             // Directory persistence/platform close failures are not certified by

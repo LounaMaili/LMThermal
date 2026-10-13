@@ -3,9 +3,9 @@
   "base_main": "fe029363062cdf54d6cefa9d4f24265e80188091",
   "canonical_plan_byte_comparisons": 33,
   "codec_adversarial_cross_cases": 3,
-  "compatibility_runtime_cases": 5,
+  "compatibility_runtime_cases": 8,
   "compressed_byte_equality": "not required; exact logical bytes and descriptor hashes compared",
-  "corpus_manifest_sha256": "bf4508898067125b90a2c823b2048839f4852d51036153287f2fc70c0b6aaca9",
+  "corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
   "independent_python_full_cases": 51,
   "java": "openjdk version \"17.0.20.1\" 2026-08-18",
   "json_vectors": [
@@ -240,5 +240,6 @@
   "python_to_kotlin_full_cases": 51,
   "read_only_scan_cross_cases": 4,
   "source_immutability": "all corpus sources and Kotlin-produced files unchanged by read/recovery",
-  "status": "passed"
+  "status": "passed",
+  "time_stream_seek_cross_cases": 44
 }

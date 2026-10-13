@@ -260,6 +260,47 @@ class LmtrReader(path: File, private val workingBudget: Long = 134217728L) : Clo
     }
 
     /**
+     * Select the first recorded entry at/after recorder-intake time, optionally
+     * participating in one declared stream. Source clocks are never compared.
+     * Segment events participate in their explicit segment inventory. Coarse page
+     * stream/time unions can require several candidate chunks; visits are bounded
+     * independently of duration and no unvisited payload integrity is claimed.
+     */
+    fun seek(timelineNs: Long, streamId: String? = null): Obj {
+        demand(timelineNs>=0,"invalid_metadata")
+        demand(streamId==null || header["streams"].arr().any { it.obj()["id"]==streamId },"invalid_metadata")
+        val (end,value)=terminal();var visits=0
+        fun search(ref:RecordRef,owner:Record):Obj? {
+            demand(++visits<=1024,"local_resource_limit")
+            val (record,p)=page(ref,owner)
+            for(child in p["children"].arr().map { it.obj() }) {
+                if(child["time_last_ns"].d()<timelineNs || (streamId!=null && streamId !in child["stream_ids"].arr()))continue
+                val next=reference(child["record"])
+                if(p["depth"].i()>0) {
+                    val (_,lower)=page(next,record)
+                    demand(lower["depth"].i()==p["depth"].i()-1 && lower["time_first_ns"]==child["time_first_ns"] &&
+                        lower["time_last_ns"]==child["time_last_ns"] && lower["stream_ids"]==child["stream_ids"],"invalid_container")
+                    search(next,record)?.let { return it }
+                } else {
+                    demand(++visits<=1024,"local_resource_limit")
+                    val data=chunk(resolve(next,record,LmtrFraming.CHUNK));childMatches(child,data.metadata)
+                    val segments=data.metadata["segments"].arr().map { it.obj() }.associateBy { it["id"].text() }
+                    for(entry in data.metadata["entries"].arr().map { it.obj() }) {
+                        val participates=streamId==null || entry["stream_id"]==streamId ||
+                            (entry["kind"] in listOf("segment_start","segment_end") && segments.getValue(entry["segment_id"].text())["streams"].arr().any { it.obj()["stream_id"]==streamId })
+                        if(entry["timeline_ns"].d()>=timelineNs && participates)return entry
+                    }
+                }
+            }
+            return null
+        }
+        val selected=value["root"]?.let { search(reference(it),end) }
+        return report("valid",if(chunksDecoded>0)"selected_chunks" else "opened_records",value["summary"].obj(),value["status"].text(),false)+mapOf(
+            "seek_result" to if(selected==null)"not_found" else "found","selected_entry_id" to selected?.get("entry_id"),
+            "selected_timeline_ns" to selected?.get("timeline_ns"),"selected_entry_kind" to selected?.get("kind"),"requested_stream_id" to streamId)
+    }
+
+    /**
      * Explicit cancellable salvage exposes independently valid CHUNK ranges only.
      * It never certifies global chronology/index/completion or invents missing rows.
      * Complete source corruption stays visible. Broken framing stops the scan;

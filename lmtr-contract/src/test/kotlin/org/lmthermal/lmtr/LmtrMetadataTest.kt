@@ -89,4 +89,13 @@ class LmtrMetadataTest {
         assertEquals("invalid_metadata", reject { LmtrMetadata.local("Ref", reference + mapOf("first" to "2", "last" to "1")) })
     }
 
+    @Test fun typedIdentifiersRejectTrailingNewlineBeforeContainerNavigation() {
+        val examples=LmtrJson.parse(javaClass.getResourceAsStream("/lmtr-examples.json")!!.use { it.readBytes() })
+        val original=examples["cases"].arr().first().obj()["header"].obj()
+        val streams=original["streams"].arr().map { it.obj()+ ("id" to (it.obj()["id"].text()+"\n")) }
+        assertEquals("invalid_metadata",reject { LmtrMetadata.header(original+("streams" to streams)) })
+        val producer=original["producer"].obj()
+        assertEquals("invalid_metadata",reject { LmtrMetadata.header(original+("producer" to (producer+("application_id" to (producer["application_id"].text()+"\n"))))) })
+    }
+
 }

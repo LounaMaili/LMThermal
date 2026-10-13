@@ -113,7 +113,7 @@ object LmtrSchema {
                 val count = value.codePointCount(0, value.length)
                 s["minLength"]?.let { demand(count >= it.i(), "metadata_limit") }
                 s["maxLength"]?.let { demand(count <= it.i(), "metadata_limit") }
-                s["pattern"]?.let { demand(Regex(it.text()).containsMatchIn(value), "metadata_pattern") }
+                s["pattern"]?.let { demand(Regex(it.text()).matches(value), "metadata_pattern") }
             }
             is JsonNumber, is Int, is Long -> {
                 s["minimum"]?.let { demand(number(value) >= number(it), "metadata_limit") }

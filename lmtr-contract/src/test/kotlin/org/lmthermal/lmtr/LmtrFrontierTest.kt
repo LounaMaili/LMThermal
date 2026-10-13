@@ -26,4 +26,16 @@ class LmtrFrontierTest {
             try { action();fail("unsafe public statistics input") } catch(_:LmtrFailure) { }
         }
     }
+    @Test fun wholeChunkBudgetRejectsBeforeAnyMissingRecipeIsMaterialized() {
+        val plan=LmtrJson.parse(javaClass.getResourceAsStream("/lmtr/plans/illustration-01-stored.json")!!.use { it.readBytes() })
+        val item=plan["chunks"].arr().single().obj();val metadata=item["metadata"].obj()
+        val blocks=metadata["blocks"].arr().mapIndexed { i,b -> if(i==0)b.obj()+mapOf("decoded" to "67108864","stored" to "67108864") else b.obj() }
+        val modified=item+mapOf("metadata" to (metadata+("blocks" to blocks)),"payload_recipes" to emptyMap<String,Any?>())
+        val directory=java.nio.file.Files.createTempDirectory("lmtr-admission-");val file=directory.resolve("refused.lmtr").toFile()
+        try {
+            try { LmtrWriter.writePlan(plan+("chunks" to listOf(modified)),file);fail("whole chunk admission bypassed") }
+            catch(e:LmtrFailure) { assertEquals("resource_limit",e.code) }
+        } finally { java.nio.file.Files.deleteIfExists(file.toPath());java.nio.file.Files.deleteIfExists(directory) }
+    }
+
 }

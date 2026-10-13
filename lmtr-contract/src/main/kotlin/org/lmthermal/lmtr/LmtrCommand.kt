@@ -11,6 +11,12 @@ object LmtrCommand {
             when(args[0]) {
                 "canon" -> { System.out.write(LmtrJson.encode(LmtrJson.parse(File(args[1]).readBytes())));return }
                 "write-plan" -> { demand(args.size==3,"invalid_metadata");println(LmtrJson.encode(LmtrWriter.writePlan(LmtrJson.parse(File(args[1]).readBytes()),File(args[2]))).toString(Charsets.UTF_8)) }
+                "seek" -> {
+                    demand(args.size==3 || (args.size==5 && args[3]=="--stream"),"invalid_metadata")
+                    val time=args[2].toLongOrNull() ?: throw LmtrFailure("invalid_metadata")
+                    val selected=LmtrReader(File(args[1])).use { it.seek(time,args.getOrNull(4)) }
+                    println(LmtrJson.encode(selected).toString(Charsets.UTF_8))
+                }
                 "scan" -> {
                     demand(args.size==2,"invalid_metadata")
                     println(LmtrJson.encode(LmtrReader(File(args[1])).use { it.salvage() }).toString(Charsets.UTF_8))

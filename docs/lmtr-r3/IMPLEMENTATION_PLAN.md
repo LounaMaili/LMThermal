@@ -14,7 +14,7 @@ R3 branch `feat/lmtr-r3-contract-conformance`; #8 stays open, no R3 merge or R4/
 - [x] 6. Bounded STORED and single RFC1950 DEFLATE streams.
 - [x] 7. Entry IDs/intake clocks/source times/sequences/gaps/retention.
 - [x] 8. Same-observation/chunk materialized-parent native view integrity.
-- [ ] 9. Paged index/checkpoint primitives tested; time/stream seek and exhaustive depth limits pending.
+- [x] 9. Bounded paged entry/time/stream navigation, checkpoints and actual maximum depth tested (finite host scope).
 - [ ] 10. END/finalization and truthful read-only recovery/errors.
 - [x] 11. Small deterministic synthetic canonical fixture inventory/provenance.
 - [x] 12. Kotlin-write/Python-read and Python-write/Kotlin-read exact logical parity.
@@ -111,3 +111,47 @@ An initial parameterized stress source incorrectly reused a 60 MiB default paylo
 hash after selecting 8 MiB chunks; both readers correctly rejected it as committed
 integrity damage. The generator now hashes its explicit selected size; no failure
 was reclassified or assertion weakened. The huge temporary artifacts are not in Git.
+
+
+## Additional host contract coverage
+
+The first two checkpoints remain preserved. Independent intake-time/stream seek
+now selects the first recorded participating entry at/after the requested common
+timeline, including explicit segment events. Not-found results contain null entry
+fields; source clocks never replace the intake chronology. All 33positive fixtures
+match sequential oracles, and 44cross-runtime seek queries pass.
+
+On-demand [hard-limit evidence](linux-limit-validation.json) verifies actual legal
+eight-level indexing/full parity, ninth-level refusal,65 MiB fast-tail refusal,
+1,025candidate and predecessor refusal,64 suffix chunks accepted and 65refused.
+The ninth-level error is aligned to the resource class. Both implementations now require typed ASCII tokens to use a a full lexical match, rejecting a trailing newline without changing
+unknown optional JSON strings. Eight cross-runtime compatibility/lexical cases pass.
+Kotlin synthetic publication now defaults unrecorded finalization UTC to unknown,
+matching Python; known earlier creation UTC is not evidence of Stop/publication UTC.
+
+A whole Python run initially overlapped corpus publication and failed with a
+missing fixture path. Regeneration and corpus-consuming tests are now serialized;
+no assertion or wire rule was weakened. Current final suite totals and hashes are
+in [the refreshed summary](linux-validation-summary.json). Earlier 60/54counts above
+are retained checkpoint history, not current totals.
+
+Current remaining work: real native Windows/NTFS and ART; measured cancellation
+latency and exhaustive mixed-corruption/admission/resource combinations; arbitrary
+damaged-framing discovery/rebuilt-index cache; asynchronous producer timers/Stop/
+queues/backend durability and production integration. R3 remains incomplete/open.
+
+
+Current extended host checkpoint also enforces two Python append-sync barriers
+(body before promised footer, then footer before acknowledgement), tested by an
+injected body-sync failure yielding zero saved CHUNKs and no END. Synthetic recipe
+and complete declared physical products are admitted before byte allocation;
+provisional plan offsets are recalculated before full wire validation. A known
+creation UTC is never silently reused as finalization UTC. None of these host
+checks certifies directory/provider durability or physical power-loss behavior.
+
+Final current results supersede earlier checkpoint counters:65 JVM R3 tests,
+61 Python tests,232 unchanged core tests;51 canonical classifications per reader,
+33 Kotlin-write/Python-full-read and 33 canonical plan-byte comparisons;43 JSON,
+8 version/lexical,3 codec,44 time/stream,2 navigation-recovery and 4 scan cross cases.
+All reported numbers are tied to durable reports; R3 remains open/incomplete for
+native Windows/ART and disclosed runtime/mixed-corruption/backend gates.

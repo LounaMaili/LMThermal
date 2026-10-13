@@ -41,8 +41,7 @@ not demonstrate native NTFS sparse offsets. Native Windows >4GiB seek/resource
 validation needs a reviewed Windows-specific stress adapter with the same valid
 contiguous framing and source-integrity assertions. Do not commit huge files.
 
-ART execution, monotonic/stream-filter seek, exhaustive index-depth/fast-recovery
-limits, arbitrary damaged-framing discovery and disposable rebuilt-index cache,
+ART execution, exhaustive mixed-corruption/fast-recovery combinations, arbitrary damaged-framing discovery and disposable rebuilt-index cache,
 async recorder admission/timers/Stop and backend durability/export are separate
 remaining coverage/runtime gates. None is established by a green host suite.
 No generic-camera, indefinite-runtime, physical power-loss or calibrated temperature

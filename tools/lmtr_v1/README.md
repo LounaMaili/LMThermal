@@ -15,6 +15,7 @@ python3 -m tools.lmtr_v1 check new-file.lmtr --entry 1
 python3 -m tools.lmtr_v1 check new-file.lmtr --full
 python3 -m tools.lmtr_v1 check incomplete.lmtr --recover --full
 python3 -m tools.lmtr_v1 scan damaged.lmtr
+python3 -m tools.lmtr_v1 seek example.lmtr 1000000 --stream primary
 ```
 
 `canon` emits UTF-8 canonical bytes with no newline. Other commands emit one JSON
@@ -22,6 +23,9 @@ result; a rejected operation exits 2. Opening is read-only. `opened_records`,
 `selected_chunks`, `full`, `full_verified_prefix` and explicit `salvaged_chunks` are distinct scopes. A valid
 END records declared completion, not external producer close acknowledgement.
 `--entry` verifies all logical data in its selected CHUNK, not just one pixel.
+`seek` searches recorder-intake time with optional declared-stream participation;
+segment events involve their explicit stream inventory. A not-found query has null
+selected fields and never invents an observation. Original sensor clocks are separate.
 `--recover` follows bounded tail/predecessor limits; `--full` additionally verifies
 the recovered checkpoint's indexed prefix. Recovery never repairs/appends a source.
 
@@ -59,8 +63,10 @@ relax record JSON's 16 KiB string bound; every wire body is checked separately.
   records. Broken framing stops safely; arbitrary-range discovery and an external
   rebuilt-index cache are not implemented. Checkpoint recovery without `--full`
   does not certify its unvisited prefix or every prior source-counter observation.
-- No asynchronous recorder admission/timers, live frame acquisition, filesystem
-  barriers/power loss, SAF providers, Kotlin/ART execution or native Windows run
+- New-file append uses separate body/footer flush/fsync barriers, with an injected
+  body-sync failure regression; unrecorded finalization UTC remains unknown.
+- No asynchronous recorder admission/timers, live frame acquisition, directory
+  persistence/provider durability/power loss, SAF providers, Kotlin/ART execution or native Windows run
   is demonstrated by these tools. The host writer does not advertise production
   Stop/durability conformance. These gates require separate evidence.
 

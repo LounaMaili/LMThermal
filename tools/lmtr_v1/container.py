@@ -10,6 +10,8 @@ from decimal import Decimal
 import hashlib
 import io
 import json
+import math
+import os
 from pathlib import Path
 import struct
 import zlib
@@ -134,7 +136,12 @@ class Reader:
             if kind!=2:
                 record['json']=loads(body)
                 if kind==1: header(record['json'])
-                else: SHAPES.check({3:'IndexPage',4:'Checkpoint',5:'End'}[kind],record['json'])
+                else:
+                    # A well-typed but ninth navigation level exceeds the frozen
+                    # hard resource limit; it is not an unfamiliar optional shape.
+                    depth=record['json'].get('depth') if kind==3 else None
+                    if type(depth) is int and 0<=depth<=2147483647:require(depth<=7,'index depth bound','resource_limit')
+                    SHAPES.check({3:'IndexPage',4:'Checkpoint',5:'End'}[kind],record['json'])
             require(len(self.validated_records)<65536 or offset in self.validated_records,'reference-tool record reporting budget','local_resource_limit')
             self.validated_records.add(offset)
             # Only small navigation records are cached. At most 16 bounded pages.
@@ -298,6 +305,39 @@ class Reader:
             summary=end['json']['summary']; scope='selected_chunks'
         else: summary=end['json']['summary']; scope='opened_records'
         return {'status':'valid','declared_end_status':end['json']['status'],'integrity_scope':scope,'summary':summary,'logical_hashes':self.logical,'validated_records':len(self.validated_records),'selected_chunks':len(self.selected)}
+    def seek(self,timeline_ns,stream_id=None):
+        """First recorded entry at/after intake time, filtered by explicit participation.
+
+Original sensor/receipt clocks never replace the common chronology. Segment
+start/end entries involve their declared streams. Coarse unions may visit multiple
+candidate chunks; local1024visit admission bounds work and retained state.
+"""
+        require(type(timeline_ns) is int and 0<=timeline_ns<=MAX63,'query timeline')
+        require(stream_id is None or stream_id in {s['id'] for s in self.head['streams']},'query stream')
+        end=self.terminal();visits=[0]
+        def find(ref,owner):
+            visits[0]+=1;require(visits[0]<=1024,'seek candidate budget','local_resource_limit')
+            record=self.reference(ref,owner,3);self.index_page(record);page=record['json']
+            for child in page['children']:
+                if int(child['time_last_ns'])<timeline_ns or stream_id is not None and stream_id not in child['stream_ids']:continue
+                target=self.reference(child['record'],record,2 if page['depth']==0 else 3)
+                if page['depth']:
+                    lower=target['json']
+                    require(lower['depth']==page['depth']-1 and child['stream_ids']==lower['stream_ids'] and child['time_first_ns']==lower['time_first_ns'] and child['time_last_ns']==lower['time_last_ns'],'seek child navigation','invalid_container')
+                    chosen=find(child['record'],record)
+                    if chosen is not None:return chosen
+                else:
+                    visits[0]+=1;require(visits[0]<=1024,'seek candidate budget','local_resource_limit')
+                    metadata,result=self.decode(target)
+                    require(child['stream_ids']==result['stream_ids'] and child['time_first_ns']==metadata['entries'][0]['timeline_ns'] and child['time_last_ns']==metadata['entries'][-1]['timeline_ns'],'seek child metadata','invalid_container')
+                    segments={s['id']:s for s in metadata['segments']}
+                    for entry in metadata['entries']:
+                        participates=stream_id is None or entry.get('stream_id')==stream_id or entry['kind'] in ('segment_start','segment_end') and stream_id in {s['stream_id'] for s in segments[entry['segment_id']]['streams']}
+                        if int(entry['timeline_ns'])>=timeline_ns and participates:return entry
+            return None
+        chosen=find(end['json']['root'],end) if end['json']['root'] else None
+        return {'status':'valid','integrity_scope':'selected_chunks' if self.selected else 'opened_records','declared_end_status':end['json']['status'],'summary':end['json']['summary'],'logical_hashes':self.logical,'validated_records':len(self.validated_records),'selected_chunks':len(self.selected),'seek_result':'found' if chosen else 'not_found','selected_entry_id':chosen['entry_id'] if chosen else None,'selected_timeline_ns':chosen['timeline_ns'] if chosen else None,'selected_entry_kind':chosen['kind'] if chosen else None,'requested_stream_id':stream_id}
+
     def salvage(self,cancelled=lambda:False):
         """Explicit cancellable scan of independently verified CHUNK ranges.
 
@@ -401,21 +441,52 @@ def make_ref(record,first=None,last=None):
     return {'offset':str(record['offset']),'length':str(record['length']),'ordinal':str(record['ordinal']),'first':first,'last':last,'hash':record['hash']}
 
 
-def recipe_bytes(recipe):
-    """Non-wire corpus plan materialization; byte recipes are never accepted as wire data."""
+def recipe_bytes(recipe,depth=0):
+    """Bounded non-wire materialization; verify requested allocation before creating bytes."""
+    require(isinstance(recipe,dict),'recipe object')
+    require(depth<32,'recipe nesting','resource_limit')
+    # Requested byte products are admitted before allocating their repeated scalar.
+    def count(width):
+        require(type(recipe['count']) is int and recipe['count']>0,'recipe integer count')
+        require(recipe['count']<=DECODED_LIMIT//width,'recipe allocation budget','resource_limit')
+        return recipe['count']
+    # NaN/Inf evidence is explicit hex transport, never a synthetic scalar coercion.
+    def finite(value):
+        require(type(value) is not bool,'recipe numeric scalar')
+        number=float(value);require(math.isfinite(number),'finite recipe scalar');return number
     kind=recipe['kind']
-    if kind=='hex': return bytes.fromhex(recipe['hex'])
-    if kind=='f32_values': return b''.join(struct.pack('<f',float(x)) for x in recipe['values'])
-    if kind=='f32_constant': return struct.pack('<f',float(recipe['value']))*int(recipe['count'])
-    if kind=='u16_constant': return struct.pack('<H',int(recipe['value']))*int(recipe['count'])
+    if kind=='hex':
+        text=recipe['hex'];require(isinstance(text,str),'hex recipe');require(len(text)<=2*DECODED_LIMIT,'hex allocation','resource_limit')
+        return bytes.fromhex(text)
+    if kind=='f32_values':
+        values=recipe['values'];require(isinstance(values,list),'recipe values')
+        require(len(values)<=DECODED_LIMIT//4,'recipe value allocation','resource_limit')
+        return b''.join(struct.pack('<f',finite(x)) for x in values)
+    if kind=='f32_constant':return struct.pack('<f',finite(recipe['value']))*count(4)
+    if kind=='u16_constant':
+        value=recipe['value'];require(type(value) is int and 0<=value<=65535,'uint16 recipe scalar')
+        return struct.pack('<H',value)*count(2)
     if kind=='transport':
-        native=recipe_bytes(recipe['native']); return native+bytes(int(recipe['trailer_bytes']))
+        native=recipe_bytes(recipe['native'],depth+1);tail=recipe['trailer_bytes']
+        require(type(tail) is int and tail>=0,'trailer integer count')
+        require(tail<=DECODED_LIMIT-len(native),'trailer allocation','resource_limit')
+        return native+bytes(tail)
     require(False,'unsupported recipe kind')
 
 
 # Materialize owned synthetic recipes and independently verify native views before publication.
 def prepare_chunk(item,head):
     metadata=deepcopy(item['metadata']); incoming={b['id']:b for b in item.get('blocks',[])}
+    for block in metadata.get('blocks',[]):
+        if type(block.get('codec')) is int:require(block['codec'] in (0,1),'writer codec','unsupported_codec')
+    SHAPES.check('Chunk',metadata)
+    require(4+len(dumps(metadata))+sum(int(b['decoded']) for b in metadata['blocks'])<=DECODED_LIMIT,'plan physical allocation budget','resource_limit')
+    byblock={b['id']:b for b in metadata['blocks']}
+    for entry in metadata['entries']:
+        for payload in entry.get('payloads',[]):
+            if payload['kind']=='materialized':
+                require(payload['block_id'] in byblock,'plan block closure')
+                require(int(payload['offset'])+int(payload['length'])<=int(byblock[payload['block_id']]['decoded']),'plan interval allocation','invalid_payload')
     if 'payload_recipes' in item:
         physical={b['id']:bytearray() for b in metadata['blocks']}
         for entry in metadata['entries']:
@@ -458,7 +529,11 @@ All actual record JSON is separately subjected to the accepted wire constraints.
         def append(kind,body,metadata=None):
             nonlocal record_count, last_record
             offset=output.tell(); previous=last_record['offset'] if last_record else MAX63; ordinal=record_count
-            raw=encode_record(kind,body,ordinal,previous); output.write(raw)
+            raw=encode_record(kind,body,ordinal,previous)
+            # A footer is a promised commit only after the body barrier; acknowledge
+            # this append only after a separate footer barrier also succeeds.
+            output.write(raw[:-72]);output.flush();os.fsync(output.fileno())
+            output.write(raw[-72:]);output.flush();os.fsync(output.fileno())
             record={'offset':offset,'length':len(raw),'ordinal':ordinal,'previous':previous,'kind':kind,'hash':sha(raw[:40]+hashlib.sha256(body).digest())}
             if metadata is not None: record['metadata' if kind==2 else 'json']=metadata
             record_count+=1; last_record=record; return record

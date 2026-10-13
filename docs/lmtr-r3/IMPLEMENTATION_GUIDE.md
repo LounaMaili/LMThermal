@@ -29,8 +29,12 @@ is not a camera acquisition API or part of wire JSON.
 - Normal open verifies HEADER, END/checkpoint and bounded root/navigation; it does
   not certify every historical payload.
 - `--entry N` verifies the containing CHUNK's body, decoded groups and logical data.
-  The current public seek interface is **entry ID only**. Monotonic-time seeking
-  and stream filters remain unimplemented; unknown Kotlin CLI options reject.
+  `seek FILE TIMELINE_NS [--stream ID]` additionally selects the first recorded
+  entry at/after **recorder-intake** time. Segment events participate in their
+  explicit stream inventory. Sensor/receipt clocks never replace this timeline.
+  A no-match query returns `seek_result=not_found` and null selected fields; it
+  does not mark an otherwise valid source corrupt. Candidate visits are capped
+  at1,024 and page caches stay bounded. Unknown options still reject.
 - `--full` streams every physical record, including legitimate immutable pages no
   longer reachable from the final root, and verifies final root/summary/journal.
   Unreferenced historical pages are legal; invalid committed ones are not hidden
@@ -78,7 +82,8 @@ The on-demand [sparse report](linux-sparse-validation.json) records selected acc
 and a separate Python full scan beyond 4 GiB. The large file never enters Git. JVM probes precede the large Python full scan:
 an initial measurement order returned the parent's pre-exec high-water mark in
 Unix child RSS (269,924 KiB), so it was corrected rather than labelled Java heap.
-The report now distinguishes selected child RSS, cumulative child RSS including
+[Hard-limit probes](linux-limit-validation.json) additionally verify all 8 index levels
+and explicit candidate/predecessor/suffix/tail refusal. The report distinguishes selected child RSS, cumulative child RSS including
 the explicit-refusal probe, Python selected/full RSS and configured heap/budget. A
 sampled synthetic run cannot certify every geometry, duration, heap, backend
 or real-time workload. Kotlin's default budget correctly refuses selecting the
@@ -89,13 +94,15 @@ large 60 MiB chunk while allowing the small indexed target beyond 4 GiB.
 Writers build exact logical recipe bytes, validate independently provided native
 view evidence against acquisition slices, and derive their hashes. They publish new
 files exclusively and retain unfinished owned artifacts on failure. Kotlin framing
-uses separate body/footer file syncs; the Python corpus writer establishes readback
-integrity, **not** matching production durability barriers. Neither implements
+and Python now use separate body/footer file-sync barriers and independent
+readback. An injected Python body-sync failure produces no promised CHUNK/footer
+or END. Neither certifies directory persistence, provider close/export durability
+or power-loss behavior. Neither implements
 monotonic 1-second sealing, 5-second checkpoints, admission/Stop races, async queue
 backpressure or provider close/export guarantees. No such success follows from END.
 
 Native Windows protocol: [WINDOWS_VALIDATION.md](WINDOWS_VALIDATION.md), pending.
-ART execution, time/stream seek, exhaustive depth/candidate/cancellation boundaries,
+ART execution, measured cancellation latency and exhaustive mixed-corruption boundaries,
 backend runtime and generic module performance remain unverified or unimplemented
 as tracked in [the checklist](IMPLEMENTATION_PLAN.md). R3 #8 stays open; PR #14 is
 draft. R4/R5/R6/R7 and application integration are not started.

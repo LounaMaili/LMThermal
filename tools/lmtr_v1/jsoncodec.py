@@ -178,6 +178,6 @@ class Shapes:
                 if 'items' in shape: self._check(shape['items'], item, path + '[]')
         if isinstance(value, str):
             require(shape.get('minLength', 0) <= len(value) <= shape.get('maxLength', MAX63), path + ': string length')
-            if 'pattern' in shape: require(re.search(shape['pattern'], value) is not None, path + ': pattern')
+            if 'pattern' in shape: require(re.fullmatch(shape['pattern'], value) is not None, path + ': pattern')
         if type(value) in (int, Decimal):
             require(shape.get('minimum', -MAX63) <= value <= shape.get('maximum', Decimal('1e4096')), path + ': numeric bound')
