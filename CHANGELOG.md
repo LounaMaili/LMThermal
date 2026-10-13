@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 ART build isolation)
+
+- Add a camera-free Gradle entry point excluding production app configuration and its NDK/CMake/UVC requirements, after an API26 job booted but failed provisioning an unrelated product NDK. Reuse the exact same contract, recorder and adapter sources; preserve the failure and product ABI.
+
 ### Fixed (R4 emulator matrix literal)
 
 - Correct the API35 image target to a literal matrix value; expressions apply only when consuming the completed matrix. This is CI provisioning only.

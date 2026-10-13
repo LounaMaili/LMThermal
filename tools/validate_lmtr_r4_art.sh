@@ -11,7 +11,7 @@ adb -e logcat -c || printf 'Log clear unavailable; retain full runtime log inste
 trap 'adb -e logcat -d > "$reports_dir/logcat.txt" || true' EXIT
 # Run directly after packaging: connectedDebugAndroidTest uninstalls its target,
 # deleting private synthetic output before host readback. No physical app is touched.
-./gradlew :lmtr-art:assembleDebug :lmtr-art:assembleDebugAndroidTest --console=plain 2>&1 | tee "$reports_dir/gradle.txt"
+./gradlew -p tools/lmtr-r4-art :lmtr-art:assembleDebug :lmtr-art:assembleDebugAndroidTest --console=plain 2>&1 | tee "$reports_dir/gradle.txt"
 adb -e install -r lmtr-art/build/outputs/apk/debug/lmtr-art-debug.apk
 adb -e install -r lmtr-art/build/outputs/apk/androidTest/debug/lmtr-art-debug-androidTest.apk
 adb -e shell am instrument -w -r org.lmthermal.art.test/androidx.test.runner.AndroidJUnitRunner | tee "$reports_dir/instrumentation.txt"

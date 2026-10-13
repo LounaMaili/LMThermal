@@ -8,7 +8,7 @@ The existing contract/recorder code is packaged on ART, with shared engine tests
 51 unchanged canonical assets, exact JSON/Float32/SHA/CRC/codec tests and actual
 engine outputs for independent Python readback. Canonical fixtures are inputs only.
 
-Build with `./gradlew :lmtr-art:assembleDebug :lmtr-art:assembleDebugAndroidTest`.
+Build with `./gradlew -p tools/lmtr-r4-art :lmtr-art:assembleDebug :lmtr-art:assembleDebugAndroidTest`.
 Use `tools/validate_lmtr_r4_art.sh REPORTS_DIR` on a camera-free emulator to retain
 outputs for independent readback; `connectedDebugAndroidTest` removes the target on exit. This is not a
 physical HT-301/Pixel8 test. Product ABI remains arm64-v8a. No new pairing is needed.
@@ -105,3 +105,10 @@ successive jobs before ART execution; official SDK metadata also provides the sm
 AOSP image. This changes only emulator provisioning, not product ABI/minimum SDK or
 test assertions. Historical failures remain evidence; the replacement job must pass
 its own instrumentation and independent file-readback gates.
+
+The ART build entry point now excludes the production `app` project entirely.
+A later API26 attempt booted successfully but root-project Gradle configuration tried
+to install the product NDK and failed before tests. `tools/lmtr-r4-art` reuses the
+same module sources with pinned AGP/Kotlin versions and needs only JDK17/SDK35;
+no NDK/CMake/UVC/JNI dependency is configured. This fixes an integration-tool boundary,
+not a recorder assertion. The product root build/ABI remains unchanged.
