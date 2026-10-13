@@ -101,7 +101,7 @@ or power-loss behavior. Neither implements
 monotonic 1-second sealing, 5-second checkpoints, admission/Stop races, async queue
 backpressure or provider close/export guarantees. No such success follows from END.
 
-Native Windows protocol: [WINDOWS_VALIDATION.md](WINDOWS_VALIDATION.md), pending.
+Native Windows protocol/results: [WINDOWS_VALIDATION.md](WINDOWS_VALIDATION.md); the exact native CI gate passed.
 ART execution, measured cancellation latency and exhaustive mixed-corruption boundaries,
 backend runtime and generic module performance remain unverified or unimplemented
 as tracked in [the checklist](IMPLEMENTATION_PLAN.md). R3 #8 stays open; PR #14 is
@@ -114,7 +114,12 @@ draft. R4/R5/R6/R7 and application integration are not started.
 [HARDENING_REVIEW](HARDENING_REVIEW.md) supersedes the earlier undifferentiated
 remaining-work list: general damaged-framing salvage/cache are optional; async
 producer and backend/export guarantees belong to R4/R6. Required R3 host recovery
-primitives are tested, while native Windows remains a required unexecuted gate.
+primitives are tested, while native Windows now passes its required finite conformance gate.
 Cooperative full/recovery checks propagate cancellation without numerical success;
 one admitted synchronous operation cannot be interrupted. New reports preserve old
 checkpoint evidence and pinned corpus provenance.
+
+The [native Windows receipt](windows-validation-summary.json) establishes71 JVM/
+64 Python, independent51-case corpus/33-write interoperability and NTFS >4GiB/full
+read integrity on the pinned CI SHA. Earlier unverified-platform lists above are
+checkpoint history; ART remains separately unexecuted before production.

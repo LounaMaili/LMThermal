@@ -21,7 +21,7 @@ R3 branch `feat/lmtr-r3-contract-conformance`; #8 stays open, no R3 merge or R4/
 - [x] 13. Negative/hostile lengths/metadata/features/codecs/views/recovery cases.
 - [x] 14. On-demand Fedora sparse >4 GiB, lazy access and explicit local-budget refusal demonstrated (sampled scope).
 - [x] 15. Clean JVM/Python/applicable core regression and deterministic regeneration.
-- [ ] 16. Real native Windows canonical LMTR validation (unavailable here; remains gate).
+- [x] 16. Real native Windows canonical LMTR/NTFS validation (run 38392229227; finite synthetic scope).
 
 ## Isolation and evidence
 
@@ -171,3 +171,20 @@ Final hardening totals: **71 JVM R3**, **64 Python**, **232 core**, all passing;
 full/recovery/salvage cancellation. [New summary](linux-hardening-summary.json) and
 [interop continuation](linux-hardening-interop-validation.json) preserve earlier
 checkpoint files. The 51 fixtures and original manifest hash remain unchanged.
+
+## Native Windows completion receipt
+
+[Run 38392229227](https://github.com/LounaMaili/LMThermal/actions/runs/38392229227)
+passes the exact `9770e5a` checkout:71 JVM/64 Python,51corpus classifications per
+reader,33 Kotlin writes independently fully read by Python,43 JSON vectors equal
+to Fedora,29 combined hostile cases and cancellation. Native NTFS selected offset
+>4GiB and Python full71 CHUNK integrity pass with<5MiBphysical allocation and exact
+source immutability. [Durable receipt](windows-validation-summary.json) retains
+raw report SHA fingerprints and passing/failed run/artifact links. The original
+corpus files are unchanged: inventory remains 51 files /33 positive /18 negative.
+
+All mandatory R3 contract/platform gates now have finite tested evidence. ART is
+NOT EXECUTED and remains a separate pre-production compatibility check. Optional
+salvage/cache and R4/R6 producer/backend guarantees stay outside pure R3 acceptance.
+PR14 remains draft/unmerged, #8 open; owner-authorized integration review is ready.
+No production app, camera, thermometry, R4/R5/R6 or specification change.

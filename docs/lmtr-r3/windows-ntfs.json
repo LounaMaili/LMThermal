@@ -1,0 +1,125 @@
+{
+  "allocated_bytes": 4915200,
+  "bytes": 4404323163,
+  "filesystem": "NTFS",
+  "full": "python_full_71_chunks_passed",
+  "kotlin": {
+    "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+    "chunks_decoded": "1",
+    "declared_end_status": "completed",
+    "integrity_scope": "selected_chunks",
+    "logical_hashes": {
+      "71:acquisition": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb"
+    },
+    "records_read": "5",
+    "status": "valid",
+    "summary": {
+      "chunks": "71",
+      "entries": "73",
+      "first_entry": "0",
+      "first_timeline_ns": "0",
+      "gap_events": "0",
+      "known_missing_observations": "0",
+      "last_entry": "72",
+      "last_timeline_ns": "72000000",
+      "logical_bytes": {
+        "acquisition": "4404019216",
+        "module_extension": "0",
+        "native_samples": "0",
+        "preview": "0",
+        "temperature": "0",
+        "validity": "0",
+        "visible": "0"
+      },
+      "measurable_planes": "0",
+      "observations": "71",
+      "physical_payload_bytes": "4404019216",
+      "streams": [
+        {
+          "gap_events": "0",
+          "known_missing_observations": "0",
+          "logical_bytes": {
+            "acquisition": "4404019216",
+            "module_extension": "0",
+            "native_samples": "0",
+            "preview": "0",
+            "temperature": "0",
+            "validity": "0",
+            "visible": "0"
+          },
+          "measurable_planes": "0",
+          "observations": "71",
+          "stream_id": "primary",
+          "temperature_planes": "0",
+          "unknown_gap_events": "0"
+        }
+      ],
+      "temperature_planes": "0",
+      "unknown_gap_events": "0"
+    },
+    "unknown_tail": false
+  },
+  "limitations": [
+    "optional Python full scan is separate from selected scope",
+    "no physical write-throughput/power-loss guarantee",
+    "no universal memory ceiling"
+  ],
+  "platform": "Windows-2022Server-10.0.20348-SP0",
+  "python": {
+    "declared_end_status": "completed",
+    "integrity_scope": "selected_chunks",
+    "logical_hashes": {
+      "71:acquisition": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb"
+    },
+    "selected_chunks": 1,
+    "status": "valid",
+    "summary": {
+      "chunks": "71",
+      "entries": "73",
+      "first_entry": "0",
+      "first_timeline_ns": "0",
+      "gap_events": "0",
+      "known_missing_observations": "0",
+      "last_entry": "72",
+      "last_timeline_ns": "72000000",
+      "logical_bytes": {
+        "acquisition": "4404019216",
+        "module_extension": "0",
+        "native_samples": "0",
+        "preview": "0",
+        "temperature": "0",
+        "validity": "0",
+        "visible": "0"
+      },
+      "measurable_planes": "0",
+      "observations": "71",
+      "physical_payload_bytes": "4404019216",
+      "streams": [
+        {
+          "gap_events": "0",
+          "known_missing_observations": "0",
+          "logical_bytes": {
+            "acquisition": "4404019216",
+            "module_extension": "0",
+            "native_samples": "0",
+            "preview": "0",
+            "temperature": "0",
+            "validity": "0",
+            "visible": "0"
+          },
+          "measurable_planes": "0",
+          "observations": "71",
+          "stream_id": "primary",
+          "temperature_planes": "0",
+          "unknown_gap_events": "0"
+        }
+      ],
+      "temperature_planes": "0",
+      "unknown_gap_events": "0"
+    },
+    "validated_records": 6
+  },
+  "source_immutability": "exact SHA/size/mtime/allocation unchanged; read-only readers",
+  "source_sha256": "6d1aada6f6a6d18272a5a9d256c7fb6b8351c595503917e96541b041bf8ad2b8",
+  "target_offset": "4404298782"
+}

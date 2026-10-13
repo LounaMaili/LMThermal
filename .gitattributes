@@ -25,3 +25,7 @@ tools/check_lmtr_*.py text eol=lf
 tools/lmtr_v1/tests/*.py text eol=lf
 tools/lmtr-r3-host/*.kts text eol=lf
 tools/validate_lmtr_r3_windows.ps1 text eol=lf
+
+# Preserve exact downloaded CI JSON receipts (including their original CRLF bytes).
+docs/lmtr-r3/windows-*.json -text -whitespace
+tools/test_lmtr_r3_windows.ps1 text eol=lf

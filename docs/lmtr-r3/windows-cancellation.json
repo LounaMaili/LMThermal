@@ -1,0 +1,327 @@
+{
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "limitations": [
+    "only cooperative boundary latency measured, including owned close",
+    "no interruption or deadline inside synchronous hash/decompression",
+    "tracemalloc excludes native allocations; JVM heap sampled at polls only",
+    "descriptor counts checked on Linux only; caller owns use/context close"
+  ],
+  "platform": "Windows-2022Server-10.0.20348-SP0",
+  "runs": [
+    {
+      "kotlin": {
+        "additional_record_reads": "0",
+        "descriptors_after": null,
+        "descriptors_before": null,
+        "immutable": true,
+        "limitations": "cooperative record boundaries; synchronous hash/decompression not interrupted; no hard real-time deadline",
+        "mode": "full",
+        "observed_latency_ns": "101800",
+        "polls": 10,
+        "request_point": "before record access at poll 10",
+        "result": {
+          "integrity_scope": "none",
+          "status": "cancelled"
+        },
+        "runtime": "17.0.20.1+1",
+        "sampled_peak_heap_bytes": "14453560",
+        "source_sha256": "6a85b5e7dee10df939fa076305d502fcbe39f98fa68ea6ee69190b915d2c0f05"
+      },
+      "mode": "full",
+      "python": {
+        "additional_record_reads": 0,
+        "descriptors_after": null,
+        "descriptors_before": null,
+        "immutable": true,
+        "mode": "full",
+        "observed_latency_ns": 114900,
+        "polls": 10,
+        "request_point": "before record access at poll 10",
+        "result": {
+          "integrity_scope": "none",
+          "status": "cancelled"
+        },
+        "runtime": "3.13.16",
+        "source_sha256": "6a85b5e7dee10df939fa076305d502fcbe39f98fa68ea6ee69190b915d2c0f05",
+        "traced_peak_bytes": 164282
+      },
+      "source_bytes": 206675
+    },
+    {
+      "kotlin": {
+        "additional_record_reads": "0",
+        "descriptors_after": null,
+        "descriptors_before": null,
+        "immutable": true,
+        "limitations": "cooperative record boundaries; synchronous hash/decompression not interrupted; no hard real-time deadline",
+        "mode": "recovery",
+        "observed_latency_ns": "95300",
+        "polls": 8,
+        "request_point": "before record access at poll 8",
+        "result": {
+          "integrity_scope": "none",
+          "status": "cancelled"
+        },
+        "runtime": "17.0.20.1+1",
+        "sampled_peak_heap_bytes": "13631488",
+        "source_sha256": "578520b6ce7708e3f79a365403e263c350559bffbfdaad58acd39cba0e45e337"
+      },
+      "mode": "recovery",
+      "python": {
+        "additional_record_reads": 0,
+        "descriptors_after": null,
+        "descriptors_before": null,
+        "immutable": true,
+        "mode": "recovery",
+        "observed_latency_ns": 124000,
+        "polls": 8,
+        "request_point": "before record access at poll 8",
+        "result": {
+          "integrity_scope": "none",
+          "status": "cancelled"
+        },
+        "runtime": "3.13.16",
+        "source_sha256": "578520b6ce7708e3f79a365403e263c350559bffbfdaad58acd39cba0e45e337",
+        "traced_peak_bytes": 177320
+      },
+      "source_bytes": 205253
+    },
+    {
+      "kotlin": {
+        "additional_record_reads": "0",
+        "descriptors_after": null,
+        "descriptors_before": null,
+        "immutable": true,
+        "limitations": "cooperative record boundaries; synchronous hash/decompression not interrupted; no hard real-time deadline",
+        "mode": "salvage",
+        "observed_latency_ns": "130100",
+        "polls": 12,
+        "request_point": "before record access at poll 12",
+        "result": {
+          "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+          "cancelled": true,
+          "declared_end_status": null,
+          "failures": [],
+          "integrity_scope": "salvaged_chunks",
+          "logical_hashes": {
+            "1:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "1:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "2:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "2:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "3:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "3:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "4:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "4:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "5:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "5:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "6:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "6:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "7:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "7:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "8:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "8:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "9:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "9:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351"
+          },
+          "ranges": [
+            {
+              "first_entry": "0",
+              "first_timeline_ns": "0",
+              "last_entry": "0",
+              "last_timeline_ns": "0",
+              "offset": "823"
+            },
+            {
+              "first_entry": "1",
+              "first_timeline_ns": "1000000",
+              "last_entry": "1",
+              "last_timeline_ns": "1000000",
+              "offset": "2502"
+            },
+            {
+              "first_entry": "2",
+              "first_timeline_ns": "2000000",
+              "last_entry": "2",
+              "last_timeline_ns": "2000000",
+              "offset": "7684"
+            },
+            {
+              "first_entry": "3",
+              "first_timeline_ns": "3000000",
+              "last_entry": "3",
+              "last_timeline_ns": "3000000",
+              "offset": "12866"
+            },
+            {
+              "first_entry": "4",
+              "first_timeline_ns": "4000000",
+              "last_entry": "4",
+              "last_timeline_ns": "4000000",
+              "offset": "18048"
+            },
+            {
+              "first_entry": "5",
+              "first_timeline_ns": "5000000",
+              "last_entry": "5",
+              "last_timeline_ns": "5000000",
+              "offset": "23230"
+            },
+            {
+              "first_entry": "6",
+              "first_timeline_ns": "6000000",
+              "last_entry": "6",
+              "last_timeline_ns": "6000000",
+              "offset": "28412"
+            },
+            {
+              "first_entry": "7",
+              "first_timeline_ns": "7000000",
+              "last_entry": "7",
+              "last_timeline_ns": "7000000",
+              "offset": "33594"
+            },
+            {
+              "first_entry": "8",
+              "first_timeline_ns": "8000000",
+              "last_entry": "8",
+              "last_timeline_ns": "8000000",
+              "offset": "38776"
+            },
+            {
+              "first_entry": "9",
+              "first_timeline_ns": "9000000",
+              "last_entry": "9",
+              "last_timeline_ns": "9000000",
+              "offset": "43958"
+            }
+          ],
+          "reason": "explicit_scan_cancelled",
+          "status": "recovered",
+          "unknown_tail": true,
+          "verified_prefix_bytes": "49140"
+        },
+        "runtime": "17.0.20.1+1",
+        "sampled_peak_heap_bytes": "14459544",
+        "source_sha256": "6a85b5e7dee10df939fa076305d502fcbe39f98fa68ea6ee69190b915d2c0f05"
+      },
+      "mode": "salvage",
+      "python": {
+        "additional_record_reads": 0,
+        "descriptors_after": null,
+        "descriptors_before": null,
+        "immutable": true,
+        "mode": "salvage",
+        "observed_latency_ns": 90600,
+        "polls": 12,
+        "request_point": "before record access at poll 12",
+        "result": {
+          "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+          "cancelled": true,
+          "declared_end_status": null,
+          "failures": [],
+          "integrity_scope": "salvaged_chunks",
+          "logical_hashes": {
+            "1:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "1:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "2:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "2:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "3:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "3:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "4:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "4:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "5:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "5:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "6:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "6:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "7:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "7:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "8:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "8:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351",
+            "9:temperature": "5e6dd14f1b50a9c7c1c77ace2dddf2397b1217a1a052801773c8aa45c4eb4f51",
+            "9:validity": "42b9c8807fa67040aa5a96d5cf0a70f58fd01abc8806ef99c65549f1d1b0c351"
+          },
+          "ranges": [
+            {
+              "first_entry": "0",
+              "first_timeline_ns": "0",
+              "last_entry": "0",
+              "last_timeline_ns": "0",
+              "offset": "823"
+            },
+            {
+              "first_entry": "1",
+              "first_timeline_ns": "1000000",
+              "last_entry": "1",
+              "last_timeline_ns": "1000000",
+              "offset": "2502"
+            },
+            {
+              "first_entry": "2",
+              "first_timeline_ns": "2000000",
+              "last_entry": "2",
+              "last_timeline_ns": "2000000",
+              "offset": "7684"
+            },
+            {
+              "first_entry": "3",
+              "first_timeline_ns": "3000000",
+              "last_entry": "3",
+              "last_timeline_ns": "3000000",
+              "offset": "12866"
+            },
+            {
+              "first_entry": "4",
+              "first_timeline_ns": "4000000",
+              "last_entry": "4",
+              "last_timeline_ns": "4000000",
+              "offset": "18048"
+            },
+            {
+              "first_entry": "5",
+              "first_timeline_ns": "5000000",
+              "last_entry": "5",
+              "last_timeline_ns": "5000000",
+              "offset": "23230"
+            },
+            {
+              "first_entry": "6",
+              "first_timeline_ns": "6000000",
+              "last_entry": "6",
+              "last_timeline_ns": "6000000",
+              "offset": "28412"
+            },
+            {
+              "first_entry": "7",
+              "first_timeline_ns": "7000000",
+              "last_entry": "7",
+              "last_timeline_ns": "7000000",
+              "offset": "33594"
+            },
+            {
+              "first_entry": "8",
+              "first_timeline_ns": "8000000",
+              "last_entry": "8",
+              "last_timeline_ns": "8000000",
+              "offset": "38776"
+            },
+            {
+              "first_entry": "9",
+              "first_timeline_ns": "9000000",
+              "last_entry": "9",
+              "last_timeline_ns": "9000000",
+              "offset": "43958"
+            }
+          ],
+          "reason": "explicit_scan_cancelled",
+          "status": "recovered",
+          "unknown_tail": true,
+          "verified_prefix_bytes": "49140"
+        },
+        "runtime": "3.13.16",
+        "source_sha256": "6a85b5e7dee10df939fa076305d502fcbe39f98fa68ea6ee69190b915d2c0f05",
+        "traced_peak_bytes": 92383
+      },
+      "source_bytes": 206675
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+{
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "base_main": "fe029363062cdf54d6cefa9d4f24265e80188091",
+  "canonical_plan_byte_comparisons": 33,
+  "codec_adversarial_cross_cases": 3,
+  "compatibility_runtime_cases": 8,
+  "compressed_byte_equality": "not required; exact logical bytes and descriptor hashes compared",
+  "corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+  "independent_python_full_cases": 51,
+  "java": "openjdk version \"17.0.20.1\" 2026-08-18",
+  "json_vectors": [
+    {
+      "canonical_sha256": "eaf23ca6e4fc163864baa33d71ba53553b7fd274f8c0e11be17b3ff27d964639",
+      "id": "scalar-order",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "bd61fe3ccfcd82b057d5114175b7e884c4962354faac75c73dfcea14fb34b752",
+      "id": "exact-values",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "abf7775dd6827e7021d7d1a69e49a8919a5bceaba990e31154f56aa961d164ed",
+      "id": "escapes",
+      "status": "valid"
+    },
+    {
+      "error": "invalid_metadata",
+      "id": "duplicate",
+      "status": "error"
+    },
+    {
+      "error": "invalid_metadata",
+      "id": "surrogate",
+      "status": "error"
+    },
+    {
+      "error": "invalid_metadata",
+      "id": "bom",
+      "status": "error"
+    },
+    {
+      "error": "invalid_metadata",
+      "id": "utf8",
+      "status": "error"
+    },
+    {
+      "error": "invalid_metadata",
+      "id": "nonfinite",
+      "status": "error"
+    },
+    {
+      "canonical_sha256": "d64d9e5daed4fe4e3b3ac72b5bf77b5320a1d2e82f4fed72b0475fe5144858c0",
+      "id": "number-9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "43c8e92bd5552bd45030718eb9366d6d6500623793c248666d77dca01ba337c0",
+      "id": "number-1e-7",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "2d6412ab0155bb89d63b73dbf83334b26b39d03e8c832cc253c6a6caceba9733",
+      "id": "number-1e-6",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "8a532d80ed64868e7d2786e6a6339b465fe0f03db6399590aa520d054875ce8c",
+      "id": "number-1e-5",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "b052bd3ccbe7980595ac047049b16d202b5598c1e9e1a2495df84105950ebf26",
+      "id": "number-1e19",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "356acd219b8c369fc389513fb5c3f9fc2977fff3c432bab9df5b1e3a2800b072",
+      "id": "number-1e20",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "bb6eae31d900fd1a83c636fb07ab8932ace171d259044e3fab794510e3a444c4",
+      "id": "number-1e21",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "3cf8dedbb75dfe2ad5fec86341f320e70a56c7c190ad210a157fe26db8e8e336",
+      "id": "number-1e-4096",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "cd0935dc449323de116c6ab0848d2d890626c110d19b49b8308280c28ba31373",
+      "id": "number-1e4096",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "5bff452c5ed93f2e87a23984db5a15050c6477335fdec955b70063bb2d692bf1",
+      "id": "number-0e5120",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "5bff452c5ed93f2e87a23984db5a15050c6477335fdec955b70063bb2d692bf1",
+      "id": "number-0e-5120",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "5bff452c5ed93f2e87a23984db5a15050c6477335fdec955b70063bb2d692bf1",
+      "id": "number--0e5120",
+      "status": "valid"
+    },
+    {
+      "error": "resource_limit",
+      "id": "refused-number-20",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "refused-number-21",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "refused-number-22",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "refused-number-23",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "refused-number-24",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "refused-number-25",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "refused-number-26",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "refused-number-27",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "refused-number-28",
+      "status": "error"
+    },
+    {
+      "canonical_sha256": "49381e97a34f6741d843c48a3ddc51d22eb4b8131ee7692f8c690a3a15c5d5c2",
+      "id": "token-1024",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "8a7b729fa9d02bc14909992852d4bbcaa33afd390a1cd546d62a152f3d5a024d",
+      "id": "string-16383",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "6d957e52378b87327c1d994156d347ec091fc0191b08c7c4b9f562f5df380c56",
+      "id": "string-16384",
+      "status": "valid"
+    },
+    {
+      "error": "resource_limit",
+      "id": "string-16385",
+      "status": "error"
+    },
+    {
+      "canonical_sha256": "7917b0f76973f56a00c154b6dc905283c4222d4d324d1de290c678148bbf9673",
+      "id": "depth-31",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "a75992ed9d5aa9c979d72fa57169e5f0658731149df9801231bb0b05a3b263d3",
+      "id": "depth-32",
+      "status": "valid"
+    },
+    {
+      "error": "resource_limit",
+      "id": "depth-33",
+      "status": "error"
+    },
+    {
+      "canonical_sha256": "38f06d8266bd95628224829bed46e64422d0d1ddd6b4de188fb6e3f30d8a5cb5",
+      "id": "elements-65534",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "8594b21b96c77e582406233c032143c038972eb5b7a1b6e70ecfd563fda54e96",
+      "id": "elements-65535",
+      "status": "valid"
+    },
+    {
+      "error": "resource_limit",
+      "id": "elements-65536",
+      "status": "error"
+    },
+    {
+      "canonical_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "id": "json-bytes-1048575",
+      "status": "valid"
+    },
+    {
+      "canonical_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "id": "json-bytes-1048576",
+      "status": "valid"
+    },
+    {
+      "error": "resource_limit",
+      "id": "json-bytes-1048577",
+      "status": "error"
+    },
+    {
+      "error": "resource_limit",
+      "id": "canonical-expansion-budget",
+      "status": "error"
+    }
+  ],
+  "jvm_heap_cap_bytes": 268435456,
+  "kotlin_to_python_full_positive_cases": 33,
+  "navigation_recovery_cross_cases": 2,
+  "normative_commit": "8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f",
+  "pending": [
+    "real native Windows",
+    "ART runtime",
+    "asynchronous recorder timers/backend durability",
+    "arbitrary damaged framing range discovery/external index cache"
+  ],
+  "platform": "Windows",
+  "python": "3.13.16",
+  "python_to_kotlin_full_cases": 51,
+  "read_only_scan_cross_cases": 4,
+  "source_immutability": "all corpus sources and Kotlin-produced files unchanged by read/recovery",
+  "status": "passed",
+  "time_stream_seek_cross_cases": 44
+}

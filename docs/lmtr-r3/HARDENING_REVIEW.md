@@ -9,10 +9,10 @@ No normative amendment, application integration, camera operation or R4/R5 work.
 
 | Category | Evidence / current boundary | Acceptance consequence |
 |---|---|---|
-| Required R3 contract | Independent JSON/framing/payloads/closure/chronology/seek, 51 pinned cases, original Float32/masks/native views, finite 8-level indexes, >4 GiB Fedora source, bounded recovery; new combined hostile oracles and cancellation reports | Host primitives have tested finite conformance; native Windows remains a required R3 platform gate. No exhaustive/universal claim |
+| Required R3 contract | Independent JSON/framing/payloads/closure/chronology/seek, 51 pinned cases, original Float32/masks/native views, finite 8-level indexes, >4 GiB Fedora source, bounded recovery; new combined hostile oracles and cancellation reports | Host primitives have tested finite conformance; native Windows/NTFS now passes its required R3 platform gate (receipt below). No exhaustive/universal claim |
 | Optional reader enhancements | §13 explicitly makes rebuilt-index cache optional; salvage stops at damaged framing and reports only verified ranges. Fast path searches a preceding verified record within the bounded tail | Arbitrary interior range discovery/cache deferred; their absence does not fail pure R3 contract acceptance |
 | Android ART | No `device` from authorized wireless ADB and no mDNS endpoint at preflight; no pairing/interaction attempted | **NOT EXECUTED**. Pre-R4 Android runtime compatibility remains desirable/unproven; host JVM is not ART evidence |
-| Native Windows / NTFS | No authorized native Windows executor supplied/available; PowerShell protocol and optional sparse adapter prepared | **NOT EXECUTED**, required independent R3 gate; WSL and previous R2/legacy Windows results do not replace it |
+| Native Windows / NTFS | GitHub-hosted Windows Server2022/NTFS, exact9770e5a;71 JVM/64 Python,51corpus cases, independent interop and >4GiB sparse/full-integrity pass | **PASSED**, finite R3 platform gate; [exact receipt](windows-validation-summary.json). Prior R2/legacy results were not substituted |
 | R4 production recorder | §14 producer admission, 1-second idle seal, 5-second checkpoint timer, queue/Stop/source/memory-pressure races not implemented in synthetic writers | Deferred R4 requirements, not a pure R3 reader/corpus failure. Production recorder acceptance is not claimed |
 | R6 publication/backend | §15 provider/export/directory/close acknowledgment and physical durability not certified; END only declares source finalization | Deferred R6/backend-specific requirements; no power-loss/SAF certification or successful live Stop inference |
 
@@ -121,8 +121,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_pinned_corpus.py
 The isolated host Gradle settings are tested on Fedora without configuring the app
 or requiring its SDK. Native Windows commands and unexecuted adapter limitations are
 in [WINDOWS_VALIDATION](WINDOWS_VALIDATION.md). #8 stays open and #14 draft/unmerged.
-Host hardening is reviewable; complete R3 integration acceptance still requires the
-real native Windows gate. ART and optional extensions remain separately identified.
+Host hardening is reviewable; the real native Windows gate now has
+passing evidence, and complete R3 is ready for owner integration review. ART and optional extensions remain separately identified.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
@@ -134,3 +134,13 @@ as errors. Earlier checkpoint totals were65/61/232. Clean module rebuild, cleanT
 core re-execution, offline debug build/lint, both-runtime51 classifications/33
 Kotlin rewrites,29 mixed-corruption oracles,3 cancellation modes, pinned original
 regeneration and documentation/diff checks pass. Previous summaries remain unchanged.
+
+## Native Windows continuation
+
+[The Windows receipt](windows-validation-summary.json) and
+[protocol/results](WINDOWS_VALIDATION.md) supersede the earlier pending-platform
+state without rewriting historical Fedora reports. All43 JSON-vector oracles are
+exactly equal across Fedora/Windows;51pinned source hashes/expected classes remain
+identical. No required R3 contract/platform gate remains unexecuted in this scoped
+campaign. ART remains NOT EXECUTED before production, not silently inferred from
+Windows/JVM results. #8 stays open and PR14 draft, for owner-authorized review.

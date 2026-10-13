@@ -1,10 +1,32 @@
-# Native Windows R3 gate — NOT EXECUTED
+# Native Windows R3 gate — PASSED on GitHub Actions
 
-No authorized native Windows executor was available in this session. This is a
-prepared camera-free protocol, **not a Windows result**. PowerShell/NTFS calls have
-not executed here; Fedora and WSL do not establish their runtime correctness.
-Use the exact pushed PR #14 commit, JDK 17, Python 3 and a native local checkout.
-No camera, ADB, credentials, Android SDK/NDK or application installation is needed.
+The native `windows-2022` gate passed on
+[run 38392229227](https://github.com/LounaMaili/LMThermal/actions/runs/38392229227),
+exact commit `9770e5a228a56884221103f7eae4b52297b8314e`. The
+[durable receipt](windows-validation-summary.json) binds runtime identities, counts,
+source/corpus hashes, raw report fingerprints and the
+[artifact](https://github.com/LounaMaili/LMThermal/actions/runs/38392229227/artifacts/11809392539).
+This is native Windows Server2022/NTFS, not WSL; Temurin17.0.20.1+1,
+Python3.13.16 and zlib1.3.1.71 JVM/64 Python tests and all51 cases per reader pass.
+The 4,404,323,163-byte sparse file occupies4,915,200 physical bytes; selected access
+reads one CHUNK at4,404,298,782, and Python fully verifies all71 CHUNKs.
+Exact source SHA/size/mtime/allocation and the original corpus manifest stay unchanged.
+
+The first run 38391877487 failed in PowerShell preflight before any LMTR tests,
+with a null-method exception. Empty native Git output handling was hardened with
+explicit arrays/join; subsequent detached exact-SHA execution succeeds. Failed
+logs/artifact and original passing reports remain preserved. Four focused negative
+preflight guards are added to subsequent CI to retain strict SHA/ref/clean-source
+behavior. No LMTR implementation defect, wire change or fixture repinning was needed.
+
+Earlier NOT EXECUTED statements in historical reports describe the prior Fedora
+checkpoint. This receipt supersedes that native-platform gate, not their original
+results. Generic `interop.json` has an old static pending checklist; its placeholder
+is not an execution classifier. Actual completion comes from the native workflow,
+NTFS report and linked combined receipt. ART stays NOT EXECUTED before production.
+
+The commands below reproduce the protocol with the exact pushed PR14 commit,
+JDK17 and Python3. No camera, ADB, credentials, Android SDK/NDK or app install.
 
 ## One PowerShell command
 
@@ -65,12 +87,12 @@ full 71-CHUNK integrity, logical hash/summary parity and source size/mtime/alloc
 immutability. SHA is streamed in 1 MiB pages. This is seek/integrity evidence, not a
 physical disk-write throughput or general heap ceiling. If sparse APIs fail, retain
 the failure; do not fall back to allocating 4.4 GB or label WSL as NTFS evidence.
-No native Windows execution has yet confirmed this adapter or PowerShell runner.
+Native run 38392229227 confirms the sparse adapter and protocol on its exact commit.
 
 ## Separate acceptance boundaries
 
-See [HARDENING_REVIEW](HARDENING_REVIEW.md): native Windows is a remaining mandatory
-R3 platform gate. ART was unavailable and remains pre-R4 compatibility work, not
+See [HARDENING_REVIEW](HARDENING_REVIEW.md): native Windows/NTFS passed the remaining mandatory
+R3 platform gate in the finite tested scope. ART was unavailable and remains pre-R4 compatibility work, not
 JVM evidence. Arbitrary damaged-framing salvage and disposable index cache are
 optional. Async producer timers/Stop/admission and backend/export durability are
 R4/R6 requirements; no green host suite establishes them. Keep #8 open and #14 draft.
@@ -87,5 +109,7 @@ are `contents: read`; no repository secrets, camera, Android SDK or owner intera
 Reports use unique `RUNNER_TEMP` directories, NTFS sparse/full read is enabled, and
 logs/XML/reports upload even on failure with30-day retention. Job/step deadlines
 and build/runtime resource caps are bounded; earlier failed runs must be retained.
-This prepared workflow alone is not a Windows pass. Actual run evidence follows
-only after execution, without regenerating the51pinned fixtures.
+Workflow existence alone is not a pass: actual execution is linked above, without
+regenerating the51pinned fixtures. Four preflight guards separately reject wrong
+HEAD, wrong detached ref/context SHA and dirty source; their output is retained
+with subsequent CI artifacts.

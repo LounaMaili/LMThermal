@@ -10,7 +10,7 @@ No production Android or Desktop recorder/importer is implemented here.
 - [Canonical synthetic corpus](CORPUS.md)
 - [Architecture, APIs and explicit limits](IMPLEMENTATION_GUIDE.md)
 - [Hardening, cancellation and current gap matrix](HARDENING_REVIEW.md)
-- [Native Windows protocol — pending](WINDOWS_VALIDATION.md)
+- [Native Windows protocol and passing CI receipt](WINDOWS_VALIDATION.md)
 - [Independent Python tools](../../tools/lmtr_v1/README.md)
 - `lmtr-contract/`: pure Kotlin/JVM library and structured CLI, no Android dependency.
 
@@ -72,8 +72,7 @@ Unknown optional JSON remains exact semantic data. Original binary payloads, val
 negative zero, invalid positive-zero filler and mask authority remain distinct.
 
 An explicit cancellable read-only salvage scan exists; arbitrary damaged-framing
-range discovery/rebuilt-index caching, full platform/backend conformance, real
-native Windows and ART execution remain separate gates. Local reporting/clock/cache
+range discovery/rebuilt-index caching, full platform/backend conformance, native Windows execution has passed; ART remains separate before production. Local reporting/clock/cache
 budgets are disclosed implementation limits, not changes to accepted format limits.
 R3 is not declared complete; R4/R5/R6/R7 are not started.
 
@@ -84,3 +83,8 @@ regeneration helper executes original `--check` without overwriting historical
 fixtures or reports. General damaged-framing discovery/cache are optional, and
 producer timers/Stop/backend guarantees belong to R4/R6, as distinguished in the
 [current matrix](HARDENING_REVIEW.md).
+
+Native Windows R3 completion is recorded in the
+[durable CI summary](windows-validation-summary.json); see its exact SHA and
+run/artifact provenance. All required scoped R3 gates now have passing evidence,
+while PR14 remains draft/unmerged and #8 open for owner-authorized review.

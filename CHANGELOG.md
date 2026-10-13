@@ -8,6 +8,8 @@ All notable changes to LMThermal will be documented in this file.
 
 - Added a branch-restricted, exact-SHA Windows GitHub Actions protocol with JDK17, Python3.13, bounded resources, read-only token permissions and persistent success/failure artifacts. It executes the existing independent suites and native NTFS sparse/full-integrity gate without camera or Android dependencies.
 - Preserved the first native CI failure before tests and hardened no-output Git handling with explicit arrays and detailed failure-location artifacts.
+- Recorded actual GitHub-hosted Windows Server2022/NTFS success:71JVM/64Python,51case classifications per reader,33independent rewrites, matching43JSON vectors,29hostile cases, cancellation and sparse >4GiB/full71CHUNK integrity. Exact raw receipts and passing/failed run/artifact hashes are retained; ART stays unexecuted.
+- Added four native preflight rejection guards for wrong SHA/ref/context and dirty source.
 - Restricted detached checkout acceptance to the exact authorized Actions push branch/ref/SHA and retained strict HEAD/clean-source checks; report summaries now include Python counts and checkout mode. The frozen wire, canonical corpus and production applications remain unchanged.
 
 ### Fixed (R3 final hardening and platform preparation — 2026-10-13)
