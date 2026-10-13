@@ -204,6 +204,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
 
     /** Preparation owns one item outside its bounded queue; writer overload becomes ordered loss evidence. */
     private fun prepareLoop() {
+        var unresolvedIntake=false
         try {
             while(true) {
                 val item=synchronized(lock) {
@@ -211,6 +212,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     if(intake.isEmpty())return@synchronized null
                     intake.removeFirst().also { if(it.drop==null){prepQueued-=it.offer.chargedBytes;prepFlight=it.offer.chargedBytes;maxPrepFlight=maxOf(maxPrepFlight,prepFlight)} }
                 } ?: break
+                unresolvedIntake=true
                 prepareHook()
                 var prepared:PreparedObservation?=null;var drop=item.drop
                 try { if(drop==null) {
@@ -229,11 +231,11 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                         "level" to profile.wire,"choice" to "explicit","requested_roles" to RecordingProfiles.requested(profile,item.offer.stream.value()["capabilities"].obj()))))
                     val charge=if(prepared==null)0L else item.offer.chargedBytes
                     writer.add(Work(prepared,item.offer.streamId,item.offer.sequence,item.witness,stream,drop,charge,item.loss))
-                    writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;lock.notifyAll()
+                    writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;unresolvedIntake=false;lock.notifyAll()
                 }
             }
-        } catch(_:InterruptedException) { synchronized(lock){unrepresentedLoss=true;terminateLocked("failed","preparation_interrupted","preparation_interrupted")} }
-        catch(_:Exception) { synchronized(lock){unrepresentedLoss=true;terminateLocked("failed","preparation_failed","preparation_failed")} }
+        } catch(_:InterruptedException) { synchronized(lock){unrepresentedLoss=unrepresentedLoss || unresolvedIntake || intake.isNotEmpty();terminateLocked("failed","preparation_interrupted","preparation_interrupted")} }
+        catch(_:Exception) { synchronized(lock){unrepresentedLoss=unrepresentedLoss || unresolvedIntake || intake.isNotEmpty();terminateLocked("failed","preparation_failed","preparation_failed")} }
         finally { synchronized(lock){prepFlight=0;prepDone=true;lock.notifyAll()} }
     }
 

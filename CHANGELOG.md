@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 precise worker-failure accounting)
+
+- Distinguish an idle preparation interruption with no admitted/queued evidence from a worker abandoning an intake item or queue. Only actual unrepresented evidence sets the sticky no-END condition; add an instance-specific interruption regression proving the empty failed recording can finalize honestly.
+
 ### Added (R4 independent mixed-failure prefix evidence)
 
 - Extend the existing engine probe with an acknowledged prefix followed by unjournaled loss/multiple errors and an honestly finalized represented source failure. Python now checks original payload bytes in verified recovered prefixes and exact known-gap reasons/ranges, preserving all older outputs and the immutable canonical corpus.

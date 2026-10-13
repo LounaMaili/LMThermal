@@ -178,3 +178,8 @@ loss after an acknowledged CHUNK and an honestly finalized failed source with a 
 count gap. Independent Python compares original payload hashes/contexts/sequences in
 the recovered prefix (including prior torn/navigation cases) and exact gap reasons/ranges.
 No-END/unknown-tail and source hash preservation remain required.
+
+Unexpected worker exit marks unrepresented loss only when a dequeued item or queued
+intake is abandoned. An interrupted idle worker with no admitted evidence can honestly
+finalize an empty failed END. A dedicated instance-specific fault test checks this
+boundary, without exposing thread interruption as a product API.

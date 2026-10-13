@@ -281,6 +281,18 @@ class RecorderEngineTest {
             assertTrue(result.failure!!.contains("Cannot certify unjournaled"))
         } finally { release.countDown();e.stop() }
     }
+    @Test fun idlePreparationInterruptionHasNoUnrepresentedAdmission() {
+        val m=SimulatedRecordingModule();val f=output();val e=engine(m,f)
+        // Fault injection targets this owned worker only, avoiding other test engines.
+        // No runtime API exposes arbitrary thread interruption to a product caller.
+        val field=RecorderEngine::class.java.getDeclaredField("preparationThread").apply { isAccessible=true }
+        val worker=field.get(e) as Thread
+        worker.interrupt();val result=e.awaitStop(10000)!!
+        assertTrue(result.toString(),result.finalized);assertEquals("failed",result.status)
+        assertEquals(0L,e.snapshot().accepted);assertEquals(0L,e.snapshot().acknowledged)
+        val full=LmtrReader(f).use { it.check(full=true) }
+        assertEquals("failed",full["declared_end_status"]);assertEquals("0",full["summary"].obj()["observations"])
+    }
     @Test fun malformedOriginalMaskCannotReceivePromisedChunkFooter() {
         val m=SimulatedRecordingModule();val o=m.observation(0,masked=true)
         val bad=o.payloads.map { if(it.role=="validity")RecordingPayload(it.descriptor.value(),ByteArray(it.size){2}) else it }
