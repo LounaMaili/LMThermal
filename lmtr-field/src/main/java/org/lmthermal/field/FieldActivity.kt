@@ -66,7 +66,8 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     val busy=MutableStateFlow(false)
     private val route=FieldSourceRoute<Bitmap>(observer={ source ->
         metrics.observation(source)
-        runCatching { clock?.source(source.identity.receiptClockId,source.receivedMonotonicNs) }
+        // A new baseline-only source after cutoff must not upgrade the old interrupted run.
+        runCatching { if(engine?.snapshot()?.state=="recording")clock?.source(source.identity.receiptClockId,source.receivedMonotonicNs) }
             .onFailure { engine?.failSource("field_source_clock_changed_or_regressed") }
     },lossObserver={metrics.loss(it)},adapterFactory={ identity ->
         val native=HtFieldRoute.native(identity)

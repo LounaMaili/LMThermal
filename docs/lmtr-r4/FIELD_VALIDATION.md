@@ -67,7 +67,8 @@ writing no LMTR payload; this is an upper-bound admission choice.
 Android elapsed realtime includes deep sleep; timer scheduling may be delayed while
 execution is suspended. On resume, due work remains due and uses original intake.
 No inferred frames/gaps fill that time. Screen-off also triggers the existing source
-cutoff policy. Source regressions/domain changes fail the run; process recreation
+cutoff policy. Source regressions/domain changes during active intake fail the run; new baseline
+callbacks after cutoff do not relabel an already interrupted run. process recreation
 creates a new run/file/domain, never appends to an old recording. Tests cover these
 rules, source timing before origin, and fresh-process IDs. Synthetic host probes use
 one explicit `System.nanoTime` domain; they do not establish a correlation between

@@ -6,7 +6,7 @@ All notable changes to LMThermal will be documented in this file.
 
 ### Fixed (R4 field failure publication)
 
-- Stop the bounded field run if its private metric writer fails and prevent a failed/missing terminal readback from enabling a longer run. Preserve diagnostic classification and original files; baseline without a capture does not manufacture a source-immutability verdict.
+- Stop the bounded field run if its private metric writer fails and prevent a failed/missing terminal readback from enabling a longer run. Preserve diagnostic classification and original files; baseline without a capture does not manufacture a source-immutability verdict. Receipt-domain validation applies only during active intake; a later explicit source reopen cannot relabel an already interrupted run as a clock error.
 
 ### Added (R4 operator-gated field preparation)
 
