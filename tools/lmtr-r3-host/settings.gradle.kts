@@ -4,3 +4,6 @@ dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_P
 rootProject.name = "LMThermal-LMTR-R3-Host"
 include(":lmtr-contract")
 project(":lmtr-contract").projectDir = file("../../lmtr-contract")
+
+include(":lmtr-recorder")
+project(":lmtr-recorder").projectDir = file("../../lmtr-recorder")

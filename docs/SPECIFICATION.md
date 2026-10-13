@@ -139,9 +139,9 @@ framing, payload/index/recovery and timing/storage requirements for R3. PR #13
 integrated explicit owner acceptance; R1 #6 is closed. The [isolated R3 tools](lmtr-r3/README.md)
 provide a standalone Kotlin/JVM library and independent Python reader/writer,
 synthetic canonical corpus and cross-language validation. They are not imported by
-the Android application. R3 #8 remains open for disclosed platform/runtime and
-remaining conformance gates. Production recorder/backend/UI work remains blocked
-in [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
+the Android application. R3 #8 is closed after the finite contract/Windows gates and PR #14 merge at `8eb4ace`.
+The isolated [R4 foundation](lmtr-r4/README.md) supplies immutable module evidence, explicit profiles, byte-bounded admission/preparation/writer queues, genuine intake timers, acknowledged counts, qualified losses, shared append/index ownership and terminal readback.
+It is not linked into the app; ART, module/lifecycle integration and live acceptance remain pending in open #9. Recording product UI/backend export and R5/R6 remain outside this scope. See [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
 Accepted LMTX v1 remain unchanged.
 
 ### RJPEG (Radiometric JPEG)

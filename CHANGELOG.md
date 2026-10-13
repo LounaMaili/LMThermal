@@ -4,6 +4,17 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 camera-free recorder foundation — 2026-10-13)
+
+- Added an isolated pure-Kotlin recorder module with owned module observations, exact Float32/masks/native/acquisition evidence, context/clock/session identities, explicit capability profiles and qualified source losses. It is not linked into the app and adds no user recording action, camera controls or thermometry change.
+- Implemented bounded asynchronous preparation/writer stages, separately accounted in-flight/pending/control reservations, truthful overload gaps, first-intake idle sealing and post-ack checkpoints, global segment transitions, idempotent cutoff/drain, local append/close/reopen and preserved incomplete files on uncertain failures.
+- Extracted the existing R3 writer/index into a shared incremental session used by both fixture and recorder paths, with private owned state and poisoned-owner guards. Wire/schema and all 51 pinned fixtures are unchanged.
+- Added deterministic non-USB simulations, failure/race tests and independent Python full readback of actual engineering outputs. ART has no available authorized device/emulator; module/lifecycle/live recording acceptance remains pending in open #9.
+
+### Changed (R3 integration — 2026-10-13)
+
+- Recorded owner-authorized PR #14 merge at `8eb4ace`, exact final Windows head/run scope and #8 closure; preserved R2 and all historical receipts. A separate CI follow-up PR #15 retains native Windows main/PR regression scheduling outside the accepted R3 merge.
+
 ### Added (R3 native Windows CI validation — 2026-10-13)
 
 - Added a branch-restricted, exact-SHA Windows GitHub Actions protocol with JDK17, Python3.13, bounded resources, read-only token permissions and persistent success/failure artifacts. It executes the existing independent suites and native NTFS sparse/full-integrity gate without camera or Android dependencies.
