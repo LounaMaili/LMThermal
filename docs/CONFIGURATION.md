@@ -117,3 +117,8 @@ and API35 Google APIs x86_64, pinned emulator action, read-only token, 45-minute
 bounds and 30-day artifacts. Exact source SHA and device identity are recorded; no
 secrets, pairing, production APK, USB camera or manual prompts are required.
 See [runtime evidence](lmtr-r4/ART_INTEGRATION.md) for actual executed scope/failures.
+
+
+## R4 field-test APK (not a product recorder)
+
+Build `:lmtr-field:assembleDebug :lmtr-field:lintDebug`; the separate package `org.lmthermal.field` reuses arm64 native transport and adds no product dependency. See [field protocol and authorization boundary](lmtr-r4/FIELD_VALIDATION.md). No physical install/ADB operation is authorized during camera-free preparation.

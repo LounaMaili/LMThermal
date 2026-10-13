@@ -5,12 +5,13 @@ import org.lmthermal.core.*
 
 /** Source wrapper retains already-owned frame/matrix/index arrays; it never reruns thermometry.
  * Complete frames are immutable Ht301Frame owners. Only malformed transport needs a new owned copy.
- * Pixel/grid/orientation semantics stay native. Source sequence here is a host UVC callback sequence.
+ * Pixel/grid/orientation semantics stay native. Source sequence here is a host UVC callback sequence. Optional session reason/gate wall duration
+ * retain existing diagnostics for field accounting; neither changes the gate or marks readiness.
  */
 class Ht301AcquiredObservation(override val identity:CameraSourceIdentity,override val ordinal:Long,
     override val sourceSequence:Long,override val receivedMonotonicNs:Long,val frame:Ht301Frame?,
     val inspection:FrameInspection,val sessionState:SessionState,val result:MeasurementResult,
-    incompleteTransport:ByteArray?=null):CameraAcquiredObservation {
+    incompleteTransport:ByteArray?=null,val sessionReason:String?=null,val measurementWallNs:Long?=null):CameraAcquiredObservation {
     private val incomplete=incompleteTransport?.copyOf()
     override val measurement:ThermalMeasurement?=result.measurement?.let(::Ht301ThermalMeasurement)
     override val unavailableReason:String?=if(result.measurement!=null)null else when {

@@ -21,3 +21,5 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
 }
+android.sourceSets.getByName("androidTest").java.srcDir("../lmtr-field-support/src/test/kotlin")
+dependencies { androidTestImplementation(project(":lmtr-field-support")) }

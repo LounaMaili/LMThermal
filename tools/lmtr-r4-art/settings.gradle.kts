@@ -16,3 +16,5 @@ include(":core", ":lmtr-contract", ":lmtr-recorder", ":camera-recording", ":lmtr
 for (name in listOf("core", "lmtr-contract", "lmtr-recorder", "camera-recording", "lmtr-art")) {
     project(":$name").projectDir = file("../../$name")
 }
+include(":lmtr-field-support")
+project(":lmtr-field-support").projectDir=file("../../lmtr-field-support")

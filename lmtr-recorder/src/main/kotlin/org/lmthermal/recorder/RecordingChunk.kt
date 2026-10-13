@@ -13,7 +13,8 @@ internal data class PendingEntry(val entry: Obj,val segment: Obj,val context: Ob
  * Statistics are caches computed from original Float32 bits, never a new temperature algorithm.
  */
 internal object RecordingChunk {
-    fun encode(header: Obj, entries: List<PendingEntry>, codec: Int,validationBudget:Long): ByteArray {
+    fun encode(header: Obj, entries: List<PendingEntry>, codec: Int,validationBudget:Long,
+        codecMetric:((Long,Long,Long)->Unit)?=null,now:()->Long=System::nanoTime): ByteArray {
         require(entries.isNotEmpty() && entries.size<=32)
         val blocks=mutableListOf<Obj>();val stored=mutableListOf<ByteArray>();var storedAt=0L
         val groups=linkedMapOf<List<String>,MutableList<ByteArray>>()
@@ -56,7 +57,11 @@ internal object RecordingChunk {
             val slices=groups.getValue(key);val decoded=slices.sumOf { it.size.toLong() }
             require(decoded<=67108864L)
             val all=ByteArray(decoded.toInt());var at=0;for(bytes in slices){bytes.copyInto(all,at);at+=bytes.size}
-            val encoded=LmtrCodec.encode(all,codec);stored.add(encoded)
+            val started=if(codecMetric!=null)now() else 0L
+            val encoded=LmtrCodec.encode(all,codec)
+            // Test-only observer times only the existing codec call, leaving encoded bytes unchanged.
+            if(codecMetric!=null)runCatching { codecMetric.invoke(now()-started,all.size.toLong(),encoded.size.toLong()) }
+            stored.add(encoded)
             blocks.add(mapOf("id" to "b$index","role" to key[0],"encoding_id" to key[1],"dtype" to key[2],"byte_order" to key[3],
                 "codec" to codec,"offset" to storedAt.toString(),"stored" to encoded.size.toString(),"decoded" to decoded.toString(),"hash" to LmtrChunk.sha(all)))
             storedAt=LmtrChunk.add(storedAt,encoded.size.toLong())

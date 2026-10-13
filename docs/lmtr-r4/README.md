@@ -181,3 +181,6 @@ reservations. R4 #9 and draft PR #16 stay open; R5/R6 have not started. SAF/prov
 publication/directory durability and power-loss assurance remain separate backend duties.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+
+The separate [field harness and operator protocol](FIELD_VALIDATION.md) prepares explicit physical validation without adding a production recorder. Phase A camera-free evidence is separate from the unexecuted Pixel8/HT-301 gates.

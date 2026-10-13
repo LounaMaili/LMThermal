@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 operator-gated field preparation)
+
+- Add a separate test-only arm64 field APK reusing the existing single HT acquisition/preview owner, authoritative observer, adapter and recorder with explicit Start/Stop, app-owned bounded files, private streaming source oracles and read-only terminal recovery. Production app has no recorder dependency or recording UI.
+- Configure physical intake/timeline/timers with Android elapsedRealtimeNanos; retain truthful source IDs, unknown UTC/sensor/resolution and test domain/regression/recreation/suspend boundaries. Add conservative per-profile storage admission, unchanged 4 MiB queues/chunks, bounded metrics and private streaming ADB extraction/independent Python byte checks.
+- Add inert optional lifetime injection and diagnostic session-reason/gate-duration facts; camera controls, initialization and thermometry are unchanged. Optional seal/codec timing observers cannot alter encoded bytes or poison acknowledged commits.
+- Document the complete two-phase operator protocol and historical R2 comparison. Physical tests remain unexecuted and require explicit go-ahead; R4 #9/PR #16 remain open/draft, frozen wire/corpus and Desktop unchanged.
+
 ### Added (R4 resumed validation and final runtime receipts)
 
 - Preserve interrupted documentation/reports and all failed experiments; record exact tested code `abea098`, 380 JVM/64 Python tests and actual 61/61 ART tests on both API26/API35. Independent Python checks 14 actual engine outputs, original bytes in three recovered prefixes, an honestly failed END/gap, 75 source observations per ART job and original source immutability.

@@ -201,3 +201,6 @@ The [56-test sticky checkpoint](art-sticky-checkpoint.json),
 [60-test recovered-prefix checkpoint](art-prefix-checkpoint.json) preserve distinct
 source SHAs and scope. This continuation adds only documentation after that tested code checkpoint; those
 commits do not imply another unreviewed runtime result. Physical Pixel8/HT-301 source/cadence/freshness/memory/lifecycle gates remain open.
+
+
+The [field preparation](FIELD_VALIDATION.md) adds the same test-only clock/resource/source-route helpers to the emulator suite and three existing-room pre-transform oracle readbacks. Exact new runtime receipts are tracked separately; the arm64 field APK is neither installed nor executed by this camera-disabled workflow.

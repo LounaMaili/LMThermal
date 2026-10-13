@@ -57,11 +57,15 @@ data class RecorderResult(val finalized:Boolean,val status:String,val reason:Str
  * it never compresses, hashes, copies image buffers or performs filesystem operations.
  * One preparation worker and one writer own all downstream ordering. Control messages use a
  * reserved journal, so overload cannot silently erase a known delivered observation.
+ * Optional seal/codec observers are bounded diagnostics, disabled by default and isolated from
+ * acknowledged bytes. Their extra clock reads do not become source/intake witnesses.
  * Timer flags are coalesced by the writer's wakeup, not queued per tick. Stop is idempotent.
  */
 class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:RecordingProfile,
     private val limits:RecorderLimits, private val backend:RecorderBackend, private val codec:Int=0,
-    private val now:()->Long=System::nanoTime, private val prepareHook:()->Unit={}) {
+    private val now:()->Long=System::nanoTime, private val prepareHook:()->Unit={},
+    private val sealMetric:((encodeNs:Long,appendNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null,
+    private val codecMetric:((wallNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null) {
     companion object {
         // Accepted wire §14 distinguishes intake sealing from post-footer checkpoint timing.
         private const val SEAL_INTERVAL_NS=1000000000L
@@ -183,6 +187,10 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     /** Bounded caller wait. Timeout is not a successful finalization and does not repair a blocked sync. */
     fun awaitStop(timeoutMs:Long):RecorderResult? = try { completion.get(timeoutMs,TimeUnit.MILLISECONDS) }
         catch(_:java.util.concurrent.TimeoutException){null}
+    /** A failed writer can complete its result while a deferred source materializer unwinds.
+     * Test composition must not reuse its oracle/storage reservation until both workers exited.
+     */
+    fun workersTerminated():Boolean = !preparationThread.isAlive && !writerThread.isAlive
     fun wakeTimers() = synchronized(lock) { lock.notifyAll() }
     fun snapshot():RecorderSnapshot = synchronized(lock) {
         RecorderSnapshot(state,accepted,acknowledged,prepDrops,writerDrops,prepQueued,writerQueued,prepFlight,writerFlight,
@@ -254,8 +262,13 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         }
         fun seal() {
             if(pending.isEmpty())return
-            val body=RecordingChunk.encode(header,pending,codec,limits.memoryBudgetBytes)
+            val started=if(sealMetric!=null)now() else 0L
+            val decoded=pending.sumOf { it.payloads.sumOf { payload -> payload.size.toLong() } }
+            val body=RecordingChunk.encode(header,pending,codec,limits.memoryBudgetBytes,codecMetric,now)
+            val encoded=if(sealMetric!=null)now() else 0L
             append!!.appendChunk(body)
+            // Optional bounded test observer; never let diagnostics poison an acknowledged commit.
+            if(sealMetric!=null)runCatching { sealMetric?.invoke(encoded-started,now()-encoded,decoded,body.size.toLong()) }
             synchronized(lock) { pendingBytes=0 }
             pending.clear();firstPendingWitness=null
             if(append!!.uncheckpointedChunks==0)firstUncoveredAck=null

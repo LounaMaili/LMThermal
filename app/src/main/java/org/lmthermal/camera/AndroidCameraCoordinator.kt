@@ -23,11 +23,13 @@ import org.lmthermal.core.CursorReading
 
 /** Application-level discovery/selection and one-session ownership.
  * Android USB is one discovery provider; test injection supplies non-USB identities without loading a driver.
+ * The optional recording lifetime is injected only by test/feature composition; null is inert.
  * Attach/foreground only probe. Permissions and opening remain tied to an explicit, exact Connect candidate.
  */
 class AndroidCameraCoordinator(private val context: Context,
     private val registrations: List<AndroidModuleRegistration> = defaultCameraModules(context),
-    private val devices: (() -> List<CameraDeviceIdentity>)? = null) {
+    private val devices: (() -> List<CameraDeviceIdentity>)? = null,
+    private val recordingLifetime: CameraSessionLifetime<Bitmap>? = null) {
     private val manager = context.getSystemService(UsbManager::class.java)
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val registry = CameraModuleRegistry(registrations.map { it.module })
@@ -37,6 +39,7 @@ class AndroidCameraCoordinator(private val context: Context,
     private val ownerId = java.util.UUID.randomUUID().toString()
     private var ownership: Map<String, Any?> = emptyMap()
     private val owner = CameraSessionOwner<Bitmap>(scope,
+        lifetime = recordingLifetime,
         activeChanged = { mutableDiagnostics.value = (it as? AndroidCameraSession)?.diagnostics },
         technicalFailure = { Log.e("LMThermalModules", "Module ownership/open failure", it) },
         event = { ownership = it; evidence.record(it + mapOf("owner_id" to ownerId, "monotonic_ms" to SystemClock.elapsedRealtime())) })

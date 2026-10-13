@@ -346,3 +346,8 @@ lifetime adapter. Only the test harness links the adapter/recorder. Product came
 thermometry, single ownership, explicit Connect/initialize and native coordinates remain
 unchanged; no recorder UI or background service is enabled. ART and host evidence are scoped
 separately from pending real HT-301/Pixel8 acceptance.
+
+
+## R4 field-test preparation
+
+The [separate field APK](lmtr-r4/FIELD_VALIDATION.md) uses the existing single owner and optional authoritative lifecycle route, explicit Start/Stop, Android elapsed-realtime intake, bounded app-owned files and independent private source-oracle checks. It is a test-only integration, not a public recording feature; actual HT/Pixel acceptance remains pending.

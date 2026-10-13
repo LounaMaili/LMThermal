@@ -26,5 +26,8 @@ adb -e exec-out run-as org.lmthermal.art tar cf - files/r4 > "$reports_dir/synth
 tar xf "$reports_dir/synthetic.tar" -C "$reports_dir"
 python3 tools/check_lmtr_r4.py --existing "$reports_dir/files/r4/generated" --report "$reports_dir/python-readback.json"
 python3 tools/check_lmtr_r4.py --existing "$reports_dir/files/r4/source/generated" --report "$reports_dir/python-source-readback.json"
+for profile in analysis native full; do
+  python3 tools/check_lmtr_r4_field.py "$reports_dir/files/r4/field-oracle/$profile" --report "$reports_dir/field-$profile.json"
+done
 test -z "$(git status --porcelain)"
 exit "$instrumentation_verdict"

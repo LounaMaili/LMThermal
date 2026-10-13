@@ -258,7 +258,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
                             previousReplaced=counters[1];previousMalformed=counters[2];previousReceiptNs=receiptNs
                             observations.publish { ordinal -> Ht301AcquiredObservation(observations.identity,ordinal,
                                 counters[4],receiptNs,frame,inspection,session.snapshot().state,measurement,
-                                if(frame==null)bytes else null) }
+                                if(frame==null)bytes else null,session.snapshot().reason,measurementNs) }
                             val available = measurement.measurement != null
                             if (available != previousMeasurementAvailable || now - lastMeasurementLog >= 2000) {
                                 thermometryEvidence.record(ThermometryDiagnostics.event(measurement, session.snapshot().state,

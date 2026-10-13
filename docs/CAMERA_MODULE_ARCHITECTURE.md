@@ -315,3 +315,6 @@ optional current measurement and separately qualified losses. Protocol payloads 
 module-specific immutable implementations. Consumers must perform bounded admission only.
 The [R4 adapter](lmtr-r4/ART_INTEGRATION.md) uses explicit subscription and generation guards;
 unsupported modules need not implement it. No camera automatically begins recording.
+
+
+The separate [R4 field-test APK](lmtr-r4/FIELD_VALIDATION.md) installs the optional lifetime observer explicitly and tees authoritative module observations before presentation. The production coordinator default remains inert; recorder Start never opens or initializes a camera.
