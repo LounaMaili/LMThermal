@@ -183,3 +183,21 @@ Unexpected worker exit marks unrepresented loss only when a dequeued item or que
 intake is abandoned. An interrupted idle worker with no admitted evidence can honestly
 finalize an empty failed END. A dedicated instance-specific fault test checks this
 boundary, without exposing thread interruption as a product API.
+
+## Final reviewed code checkpoint
+
+[Run 38435068678](https://github.com/LounaMaili/LMThermal/actions/runs/38435068678)
+checks exact source `abea098e69332f0a16ee779f6181c3af9040947c`: **61/61 on each
+API26 AOSP x86_64 and API35 Google APIs x86_64**. [Final receipt](art-final-code-validation.json)
+retains environment, artifact hashes, ownership-copy measurements and independent
+Python parity for 14 actual engine files plus 75 source observations per API.
+The source oracle SHA, exact clock facts and genuine intake bounds also pass. The
+39 recorder +17 bridge +5 ART tests include mixed failure orderings, no-END protection,
+honest represented failure/idle interruption, native/acquisition views and ownership.
+No skipped assertion or earlier failure is reclassified.
+
+The [56-test sticky checkpoint](art-sticky-checkpoint.json),
+[60-test clock checkpoint](art-clock-checkpoint.json) and
+[60-test recovered-prefix checkpoint](art-prefix-checkpoint.json) preserve distinct
+source SHAs and scope. This continuation adds only documentation after that tested code checkpoint; those
+commits do not imply another unreviewed runtime result. Physical Pixel8/HT-301 source/cadence/freshness/memory/lifecycle gates remain open.

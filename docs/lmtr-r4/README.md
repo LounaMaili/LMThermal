@@ -27,17 +27,22 @@ session identities or every original clock. `CelsiusPresenter` deliberately conf
 presentation requests and uses owner-generation guards. Recording must receive observations
 from the module's authoritative measurement path **before** presentation conflation.
 `Ht301ExportEvidence` proves richer module evidence exists for still export; it is not a
-universal recording adapter. `CameraSessionOwner` and `CameraUiLifetime` remain unchanged.
+universal recording adapter. The optional acquisition/lifetime extension described in
+[ART integration](ART_INTEGRATION.md) preserves the existing single camera owner and
+CameraUiLifetime policy. Its guarded notifications do not change camera controls.
 The [R2 review](../recording-r2/COMPLETION_REVIEW.md) is finite feasibility evidence;
 its disposable recorder, SAF probes and JNI/Zstd dependencies are not imported.
 
 The new pure Kotlin `lmtr-recorder` module depends only on `lmtr-contract`. It is included
-in host builds but **not linked into the Android app**. There is no recorder button,
-camera callback subscription, automatic initialization or acquisition-owner change.
+in host builds but **not linked into the Android app**. The separate `camera-recording`
+module is linked only by tests. Product acquisition exposes an inert optional channel;
+no product subscription, recorder button, automatic initialization or acquisition-owner
+change is enabled.
 
 | API | Ownership and meaning |
 |---|---|
 | `RecordingObservation` | Module-supplied stream/session/source/geometry/encodings/clocks, context, original sequence/device counter, receipt/acquisition/schedule, measurement availability/provenance and owned payloads. Recorder assigns genuine intake witness; it never substitutes receipt time. |
+| `RecordingOffer` | Charged immutable source owner with deferred materialization on the existing preparation worker; callback performs no image copy/hash/codec/I/O. Rejected overload never freezes the retained owner. |
 | `RecordingPayload` | Copies bytes while the module still owns its buffer. Copy-only access; lossless original Float32/mask/native/transport bytes, arbitrary source dimensions/encodings. Optional view offset requires independently supplied matching native bytes. |
 | `FrozenJson` | Canonical owned JSON bytes; read access reparses independent values. Unknown semantic Decimal values survive. Binary Float32/Float64 evidence stays binary, not converted through JSON. |
 | `RecordingLoss` | Qualified source loss with original ranges/count/evidence or explicit unknown reason; no FPS-derived counts. |
@@ -71,6 +76,9 @@ on any failed operation, including partial journal-validation failure.
 - Preparation and writer overload become ordered, known-count gaps. A reserved bounded
   journal carries losses and Stop independently of the data queues. Exhaustion stops intake;
   without enough loss evidence the engine preserves an incomplete file and cannot claim END.
+  The unrepresented-loss flag is sticky across later failures/Stop. Unexpected worker
+  exit marks abandoned items/queues; idle interruption and fully journaled errors
+  remain honestly finalizable as failed END when no evidence is lost.
 - Pending observations are distinct from `acknowledged`: only successful CHUNK-footer sync
   increases that counter, before subsequent index/checkpoint I/O. A later navigation failure
   preserves that actual acknowledgment while refusing finalization. A failed pending chunk does not become saved data.
@@ -106,8 +114,8 @@ A worker exception releases queued references; a backend failure retains the inc
 
 The R2 4 MiB recommendation is justified only on tested HT-301/Pixel8 finite runs. Its
 sampled memory peaks, baseline subtraction and backend-specific limitations remain intact.
-No R4 throughput, freshness, memory plateau, long-run cadence or storage durability has yet
-been measured on Android. Full-grid copies are safe but need real device cost measurements.
+No R4 physical-camera throughput/freshness, ART/RSS plateau, indefinite cadence or
+storage durability has been measured; finite emulator runtime is documented below. Full-grid copies are safe but need real device cost measurements.
 
 ## Validation
 
@@ -116,7 +124,8 @@ Run without Android SDK/camera:
 ```bash
 ./gradlew -p tools/lmtr-r3-host :lmtr-contract:test :lmtr-recorder:test \
   :lmtr-contract:writeRuntimeClasspath :lmtr-contract:writeTestRuntimeClasspath \
-  :lmtr-recorder:writeTestRuntimeClasspath
+  :lmtr-recorder:writeTestRuntimeClasspath :camera-recording:test \
+  :camera-recording:writeTestRuntimeClasspath
 python3 tools/check_lmtr_r4.py --report /tmp/lmtr-r4-interop.json
 python3 tools/check_lmtr_conformance.py --report /tmp/lmtr-r3-interop.json
 python3 -W error -m unittest discover -s tools/lmtr_v1/tests -t . -v
@@ -124,7 +133,10 @@ python3 -W error -m unittest discover -s tools/lmtr_v1/tests -t . -v
 git diff --check
 ```
 
-33 R4 JVM, 71 R3 JVM, 232 existing core and 64 Python tests pass with zero failures/skips; Android build/lint pass.
+39 recorder JVM, 17 source/lifecycle JVM, 71 R3 JVM, 232 existing core, 21 app JVM
+and 64 Python tests pass with zero failures/skips; Android build/lint and ART packaging pass.
+The current runtime/evidence receipt is [validation summary](validation-summary.json);
+[original foundation summary](foundation-validation-summary.json) remains historical.
 [Host summary](validation-summary.json), [R3 regression receipt](r3-regression-interop.json) (its old pending labels are tool checkpoint history), and [independent engine readback](interop-validation.json)
 record exact coverage. Simulated non-USB modules cover temperature-only, preview-only,
 independent native/acquisition, same-observation verified views, partial mask/+0 filler/valid
@@ -139,26 +151,33 @@ A torn output and a post-ack navigation failure are recovered with `full_verifie
 R4 engineering files, **not new canonical R3 fixtures**. Fake-clock probe inputs are deterministic;
 this finite suite is not exhaustive scheduling/model-checking or backend certification.
 
-### ART availability and remaining gates
+### Source/lifecycle and actual ART evidence
 
-Authorized wireless ADB lists no usable device and mDNS no endpoint. The installed SDK has
-no emulator executable/available AVD. No pairing, operator, USB or camera action was attempted.
-ART is **NOT EXECUTED**; JVM tests/build/lint do not establish Android runtime conformance.
-The app does not link the recorder, so its successful build also does not validate recorder dex/ART.
+See [ART integration](ART_INTEGRATION.md) for the module channel, deferred HT-301
+adapter, optional owner notifications, explicit Start/Stop, current runtime receipt
+and retained failures. The channel is published after the existing gate and before UI
+StateFlow, not from Celsius rendering. Old source epochs and late owner-open callbacks
+cannot reattach after Close. Optional observer exceptions cannot suppress camera release.
 
-Next R4 steps:
+[Source validation](SOURCE_VALIDATION.md) records finite 25 Hz non-USB source stress,
+independent preview/palette/ROI cadence, queue peaks, actual chunk/checkpoint acknowledgments,
+Stop, HT fixture copy cost and independent Python readback. These are host/emulator
+engineering outputs, not new canonical fixtures or Pixel/HT throughput evidence.
 
-1. Camera-free ART packaging/runtime tests for both contract and recorder using an emulator or
-   already authorized device; measure resource reservations and Stop/timer behavior there.
-2. A module-owned HT-301 adapter publishing full immutable observations from authoritative
-   measurement intake, separately from presentation, with original session/clock/context evidence.
-3. Feature-isolated lifecycle connection: explicit Start/Stop and source detach/error/background
-   events without changing acquisition ownership or control sequences. No product UI yet.
-4. Matched-baseline live tests for cadence, retained valid measurements, both drop classes,
-   preview age, chunk latency, queue peaks, clean-process memory and Stop/recovery under failures.
-5. Independent full Python readback of real Android files and source-bit parity; native Windows
-   recorder-engine portability and relevant backend tests remain separate from the accepted R3 CI.
+Remaining R4 gates:
 
-No real HT-301 recording test occurred in this task. R4 #9 stays open. R5/R6 are not started.
+1. Opt-in physical HT-301/Pixel8 adapter and lifecycle smoke tests with an explicit Start;
+   no normal recording button until relevant gates pass.
+2. Matched-baseline live cadence, retained valid measurements, both recorder drop classes,
+   source-loss qualification, preview freshness, chunk latency, queue peaks, clean-process
+   memory and Stop/recovery under failures.
+3. Independent full Python readback of physical Android source bits, masks/settings/context.
+4. Recorder native Windows portability and applicable local backend tests, independently
+   of already accepted R3 Windows conformance and isolated CI PR #15.
+
+No hardware test occurred in this task; no physical-device ADB or camera was opened.
+ART/emulator tests do not certify physical accuracy, live responsiveness or ART memory
+reservations. R4 #9 and draft PR #16 stay open; R5/R6 have not started. SAF/provider export,
+publication/directory durability and power-loss assurance remain separate backend duties.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**

@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 resumed validation and final runtime receipts)
+
+- Preserve interrupted documentation/reports and all failed experiments; record exact tested code `abea098`, 380 JVM/64 Python tests and actual 61/61 ART tests on both API26/API35. Independent Python checks 14 actual engine outputs, original bytes in three recovered prefixes, an honestly failed END/gap, 75 source observations per ART job and original source immutability.
+- Record current 120-second/3000-observation synthetic source on the same code SHA, original clock/intake/oracle hash checks, zero preparation/writer drops, 118 chunks/23 checkpoints, 198.535 ms Stop and separate charged queue/in-flight/pending peaks. Preserve prior run receipts and publish only sanitized metrics/hashes, not recordings or large JSONL files.
+- Document sticky noncertifiable loss boundaries, exceptional callback copy cost, exact runtime/environment receipts and reproducible host commands. R4 remains incomplete pending opt-in physical Pixel8/HT-301 source/lifecycle/cadence/freshness/memory/failure validation; no recording product UI, R5/R6, frozen wire/corpus or Desktop change.
+
 ### Fixed (R4 precise worker-failure accounting)
 
 - Distinguish an idle preparation interruption with no admitted/queued evidence from a worker abandoning an intake item or queue. Only actual unrepresented evidence sets the sticky no-END condition; add an instance-specific interruption regression proving the empty failed recording can finalize honestly.

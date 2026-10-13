@@ -93,3 +93,27 @@ This does not open USB or initialize radiometry. Configuration recreation uses t
 ViewModel; locale changes and ordinary background stops release as defined in
 [ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md). `CameraEntryDeviceTest` verifies
 repeat entry on the Pixel without opening the camera.
+
+## Camera-free R4 ART harness
+
+`lmtr-art` is a separate test-only application (min26/compile35), no launcher/USB
+permission/native build. Product `app` remains arm64-v8a. Run its isolated entry point
+without configuring the product NDK/CMake/UVC project:
+
+```bash
+./gradlew -p tools/lmtr-r4-art :lmtr-art:assembleDebug :lmtr-art:assembleDebugAndroidTest
+mkdir -p /tmp/lmtr-art-reports
+bash tools/validate_lmtr_r4_art.sh /tmp/lmtr-art-reports
+```
+
+Use JDK17/SDK35 and an already running **camera-disabled emulator**, not the physical
+phone. The script selects `adb -e`, verifies `ro.kernel.qemu=1`, runs instrumentation
+manually and extracts only synthetic app-owned files for independent Python readback.
+The Gradle connected-test task uninstalls the target and is unsuitable for retaining
+private synthetic outputs. Local reports/binaries stay outside Git.
+
+CI `.github/workflows/lmtr-r4-art.yml` runs only the focused R4 branch: API26 AOSP
+and API35 Google APIs x86_64, pinned emulator action, read-only token, 45-minute job
+bounds and 30-day artifacts. Exact source SHA and device identity are recorded; no
+secrets, pairing, production APK, USB camera or manual prompts are required.
+See [runtime evidence](lmtr-r4/ART_INTEGRATION.md) for actual executed scope/failures.

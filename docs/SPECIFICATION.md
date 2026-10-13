@@ -141,7 +141,7 @@ provide a standalone Kotlin/JVM library and independent Python reader/writer,
 synthetic canonical corpus and cross-language validation. They are not imported by
 the Android application. R3 #8 is closed after the finite contract/Windows gates and PR #14 merge at `8eb4ace`.
 The isolated [R4 foundation](lmtr-r4/README.md) supplies immutable module evidence, explicit profiles, byte-bounded admission/preparation/writer queues, genuine intake timers, acknowledged counts, qualified losses, shared append/index ownership and terminal readback.
-It is not linked into the app; ART, module/lifecycle integration and live acceptance remain pending in open #9. Recording product UI/backend export and R5/R6 remain outside this scope. See [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
+The recorder/adapter are not linked into the app; the optional source channel and guarded lifetime notifications are implemented, with host and test-only ART evidence. Physical module/lifecycle/resource acceptance remains pending in open #9. Recording product UI/backend export and R5/R6 remain outside this scope. See [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
 Accepted LMTX v1 remain unchanged.
 
 ### RJPEG (Radiometric JPEG)

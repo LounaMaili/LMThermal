@@ -3,7 +3,7 @@
 The owner explicitly accepted [LMTR v1](LMTR_WIRE_V1.md), complete `r1b-review-2`
 D1–D10 and approach B. PR #13 integrated acceptance at `fe029363`; R1 #6 is closed.
 [R3](lmtr-r3/README.md) is integrated by PR #14 at `8eb4ace`; #8 is closed for its finite conformance scope.
-The [isolated R4 camera-free foundation](lmtr-r4/README.md) is authorized and implemented for host engineering tests; #9 stays open pending ART, module/lifecycle integration and live acceptance. R5/R6 are not started. Historical statuses below
+The [isolated R4 camera-free foundation](lmtr-r4/README.md) is authorized and implemented for host engineering tests; #9 stays open pending physical integration and live resource/cadence acceptance; host adapter/lifecycle and test-only ART receipts are linked from that guide. R5/R6 are not started. Historical statuses below
 remain the stage-design record; acceptance is not production format release.
 
 # Common recording implementation roadmap and issues
@@ -37,7 +37,7 @@ already-completed R1a stage. This avoids a circular R1/R2 issue dependency.
 | R1 | [LMThermal #6](https://github.com/LounaMaili/LMThermal/issues/6) | R1a/R1b accepted; PR #13 integrated; closed |
 | R2 | [LMThermal #7](https://github.com/LounaMaili/LMThermal/issues/7) | Scoped baseline complete/closed; focused evidence/presentation integrated; original prototypes remain separate |
 | R3 | [LMThermal #8](https://github.com/LounaMaili/LMThermal/issues/8) | Integrated at `8eb4ace`; #8 closed for finite host/Windows contract conformance |
-| R4 | [LMThermal #9](https://github.com/LounaMaili/LMThermal/issues/9) | Isolated camera-free foundation implemented; open pending ART/module/lifecycle/live acceptance |
+| R4 | [LMThermal #9](https://github.com/LounaMaili/LMThermal/issues/9) | Isolated engine/source/lifecycle implemented with scoped host/ART evidence; physical live acceptance pending |
 | R5 | [LMThermal-Desktop #2](https://github.com/LounaMaili/LMThermal-Desktop/issues/2) | Not started in this task; real R4 output still required for interoperability completion |
 | R6 | [LMThermal #10](https://github.com/LounaMaili/LMThermal/issues/10) | Blocked by both R4 and R5 |
 | R7 | [LMThermal-Desktop #3](https://github.com/LounaMaili/LMThermal-Desktop/issues/3) | Later; blocked by R6 |
@@ -171,7 +171,7 @@ Acceptance:
 
 ## R4 — Implement Android generic radiometric recorder
 
-**Repository:** LMThermal. **Status:** isolated [camera-free foundation](lmtr-r4/README.md) implemented on `feat/lmtr-r4-recorder-foundation`; #9 remains open. ART, real module integration, lifecycle and live resource/cadence/backend validation remain required.
+**Repository:** LMThermal. **Status:** isolated [camera-free foundation](lmtr-r4/README.md) implemented on `feat/lmtr-r4-recorder-foundation`; #9 remains open. The optional module-owned source adapter and lifecycle route are host/test-only ART validated; real HT-301/Pixel8 resource/cadence/lifecycle/backend acceptance remains required.
 
 Scope: a separate module-owned recording retention/evidence contract; common
 recorder consumes immutable owned current observations. Analysis/Native/Full

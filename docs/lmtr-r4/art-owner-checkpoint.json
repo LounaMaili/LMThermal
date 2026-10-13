@@ -1,0 +1,296 @@
+{
+  "status": "passed",
+  "run_id": 38414074626,
+  "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/38414074626",
+  "scope": "Actual ART on synthetic test-only app; no physical Pixel/HT, GUI, source transport or ART/RSS claim.",
+  "apis": [
+    {
+      "api": 26,
+      "model": "Android SDK built for x86_64",
+      "reported_abis": "x86_64,x86",
+      "executed_architecture": "x86_64 emulator, cameras disabled",
+      "tests": 55,
+      "failures": 0,
+      "source_sha": "b5c9dca80ce174f0ff5125c9f42e1bce66921115",
+      "independent_engine_readback": {
+        "status": "passed",
+        "cases": [
+          {
+            "name": "analysis-0",
+            "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "native-0",
+            "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "full-0",
+            "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "analysis-1",
+            "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "native-1",
+            "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "full-1",
+            "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "independent-native-acquisition",
+            "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "temperature-only",
+            "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "preview-only",
+            "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "multistream-geometry",
+            "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+            "observations": 4,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "torn-tail",
+            "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+            "observations": 1,
+            "status": "recovered",
+            "integrity_scope": "full_verified_prefix",
+            "source_unchanged": true
+          },
+          {
+            "name": "navigation-failure",
+            "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+            "observations": 1,
+            "status": "recovered",
+            "integrity_scope": "full_verified_prefix",
+            "source_unchanged": true
+          }
+        ],
+        "generated_scope": "noncanonical R4 engineering outputs",
+        "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      },
+      "independent_source_readback": {
+        "status": "passed",
+        "cases": [
+          {
+            "name": "source-25hz",
+            "sha256": "ac8775c92fdda347b7355a645fc7a6643be99c5fccb1e2b0defdfdcd21a0dab0",
+            "observations": 75,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          }
+        ],
+        "generated_scope": "noncanonical R4 engineering outputs",
+        "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      },
+      "environment": {
+        "abis": [
+          "x86_64",
+          "x86"
+        ],
+        "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "model": "Android SDK built for x86_64",
+        "runtime": "Dalvik",
+        "sdk": 26
+      },
+      "artifact_report_sha256": {
+        "instrumentation.txt": "ae3aa269e9c662619f48feeffe68574f75c1072a504cdbd55e65b0baa6eb533c",
+        "python-readback.json": "820f99a008c8421831baff818057cc8ff1d685cf420b5f5c0bdc7d9af38314fe",
+        "python-source-readback.json": "4a818ec721959e3ff20f620bc107f14cf1b049e7f7aef99e6f9c470ecf163693",
+        "synthetic.tar": "675e9a47a8e8dd8bca5fb261d0de7a6fbef7682f0b99ba1fb0b7ed7f319e25f7"
+      }
+    },
+    {
+      "api": 35,
+      "model": "sdk_gphone64_x86_64",
+      "reported_abis": "x86_64,arm64-v8a",
+      "executed_architecture": "x86_64 emulator, cameras disabled",
+      "tests": 55,
+      "failures": 0,
+      "source_sha": "b5c9dca80ce174f0ff5125c9f42e1bce66921115",
+      "independent_engine_readback": {
+        "status": "passed",
+        "cases": [
+          {
+            "name": "analysis-0",
+            "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "native-0",
+            "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "full-0",
+            "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "analysis-1",
+            "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "native-1",
+            "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "full-1",
+            "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "independent-native-acquisition",
+            "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "temperature-only",
+            "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "preview-only",
+            "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+            "observations": 2,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "multistream-geometry",
+            "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+            "observations": 4,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          },
+          {
+            "name": "torn-tail",
+            "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+            "observations": 1,
+            "status": "recovered",
+            "integrity_scope": "full_verified_prefix",
+            "source_unchanged": true
+          },
+          {
+            "name": "navigation-failure",
+            "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+            "observations": 1,
+            "status": "recovered",
+            "integrity_scope": "full_verified_prefix",
+            "source_unchanged": true
+          }
+        ],
+        "generated_scope": "noncanonical R4 engineering outputs",
+        "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      },
+      "independent_source_readback": {
+        "status": "passed",
+        "cases": [
+          {
+            "name": "source-25hz",
+            "sha256": "de757a1c93c5d51698b7d1b99b6d3ad5ef331ccd58452865d2a04512ad7de7f5",
+            "observations": 75,
+            "status": "valid",
+            "integrity_scope": "full",
+            "source_unchanged": true
+          }
+        ],
+        "generated_scope": "noncanonical R4 engineering outputs",
+        "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      },
+      "environment": {
+        "abis": [
+          "x86_64",
+          "arm64-v8a"
+        ],
+        "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "model": "sdk_gphone64_x86_64",
+        "runtime": "Dalvik",
+        "sdk": 35
+      },
+      "artifact_report_sha256": {
+        "instrumentation.txt": "d3a11f6b6c68811087ce499a98dcf2cf74adef7d77420180b3f8d5fd009cfcce",
+        "python-readback.json": "820f99a008c8421831baff818057cc8ff1d685cf420b5f5c0bdc7d9af38314fe",
+        "python-source-readback.json": "1ea56896234a4535f01c1d8ef01c3e53bcc72e008b4ce8ca390968f9f768291e",
+        "synthetic.tar": "71555f94120b76681bd9ae8ea785fff30ca3373bf0eb450023db4588c9f1d096"
+      }
+    }
+  ],
+  "limits": "Finite 3-second source stress per API plus engine/corpus/lifecycle tests; full Kotlin/R3 JSON vectors remain cross-JVM/Python evidence, not all executed on ART.",
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}
