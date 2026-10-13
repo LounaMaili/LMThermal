@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R3 native Windows CI validation — 2026-10-13)
+
+- Added a branch-restricted, exact-SHA Windows GitHub Actions protocol with JDK17, Python3.13, bounded resources, read-only token permissions and persistent success/failure artifacts. It executes the existing independent suites and native NTFS sparse/full-integrity gate without camera or Android dependencies.
+- Restricted detached checkout acceptance to the exact authorized Actions push branch/ref/SHA and retained strict HEAD/clean-source checks; report summaries now include Python counts and checkout mode. The frozen wire, canonical corpus and production applications remain unchanged.
+
 ### Fixed (R3 final hardening and platform preparation — 2026-10-13)
 
 - Added independently checked mixed-corruption, historical checkpoint/page, feature/view and lineage attacks without modifying the 51 pinned fixtures or their original manifest. Enforced Python signed-64 reference arithmetic/self-parent rejection and both readers' approach-B/null-entry lineage boundaries.

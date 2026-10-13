@@ -185,7 +185,7 @@ for the original full-payload Android camera test.
 - compileSdk/targetSdk 35, minSdk 26; initial arm64-v8a APK supports the test Pixel 8.
 - Native libusb 1.0.29 (LGPL-2.1-or-later), pinned libuvc 0.0.8 snapshot (BSD-3-Clause), NDK 28.
 - Plain JVM `core/` holds immutable frame/parser and preview logic; no Python embedded.
-- Standalone `lmtr-contract/` is an offline JVM conformance library/CLI with JUnit 4 tests; `tools/lmtr_v1/` is an independent standard-library Python reference. Neither is wired into the Android application.
+- Standalone `lmtr-contract/` is an offline JVM conformance library/CLI with JUnit 4 tests; its branch-restricted native Windows CI protocol is documented in [Windows validation](docs/lmtr-r3/WINDOWS_VALIDATION.md); `tools/lmtr_v1/` is an independent standard-library Python reference. Neither is wired into the Android application.
 - Shared camera contracts/presentation consume module-provided geometry and optional
   measurements; HT-301 transport/session/thermometry remain module internals.
 - Third-party licenses and exact source pins: [third_party/README.md](third_party/README.md).

@@ -31,7 +31,17 @@ try {
     }
     $Head = (& git rev-parse HEAD).Trim()
     if ($LASTEXITCODE -ne 0 -or $Head -ne $ExpectedCommit) { throw "Expected $ExpectedCommit; actual $Head" }
-    $Branch = (& git branch --show-current).Trim()
+    $Branch = ([string](& git branch --show-current)).Trim()
+    $CheckoutMode = 'branch'
+    # Actions checks out an exact SHA detached. Require its authenticated push context
+    # as well as the unchanged exact HEAD check; local detached checkouts still reject.
+    if ($Branch -eq '') {
+        if ($env:GITHUB_ACTIONS -ne 'true' -or $env:GITHUB_REF -ne 'refs/heads/feat/lmtr-r3-contract-conformance' -or $env:GITHUB_SHA -ne $ExpectedCommit) {
+            throw 'Detached HEAD requires the exact authorized R3 push/SHA in GitHub Actions.'
+        }
+        $Branch = 'feat/lmtr-r3-contract-conformance'
+        $CheckoutMode = 'detached_actions_push'
+    }
     if ($Branch -ne 'feat/lmtr-r3-contract-conformance') { throw "Unexpected branch: $Branch" }
     if (@(& git status --porcelain).Count -ne 0) { throw 'Working tree must be clean before validation.' }
     if (-not $env:JAVA_HOME) { throw 'Set JAVA_HOME to a JDK 17 installation.' }
@@ -66,9 +76,12 @@ try {
         $Errors += [int]$Xml.testsuite.errors; $Skipped += [int]$Xml.testsuite.skipped
     }
     if ($Tests -eq 0 -or $Failures -ne 0 -or $Errors -ne 0) { throw 'Missing/failing JVM result XML.' }
-    # Per-command logs retain exact Python counts and independent outcomes even if a later gate fails.
+    $PythonLog = Get-Content -LiteralPath (Join-Path $Reports 'python-tests.txt') -Raw
+    $PythonCount = [regex]::Match($PythonLog, 'Ran (\d+) tests?')
+    if (-not $PythonCount.Success) { throw 'Missing Python suite count.' }
+    # Per-command logs retain exact results even if a later gate fails.
     $Volume = Get-Volume -DriveLetter ([IO.Path]::GetPathRoot($Reports).Substring(0,1))
-    @{ commit=$Head; branch=$Branch; windows=[Environment]::OSVersion.VersionString;
+    @{ commit=$Head; branch=$Branch; checkout_mode=$CheckoutMode; python_tests=[int]$PythonCount.Groups[1].Value; windows=[Environment]::OSVersion.VersionString;
        report_filesystem=$Volume.FileSystem; manifest_sha256=$ManifestAfter;
        jvm_tests=$Tests; jvm_failures=$Failures; jvm_errors=$Errors; jvm_skipped=$Skipped;
        ntfs_sparse=$(if ($NtfsSparse) {'executed; see ntfs.json'} else {'NOT EXECUTED'});

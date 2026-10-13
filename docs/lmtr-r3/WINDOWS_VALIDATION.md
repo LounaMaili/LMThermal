@@ -76,3 +76,16 @@ optional. Async producer timers/Stop/admission and backend/export durability are
 R4/R6 requirements; no green host suite establishes them. Keep #8 open and #14 draft.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## GitHub-hosted Windows execution
+
+The branch-restricted push workflow `.github/workflows/lmtr-r3-windows.yml` uses
+native `windows-2022`, Temurin17 and Python3.13. Checkout and `-ExpectedCommit` bind
+the exact push SHA. A detached checkout is accepted only with matching Actions
+R3 branch/ref/SHA context; source cleanliness remains mandatory. Token permissions
+are `contents: read`; no repository secrets, camera, Android SDK or owner interaction.
+Reports use unique `RUNNER_TEMP` directories, NTFS sparse/full read is enabled, and
+logs/XML/reports upload even on failure with30-day retention. Job/step deadlines
+and build/runtime resource caps are bounded; earlier failed runs must be retained.
+This prepared workflow alone is not a Windows pass. Actual run evidence follows
+only after execution, without regenerating the51pinned fixtures.
