@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 final Phase A runtime receipts)
+
+- Record exact field code f90db85 with 398 JVM, 64+8 Python and 80/80 camera-free ART tests per API26/API35. Preserve source-byte parity for 14 engine files, 75 synthetic observations and three existing-room profile readbacks per API, plus the failed API26 scheduling checkpoint. Keep physical Pixel8/HT tests explicitly unexecuted/operator-gated.
+
 ### Fixed (R4 matched measurement window)
 
 - Close acquisition/preview aggregates at Stop so the subsequent full readback and streaming hashes cannot inflate the matched performance interval. Keep codec/seal/drain timing active and report its separate finalization scope.

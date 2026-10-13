@@ -208,7 +208,11 @@ must stay local. Do not upload the entire private report or trace.
 [Phase A host receipt](field-preparation-validation.json) records 398 JVM and 64+8
 Python tests, three original-owner profile readbacks, build/lint and unchanged corpus
 checks. [Earlier host readbacks](field-host-initial-readbacks.json) remain separate.
-Current ART execution is a separate exact-source CI gate, not inferred from packaging.
+The [executable preflight output](field-preflight-plan.json) uses unknown capacity;
+it does not query or assert available Pixel storage. [ART checkpoints](field-art-checkpoints.json)
+preserve the passing 79/80-test runs and failed API26 run; final current-code execution is [run 38453472955](https://github.com/LounaMaili/LMThermal/actions/runs/38453472955),
+**80 tests per API26/API35** plus all independent readbacks. The tested code is
+`f90db853e9eee854eb8c562d09c4f4592c663db5`; the arm64 field UI itself remains physically unexecuted.
 
 `lmtr-field-support` is a JVM test-only helper module shared by the field APK and
 isolated ART suite. Regressions cover no Start on Connect, no camera actions from

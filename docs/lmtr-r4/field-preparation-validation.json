@@ -4,7 +4,7 @@
   "jvm_tests": 398,
   "python_contract_tests": 64,
   "field_python_tests": 8,
-  "art_current_revision": "pending_exact_commit_runtime",
+  "art_current_revision": "passed_exact_final_code",
   "builds": [
     "app assembleDebug/lintDebug",
     "lmtr-field assembleDebug/lintDebug",
@@ -93,5 +93,11 @@
   "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
   "corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
   "corpus_runtime_cases_per_reader": 51,
-  "source_and_capture_hashes": "streaming independent original-owner binary parity; actual Pixel gate pending"
+  "source_and_capture_hashes": "streaming independent original-owner binary parity; actual Pixel gate pending",
+  "art_last_reviewed_code_sha": "f90db853e9eee854eb8c562d09c4f4592c663db5",
+  "art_last_reviewed_run": 38453472955,
+  "art_last_reviewed_tests_per_api": 80,
+  "earlier_failed_art_run": 38450510713,
+  "final_code_sha": "f90db853e9eee854eb8c562d09c4f4592c663db5",
+  "field_apk_sha256": "6e5e3c9e8e5d99decd1519c9ef8eb9bf67e34b4ab4a29ec488ada1b5e64c34d9"
 }

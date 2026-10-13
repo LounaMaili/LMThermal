@@ -225,3 +225,18 @@ thread/two acknowledgments and adding zero writer drops. This isolates the inten
 preparation assertion without changing any product/field capacity or writer-overload
 behavior/coverage. Final exact-source ART must pass independently. Historical failed
 logs/artifacts are retained privately and linked here, never relabeled.
+
+
+## Final field-preparation code receipt
+
+[Run 38453472955](https://github.com/LounaMaili/LMThermal/actions/runs/38453472955) verifies
+exact code `f90db853e9eee854eb8c562d09c4f4592c663db5`: **80/80 on API26 and API35**, 14 actual engine outputs,
+75 synthetic source observations and three existing-room profile outputs (nine
+observations) per API. Independent Python original-owner Float32/native/transport
+hashes, unavailable states, exact Full views, clocks/intake bounds and source
+immutability pass. [Checkpoint receipt](field-art-checkpoints.json) retains exact
+SHAs, environment, verdicts and prior failure. These are emulator helper/engine
+tests, not the arm64 field UI or real Pixel/HT performance/lifecycle validation.
+The field APK build/lint and 398 host JVM/64+8 Python gates pass separately.
+This final documentation update does not alter tested code; R4 #9/PR #16 remain
+open/draft, and physical Phase B requires explicit operator go-ahead.
