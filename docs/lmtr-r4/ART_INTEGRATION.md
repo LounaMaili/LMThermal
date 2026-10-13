@@ -9,7 +9,8 @@ The existing contract/recorder code is packaged on ART, with shared engine tests
 engine outputs for independent Python readback. Canonical fixtures are inputs only.
 
 Build with `./gradlew :lmtr-art:assembleDebug :lmtr-art:assembleDebugAndroidTest`.
-Run `:lmtr-art:connectedDebugAndroidTest` on a camera-free emulator. This is not a
+Use `tools/validate_lmtr_r4_art.sh REPORTS_DIR` on a camera-free emulator to retain
+outputs for independent readback; `connectedDebugAndroidTest` removes the target on exit. This is not a
 physical HT-301/Pixel8 test. Product ABI remains arm64-v8a. No new pairing is needed.
 
 The branch-restricted `lmtr-r4-art.yml` tests API26 (product minimum) and API35 on
@@ -19,13 +20,11 @@ required. Logs retain device SDK/ABI/model, exact source SHA and synthetic outpu
 `check_lmtr_r4.py --existing DIR --report REPORT` uses the independent Python reader,
 not a host JVM substitute for ART. Native Windows PR #15 remains isolated/unmerged.
 
-Local infrastructure has SDK35 but no emulator executable/AVD. CI runtime evidence
-is pending; packaging success alone is not ART conformance.
+Local infrastructure has SDK35 but no emulator executable/AVD. CI runtime evidence is recorded below; packaging success alone is not ART conformance.
 
 ## Integration work in progress
 
-Authoritative callback/lifecycle implementation and its new tests will be recorded
-here as they are validated. Recording must never subscribe to conflated camera/UI
+Authoritative callback/lifecycle implementation is described below. Recording must never subscribe to conflated camera/UI
 StateFlow or Celsius rendering. No recording product UI or R5/R6 is authorized.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
@@ -83,3 +82,14 @@ API26 stopped before tests because logcat's startup clear was unavailable. Log c
 is now best effort rather than a conformance gate; instrumentation verdicts remain strict.
 All ADB harness operations explicitly select an emulator and verify `ro.kernel.qemu=1`,
 so this helper cannot accidentally install/run against a physical paired phone.
+
+Third checkpoint run [38412292500](https://github.com/LounaMaili/LMThermal/actions/runs/38412292500)
+on `10a4014238d28af58bf3a405cacf9ac76df03bf6` is preserved. API26 failed during
+SDK system-image download (`Error on ZipFile unknown archive`), before any emulator
+or test execution. API35 verdicts and the final runtime receipt must be inspected
+separately; an infrastructure failure is not a passing API26 gate.
+
+The synthetic UI cadence now updates `CameraPreview`, not an acquisition-statistics
+counter. Recorder-clock scale is one nanosecond but its actual resolution remains
+unknown (`null`); the test does not manufacture measured clock precision. These
+metadata corrections leave the accepted wire and canonical inputs unchanged.

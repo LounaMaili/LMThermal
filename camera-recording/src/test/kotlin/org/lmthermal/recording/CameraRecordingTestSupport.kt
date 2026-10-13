@@ -40,12 +40,16 @@ class RecordingTestSession(val hub:CameraObservationHub,device:CameraDeviceIdent
     var closes=0
     override suspend fun perform(action:CameraAction){error("No test camera controls")}
     override suspend fun close(reason:CameraCloseReason){closes++;hub.finish(reason)}
-    fun presentation(sequence:Long){latest.value=latest.value.copy(statistics=CameraStatistics(received=sequence))}
+    fun presentation(sequence:Long){latest.value=latest.value.copy(preview=CameraPreview(NativeImageGeometry(3,2),sequence,System.nanoTime()/1000000,Unit))}
 }
 /** New synthetic sources use explicit matching session/clock facts, not the physical device key. */
 internal fun testIdentity(producer:SimulatedRecordingModule)=CameraSourceIdentity(CameraModuleMetadata(CameraModuleId("org.example.recording.synthetic"),
     "Non-USB synthetic module",CameraCapabilities(preview=true,temperatureMeasurement=producer.thermal,explicitMeasurementInitialization=false,touchInspection=producer.thermal),"simulated"),
     producer.stream["session_id"].text(),producer.stream["clocks"].arr().first().obj()["id"].text())
 internal fun testEngine(producer:SimulatedRecordingModule,file:File,profile:RecordingProfile=RecordingProfile.FULL,
-    hook:()->Unit={},backend:RecorderBackend=LocalRecorderBackend(file))=RecorderEngine(SimulatedRecordingModule.header(listOf(producer),1),
+    hook:()->Unit={},backend:RecorderBackend=LocalRecorderBackend(file)):RecorderEngine {
+    val original=SimulatedRecordingModule.header(listOf(producer),1)
+    val header=original+("timeline" to (original["timeline"].obj()+("resolution_ns" to null)))
+    return RecorderEngine(header,
     listOf(producer.stream),profile,RecorderLimits(maxObservationBytes=65536),backend,1,prepareHook=hook)
+}

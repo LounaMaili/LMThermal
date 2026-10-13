@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 synthetic clock and preview evidence)
+
+- Keep synthetic preview cadence independent of camera acquisition statistics and leave actual common-clock resolution unknown instead of equating nanosecond units with measured precision. Preserve the third API26 pre-test SDK image-download failure.
+
 ### Fixed (R4 emulator evidence gates)
 
 - Treat emulator log-buffer clearing as best-effort diagnostics while keeping strict instrumentation/readback verdicts; explicitly select and verify an emulator before any ADB operation. Preserve the API35 passing checkpoint and API26 pre-test logcat failure.
