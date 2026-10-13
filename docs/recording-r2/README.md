@@ -1,6 +1,10 @@
 # R2 feasibility evidence
 
-**R2 REVIEW ACCEPTED FOR SCOPED INTEGRATION PREPARATION; OWNER MERGE/CLOSURE PENDING.**
+**R2 SCOPED BASELINE COMPLETED/CLOSED — 2026-10-12.**
+Focused PR #11/#12 integration is verified on main `ed0e333`; original R2 tip/history
+remain preserved. [R1b wire DRAFT](../LMTR_WIRE_V1_DRAFT.md) and
+[owner decisions](../LMTR_R1B_OWNER_DECISIONS.md) are unaccepted proposals.
+The dated review/preparation material below remains the evidence history.
 See [integrated file set, provenance and permanent historical references](INTEGRATION.md). The
 [completion review](COMPLETION_REVIEW.md) records gate-by-gate verdicts, separate
 production-fix review, integration recommendation and R1b handoff. No issue is
@@ -11,7 +15,7 @@ The resumed clean Full-STORED and explicit 4 MiB Analysis/Native/Full DEFLATE ru
 also pass throughput/freshness, with measured clean-process memory differences
 below the 64 MiB target. Native Windows now passes all 10 STORED/DEFLATE baseline
 outcomes and the separate optional 15-case Zstd reference run with exact Linux
-parity and immutable sources. R2 #7 stays open pending owner approval; R1b owner
+parity and immutable sources. R2 #7 is closed for the tested baseline; R1b owner
 approval remains separate. Memory sampling and backend assurance limits remain
 explicit; historical failures are retained.
 

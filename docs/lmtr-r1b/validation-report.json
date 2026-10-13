@@ -1,0 +1,134 @@
+{
+  "status": "DRAFT_HOST_CHECKS_PASS_NOT_R3_OR_OWNER_ACCEPTANCE",
+  "review": "r1b-review-2",
+  "schema_definitions": 76,
+  "schema_refs_resolve": 299,
+  "scenarios": [
+    {
+      "id": "01",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "02",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "03",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "04",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "05",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "06",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "07",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "08",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "09",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "10",
+      "outcome": "accept_metadata",
+      "passed": true
+    },
+    {
+      "id": "11",
+      "outcome": "unsupported_required_feature",
+      "passed": true
+    },
+    {
+      "id": "12",
+      "outcome": "recovered_missing_end",
+      "passed": true
+    },
+    {
+      "id": "13",
+      "outcome": "committed_payload_integrity",
+      "passed": true
+    },
+    {
+      "id": "14",
+      "outcome": "accept_metadata",
+      "passed": true
+    }
+  ],
+  "original_14_examples_byte_identical": true,
+  "decimal_spelling_checks": 19,
+  "decimal_context_precisions": [
+    6,
+    28,
+    80
+  ],
+  "precision_negative_checks": 11,
+  "semantic_content_vs_byte_hash_check": true,
+  "exact_finite_native_decimal_roundtrips": 4,
+  "jvm_library_probes": {
+    "executed": true,
+    "scope": "Optional selected host library operations, not Kotlin/ART JSON, schema or runtime conformance",
+    "decimal_operations": 23,
+    "scalar_order": true,
+    "native_signed_zero_bits": true,
+    "runtime": "openjdk version \"25.0.4.1\" 2026-08-18"
+  },
+  "negative_type_json_checks": 10,
+  "semantic_negative_checks": [
+    "statistics_value",
+    "context_hash",
+    "timeline_order",
+    "view_slice",
+    "view_parent",
+    "view_feature",
+    "segment_hash",
+    "undeclared_stream"
+  ],
+  "framing_widths": {
+    "header": 40,
+    "footer": 72
+  },
+  "ieee_crc32_known_check": true,
+  "float32_signed_zero_check": true,
+  "unicode_scalar_key_order_check": true,
+  "binary_container_written": false,
+  "device_or_camera_accessed": false,
+  "unexecuted": [
+    "Kotlin/ART and Python production JSON/schema/hash pipelines",
+    "canonical R3 binary corpus",
+    "real Windows new-wire validation",
+    "multi-stream camera hardware",
+    "idle timer/Stop/backend races",
+    "new grammar sustained performance or peak-memory proof"
+  ],
+  "scope": "Documentation local-shape checks and selected cross-field/byte/library recipes, not full LMTR/R3 conformance; prose binary/index/recovery/storage rules require future implementation validation.",
+  "inputs_sha256": {
+    "docs/LMTR_WIRE_V1_DRAFT.md": "e6a69c7d7d32a7959714e6d1c10a2741e8114c50aacc8632203a05177156a777",
+    "docs/LMTR_R1B_OWNER_DECISIONS.md": "c55f07f58c30f90713fcf3aeb6b901a057b09c63ae008edb9a8aa6b7fc3f8201",
+    "docs/lmtr-r1b/schema.json": "ec8b06d2f6b408cf6bd224a8452d05ac612d653cab752710c6079fd7911206d7",
+    "docs/lmtr-r1b/examples.json": "a7388f7fd08f71ab1bc70adfc90b273784091aa11636f403a389341ab8c80613",
+    "tools/check_lmtr_draft.py": "267db61b612106f58d9f1a09557588f53ffea6d4cd3b419c6e3e145b2bbb5a77",
+    "tools/LmtrJsonLibraryProbe.java": "cbe4dfb6f09650d6b18025b93c9776d990e9575f86e2208dfdd92a2e4c0b2c72"
+  },
+  "base_revision": "ed0e3338a72bba76a267e4701125f6f89b3f93e3"
+}

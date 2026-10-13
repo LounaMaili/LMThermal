@@ -6,8 +6,9 @@ The authorized feasibility branch now contains [isolated R2 prototypes/reports](
 This checklist remains the acceptance gate. The
 [completed native Windows execution](recording-r2/WINDOWS_VALIDATION.md) satisfies
 the last pending baseline interoperability gate. The [completion review](recording-r2/COMPLETION_REVIEW.md)
-now finds the recommended baseline gates satisfied with limitations; R2 is ready
-for explicit integration/closure approval. #7 remains open; R1b and R3 remain gated.
+finds the recommended baseline gates satisfied with limitations; R2 #7 is now
+closed for that scope after focused PR #11/#12 integration. The
+[complete R1b DRAFT](LMTR_WIRE_V1_DRAFT.md) remains unaccepted; #6 and R3 stay gated.
 
 [R1a semantics and owner decisions](LMTR_FORMAT_CANDIDATE.md) are accepted direction.
 Wire details and backend assurance remain provisional. This checklist defines what

@@ -2,8 +2,12 @@
 
 The owner accepts the completion review as sufficient evidence to prepare closure
 for the **tested HT-301/Pixel 8 baseline**, with all documented limits preserved.
-This branch prepares documentation integration only. #7 and #6 remain open;
-merges/closure and R1b wire acceptance require separate explicit owner decisions.
+Focused documentation PR #11 and presentation PR #12 were owner-authorized and
+merged on 2026-10-12, main `ed0e3338a72bba76a267e4701125f6f89b3f93e3`.
+#7 is closed as scoped-complete; #6 remains open for the
+[complete R1b DRAFT](../LMTR_WIRE_V1_DRAFT.md) and
+[owner decision review](../LMTR_R1B_OWNER_DECISIONS.md). No wire acceptance is inferred.
+The selection and historical review below remain preserved.
 
 ## Provenance and file selection
 
@@ -83,8 +87,9 @@ thermometry behavior changes. This new integration finding does not rewrite the
 historical review or measured R2 reports. The historical
 presentation audit describes R2 source; it does not claim the docs branch changes
 application behavior. Review each focused PR independently; do not merge R2 wholesale.
-After owner-approved integration, the owner may authorize #7 closure for the scoped
-baseline. #6 remains open until the complete R1b contract is explicitly accepted.
+The owner authorized integration and scoped #7 closure; both are verified. Only
+CHANGELOG conflicted during the #12 update, and both entries were retained verbatim.
+#6 remains open until the complete R1b contract is explicitly accepted.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 

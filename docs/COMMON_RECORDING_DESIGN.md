@@ -1,7 +1,21 @@
+# Accepted R1b reference — 2026-10-13
+
+The [canonical LMTR v1 specification](LMTR_WIRE_V1.md) now records explicit owner
+acceptance of `r1b-review-2`, D1–D10 and approach B. The review/architecture text
+below remains historical rationale. Wire acceptance is frozen for R3, without
+claiming implementation or end-user release. R1 closure follows main integration;
+production R4/R5 remain unauthorized.
+
 # Common radiometric recording — review draft 1
 
 **Architecture draft: 2026-10-06; R1a owner acceptance recorded 2026-10-07.**
 **The complete wire contract remains provisional, not frozen or published.**
+
+Current handoff: [complete R1b DRAFT](LMTR_WIRE_V1_DRAFT.md) and
+[owner decisions](LMTR_R1B_OWNER_DECISIONS.md). R2 #7 is scoped-complete after
+focused integration; #6 stays open. This architecture retains earlier proposals
+and rationale; new exact mechanical recommendations are identified in the draft,
+not silently treated as accepted rules or applied to R2 bytes.
 
 This document preserves the architecture proposals for Android/Linux/Windows.
 The [normative candidate](LMTR_FORMAT_CANDIDATE.md) now distinguishes accepted R1a
@@ -578,6 +592,12 @@ Do not relabel, rewrite or auto-convert originals. Explicit future conversion
 preserves actual source capabilities: legacy recording has no full transport;
 estimated historical UTC is tagged as such rather than upgraded to acquisition
 truth. Existing still `.lmtx` loader remains independently versioned and strict.
+
+Targeted R1b review recommends [deferring historical dataset conversion](LMTR_WIRE_V1_DRAFT.md#63-historical-conversion-boundary-and-r7-p-a-immutabilitytruthful-clocks):
+base Parent binds one file and genuine intake chronology cannot represent the
+legacy manifest/CSV/NPZ bundle with estimated sampling rows. R7 remains feasible
+through a later explicitly reviewed required dataset/imported-timeline feature;
+no optional field may silently relabel that dataset or improve its clock accuracy.
 
 ## 17. Shared future conformance corpus
 

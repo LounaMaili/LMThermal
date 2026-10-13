@@ -1,3 +1,11 @@
+# Current R1b acceptance / R3 handoff — 2026-10-13
+
+The owner explicitly accepted [LMTR v1](LMTR_WIRE_V1.md), complete `r1b-review-2`
+D1–D10 and approach B. R1 closure requires verified main integration; R3 then
+becomes authorized/unblocked. R3 remains open pending real conformance gates;
+R4/R5 and later implementation are not authorized. Historical statuses below
+remain the stage-design record; acceptance is not production format release.
+
 # Common recording implementation roadmap and issues
 
 **R1a product/semantic direction accepted, 2026-10-07. Wire contract provisional.**
@@ -14,7 +22,9 @@ accepted still decision history; it is not silently expanded into sequences.
 
 ## GitHub issue registry
 
-R2 #7 and R1 #6 remain open pending owner integration/closure and R1b approval.
+R2 #7 is closed for the tested HT-301/Pixel 8 baseline after focused integration.
+R1 #6 remains open with the [complete R1b DRAFT](LMTR_WIRE_V1_DRAFT.md) and
+[owner decision review](LMTR_R1B_OWNER_DECISIONS.md); no wire acceptance is inferred.
 The [completion review](recording-r2/COMPLETION_REVIEW.md) finds the recommended
 baseline feasibility gates satisfied with limitations. R1a is complete.
 The native GitHub blocking graph uses R2 → R1 (R1b), so R2 is not blocked by the
@@ -22,9 +32,9 @@ already-completed R1a stage. This avoids a circular R1/R2 issue dependency.
 
 | Stage | Tracking issue | Current gate |
 |---|---|---|
-| R1 | [LMThermal #6](https://github.com/LounaMaili/LMThermal/issues/6) | R1a complete; R1b handoff prepared, awaiting owner approval and R2 closure |
-| R2 | [LMThermal #7](https://github.com/LounaMaili/LMThermal/issues/7) | Baseline reviewed and ready for closure approval; remains open, no merge |
-| R3 | [LMThermal #8](https://github.com/LounaMaili/LMThermal/issues/8) | Blocked by R2 and R1b acceptance in R1 |
+| R1 | [LMThermal #6](https://github.com/LounaMaili/LMThermal/issues/6) | R1a complete; complete R1b DRAFT ready for explicit owner contract review |
+| R2 | [LMThermal #7](https://github.com/LounaMaili/LMThermal/issues/7) | Scoped baseline complete/closed; focused evidence/presentation integrated; original prototypes remain separate |
+| R3 | [LMThermal #8](https://github.com/LounaMaili/LMThermal/issues/8) | R2 prerequisite resolved; blocked by explicit R1b acceptance in R1 |
 | R4 | [LMThermal #9](https://github.com/LounaMaili/LMThermal/issues/9) | Blocked by R3 and its prior gates |
 | R5 | [LMThermal-Desktop #2](https://github.com/LounaMaili/LMThermal-Desktop/issues/2) | Development blocked by R3; real R4 output also required for interoperability completion |
 | R6 | [LMThermal #10](https://github.com/LounaMaili/LMThermal/issues/10) | Blocked by both R4 and R5 |
@@ -67,7 +77,7 @@ review. `.lmtr` / `lmthermal-recording` are not stable published identifiers yet
 ## R1 — Freeze common radiometric recording semantics and later wire contract
 
 **Repository:** LMThermal. **Status:** R1a complete; R1b technical handoff ready
-following R2 review, but #6 stays open and wire approval/R2 closure remain owner actions.
+following scoped R2 closure; #6 stays open until owner acceptance of the complete draft.
 
 Scope: record the owner-approved [R1a normative candidate](LMTR_FORMAT_CANDIDATE.md)
 and product/semantic decisions separately from exact mechanics. Keep LMTX v1
@@ -83,7 +93,7 @@ Acceptance:
   recovery goals, source immutability and legacy coexistence are distinguished.
 - [x] Restricted views and identifiers/mechanics remain candidate/provisional;
   R2 gates and later R1b acceptance are explicit; no production work authorized.
-- [ ] R2 evidence packet reviewed, with failures/untested configurations and
+- [x] R2 evidence packet reviewed, with failures/untested configurations and
   semantic consequences resolved explicitly rather than hidden.
 - [ ] R1b owner acceptance recorded for the precise full wire contract and chosen
   mandatory codec set/backend assurance; specification/version/identifiers frozen.
@@ -96,8 +106,8 @@ Acceptance:
 branch if required. **Status:** the authorized R2 feasibility task has executed.
 The [R2 execution packet](recording-r2/README.md) now records
 prototypes, measurements and the [completed review](recording-r2/COMPLETION_REVIEW.md).
-Recommended baseline gates are satisfied with limitations. R2 remains open pending
-explicit integration/closure approval and returns evidence to R1b before stable release.
+Recommended baseline gates are satisfied with limitations. R2 is closed for that
+scoped baseline after focused integration and returns evidence to R1b before release.
 
 Scope: controlled prototypes/benchmarks and provider fault tests, using owned
 current measurements and saved frames. Compare STORED/DEFLATE-1/Zstd-3 on genuine
@@ -251,6 +261,14 @@ graphs, explicit time/geometry alignment between recordings, visual video render
 and opt-in legacy conversion. This is later product work, not required to prove the
 first common recording's full-grid authority. Persist analysis independently of
 large immutable sources; new recalculated recordings retain source lineage.
+
+The [R1b targeted review](LMTR_R1B_OWNER_DECISIONS.md#historical-conversion-a-versus-b-recommend-b)
+recommends a separate required feature/revision for multi-file dataset provenance
+and explicitly qualified imported clocks before R7 conversion. Base v1 single-file
+Parent/intake fields do not themselves support historical directory/NPZ conversion.
+R7 is not cancelled or implicitly implemented; its additional contract must preserve
+source membership/sample identity, original timing precision and estimated/unknown
+facts. An additive minor must preserve base semantics; reinterpretation needs a major.
 
 Acceptance: no mandatory cached per-frame ROI stats, no gaps filled with previous
 values, no invented transport/time accuracy in legacy conversions, explicit derived

@@ -1,0 +1,12 @@
+{
+  "status": "EDITORIAL_ACCEPTANCE_CHECKS_PASS_NOT_IMPLEMENTATION_CONFORMANCE",
+  "reviewed_revision": "r1b-review-2",
+  "reviewed_commit": "2c18401af7ef45319a7c025f136d94939e5bee03",
+  "acceptance_date": "2026-10-13",
+  "normative_sections_2_through_16_unchanged": true,
+  "shape_definitions_unchanged": 76,
+  "original_review_preserved": true,
+  "normative_sha256": "b5b867ff9e5fae707fa07a4a2ebe1854d4716f993a4017a90140f2b934e539d0",
+  "accepted_schema_sha256": "3326ed51f1b29f7e470179f5d44aa9355a644b0fcd92aa545791f631afc29b8f",
+  "scope": "Editorial identity/status/reference changes only; no canonical-byte/runtime/platform certification."
+}
