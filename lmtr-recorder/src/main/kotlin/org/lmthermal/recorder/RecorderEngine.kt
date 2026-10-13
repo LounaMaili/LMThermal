@@ -212,7 +212,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     require(original.stream.byteSize+original.context.byteSize+original.facts.byteSize<=MAX_OBSERVATION_METADATA_BYTES)
                     prepared=RecordingProfiles.select(original,profile)
                 } }
-                catch(_:Exception) { drop="source_loss";synchronized(lock){reserveControlLocked();terminateLocked("failed","invalid_module_evidence","invalid_module_evidence")} }
+                catch(_:Exception) { drop="source_loss";synchronized(lock){reserveControlLocked();terminateLocked("failed","invalid_module_evidence","invalid_module_evidence");failureCode="source_failure"} }
                 synchronized(lock) {
                     if(prepared!=null && writerQueued+item.offer.chargedBytes>limits.writerBytes) {
                         if(!reserveControlLocked()) { prepFlight=0;throw IllegalStateException("loss_journal_exhausted") }

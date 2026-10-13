@@ -76,3 +76,10 @@ remain preserved. The revised harness packages then installs/runs instrumentatio
 verifies its success log and extracts only synthetic app-owned files before uninstall.
 This historical run does not establish the later source/lifecycle code or independent
 ART output parity; the final run must validate those separately.
+
+Second checkpoint run [38411040771](https://github.com/LounaMaili/LMThermal/actions/runs/38411040771)
+on `ca96404` passed the full API35 job (50 ART tests plus both Python readbacks).
+API26 stopped before tests because logcat's startup clear was unavailable. Log clearing
+is now best effort rather than a conformance gate; instrumentation verdicts remain strict.
+All ADB harness operations explicitly select an emulator and verify `ro.kernel.qemu=1`,
+so this helper cannot accidentally install/run against a physical paired phone.

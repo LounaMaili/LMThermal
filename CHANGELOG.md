@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 emulator evidence gates)
+
+- Treat emulator log-buffer clearing as best-effort diagnostics while keeping strict instrumentation/readback verdicts; explicitly select and verify an emulator before any ADB operation. Preserve the API35 passing checkpoint and API26 pre-test logcat failure.
+
 ### Added (R4 authoritative acquisition and lifecycle integration)
 
 - Added an optional module-owned acquisition observation channel before UI StateFlow conflation, with genuine nanosecond receipt witnesses, qualified native callback loss signals and immutable source owners. HT-301's existing gate/control/thermometry path is unchanged; the channel is inert without explicit subscription.

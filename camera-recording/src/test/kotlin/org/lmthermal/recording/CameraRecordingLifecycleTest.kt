@@ -119,4 +119,35 @@ class CameraRecordingLifecycleTest {
         owner.open(CameraCandidate(device,module)).join();assertTrue(owner.state.value.lifecycle!=CameraLifecycle.ERROR)
         owner.background().join();scope.cancel()
     }
+    @Test fun temperatureOnlyAndPreviewOnlySourcesUseSameGuardedRoute() {
+        for(thermal in listOf(true,false)) {
+            val p=SimulatedRecordingModule(thermal=thermal,native=false,acquisition=false,preview=!thermal)
+            val identity=testIdentity(p);val session=RecordingTestSession(CameraObservationHub(identity),object:CameraDeviceIdentity{override val key="not_usb"})
+            val adapter=RecordingTestAdapter(identity,p);val binding=CameraRecorderBinding<Unit>{adapter};binding.opened(session)
+            val engine=testEngine(p,file(),profile=if(thermal)RecordingProfile.ANALYSIS else RecordingProfile.VISUAL)
+            assertTrue(binding.start(engine));session.hub.publish{n->RecordingTestObservation(identity,p.observation(n),n,System.nanoTime())}
+            binding.stop();val result=done(binding);assertEquals(1L,engine.snapshot().acknowledged)
+            assertEquals(if(thermal)"1" else "0",result.report!!["summary"].obj()["temperature_planes"])
+        }
+    }
+    @Test fun sourceFreezeRunsOnExistingPreparationWorkerAndOverloadDoesNotFreezeRejectedOwner() {
+        val p=SimulatedRecordingModule();val stream=FrozenJson(p.stream);val f=file()
+        val entered=CountDownLatch(1);val release=CountDownLatch(1);var freezes=0;var thread:String?=null
+        val e=RecorderEngine(SimulatedRecordingModule.header(listOf(p)),listOf(p.stream),RecordingProfile.FULL,
+            RecorderLimits(preparationBytes=65536,writerBytes=65536,maxObservationBytes=65536),LocalRecorderBackend(f),
+            prepareHook={entered.countDown();release.await(5,TimeUnit.SECONDS)})
+        fun offer(n:Long)=RecordingOffer(p.id,n,stream,65536){freezes++;thread=Thread.currentThread().name;p.observation(n)}
+        e.admit(offer(0));assertTrue(entered.await(5,TimeUnit.SECONDS));e.admit(offer(1))
+        assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(offer(2)));assertEquals(0,freezes)
+        e.stop();release.countDown();val result=e.awaitStop(10000)!!;assertTrue(result.finalized)
+        assertEquals(2,freezes);assertEquals("lmtr-preparation",thread);assertEquals(2L,e.snapshot().acknowledged)
+    }
+    @Test fun incorrectDeferredEvidenceFailsSourceWithoutClaimingWriterOverload() {
+        val p=SimulatedRecordingModule();val e=testEngine(p,file())
+        e.admit(RecordingOffer(p.id,0,FrozenJson(p.stream),65536){p.observation(1)})
+        e.stop();val result=e.awaitStop(10000)!!;assertTrue(result.toString(),result.finalized)
+        assertEquals("failed",result.status);assertEquals(0L,e.snapshot().acknowledged)
+        assertEquals(0L,e.snapshot().preparationDrops);assertEquals(0L,e.snapshot().writerDrops)
+    }
+
 }
