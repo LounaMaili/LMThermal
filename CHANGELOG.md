@@ -4,6 +4,14 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 source allocation churn)
+
+- Compare calibration copies in private immutable frame storage and hash the original image range directly, eliminating 669,696 temporary payload bytes per ready frame without changing numerical operations, liveness/controls, source ownership or public defensive copies. Preserve source Float32 and entire six-profile/codec fixture artifact bytes.
+
+### Added (R4 pipeline heap attribution)
+
+- Add finite camera-free acquisition/colors/ROI/bitmap replay with host allocation counters, ART GC statistics, weak measurement owners and a strictly separate diagnostic GC. Preserve before/after and final timing receipts; distinguish reclaimable fixture generations from real-camera/Compose memory and retain the unchanged 78 MiB +32 MiB admission policy. Physical smoke remains pending.
+
 ### Added (R4 measured heap refusal)
 
 - Record Pixel ready-state occupied Java 16.76–228.85 MB and headroom down to 39.59 MB: nine of 20 read-only ready samples fail the unchanged 110 MiB admission threshold. Preserve the partial fresh-process window and original refusing history; no physical LMTR, lucky-GC retry, long profile or reservation reduction follows.

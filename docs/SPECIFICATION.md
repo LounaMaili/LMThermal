@@ -353,3 +353,5 @@ separately from pending real HT-301/Pixel8 acceptance.
 The [separate field APK](lmtr-r4/FIELD_VALIDATION.md) uses the existing single owner and optional authoritative lifecycle route, explicit Start/Stop, Android elapsed-realtime intake, bounded app-owned files and independent private source-oracle checks. It is a test-only integration, not a public recording feature; current resource/cadence admission and sampled safety stops apply only to that APK. The [conditional physical receipt](lmtr-r4/field-unattended-validation.json) records successful real initialization but refused Java-headroom admission before any LMTR; actual recording acceptance remains pending.
 
 Test-only [R4 memory diagnosis](lmtr-r4/MEMORY_ADMISSION.md) adds finite read-only phase sampling and immutable-owner writer operations. Constructor/public copy isolation, both full CHUNK validations and original reservations are unchanged.
+
+The [R4 live-heap follow-up](lmtr-r4/LIVE_HEAP.md) preserves source evidence and session semantics while eliminating temporary calibration/SHA copies. Replay attribution and diagnostic GC are test-only evidence; no safe physical recorder admission is asserted.

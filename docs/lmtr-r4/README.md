@@ -186,3 +186,5 @@ publication/directory durability and power-loss assurance remain separate backen
 The separate [field harness and operator protocol](FIELD_VALIDATION.md) prepares explicit physical validation without adding a production recorder. Phase A evidence is separate from the [conditional real-Pixel attempt](field-unattended-validation.json): explicit initialization succeeded but smoke admission was refused for Java headroom; no physical LMTR was recorded and the remaining field gates are pending.
 
 [Memory follow-up](MEMORY_ADMISSION.md) reproduces the ready-state refusal while retaining all admission factors; [exact runtime receipts](memory-admission-validation.json) distinguish actual Pixel heap diagnostics from fixture/ART bytes. No physical LMTR is created.
+
+[Pipeline allocation/reclaimability follow-up](LIVE_HEAP.md) removes proven source-side temporary copies with unchanged Float32 and entire fixture artifact bytes. Admission remains unchanged and physical acceptance pending; finite replay is not a live-camera/presenter guarantee.

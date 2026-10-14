@@ -11,6 +11,32 @@ class Ht301FrameTest {
     private fun fixture(name: String) = javaClass.getResourceAsStream("/fixtures/$name")!!.use { it.readBytes() }
     private fun raw() = fixture("radiometric-room-settled.raw")
     private fun display() = fixture("display-room-baseline.raw")
+    @Test fun borrowedDigestMatchesOriginalImageAndExcludesTrailerWithoutExposingStorage() {
+        for (bytes in listOf(raw(), display())) {
+            val frame = Ht301Frame.parse(bytes)
+            val expected = MessageDigest.getInstance("SHA-256").digest(frame.imageBytes())
+            assertArrayEquals(expected, frame.imageDigest())
+            frame.imageDigest().fill(0); frame.transportBytes().fill(0)
+            assertArrayEquals(expected, frame.imageDigest())
+            bytes[Ht301Layout.IMAGE_BYTES] = (bytes[Ht301Layout.IMAGE_BYTES].toInt() xor 1).toByte()
+            assertArrayEquals(expected, Ht301Frame.parse(bytes).imageDigest())
+            bytes[0] = (bytes[0].toInt() xor 1).toByte()
+            assertFalse(expected.contentEquals(Ht301Frame.parse(bytes).imageDigest()))
+        }
+    }
+    @Test fun calibrationComparisonChecksEveryByteWithoutMutableBorrow() {
+        val bytes = raw(); val frame = Ht301Frame.parse(bytes)
+        assertTrue(frame.calibrationCopiesMatch())
+        frame.transportBytes().fill(0)
+        assertTrue(frame.calibrationCopiesMatch())
+        for (index in 0 until Ht301Layout.CALIBRATION_BYTES) {
+            val changed = bytes.copyOf()
+            changed[Ht301Layout.CALIBRATION_COPY + index] = (changed[Ht301Layout.CALIBRATION_COPY + index].toInt() xor 1).toByte()
+            val invalid = Ht301Frame.parse(changed)
+            assertFalse(invalid.calibrationCopiesMatch())
+            assertThrows(IllegalArgumentException::class.java) { FrameParameters.decode(invalid) }
+        }
+    }
     private fun putWord(bytes: ByteArray, offset: Int, word: Int) {
         bytes[offset] = word.toByte(); bytes[offset + 1] = (word shr 8).toByte()
     }

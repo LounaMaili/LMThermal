@@ -383,3 +383,5 @@ instrumentation limitations. Optional backend/Windows recorder tests remain sepa
 scoped; R6 export and physical power-loss assurances are not borrowed from R3/R2.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+The [pipeline heap investigation](LIVE_HEAP.md) is camera-free fixture attribution, not a successful physical smoke or live-preview acceptance. Diagnostic GC remains isolated from field admission; no physical recording follows the unresolved memory proof.

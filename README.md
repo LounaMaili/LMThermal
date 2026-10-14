@@ -234,3 +234,5 @@ Test-only conditionally owner-authorized field preparation and executable protoc
 The [R4 memory audit](docs/lmtr-r4/MEMORY_ADMISSION.md) separates occupied Java heap from native/graphics, RSS/PSS and unchanged logical admission; fixture-only memory tests do not establish real recording acceptance.
 
 The [measured R4 memory follow-up](docs/lmtr-r4/memory-admission-validation.json) reproduces insufficient ready-state headroom; actual LMTR smoke/sustained acceptance remains pending.
+
+The [R4 allocation follow-up](docs/lmtr-r4/LIVE_HEAP.md) isolates fixture acquisition/presentation churn and eliminates redundant temporary copies. Physical recorder admission remains unresolved; no new recording feature is exposed.

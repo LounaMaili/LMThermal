@@ -138,3 +138,7 @@ Fresh-process isolation is deliberate and finite, not repeated relaunches for lu
   PR #16 DRAFT/unmerged. R4 is not finished; R5/R6/R7 and Desktop are untouched.
 
 Recorder Start is refused while a read-only health window remains active; its no-recorder provenance and admission timing cannot silently overlap another explicit recording action.
+
+## Follow-up: pipeline allocation versus reachable owners
+
+[Live-heap investigation](LIVE_HEAP.md) records finite host/Pixel replay, isolated diagnostic GC and exact byte-preserving removal of two calibration transport copies and the liveness SHA input copy. These results do not establish a safe admission policy; 78 MiB +32 MiB, queues and both validation boundaries remain unchanged. Original actual-camera receipts above are historical and are not replaced by replay evidence.

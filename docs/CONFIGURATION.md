@@ -125,4 +125,4 @@ Build `:lmtr-field:assembleDebug :lmtr-field:lintDebug`; the separate package `o
 
 
 Read-only R4 heap-phase sampling and full-size fixture memory probes are documented in
-[lmtr-r4/MEMORY_ADMISSION.md](lmtr-r4/MEMORY_ADMISSION.md); no forced GC or lowered admission factors are used.
+[lmtr-r4/MEMORY_ADMISSION.md](lmtr-r4/MEMORY_ADMISSION.md); no field/production forced GC or lowered admission factors are used. The separate [camera-free replay probe](lmtr-r4/LIVE_HEAP.md) may request one explicitly diagnostic GC after each measured phase, never for admission.

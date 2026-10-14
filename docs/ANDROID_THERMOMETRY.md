@@ -156,3 +156,5 @@ liveness criteria changed in the thermometry or presentation milestones. Touch/C
 presentation is now implemented separately; ROI and export/recording remain future
 work. Absolute physical accuracy still
 requires independently measured surface targets with controlled environmental inputs.
+
+Calibration-copy verification now borrows the frame’s private immutable storage instead of copying the entire transport twice. Numerical inputs, LUT operations, Float32 results and public evidence isolation are unchanged; see [allocation validation](lmtr-r4/LIVE_HEAP.md).
