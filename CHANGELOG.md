@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 conditional physical attempt)
+
+- Preserve actual Pixel 8/API37 HT-301 initialization and normal single-owner Close evidence on cd6606f. The 20-second Full smoke was refused for Java headroom before any LMTR was created; no longer profiles or automatic retries ran. Keep original private logs/OS snapshot locally and publish only sanitized metrics/hashes, without inferring recording parity or memory plateau.
+- Record 405 JVM, 64+8 Python and eight actual camera-free Pixel ART safety/clock/fixture passes and independent original-owner readback of three saved-room profile files. Keep previous host/emulator receipts and remaining physical smoke, matched profiles, memory/freshness/byte-parity/recovery gates distinct; PR #16 remains draft and #9 open.
+
 ### Fixed (R4 admission refusal evidence)
 
 - Preserve exact sampled Runtime heap/headroom and read-only health/preflight facts before refusing field admission. A later GC/dumpsys snapshot cannot reconstruct an earlier safety refusal; do not reduce reservations or force GC to manufacture acceptance.

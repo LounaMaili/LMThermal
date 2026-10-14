@@ -156,4 +156,4 @@ R4 is incomplete; #9 and draft PR #16 stay open.
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
 
-The [conditionally authorized field harness](FIELD_VALIDATION.md) now explicitly configures Android elapsedRealtimeNanos intake/origin and original source-clock correlation. It prepares independent original-owner byte hashes and private streaming extraction; no real Pixel8/HT-301 acquisition is claimed.
+The [conditionally authorized field harness](FIELD_VALIDATION.md) now explicitly configures Android elapsedRealtimeNanos intake/origin and original source-clock correlation. It prepares independent original-owner byte hashes and private streaming extraction; the earlier preparation receipts claim no real Pixel8/HT-301 acquisition. The [later conditional physical receipt](field-unattended-validation.json) records a ready real camera session but refused smoke admission and no real LMTR/source-byte parity.

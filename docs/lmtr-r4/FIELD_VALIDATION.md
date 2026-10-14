@@ -35,9 +35,10 @@ recording feature in the production APK. ADB visibility is not physical authoriz
 conflation; it never opens transport. Baseline observes this same route without an
 engine. `CameraRecorderBinding` receives a guarded tee only after explicit Start.
 Epoch/expected-source checks reject old captured callbacks and replaced sources.
-Start during an unready session is allowed as an explicit diagnostic: current
-unavailable observations retain truthful reasons/evidence; no last-good temperature
-is substituted. Later readiness is still produced only by explicit initialization.
+Physical field Start now requires a current valid ready measurement and health admission.
+The engine/adapter camera-free tests still exercise unready→available input; a later
+unavailable frame in a real run retains truthful reasons/evidence, never last-good
+temperature. Readiness is still produced only by explicit initialization.
 
 Rotation keeps the retained ViewModel/owner; Close, detach, ordinary background,
 screen off, disposal and source failure cut off recording and drain off UI under
@@ -250,7 +251,56 @@ The existing camera-disabled API26/API35 GitHub ART route remains emulator-only,
 qemu-guarded and separate from the arm64 native field APK. It adds the actual Android
 elapsedRealtime witness test and the same helper regressions/three source-oracle
 readbacks. A built instrumentation APK is not a runtime pass; receipts separately
-identify executed exact-SHA jobs. No physical ADB/Pixel/camera was used in Phase A.
+identify executed exact-SHA jobs. No physical ADB/Pixel/camera was used for those earlier Phase A receipts. The
+separate current physical attempt and camera-free Pixel safety tests are reported below.
+
+## Actual conditional physical attempt — admission refused
+
+[Sanitized receipt](field-unattended-validation.json) pins the actual Pixel execution to
+`cd6606f` and field APK SHA-256
+`922c2d9575df039423bfaa6081a7612303ac6d78adc27ca6d3db19de15634b8c`.
+The owner granted normal permissions and confirmed the authorized non-sensitive scene.
+Already-paired mDNS ADB, Pixel 8/Android 17/API37/arm64 and attached HT-301 were verified.
+Initial battery was 78%, thermal status 0 and free storage 4,728,672,256 bytes.
+
+Normal Connect and one explicit 32772→32800→32768 initialization reached ready in
+6.320 seconds, with exact 2-byte SET completion each. Observed display words were
+32768–33023; structurally valid raw14 words across the logged initialization were
+4807–5916, including pre-ready stages. Readiness included 75 shutter discard frames
+and five changing frames. At ready cumulative diagnostic counts were 84 rejected,
+30 held, five malformed inspections, seven native malformed callbacks and three
+presentation replacements; these are **not smoke-window loss counts**. Ready callback
+FPS was 25.121; later sampled presentation diagnostics reported callback FPS
+24.802–25.121. This is observational acquisition evidence, **not a matched recorder baseline**.
+
+**The 20-second Full smoke was refused before creating any LMTR or recorder engine:**
+`java_headroom_low`. Admission requires 81,788,928 reserved bytes plus 33,554,432 bytes
+margin (115,343,360 bytes Java headroom). No longer runs or automatic retries followed.
+This is a failed admission gate, not an OOM, successful recording or demonstrated
+throughput/memory regression. The exact admission-time heap quantities were not persisted
+by that APK. A later read-only dumpsys snapshot showed RSS 511,422,464 and PSS 391,738,368
+bytes, with a 256 MiB Dalvik heap and much smaller later allocated heap; it cannot
+reconstruct the earlier Runtime witness or prove a leak/steady plateau. Temporary GC
+occupancy is a possible explanation, not established evidence. No forced GC, large-heap
+manifest, queue increase, budget decrease or evidence downgrade was used to pass admission.
+
+The normal Close released the sole opened owner once, left zero active owners and a
+closed 0 FPS UI. Its window no longer had KEEP_SCREEN_ON. Original bounded app JSONL,
+UI/OS logs and hashes remain private on Fedora; no real scene/oracle/LMTR was uploaded.
+The follow-up `5790dc3` diagnostic patch preserves exact admission-time heap/health facts
+before future refusals. It is build/lint/host tested, **not another physical camera run**.
+Eight focused tests on actual Pixel ART/API37 pass on that code without camera: seven
+safety policies plus the actual Android clock bracket and three existing-room original-owner
+profile files. Independent Python verifies their three observations/profile and unchanged
+source bytes. These are saved-fixture engineering outputs, **not current HT captures**.
+Current 405 JVM and 64+8 Python tests pass; earlier API26/API35 receipts stay historical.
+The frozen wire and 51 pinned fixtures are unchanged. PR #16 remains draft; #9 stays open.
+
+Still pending: admissible current-runtime memory; a completed 20-second original-owner
+smoke and independent Python readback; matched baseline and Analysis/Native/Full finite
+profiles; actual recorder Stop/repeated Stop/background/reopen/software recovery;
+measured preview freshness, queue/seal latency, losses, RSS/PSS/heap trend and byte parity.
+No recording/finalization/recovery/physical durability claim follows from this attempt.
 
 ## Conditional unattended Phase B authorization
 

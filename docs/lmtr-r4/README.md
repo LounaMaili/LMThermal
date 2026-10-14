@@ -183,4 +183,4 @@ publication/directory durability and power-loss assurance remain separate backen
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
 
-The separate [field harness and operator protocol](FIELD_VALIDATION.md) prepares explicit physical validation without adding a production recorder. Phase A camera-free evidence is separate from the unexecuted Pixel8/HT-301 gates.
+The separate [field harness and operator protocol](FIELD_VALIDATION.md) prepares explicit physical validation without adding a production recorder. Phase A evidence is separate from the [conditional real-Pixel attempt](field-unattended-validation.json): explicit initialization succeeded but smoke admission was refused for Java headroom; no physical LMTR was recorded and the remaining field gates are pending.

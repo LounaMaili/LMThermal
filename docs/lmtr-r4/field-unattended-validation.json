@@ -1,0 +1,231 @@
+{
+  "classification": "physical_camera_ready_smoke_admission_refused_no_lmtr",
+  "physical_camera_session_executed": true,
+  "physical_lmtr_recording_executed": false,
+  "owner_permission_and_scene_confirmation": true,
+  "source_commit_physical": "cd6606f52226ed78a9646b7f200bd8e2b5e91668",
+  "physical_field_apk_sha256": "922c2d9575df039423bfaa6081a7612303ac6d78adc27ca6d3db19de15634b8c",
+  "source_commit_diagnostic_and_art": "5790dc338a82faf8280a9a47988972b7aa2dcb12",
+  "final_built_field_apk_sha256": "b312c20b0e052f24b2ce12a6810385d7c3f959642de682f885205c14928cca81",
+  "final_field_apk_physical_camera_executed": false,
+  "runtime": {
+    "model": "Pixel 8",
+    "android_release": "17",
+    "sdk": 37,
+    "abi": "arm64-v8a",
+    "wireless_adb": "existing_pair_auto_mdns_online",
+    "ht301_vid": "1514",
+    "ht301_pid": "0001",
+    "camera_permission": "owner_granted_normal_android_flow",
+    "initial_battery_percent": 78,
+    "final_sampled_battery_percent": 75,
+    "initial_android_thermal_status": 0,
+    "initial_free_storage_bytes": 4728672256
+  },
+  "plan": {
+    "smoke_seconds": 20,
+    "codec": 1,
+    "preferred_chunk_bytes": 4194304,
+    "preparation_queue_bytes": 4194304,
+    "writer_queue_bytes": 4194304,
+    "logical_reservation_bytes": 81788928,
+    "java_and_system_margin_bytes": 33554432,
+    "required_java_headroom_bytes": 115343360,
+    "smoke_required_free_storage_bytes": 699920384,
+    "larger_runs_executed": false,
+    "automatic_retries": 0
+  },
+  "initialization": {
+    "sequence": [
+      32772,
+      32800,
+      32768
+    ],
+    "set_actual_lengths": [
+      2,
+      2,
+      2
+    ],
+    "set_completion": [
+      true,
+      true,
+      true
+    ],
+    "get_readback": "not_used_as_completion_or_readiness_authority",
+    "time_to_ready_ms": 6320,
+    "display_word_range": [
+      32768,
+      33023
+    ],
+    "observed_structurally_valid_raw14_range": [
+      4807,
+      5916
+    ],
+    "state_progression": [
+      "DISPLAY_STREAM",
+      "RAW14_UNSETTLED",
+      "RADIOMETRIC_READY",
+      "CLOSED"
+    ],
+    "shutter_discard_frames": 75,
+    "live_changing_frames_at_ready": 5,
+    "counters_at_ready_not_smoke_window": {
+      "discarded": 105,
+      "rejected": 84,
+      "held": 30,
+      "malformed": 5,
+      "native_malformed": 7,
+      "callback_count": 688,
+      "replaced_count": 3
+    },
+    "callback_fps_at_ready": 25.120772946859905
+  },
+  "observational_camera_not_matched_recording_baseline": {
+    "sampled_presentation_callback_fps_range": [
+      24.8015873015873,
+      25.120772946859905
+    ],
+    "matched_acquisition_fps": null,
+    "preview_freshness_p50_p95_max": null,
+    "recorder_cpu": null,
+    "recorder_memory_delta": null,
+    "source_original_byte_parity": null,
+    "saved_valid_measurements": null,
+    "preparation_drops": null,
+    "writer_drops": null,
+    "queue_backlog_and_seal_latency": null
+  },
+  "smoke_admission": {
+    "refusal": "java_headroom_low",
+    "lmtr_created": false,
+    "admission_time_heap_bytes": "not_persisted_by_cd6606f_not_reconstructable_from_later_snapshot",
+    "subsequent_fix": "5790dc3_persists_actual_heap_and_health_before_refusal",
+    "no_threshold_relaxation": true
+  },
+  "later_os_snapshot_not_admission_witness": {
+    "pss_bytes": 391738368,
+    "rss_bytes": 511422464,
+    "native_heap_allocated_bytes": 46402560,
+    "dalvik_heap_allocated_bytes": 10888192,
+    "dalvik_heap_size_bytes": 268435456,
+    "interpretation": "one_later_GC_sensitive_snapshot_not_leak_proof_or_reservation_certificate"
+  },
+  "close": {
+    "reason": "USER",
+    "opens": 1,
+    "releases": 1,
+    "active_owners": 0,
+    "field_keep_screen_on_at_terminal": false,
+    "recorder_stop_drain_recovery": "not_executed_no_recording"
+  },
+  "regressions": {
+    "jvm": 405,
+    "field_helper_jvm": 25,
+    "python_contract": 64,
+    "python_field_original_fixture_negatives": 8,
+    "pixel_camera_free_art": 8,
+    "art_class": "org.lmthermal.field.FieldSafetyTest",
+    "art_target_apk_sha256": "361771bad033fc475239ccd756f8d326f248acdfecefdd59c9379bfefa9411d9",
+    "art_instrumentation_apk_sha256": "8a5ec9f4d03e8325311f11636efbae176609c0881a03fbf5f7b263707646b8bf",
+    "build_lint": [
+      "app",
+      "lmtr-field"
+    ],
+    "editorial_acceptance": "unchanged_reviewed_sections_2_16_76_shapes",
+    "editorial_draft": "14_examples_19_decimal_29_negative_checks",
+    "localization_selftests": 10,
+    "canonical_fixture_count": 51,
+    "canonical_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "art_classes": [
+      "org.lmthermal.field.FieldSafetyTest",
+      "org.lmthermal.art.FieldAndroidRuntimeTest"
+    ],
+    "art_clock_api": "actual_Android_elapsedRealtimeNanos_read_bracket_unknown_UTC_resolution",
+    "relative_documentation_targets_checked": 123,
+    "pixel_camera_free_existing_room_readbacks": [
+      {
+        "profile": "analysis",
+        "status": "passed",
+        "source_sha256": "2d58ddb78646a2a00eb0a25445c70bba52541a87aea88f71258730035ba8b81d",
+        "oracle_sha256": "13cad0e7e625f106e178046c84ce69ff1089a0014287458c2d29b7995612dfcb",
+        "observations": 3,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "884736"
+        },
+        "physical_decoded_block_bytes": "884736",
+        "physical_stored_block_bytes": "209270",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      },
+      {
+        "profile": "native",
+        "status": "passed",
+        "source_sha256": "2a9266426c289f9ba499bd9d0927f06f5b957e9538058b299465c07e33f2d672",
+        "oracle_sha256": "90110c6402cb585712f1b8d48c082566630d33cbf81447bdb3cc19997a9f0b88",
+        "observations": 3,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "663552",
+          "temperature": "884736"
+        },
+        "physical_decoded_block_bytes": "1548288",
+        "physical_stored_block_bytes": "450725",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      },
+      {
+        "profile": "full",
+        "status": "passed",
+        "source_sha256": "9a4dd49f35e8cdd7cedfa55cc47749da49195fbd7cff32a8b6659a1b7a59cb6f",
+        "oracle_sha256": "02a8c66edcd0f7359f31689ca1f4d7c3b3bf3ee20317e910c72a4704c532abdd",
+        "observations": 3,
+        "unavailable": 1,
+        "same_observation_views": 3,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "663552",
+          "acquisition": "672768",
+          "temperature": "884736"
+        },
+        "physical_decoded_block_bytes": "1557504",
+        "physical_stored_block_bytes": "451860",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    ],
+    "pixel_camera_free_existing_room_scope": "saved_sanitized_fixture_3_observations_per_profile_not_current_HT_capture_or_throughput"
+  },
+  "private_evidence": "original_app_jsonl_ui_logs_and_os_snapshot_retained_locally_no_upload",
+  "remaining_gates": [
+    "admissible_current_runtime_memory",
+    "20_second_original_owner_smoke_plus_independent_Python",
+    "matched_baseline_and_three_146_second_profiles",
+    "real_recording_stop_repeated_stop_background_reopen_software_recovery",
+    "real_queue_memory_freshness_sealing_roles_loss_acceptance"
+  ],
+  "pr": "https://github.com/LounaMaili/LMThermal/pull/16",
+  "issue": "https://github.com/LounaMaili/LMThermal/issues/9",
+  "merge": false,
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "final_built_field_apk_installed_without_launch": true
+}
