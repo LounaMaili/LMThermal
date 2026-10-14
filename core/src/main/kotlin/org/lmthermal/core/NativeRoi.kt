@@ -3,6 +3,7 @@ package org.lmthermal.core
 import org.lmthermal.camera.CameraModuleId
 import org.lmthermal.camera.MeasurementValidity
 import org.lmthermal.camera.ThermalMeasurement
+import org.lmthermal.camera.roiStatistics
 
 /** Native pixel-cell rectangle, [x1,x2) × [y1,y2), matching LMTX v1 §10.
  * Construction rejects empty/negative/overflowing bounds; validate against the source geometry before use.
@@ -106,6 +107,6 @@ data class NativeRoiSelection(val source: RoiSourceKey? = null, val geometry: Na
         if (measurement == null || measurement.validity != MeasurementValidity.VALID ||
             measurement.geometry != geometry || measurement.provenance.moduleId != source?.moduleId ||
             measurement.provenance.modelId != source.modelId) return null
-        return RoiStatistics.calculate(measurement.geometry, measurement.matrix(), selected, measurement.validityMask())
+        return measurement.roiStatistics(selected)
     }
 }

@@ -126,3 +126,5 @@ Build `:lmtr-field:assembleDebug :lmtr-field:lintDebug`; the separate package `o
 
 Read-only R4 heap-phase sampling and full-size fixture memory probes are documented in
 [lmtr-r4/MEMORY_ADMISSION.md](lmtr-r4/MEMORY_ADMISSION.md); no field/production forced GC or lowered admission factors are used. The separate [camera-free replay probe](lmtr-r4/LIVE_HEAP.md) may request one explicitly diagnostic GC after each measured phase, never for admission.
+
+The field-only PROFILE_PRESENTATION intent profiles an already-ready session without controls/recording, with scoped keep-screen-on and10-s measured windows after3-s transitions. See [protocol, failure and limits](lmtr-r4/PRESENTATION_PERFORMANCE.md); no global screen-lock/security setting or forced GC is used.

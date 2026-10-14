@@ -318,3 +318,5 @@ unsupported modules need not implement it. No camera automatically begins record
 
 
 The separate [R4 field-test APK](lmtr-r4/FIELD_VALIDATION.md) installs the optional lifetime observer explicitly and tees authoritative module observations before presentation. The production coordinator default remains inert; recorder Start never opens or initializes a camera.
+
+`ImmutableRoiProvider` is an explicit optional computation capability, not a mutable-plane access API or a new LMTR measurement contract. Wrappers implementing only ThermalMeasurement keep the generic matrix/mask validation fallback. See [presentation ownership validation](lmtr-r4/PRESENTATION_PERFORMANCE.md).

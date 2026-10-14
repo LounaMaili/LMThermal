@@ -188,3 +188,5 @@ The separate [field harness and operator protocol](FIELD_VALIDATION.md) prepares
 [Memory follow-up](MEMORY_ADMISSION.md) reproduces the ready-state refusal while retaining all admission factors; [exact runtime receipts](memory-admission-validation.json) distinguish actual Pixel heap diagnostics from fixture/ART bytes. No physical LMTR is created.
 
 [Pipeline allocation/reclaimability follow-up](LIVE_HEAP.md) removes proven source-side temporary copies with unchanged Float32 and entire fixture artifact bytes. Admission remains unchanged and physical acceptance pending; finite replay is not a live-camera/presenter guarantee.
+
+[Targeted Celsius/ROI performance](PRESENTATION_PERFORMANCE.md) records exact parity, a rejected selector, single-owner pixels/private ROI computation and real Compose headroom witnesses. R4 physical recording admission remains unresolved.

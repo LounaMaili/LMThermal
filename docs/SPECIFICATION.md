@@ -355,3 +355,5 @@ The [separate field APK](lmtr-r4/FIELD_VALIDATION.md) uses the existing single o
 Test-only [R4 memory diagnosis](lmtr-r4/MEMORY_ADMISSION.md) adds finite read-only phase sampling and immutable-owner writer operations. Constructor/public copy isolation, both full CHUNK validations and original reservations are unchanged.
 
 The [R4 live-heap follow-up](lmtr-r4/LIVE_HEAP.md) preserves source evidence and session semantics while eliminating temporary calibration/SHA copies. Replay attribution and diagnostic GC are test-only evidence; no safe physical recorder admission is asserted.
+
+[R4 presentation profiling](lmtr-r4/PRESENTATION_PERFORMANCE.md) retains exact Auto/ROI/color semantics, optional immutable ROI computation and single-owner display pixel transfer. Real headroom policy witnesses still fail; no production recording or safe-admission certification is implied.

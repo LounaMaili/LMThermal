@@ -32,7 +32,9 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
     private val measurementEvidence: (ThermalMeasurement) -> Map<String, Any?> = { emptyMap() },
     private val cursorEvidence: (CameraModuleId?, CursorReading) -> Map<String, Any?> = { _, _ -> emptyMap() },
     private val sourceGeneration: (CameraSessionState<Bitmap>) -> Long? = { 0L },
-    private val publishInGeneration: (Long, () -> Unit) -> Unit = { _, publish -> publish() }) {
+    private val publishInGeneration: (Long, () -> Unit) -> Unit = { _, publish -> publish() },
+    private val diagnostic: ((String, ThermalMeasurement, Long) -> Unit)? = null,
+    private val renderingEnabled: () -> Boolean = { true }) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default.limitedParallelism(1))
     private val mutableSettings = MutableStateFlow(CelsiusPresentationSettings())
     val settings = mutableSettings.asStateFlow()
@@ -40,7 +42,7 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
     val pixel = mutablePixel.asStateFlow()
     private val latest = LatestFrameState(CelsiusPresentationSnapshot())
     val state = latest.asStateFlow()
-    val roi = RoiPresenter(context, camera, state)
+    val roi = RoiPresenter(context, camera, state, diagnostic)
     private val evidence = NumericEvidence(context, "presentation.jsonl", "LMThermalPresentation")
     private var recording = false
     private var lastLog = 0L
@@ -68,7 +70,7 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
         val current = camera.value
         val measurement = current.measurement ?: return false
         val original = request.source.measurement ?: return false
-        return scope.isActive && generation.get() == request.generation &&
+        return renderingEnabled() && scope.isActive && generation.get() == request.generation &&
             current.lifecycle == CameraLifecycle.STREAMING && current.error == null &&
             measurement.validity == MeasurementValidity.VALID && key(current, mutableSettings.value) == request.key &&
             measurement.sequence >= original.sequence && measurement.receivedMonotonicMs >= original.receivedMonotonicMs
@@ -82,7 +84,7 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
                     selectedModule = id
                 }
                 val measurement = source.measurement
-                if (measurement == null || measurement.validity != MeasurementValidity.VALID || source.lifecycle != CameraLifecycle.STREAMING || source.error != null) {
+                if (!renderingEnabled() || measurement == null || measurement.validity != MeasurementValidity.VALID || source.lifecycle != CameraLifecycle.STREAMING || source.error != null) {
                     generation.incrementAndGet(); currentKey = null
                     latest.value = CelsiusPresentationSnapshot()
                     if (previousAvailable) evidence.record(mapOf("event" to "presentation_unavailable",
@@ -103,39 +105,44 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
                     currentKey = nextKey
                 }
                 requests.trySend(Request(source, settings, generation.get(), nextKey))
+                trace("request", measurement)
             }
         }
         scope.launch {
             for (request in requests) {
-                if (!canPublish(request)) { skipped++; continue }
+                if (!canPublish(request)) { skipped++; request.source.measurement?.let { trace("rejected_before", it) }; continue }
                 val source = request.source; val settings = request.settings
                 val measurement = requireNotNull(source.measurement)
+                trace("started", measurement)
                 val start = SystemClock.elapsedRealtimeNanos()
                 val rendered = try {
                     withContext(Dispatchers.Default) {
                         val colors = CelsiusRenderer.render(measurement, settings)
                         ensureActive()
-                        val bitmap = Bitmap.createBitmap(colors.argb(), measurement.geometry.width, measurement.geometry.height, Bitmap.Config.ARGB_8888)
+                        val bitmap = Bitmap.createBitmap(colors.takeArgb(), measurement.geometry.width, measurement.geometry.height, Bitmap.Config.ARGB_8888)
                         val legend = Bitmap.createBitmap(colors.legend(), 256, 1, Bitmap.Config.ARGB_8888)
                         CelsiusPresentationSnapshot(measurement, bitmap, legend, colors.range, colors.palette,
                             (SystemClock.elapsedRealtimeNanos() - start) / 1e6)
                     }
                 } catch (cancelled: CancellationException) { throw cancelled }
                 catch (failure: Exception) {
+                    trace("failed", measurement)
                     Log.e("LMThermalPresentation", "Module presentation data rejected", failure)
                     publishInGeneration(request.key.sourceGeneration) {
                         latest.updateIf({ canPublish(request) }) { CelsiusPresentationSnapshot(error = CameraErrorCode.MODULE_DATA_INVALID) }
                     }
                     continue
                 }
-                if (!canPublish(request)) { skipped++; continue }
+                trace("completed", measurement, (rendered.renderMs * 1e6).toLong())
+                if (!canPublish(request)) { skipped++; trace("rejected_after", measurement); continue }
                 var published = false
                 // The owner guard makes generation check + publication indivisible
                 // with Close/open. Matrix/color/bitmap work never holds that lock.
                 publishInGeneration(request.key.sourceGeneration) {
                     latest.updateIf({ canPublish(request) }) { published = true; rendered }
                 }
-                if (!published) { skipped++; continue }
+                if (!published) { skipped++; trace("rejected_after", measurement); continue }
+                trace("published", measurement)
                 if (!recording) { evidence.reset(); recording = true }
                 val now = SystemClock.elapsedRealtime()
                 if (!previousAvailable || previousSettings != settings || now - lastLog >= 2000) {
@@ -161,6 +168,12 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
                 previousAvailable = true; previousSettings = settings
             }
         }
+    }
+    /** Optional field-only numerical observer. It must be bounded/nonblocking; a broken observer
+     * cannot affect rendering or ownership. Product uses null and always-enabled rendering.
+     */
+    private fun trace(event: String, measurement: ThermalMeasurement, elapsedNs: Long = 0) {
+        diagnostic?.let { runCatching { it(event, measurement, elapsedNs) } }
     }
     /** These methods alter presentation only; no module action or measurement input is touched. */
     fun setPalette(palette: CelsiusPalette) { mutableSettings.value = mutableSettings.value.copy(palette = palette) }

@@ -70,6 +70,9 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     val busy=MutableStateFlow(false)
     val running=MutableStateFlow(false)
     private var healthSampler:Job?=null
+    private var presentationSampler:Job?=null
+    private val suppressPresentation=java.util.concurrent.atomic.AtomicBoolean()
+    @Volatile private var presentationCounters=PresentationCounters()
     /** Read-only diagnostic using the existing health witness, even before a USB source exists.
      * A phase label is not authority: each sample also retains actual lifecycle/readiness facts.
      * No recorder, source connection, controls, GC or device-setting changes occur here.
@@ -131,17 +134,70 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         }
     })
     val camera=AndroidCameraCoordinator(application,recordingLifetime=route)
-    val presenter=CelsiusPresenter(application,camera.state,camera::measurementEvidence,camera::cursorEvidence,camera::presentationGeneration,camera::publishPresentation)
+    val presenter=CelsiusPresenter(application,camera.state,camera::measurementEvidence,camera::cursorEvidence,camera::presentationGeneration,camera::publishPresentation,
+        {event,m,elapsed->presentationCounters.event(event,m,elapsed)}, { !suppressPresentation.get() })
     val lifetime=CameraUiLifetime(camera::leaveForeground,camera::recordLifecycle)
     init {
         camera.screenOff=lifetime::screenOff
         scope.launch { presenter.state.collect { it.measurement?.let { m -> metrics.preview(m.receivedMonotonicMs) } } }
         scope.launch { camera.state.collect { if(it.measurement==null)it.preview?.let { p -> metrics.preview(p.receivedMonotonicMs) } } }
     }
+    /** Finite no-recorder Compose/USB probe. Connect/init remain separate explicit actions.
+     * Uses the original source owner and guards; no GC, source controls or timing changes.
+     * Configuration changes are display/ROI-only and are restored even on cancellation.
+     */
+    fun profilePresentation() {
+        if(busy.value || healthSampler?.isActive==true || presentationSampler?.isActive==true)return
+        if(camera.state.value.measurement==null){status.value="Presentation probe refused: current ready measurement required";return}
+        busy.value=true;running.value=true
+        presentationSampler=scope.launch {
+            val root=File(getApplication<Application>().filesDir,"r4-presentation/${UUID.randomUUID()}")
+            val settings=presenter.settings.value;val previousRoi=presenter.roi.selection.value.rect
+            var failure:String?=null
+            try {
+                check(root.mkdirs())
+                for(phase in listOf("locked_no_roi","auto_no_roi","auto_full_roi","suppressed")) {
+                    val pre=fieldHealth(getApplication(),foreground)
+                    check(pre.foregroundUnlocked && pre.cameraPermission && (pre.batteryPercent ?: -1)>=30 &&
+                        (pre.thermalStatus ?: 99)<3 && (pre.freeBytes ?: -1)>=268435456 && !pre.systemLowMemory){"diagnostic_prerequisite"}
+                    presenter.roi.clear();presenter.setAutomatic(phase!="locked_no_roi")
+                    if(phase=="auto_full_roi")camera.state.value.geometry?.let { presenter.roi.select(org.lmthermal.core.NativeRect(0,0,it.width,it.height)) }
+                    suppressPresentation.set(phase=="suppressed")
+                    delay(3000) // Exclude transition/warmup; never qualifies session readiness.
+                    metrics=FieldMetrics();presentationCounters=PresentationCounters()
+                    val start=SystemClock.elapsedRealtimeNanos();val before=camera.state.value.statistics
+                    File(root,"$phase.jsonl").bufferedWriter().use { out ->
+                        repeat(10) {
+                            val state=camera.state.value;check(state.measurement!=null && foreground){"source_or_foreground_lost"}
+                            val health=fieldHealth(getApplication(),foreground)
+                            check(health.foregroundUnlocked && (health.batteryPercent ?: -1)>=30 &&
+                                (health.thermalStatus ?: 99)<3 && !health.systemLowMemory && health.javaHeadroomBytes>=33554432){"diagnostic_safety_stop"}
+                            val row=mapOf("phase" to phase,"elapsed_ns" to (SystemClock.elapsedRealtimeNanos()-start).toString(),
+                                "health" to health.report(),"memory" to metrics.sample(),"presentation" to presentationCounters.report(),
+                                "session_state" to state.status.detail?.machineCode,"recorder_created" to false)
+                            out.write(LmtrJson.encode(row).toString(Charsets.UTF_8));out.newLine();out.flush();delay(1000)
+                        }
+                    }
+                    File(root,"$phase-summary.json").writeBytes(LmtrJson.encode(mapOf("phase" to phase,
+                        "elapsed_ns" to (SystemClock.elapsedRealtimeNanos()-start).toString(),"metrics" to metrics.report(),
+                        "presentation" to presentationCounters.report(),"received_delta" to (camera.state.value.statistics.received-before.received).toString(),
+                        "recorder_created" to false,"render_suppressed" to suppressPresentation.get())))
+                }
+            } catch(error:Exception){failure=error.javaClass.simpleName+":"+error.message}
+            finally {
+                suppressPresentation.set(false);presenter.setPalette(settings.palette)
+                if(settings.automatic)presenter.setAutomatic(true)else presenter.setLocked(settings.locked)
+                presenter.roi.clear();previousRoi?.let { presenter.roi.select(it) }
+                if(root.isDirectory)File(root,"result.json").writeBytes(LmtrJson.encode(mapOf("failure" to failure,"complete" to (failure==null),"recorder_created" to false,"forced_gc" to false)))
+                status.value="Presentation probe ${if(failure==null)"completed" else "stopped: $failure"}: ${root.name}"
+                busy.value=false;running.value=false
+            }
+        }
+    }
     /** UI actions launch only admission/recorder work. Unsupported/absent source cannot create a file. */
     fun start(profile:RecordingProfile?,seconds:Int) {
         // Diagnostic sampling declares no recorder and must not overlap a later admission window.
-        if(busy.value || healthSampler?.isActive==true)return
+        if(busy.value || healthSampler?.isActive==true || presentationSampler?.isActive==true)return
         busy.value=true
         running.value=true
         scope.launch {
@@ -245,7 +301,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         }
     }
     /** Stop cuts source intake synchronously; drain/reopen/hash/inventory remain off UI. */
-    fun stop() { if(!busy.value)return;requestStop();sampler?.cancel();scope.launch { sampler?.join();finishSafely() } }
+    fun stop() { if(presentationSampler?.isActive==true){presentationSampler?.cancel();return};if(!busy.value)return;requestStop();sampler?.cancel();scope.launch { sampler?.join();finishSafely() } }
     /** Unhealthy runs cannot enable a later run; retain honest interrupted termination and originals. */
     private fun stopForSafety(reason:String) {
         if(safetyFailure==null)safetyFailure=reason
@@ -335,6 +391,7 @@ class FieldActivity:AppCompatActivity() {
         super.onCreate(savedInstanceState)
         token=model.lifetime.started(resources.configuration.locales.toLanguageTags())
         if(intent.action=="org.lmthermal.field.SAMPLE_HEALTH")model.sampleHealth(intent.getStringExtra("phase") ?: "foreground_idle")
+        if(intent.action=="org.lmthermal.field.PROFILE_PRESENTATION")model.profilePresentation()
         setContent {
             val state by model.status.collectAsState();val busy by model.busy.collectAsState()
             val running by model.running.collectAsState()
@@ -364,6 +421,7 @@ class FieldActivity:AppCompatActivity() {
     override fun onNewIntent(intent:android.content.Intent) {
         super.onNewIntent(intent)
         if(intent.action=="org.lmthermal.field.SAMPLE_HEALTH")model.sampleHealth(intent.getStringExtra("phase") ?: "foreground_idle")
+        if(intent.action=="org.lmthermal.field.PROFILE_PRESENTATION")model.profilePresentation()
     }
     override fun onStart(){super.onStart();model.foreground(true);model.camera.enterForeground()}
     override fun onStop(){window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);if(!isChangingConfigurations)model.foreground(false);model.lifetime.stopped(token,isChangingConfigurations,isFinishing);super.onStop()}

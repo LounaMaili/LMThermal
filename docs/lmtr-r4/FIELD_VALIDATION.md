@@ -387,3 +387,5 @@ scoped; R6 export and physical power-loss assurances are not borrowed from R3/R2
 The [pipeline heap investigation](LIVE_HEAP.md) is camera-free fixture attribution, not a successful physical smoke or live-preview acceptance. Diagnostic GC remains isolated from field admission; no physical recording follows the unresolved memory proof.
 
 See the [updated R4 acceptance matrix](LIVE_HEAP.md#updated-r4-acceptance-matrix) for the completed copy/fixture checks and unresolved live-admission/physical gates.
+
+The field-only `org.lmthermal.field.PROFILE_PRESENTATION` action requires an existing current ready measurement and starts no recorder/controls. Its bounded configuration windows, safety stops, report-serialization failure and exact limitations are documented in [presentation investigation](PRESENTATION_PERFORMANCE.md). Stop test cancels this probe; settings/ROI and normal rendering are restored.

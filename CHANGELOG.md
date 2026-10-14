@@ -4,6 +4,18 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 exact presentation allocation)
+
+- Retain the exact percentile full sort after rejecting a slower four-rank selection experiment; remove the redundant render validation scan. Add opt-in single-owner display ARGB transfer with copying Android Bitmap checks and explicit immutable HT ROI computation; preserve generic/delegated mask fallback, source bits, row-major statistics and session guards.
+
+### Added (R4 real Compose investigation)
+
+- Add bounded optional field-only render/ROI/weak-owner counters and no-recorder configuration windows. Preserve paired host/ART performance and the partial real Pixel/HT Compose window, including Auto/ROI headroom policy refusals and absent freshness/suppression results; keep110 MiB admission unchanged and physical LMTR pending.
+
+### Fixed (R4 diagnostic summary serialization)
+
+- Convert finite field rate/ratio diagnostics explicitly to BigDecimal before strict JSON encoding. Preserve the physical invalid_metadata failure and original partial rows; do not relax the wire encoder's Float/Double rejection. The corrected repeat completed after owner reconnection with no recorder or forced GC.
+
 ### Fixed (R4 source allocation churn)
 
 - Compare calibration copies in private immutable frame storage and hash the original image range directly, eliminating 669,696 temporary payload bytes per ready frame without changing numerical operations, liveness/controls, source ownership or public defensive copies. Preserve source Float32 and entire six-profile/codec fixture artifact bytes.

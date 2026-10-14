@@ -3,6 +3,8 @@ package org.lmthermal.camera
 import kotlinx.coroutines.flow.StateFlow
 import org.lmthermal.core.NativeImageGeometry
 import org.lmthermal.core.NativePixel
+import org.lmthermal.core.NativeRect
+import org.lmthermal.core.RoiStatistics
 
 /** Stable untranslated identity, independent of any resource/display label. */
 @JvmInline
@@ -142,6 +144,17 @@ interface ThermalMeasurement {
     fun temperature(pixel: NativePixel): Float
     fun sample(pixel: NativePixel): NativeSample? = null
 }
+
+/** Explicit opt-in computation capability, separate from ThermalMeasurement delegation.
+ * Implementations must validate their complete immutable plane/mask with shared ROI semantics.
+ * A wrapper overriding matrix/mask does not implicitly inherit another owner's capability.
+ */
+interface ImmutableRoiProvider { fun roiStatistics(roi: NativeRect): RoiStatistics }
+
+/** Generic modules retain the original defensive-copy/full-validation path. No arrays escape. */
+fun ThermalMeasurement.roiStatistics(roi: NativeRect): RoiStatistics =
+    if (this is ImmutableRoiProvider) roiStatistics(roi)
+    else RoiStatistics.calculate(geometry, matrix(), roi, validityMask())
 
 /** Owned generic finite matrix for modules/tests; validates extrema against the actual native pixel plane. */
 class OwnedThermalMeasurement(override val geometry: NativeImageGeometry, matrix: FloatArray,

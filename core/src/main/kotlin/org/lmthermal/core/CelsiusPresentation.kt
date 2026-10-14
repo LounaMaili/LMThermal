@@ -32,9 +32,14 @@ data class CelsiusPresentationSettings(val palette: CelsiusPalette = CelsiusPale
     val automatic: Boolean = true, val locked: CelsiusRange = CelsiusRange(25.0, 45.0))
 
 /** Owned rendered output. Celsius evidence remains in the supplied measurement, not these pixels. */
-class CelsiusRender internal constructor(private val pixels: IntArray, val range: CelsiusRange,
+class CelsiusRender internal constructor(private var pixels: IntArray?, val range: CelsiusRange,
     val palette: CelsiusPalette) {
-    fun argb(): IntArray = pixels.copyOf()
+    @Synchronized fun argb(): IntArray = checkNotNull(pixels) { "Pixels already transferred" }.copyOf()
+    /** Opt-in single-owner transfer of newly generated display pixels, never source evidence.
+     * Afterwards this render cannot expose pixels again. Previous public copies stay independent.
+     * The receiver must finish reading before reusing the transferred array; no pool/recycling occurs.
+     */
+    @Synchronized fun takeArgb(): IntArray = checkNotNull(pixels) { "Pixels already transferred" }.also { pixels = null }
     /** Horizontal legend is cold-at-left, with exactly the same 256-entry palette as the image. */
     fun legend(): IntArray = IntArray(256) { palette.argb(it) }
 }
@@ -50,8 +55,14 @@ object CelsiusRenderer {
     /** NumPy linear 2nd/98th percentiles; a small span expands symmetrically about their midpoint. */
     fun autoRange(matrix: FloatArray, geometry: NativeImageGeometry): CelsiusRange {
         validate(matrix, geometry)
-        val sorted = matrix.sortedArray()
-        var lower = percentile(sorted, .02); var upper = percentile(sorted, .98)
+        return autoRangeValidated(matrix)
+    }
+    /** The caller already validated the plane. Keep Java's exact Float ordering and the
+     * original full sort: the measured order-selection candidate was slower and was rejected.
+     */
+    private fun autoRangeValidated(matrix: FloatArray): CelsiusRange {
+        val work = matrix.sortedArray()
+        var lower = percentile(work, .02); var upper = percentile(work, .98)
         if (upper - lower < MINIMUM_AUTO_SPAN) {
             val middle = (lower + upper) / 2
             lower = middle - .5; upper = middle + .5
@@ -59,10 +70,10 @@ object CelsiusRenderer {
         return CelsiusRange(lower, upper)
     }
     /** Preserve NumPy Float32 difference and Double interpolation, including its upper-half lerp branch. */
-    private fun percentile(sorted: FloatArray, fraction: Double): Double {
-        val rank = (sorted.size - 1) * fraction
+    private fun percentile(work: FloatArray, fraction: Double): Double {
+        val rank = (work.size - 1) * fraction
         val index = rank.toInt(); val weight = rank - index
-        val a = sorted[index]; val b = sorted[minOf(index + 1, sorted.lastIndex)]
+        val a = work[index]; val b = work[minOf(index + 1, work.lastIndex)]
         val difference = (b - a).toDouble()
         return if (weight >= .5) b.toDouble() - difference * (1 - weight)
             else a.toDouble() + difference * weight
@@ -70,7 +81,7 @@ object CelsiusRenderer {
     /** Locked bounds are exact, regardless of image extrema. Matrix validity is still required. */
     fun effectiveRange(matrix: FloatArray, geometry: NativeImageGeometry, settings: CelsiusPresentationSettings): CelsiusRange {
         validate(matrix, geometry)
-        return if (settings.automatic) autoRange(matrix, geometry) else settings.locked
+        return if (settings.automatic) autoRangeValidated(matrix) else settings.locked
     }
     /** Match NumPy float64 normalization/clip/rint, including round-to-even at half-integer indices. */
     fun level(celsius: Double, range: CelsiusRange): Int {

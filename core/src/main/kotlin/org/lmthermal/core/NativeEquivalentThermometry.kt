@@ -61,6 +61,11 @@ class RadiometricMeasurement internal constructor(val source: Ht301Frame,
     val sequence: Long, val receivedMonotonicMs: Long) {
     fun raw14(): IntArray = indices.copyOf()
     fun matrix(): FloatArray = temperatures.copyOf()
+    /** Compute exact ROI statistics on immutable private storage without a full-plane copy.
+     * The shared algorithm still validates the whole plane, including outside the rectangle.
+     */
+    fun roiStatistics(roi: NativeRect): RoiStatistics = RoiStatistics.calculate(
+        NativeImageGeometry(Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT), temperatures, roi)
     /** Never reverse/rotate thermometry to follow screen orientation. */
     fun temperature(x: Int, y: Int): Float {
         require(x in 0 until Ht301Layout.WIDTH && y in 0 until Ht301Layout.IMAGE_HEIGHT)
