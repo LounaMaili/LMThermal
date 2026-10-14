@@ -1909,6 +1909,7 @@
   "pr_draft": true,
   "issue_open": true,
   "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
-  "followup_diagnostic_field_apk_sha256": "d56f2f5f06a36e97998fe3c225d794834c2791e8f3ecfced9d69133ebf02faa3",
-  "followup_diagnostic_field_apk_camera_executed": false
+  "followup_diagnostic_field_apk_sha256": "2fb97a9bd1e9da7bf2c9d81e7c9c67746d87d13b6a44e1451b46e28e712fc426",
+  "followup_diagnostic_field_apk_camera_executed": false,
+  "followup_diagnostic_start_sampler_overlap_refused": true
 }

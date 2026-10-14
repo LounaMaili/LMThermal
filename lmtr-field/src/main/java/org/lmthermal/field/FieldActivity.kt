@@ -140,7 +140,8 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     }
     /** UI actions launch only admission/recorder work. Unsupported/absent source cannot create a file. */
     fun start(profile:RecordingProfile?,seconds:Int) {
-        if(busy.value)return
+        // Diagnostic sampling declares no recorder and must not overlap a later admission window.
+        if(busy.value || healthSampler?.isActive==true)return
         busy.value=true
         running.value=true
         scope.launch {

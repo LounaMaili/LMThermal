@@ -136,3 +136,5 @@ Fresh-process isolation is deliberate and finite, not repeated relaunches for lu
   passes 88/88 tests, retains six memory cases/readbacks per API and all prior engineering outputs.
 - The frozen wire and 51 pinned canonical fixtures remain unchanged. #9 stays OPEN and
   PR #16 DRAFT/unmerged. R4 is not finished; R5/R6/R7 and Desktop are untouched.
+
+Recorder Start is refused while a read-only health window remains active; its no-recorder provenance and admission timing cannot silently overlap another explicit recording action.

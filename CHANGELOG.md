@@ -11,6 +11,8 @@ All notable changes to LMThermal will be documented in this file.
 
 ### Fixed (R4 partial memory diagnostic receipts)
 
+- Refuse recorder Start while a read-only health window is active, preserving its no-recorder provenance and avoiding diagnostic sampling overhead during recorder admission.
+
 - Record completed sample count and cancellation/error classification for future read-only health windows instead of silently treating a partial diagnostic as complete. Preserve the observed11/20 fresh window without claiming its cause or rerunning for favorable GC.
 
 ### Changed (R4 memory diagnosis)
