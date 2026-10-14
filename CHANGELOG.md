@@ -10,11 +10,15 @@ All notable changes to LMThermal will be documented in this file.
 
 ### Added (R4 real Compose investigation)
 
-- Add bounded optional field-only render/ROI/weak-owner counters and no-recorder configuration windows. Preserve paired host/ART performance and the partial real Pixel/HT Compose window, including Auto/ROI headroom policy refusals and absent freshness/suppression results; keep110 MiB admission unchanged and physical LMTR pending.
+- Add bounded optional field-only render/ROI/weak-owner counters and no-recorder configuration windows. Preserve paired host/ART performance, the partial failed Pixel/HT Compose window and the completed corrected repeat with freshness/suppression measurements and normal Auto/ROI headroom policy refusals; keep110 MiB admission unchanged and physical LMTR pending.
 
 ### Fixed (R4 diagnostic summary serialization)
 
 - Convert finite field rate/ratio diagnostics explicitly to BigDecimal before strict JSON encoding. Preserve the physical invalid_metadata failure and original partial rows; do not relax the wire encoder's Float/Double rejection. The corrected repeat completed after owner reconnection with no recorder or forced GC.
+
+### Added (R4 presentation runtime receipt)
+
+- Record exact9efdc1f API26/API35 101/101 tests and six independent original-owner memory-case readbacks per API, retaining the pre-test SDK-download failure and passing API35 retry. Pin actual physical APK provenance separately from the later rebuild; record37 unique current Pixel tests, unchanged51 fixtures and unresolved live recording admission.
 
 ### Fixed (R4 source allocation churn)
 

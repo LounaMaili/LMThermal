@@ -4251,8 +4251,141 @@
     "pixel_final_art": 23,
     "pixel_app_presenter_roi": 13,
     "report_fix_ART": 3,
-    "API26_API35": "pending_checkpoint_CI",
-    "canonical_fixtures": 51
+    "API26_API35": {
+      "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/38585293749",
+      "source_commit": "9efdc1f054017ea9e404213b14e28b9184038dee",
+      "verdict": "passed",
+      "attempt1_API35": "SDK image download failed before emulator or test execution; retained separately",
+      "API26": {
+        "tests_passed": 101,
+        "artifact": "lmtr-r4-art-api26-38585293749-1",
+        "readbacks": [
+          {
+            "kind": "python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "3fefbc2e53a883246afdb9776979547cd6935e0fad97539f0a3e3f90734f0e23"
+          },
+          {
+            "kind": "python-source-readback.json",
+            "status": "passed",
+            "receipt_sha256": "84ec24afbd8ef0ee266c74ebf63caab42b4a11fe7f751d7e88a44be08ed70187"
+          },
+          {
+            "kind": "field-analysis.json",
+            "status": "passed",
+            "receipt_sha256": "abb0cd526ed1441d4e8b5e89de3f8f97e5630b39b95abfa2869081f3a4a59d83"
+          },
+          {
+            "kind": "field-native.json",
+            "status": "passed",
+            "receipt_sha256": "d8157ca1db662b3e477a263f6474937dc93a01fec65c8843f7ab2e733fc1177d"
+          },
+          {
+            "kind": "field-full.json",
+            "status": "passed",
+            "receipt_sha256": "ed6ed6ff77b905b7a4c3b19cb51f18fba94e9dd09476f34baeb07ed8402f68fb"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/analysis-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "8071d763d29193b26002b33d20ab01ab6ce660733f99a3a9f4dab543113f91de"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/analysis-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "85f935fda5869e14598ffd75dadfd4b282d211a9b8c36304fdf7963b2637a3cb"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/full-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "50ceb957405fe6e14935190cc354d045d1098c980458491d72c1ad0093559fe4"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/full-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "fc4f60b92d8be1d96f48a656892469bb301c0e7483355af0816282b1e3bc35fe"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/native-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "583277c484e5b17003ecbcfea4e8864c64a20666ba3726dadc16df0ba698d757"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/native-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "1efb3185287bce47b0067b7c4ed899195a7b56295d86c2e7314dec56f230fd23"
+          }
+        ],
+        "six_memory_original_owner_readbacks": 6,
+        "instrumentation_sha256": "3f1d3b9130e78e3a49777cef0cf370034b38a48999773a524450c654c435bf7a"
+      },
+      "API35": {
+        "tests_passed": 101,
+        "artifact": "lmtr-r4-art-api35-38585293749-2",
+        "readbacks": [
+          {
+            "kind": "python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "3fefbc2e53a883246afdb9776979547cd6935e0fad97539f0a3e3f90734f0e23"
+          },
+          {
+            "kind": "python-source-readback.json",
+            "status": "passed",
+            "receipt_sha256": "a8f5c7691fdf37ec36792ff2e2e7675e9e2c7de82859c9dbd7524bd625282ea0"
+          },
+          {
+            "kind": "field-analysis.json",
+            "status": "passed",
+            "receipt_sha256": "6a043afc6f760e94c4e6b48a58a239170dcbe625fb4dd2ee27439ac2cea52e76"
+          },
+          {
+            "kind": "field-native.json",
+            "status": "passed",
+            "receipt_sha256": "7340dd41a1dad9a7e8d78aa0ffc0bf8d880cd6b73d372a526d8976bc8a8fa148"
+          },
+          {
+            "kind": "field-full.json",
+            "status": "passed",
+            "receipt_sha256": "e57e304b2f94f9fa3cc425e7bf3bde0b60d14f550cee26eea3ed1ba783e230b7"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/analysis-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "8071d763d29193b26002b33d20ab01ab6ce660733f99a3a9f4dab543113f91de"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/analysis-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "85f935fda5869e14598ffd75dadfd4b282d211a9b8c36304fdf7963b2637a3cb"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/full-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "50ceb957405fe6e14935190cc354d045d1098c980458491d72c1ad0093559fe4"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/full-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "fc4f60b92d8be1d96f48a656892469bb301c0e7483355af0816282b1e3bc35fe"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/native-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "583277c484e5b17003ecbcfea4e8864c64a20666ba3726dadc16df0ba698d757"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/native-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "1efb3185287bce47b0067b7c4ed899195a7b56295d86c2e7314dec56f230fd23"
+          }
+        ],
+        "six_memory_original_owner_readbacks": 6,
+        "instrumentation_sha256": "495e89efc8449e574aa0f991276b292dfd5620cd8e55fb7af06e723fecc6212d"
+      }
+    },
+    "canonical_fixtures": 51,
+    "pixel_unique_current": 37,
+    "pixel_overlap_note": "23 initial field/runtime + 3 report-fix overlap by 2 counter tests = 24 field/runtime; 13 app tests are separate. 37 unique tests, not 39."
   },
   "corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
   "source_fixture_artifact_parity": [
@@ -4432,5 +4565,31 @@
     "lmtr-field/src/main/java/org/lmthermal/field/FieldMetrics.kt": "a070e291a4cb4d7fbb2a622f12f293cf64d6e40b2b486e5e4b2d55e7cb089c8d",
     "lmtr-field-support/src/main/kotlin/org/lmthermal/field/PresentationCounters.kt": "b738c4f63858149180f0319447d0f4bd0d070e0793a8a8ceff284c2f8ec8155d",
     "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldMetricNumber.kt": "bf026769d1c29c692af4a5666bc1df44fd7d6a5090f3bbcadbe5a47f1deab72e"
+  },
+  "runtime_checkpoint": "9efdc1f054017ea9e404213b14e28b9184038dee",
+  "physical_apk_audit": {
+    "physical_apk_sha256": "21e1965f88dd6b223612ab42339b60ce8127f6e7998308fafbbd7a556a42242b",
+    "rebuilt_apk_sha256": "2cbd7092109a3efddd619c34e762944607b33b7004add972345d2d7795a251e0",
+    "differing_zip_members": [
+      "classes10.dex",
+      "classes4.dex"
+    ],
+    "dex_methods": {
+      "4": {
+        "methods": 145,
+        "missing": [],
+        "changed": [],
+        "unchanged_count": 145
+      },
+      "10": {
+        "methods": 295,
+        "missing": [],
+        "changed": [
+          "org.lmthermal.field.FieldActivity$onCreate$1$2.invoke:(Landroidx/compose/runtime/Composer;I)V"
+        ],
+        "unchanged_count": 294
+      }
+    },
+    "scope": "Decoded symbolic executable instructions compared excluding debug positions and DEX index/address renumbering; this is not a byte-identical APK claim or a formal semantic equivalence proof. Only the field Compose onCreate UI method differs after rebuild; camera/thermometry/presenter/ROI/profile measurement methods are unchanged. Both actual APK and rebuilt APK retained privately."
   }
 }

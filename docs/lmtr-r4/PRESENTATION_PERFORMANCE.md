@@ -139,6 +139,23 @@ measurement owners only. No heap dump was required. Normal Close again released 
 single owner once; renderer settings/ROI were restored before Close. Suppressed-mode
 headroom is **not** permission to hide preview to admit a product recording.
 
+## Runtime checkpoint and physical APK provenance
+
+Runtime checkpoint: `9efdc1f054017ea9e404213b14e28b9184038dee`.
+The physical repeat used APK SHA-256
+`21e1965f88dd6b223612ab42339b60ce8127f6e7998308fafbbd7a556a42242b`.
+The later build has SHA-256
+`2cbd7092109a3efddd619c34e762944607b33b7004add972345d2d7795a251e0`.
+Both are retained privately: they are **not byte-identical APKs**. Only classes4.dex
+and classes10.dex differ; all other ZIP members (including other code/resources)
+match. A decoded symbolic instruction audit, ignoring debug positions and DEX
+address/index renumbering, finds145/145 methods unchanged in classes4 and294/295
+unchanged in classes10. The one different method is the field Compose onCreate UI
+function (register/instruction layout differs on rebuild). Camera, thermometry,
+presenter, ROI and profile measurement methods match under that audit. This is a
+scoped comparison, not a formal semantic-equivalence proof. Physical results pin
+the actual installed APK rather than claiming the later build was physically tested.
+
 ## Admission and remaining gates
 
 No budget/queue change:78 MiB estimated recorder reservation +32 MiB margin, two4 MiB
@@ -150,7 +167,7 @@ to the previous checkpoint; independent original-owner Python checks cover fixtu
 on host/Pixel, not a new physical recording.
 
 Do not conclude256 MiB is inherently insufficient solely from garbage-inclusive occupancy.
-Next work: complete the corrected four-window profile, bound source/presentation ownership
+Next work: bound source/presentation ownership
 and transient allocator overlap against incremental recorder buffers. If that proof fails,
 compare bounded scratch/lifetime changes and explicitly reviewed architecture options;
 largeHeap, a second process, hidden preview suppression or post-GC Start are not automatic
@@ -165,8 +182,12 @@ solutions. Only then the conditional Full smoke and matched sustained/lifecycle/
 | Safe simultaneous recording admission | PENDING; real policy witnesses still refuse |
 | Physical Full smoke / original-source parity / sustained profiles | NOT EXECUTED |
 
-417 JVM,64 Python,23 final camera-free Pixel ART tests plus13 actual presenter/ROI tests
-and3 report-fix ART tests pass; final API26/API35 receipts are recorded separately.51
+417 JVM and64 Python tests pass. Pixel runs contain24 unique field/runtime tests
+plus13 app presenter/ROI tests (37 unique):23 initial tests and3 report-fix tests
+overlap in2 counter tests. Exact checkpoint [API26/API35 CI](https://github.com/LounaMaili/LMThermal/actions/runs/38585293749)
+passes101/101 tests, including six independent original-owner memory-case readbacks
+per API. The first API35 attempt failed downloading its SDK image before tests; the
+API35-only retry passed, with both artifacts retained.51
 canonical fixtures remain unchanged. Build/lint, module/localization/reference/diff
 checks pass. PR #16 stays DRAFT/unmerged; #9 stays OPEN; Desktop/R5/R6 remain untouched.
 

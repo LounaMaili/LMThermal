@@ -143,4 +143,4 @@ Recorder Start is refused while a read-only health window remains active; its no
 
 [Live-heap investigation](LIVE_HEAP.md) records finite host/Pixel replay, isolated diagnostic GC and exact byte-preserving removal of two calibration transport copies and the liveness SHA input copy. These results do not establish a safe admission policy; 78 MiB +32 MiB, queues and both validation boundaries remain unchanged. Original actual-camera receipts above are historical and are not replaced by replay evidence.
 
-[Targeted presentation receipts](PRESENTATION_PERFORMANCE.md) add real Auto/ROI headroom witnesses and a partial Compose window. The110 MiB requirement and both validation boundaries are unchanged; fixture speed/allocation savings are not safe admission proof.
+[Targeted presentation receipts](PRESENTATION_PERFORMANCE.md) add real Auto/ROI headroom witnesses, the partial failed Compose window and the completed corrected four-window repeat. The110 MiB requirement and both validation boundaries are unchanged; fixture speed/allocation savings are not safe admission proof.
