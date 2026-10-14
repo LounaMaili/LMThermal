@@ -8,6 +8,10 @@ All notable changes to LMThermal will be documented in this file.
 
 - Compare calibration copies in private immutable frame storage and hash the original image range directly, eliminating 669,696 temporary payload bytes per ready frame without changing numerical operations, liveness/controls, source ownership or public defensive copies. Preserve source Float32 and entire six-profile/codec fixture artifact bytes.
 
+### Added (R4 exact-code ART receipt)
+
+- Record exact8e928b2 API26/API35 89/89 runtime passes and six independent original-owner memory-case readbacks per API; preserve serial replay deadline misses and distinguish completed fixture checks from pending physical admission/smoke/profile gates.
+
 ### Added (R4 pipeline heap attribution)
 
 - Add finite camera-free acquisition/colors/ROI/bitmap replay with host allocation counters, ART GC statistics, weak measurement owners and a strictly separate diagnostic GC. Preserve before/after and final timing receipts; distinguish reclaimable fixture generations from real-camera/Compose memory and retain the unchanged 78 MiB +32 MiB admission policy. Physical smoke remains pending.

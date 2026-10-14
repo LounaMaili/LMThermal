@@ -109,8 +109,9 @@ then the conditional single Full smoke and its original-owner Python validation.
   diagnostic is retained separately. Six new host and six Pixel fixture artifacts
   pass independent Python original-owner readback. The six host files are exactly
   byte-identical to the preceding checkpoint's artifacts, not just reader-equivalent.
-- Accepted wire and 51 canonical hashes remain unchanged. API26/API35 final runtime
-  results are recorded separately in the receipt after CI completion.
+- Accepted wire and 51 canonical hashes remain unchanged. [Exact-code ART run38573024599](https://github.com/LounaMaili/LMThermal/actions/runs/38573024599)
+  passes89/89 on each of API26/API35, including the replay probe and six original-owner
+  fixture readbacks each. Runtime logs/source SHA were inspected and preserved locally.
 
 Host: build `:lmtr-field-support:writeTestRuntimeClasspath` using the established host
 Gradle settings, then run `org.lmthermal.field.PipelineHeapProbe <new-private-directory>`
@@ -121,3 +122,17 @@ no fixture/canonical output is overwritten and no USB permission is requested.
 PR #16 stays DRAFT; #9 stays OPEN. R4 physical acceptance remains pending.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## Updated R4 acceptance matrix
+
+| Gate | Current status | Evidence boundary |
+|---|---|---|
+| Immutable source/encoded fixture parity | PASS for tested fixtures | Six entire files unchanged; independent host/Pixel/ART original-owner checks |
+| Source allocation correction | PASS for specific redundant copies | Same bytes/numerics/digest;407 JVM regressions and ART execution |
+| Synthetic reclaimability attribution | Observed, finite | Three retained weak owners after separate diagnostic GC; not a UI leak certificate |
+| Actual full UI simultaneous-live/admission proof | PENDING | Historical camera refusal plus replay cannot certify allocator/GC peak |
+| Physical20-second Full smoke and source-byte parity | NOT RUN in this continuation | Memory safety prerequisite unresolved; no physical output |
+| Matched sustained cadence/freshness/memory and recorder lifecycle/recovery | PENDING | Cannot advance from an unvalidated physical smoke |
+
+The documentation-only final receipt commit does not change the runtime-tested code
+at8e928b22864c8cb3878c436f17deba069f28936f. Historical failures remain preserved.

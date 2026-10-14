@@ -385,3 +385,5 @@ scoped; R6 export and physical power-loss assurances are not borrowed from R3/R2
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
 The [pipeline heap investigation](LIVE_HEAP.md) is camera-free fixture attribution, not a successful physical smoke or live-preview acceptance. Diagnostic GC remains isolated from field admission; no physical recording follows the unresolved memory proof.
+
+See the [updated R4 acceptance matrix](LIVE_HEAP.md#updated-r4-acceptance-matrix) for the completed copy/fixture checks and unresolved live-admission/physical gates.

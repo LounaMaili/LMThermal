@@ -1047,7 +1047,7 @@
     "pixel_baseline_pipeline": 1,
     "pixel_final_timing_pipeline": 1,
     "app_field_build_lint": "passed",
-    "api26_api35": "pending_exact_checkpoint_CI"
+    "api26_api35": "passed_89_per_API"
   },
   "corpus": {
     "count": 51,
@@ -1062,5 +1062,754 @@
     "Historical physical traces remain unmodified",
     "No universal live-allocation bound or safe physical admission established"
   ],
-  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "art_ci": {
+    "run": {
+      "conclusion": "success",
+      "headSha": "8e928b22864c8cb3878c436f17deba069f28936f",
+      "status": "completed",
+      "url": "https://github.com/LounaMaili/LMThermal/actions/runs/38573024599"
+    },
+    "apis": [
+      {
+        "api": 26,
+        "tests": 89,
+        "status": "passed",
+        "source_sha": "8e928b22864c8cb3878c436f17deba069f28936f",
+        "original_owner_readbacks": [
+          {
+            "case": "analysis-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "2211840",
+              "physical_stored_block_bytes": "2211840",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "analysis-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "2211840",
+              "physical_stored_block_bytes": "522651",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "full-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 6,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "acquisition": "1345536",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3557376",
+              "physical_stored_block_bytes": "3557376",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "full-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 6,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "acquisition": "1345536",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3557376",
+              "physical_stored_block_bytes": "1007761",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "native-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3538944",
+              "physical_stored_block_bytes": "3538944",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "native-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3538944",
+              "physical_stored_block_bytes": "1005483",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        ],
+        "pipeline": {
+          "phases": [
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "914836816",
+                  "art.gc.bytes-freed": "907880584",
+                  "art.gc.gc-count": "360",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2316"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 6956232,
+                "native_allocated_bytes": 4901840,
+                "pss_bytes": 25994240
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": false,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "914836816",
+                  "art.gc.bytes-freed": "907880584",
+                  "art.gc.gc-count": "360",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2316"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 6956232,
+                "native_allocated_bytes": 4901840,
+                "pss_bytes": 25990144
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 0,
+              "paced_25_hz": true,
+              "phase": "acquisition",
+              "sampled_peak_occupied_bytes": 12777856,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "912551248",
+                  "art.gc.bytes-freed": "904278992",
+                  "art.gc.gc-count": "334",
+                  "art.gc.gc-count-rate-histogram": "197:1",
+                  "art.gc.gc-time": "2218"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 8272256,
+                "native_allocated_bytes": 10406664,
+                "pss_bytes": 35593216
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 4,
+              "weak_owners_before_diagnostic_gc": 4,
+              "window_elapsed_ns": 4800158750
+            },
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "917200208",
+                  "art.gc.bytes-freed": "910085112",
+                  "art.gc.gc-count": "420",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2603"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 7115096,
+                "native_allocated_bytes": 4879856,
+                "pss_bytes": 26147840
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": false,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "917200208",
+                  "art.gc.bytes-freed": "910085112",
+                  "art.gc.gc-count": "420",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2603"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 7115096,
+                "native_allocated_bytes": 4879856,
+                "pss_bytes": 26143744
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 3,
+              "paced_25_hz": true,
+              "phase": "acquisition_colors",
+              "sampled_peak_occupied_bytes": 12227784,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "916192592",
+                  "art.gc.bytes-freed": "907880584",
+                  "art.gc.gc-count": "360",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2316"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 8312008,
+                "native_allocated_bytes": 4902736,
+                "pss_bytes": 27341824
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 3,
+              "weak_owners_before_diagnostic_gc": 3,
+              "window_elapsed_ns": 4800162330
+            },
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "923790672",
+                  "art.gc.bytes-freed": "912325504",
+                  "art.gc.gc-count": "481",
+                  "art.gc.gc-count-rate-histogram": "110:1,156:1,197:1",
+                  "art.gc.gc-time": "2878"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 11465168,
+                "native_allocated_bytes": 6223352,
+                "pss_bytes": 31977472
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": true,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "923790672",
+                  "art.gc.bytes-freed": "912325504",
+                  "art.gc.gc-count": "481",
+                  "art.gc.gc-count-rate-histogram": "110:1,156:1,197:1",
+                  "art.gc.gc-time": "2878"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 11465168,
+                "native_allocated_bytes": 6223352,
+                "pss_bytes": 31973376
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 0,
+              "paced_25_hz": true,
+              "phase": "acquisition_colors_roi_bitmap",
+              "sampled_peak_occupied_bytes": 11448784,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "918555984",
+                  "art.gc.bytes-freed": "910085112",
+                  "art.gc.gc-count": "420",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2603"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 8470872,
+                "native_allocated_bytes": 4880752,
+                "pss_bytes": 27491328
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 4,
+              "weak_owners_before_diagnostic_gc": 4,
+              "window_elapsed_ns": 4800169200
+            }
+          ],
+          "physical": false,
+          "profiler_overhead": "start_end_platform_probes_and_first_last_hashes_not_subtracted; host_thread_attribution_includes_counter_read_overhead",
+          "recorder_created": false,
+          "scope": "fixture_synchronous_replay_not_compose_or_usb_or_admission"
+        },
+        "instrumentation_sha256": "45e3af1e0c166bac129a7a5a1ecb9a8e29394503b45a50b195803079b866a469"
+      },
+      {
+        "api": 35,
+        "tests": 89,
+        "status": "passed",
+        "source_sha": "8e928b22864c8cb3878c436f17deba069f28936f",
+        "original_owner_readbacks": [
+          {
+            "case": "analysis-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "2211840",
+              "physical_stored_block_bytes": "2211840",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "analysis-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "2211840",
+              "physical_stored_block_bytes": "522651",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "full-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 6,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "acquisition": "1345536",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3557376",
+              "physical_stored_block_bytes": "3557376",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "full-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 6,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "acquisition": "1345536",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3557376",
+              "physical_stored_block_bytes": "1007761",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "native-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3538944",
+              "physical_stored_block_bytes": "3538944",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "native-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3538944",
+              "physical_stored_block_bytes": "1005483",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        ],
+        "pipeline": {
+          "phases": [
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "1619906560",
+                  "art.gc.bytes-freed": "1613544880",
+                  "art.gc.gc-count": "292",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2368",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 6361680,
+                "native_allocated_bytes": 5954272,
+                "pss_bytes": 55005184
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": false,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1619841024",
+                  "art.gc.bytes-freed": "1606614448",
+                  "art.gc.gc-count": "291",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2362",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 13226576,
+                "native_allocated_bytes": 5960752,
+                "pss_bytes": 61796352
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 0,
+              "paced_25_hz": true,
+              "phase": "acquisition",
+              "sampled_peak_occupied_bytes": 35316336,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1474269184",
+                  "art.gc.bytes-freed": "1445817744",
+                  "art.gc.gc-count": "273",
+                  "art.gc.gc-count-rate-histogram": "0:1,173:1",
+                  "art.gc.gc-time": "2243",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 28451440,
+                "native_allocated_bytes": 13849920,
+                "pss_bytes": 77173760
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 3,
+              "weak_owners_before_diagnostic_gc": 8,
+              "window_elapsed_ns": 4800120072
+            },
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "2",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "10",
+                  "art.gc.bytes-allocated": "1983119360",
+                  "art.gc.bytes-freed": "1976745392",
+                  "art.gc.gc-count": "341",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2676",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 6373968,
+                "native_allocated_bytes": 5955424,
+                "pss_bytes": 54956032
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": false,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "1983053824",
+                  "art.gc.bytes-freed": "1972817328",
+                  "art.gc.gc-count": "340",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2672",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 10236496,
+                "native_allocated_bytes": 5958192,
+                "pss_bytes": 58843136
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 2,
+              "paced_25_hz": true,
+              "phase": "acquisition_colors",
+              "sampled_peak_occupied_bytes": 15290960,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "1621245952",
+                  "art.gc.bytes-freed": "1613544880",
+                  "art.gc.gc-count": "292",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2368",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 7701072,
+                "native_allocated_bytes": 5955168,
+                "pss_bytes": 56279040
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 3,
+              "weak_owners_before_diagnostic_gc": 4,
+              "window_elapsed_ns": 4800101416
+            },
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "3",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3,2:1",
+                  "art.gc.blocking-gc-time": "15",
+                  "art.gc.bytes-allocated": "2400366592",
+                  "art.gc.bytes-freed": "2393988528",
+                  "art.gc.gc-count": "397",
+                  "art.gc.gc-count-rate-histogram": "0:1,77:1,105:1,173:1",
+                  "art.gc.gc-time": "3015",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 6378064,
+                "native_allocated_bytes": 6404240,
+                "pss_bytes": 49235968
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": true,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "2",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3,2:1",
+                  "art.gc.blocking-gc-time": "10",
+                  "art.gc.bytes-allocated": "2400301056",
+                  "art.gc.bytes-freed": "2390801840",
+                  "art.gc.gc-count": "396",
+                  "art.gc.gc-count-rate-histogram": "0:1,77:1,105:1,173:1",
+                  "art.gc.gc-time": "3010",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 9499216,
+                "native_allocated_bytes": 6852976,
+                "pss_bytes": 52828160
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 3,
+              "paced_25_hz": true,
+              "phase": "acquisition_colors_roi_bitmap",
+              "sampled_peak_occupied_bytes": 15446608,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "2",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "10",
+                  "art.gc.bytes-allocated": "1984458752",
+                  "art.gc.bytes-freed": "1976745392",
+                  "art.gc.gc-count": "341",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2676",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 7713360,
+                "native_allocated_bytes": 5956192,
+                "pss_bytes": 56303616
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 3,
+              "weak_owners_before_diagnostic_gc": 3,
+              "window_elapsed_ns": 4800097900
+            }
+          ],
+          "physical": false,
+          "profiler_overhead": "start_end_platform_probes_and_first_last_hashes_not_subtracted; host_thread_attribution_includes_counter_read_overhead",
+          "recorder_created": false,
+          "scope": "fixture_synchronous_replay_not_compose_or_usb_or_admission"
+        },
+        "instrumentation_sha256": "b3b6b115b2c6581c2ca84ff4966b5d6e15efc554b7ac779b6a1ea57623a9144f"
+      }
+    ]
+  }
 }
