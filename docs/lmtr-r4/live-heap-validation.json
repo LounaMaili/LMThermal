@@ -1,0 +1,1815 @@
+{
+  "status": "allocation_churn_reduced_safe_physical_admission_not_established",
+  "base_commit": "c7dac61a1eebd9ccea137e5531cf24a7c904ed41",
+  "code_sha256": {
+    "core/src/main/kotlin/org/lmthermal/core/Ht301Frame.kt": "f52346564101712d76bc35128401021785b527411fac32c9533f4e1c62b3c377",
+    "core/src/main/kotlin/org/lmthermal/core/NativeEquivalentThermometry.kt": "f3aac76f64bec54fbfe9f8bd5d78f63df82467fbe81daf883460ea9598f2b98a",
+    "core/src/main/kotlin/org/lmthermal/core/RadiometricSession.kt": "a0f4dbe83fe11480b80816e52bfefbb91b8bcf8631be609f6b8742cd04b3e1b8",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/PipelineHeapProbe.kt": "edcb964cfd89c4cc93dc6e509dbb338a49b8d808bbd2f45c4a55d29d94dc1412"
+  },
+  "pixel": {
+    "model": "Pixel 8",
+    "api": 37,
+    "scope": "camera_free_fixture_replay_no_USB_or_Compose",
+    "before": {
+      "phases": [
+        {
+          "after_diagnostic_gc": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "229528288",
+              "art.gc.bytes-freed": "223567872",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "102",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5960416,
+            "native_allocated_bytes": 7243696,
+            "pss_bytes": 39934976
+          },
+          "attributed_thread_bytes": {},
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "229429984",
+              "art.gc.bytes-freed": "77557760",
+              "art.gc.gc-count": "1",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "76",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 151872224,
+            "native_allocated_bytes": 7266064,
+            "pss_bytes": 185760768
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": true,
+          "phase": "acquisition",
+          "sampled_peak_occupied_bytes": 151872224,
+          "start": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "3379936",
+              "art.gc.bytes-freed": "0",
+              "art.gc.gc-count": "0",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "0",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 3412704,
+            "native_allocated_bytes": 7243344,
+            "pss_bytes": 35667968
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 81
+        },
+        {
+          "after_diagnostic_gc": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "672334560",
+              "art.gc.bytes-freed": "666370048",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "3:1",
+              "art.gc.gc-time": "332",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5964512,
+            "native_allocated_bytes": 7245824,
+            "pss_bytes": 39712768
+          },
+          "attributed_thread_bytes": {},
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "672236256",
+              "art.gc.bytes-freed": "598560768",
+              "art.gc.gc-count": "4",
+              "art.gc.gc-count-rate-histogram": "3:1",
+              "art.gc.gc-time": "312",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 73675488,
+            "native_allocated_bytes": 7251056,
+            "pss_bytes": 107436032
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": true,
+          "phase": "acquisition_colors",
+          "sampled_peak_occupied_bytes": 261726944,
+          "start": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "230867680",
+              "art.gc.bytes-freed": "223567872",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "102",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 7299808,
+            "native_allocated_bytes": 7244144,
+            "pss_bytes": 41221120
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 21
+        },
+        {
+          "after_diagnostic_gc": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "1168782048",
+              "art.gc.bytes-freed": "1162801152",
+              "art.gc.gc-count": "8",
+              "art.gc.gc-count-rate-histogram": "3:1,4:1",
+              "art.gc.gc-time": "712",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5980896,
+            "native_allocated_bytes": 7694608,
+            "pss_bytes": 37750784
+          },
+          "attributed_thread_bytes": {},
+          "bitmap_created": true,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "1168683744",
+              "art.gc.bytes-freed": "1009647616",
+              "art.gc.gc-count": "7",
+              "art.gc.gc-count-rate-histogram": "3:1",
+              "art.gc.gc-time": "677",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 159036128,
+            "native_allocated_bytes": 24682304,
+            "pss_bytes": 207804416
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": true,
+          "phase": "acquisition_colors_roi_bitmap",
+          "sampled_peak_occupied_bytes": 256762592,
+          "start": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "673673952",
+              "art.gc.bytes-freed": "666370048",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "3:1",
+              "art.gc.gc-time": "332",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 7303904,
+            "native_allocated_bytes": 7245824,
+            "pss_bytes": 41060352
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 40
+        }
+      ],
+      "physical": false,
+      "profiler_overhead": "start_end_platform_probes_and_first_last_hashes_not_subtracted; host_thread_attribution_includes_counter_read_overhead",
+      "recorder_created": false,
+      "scope": "fixture_synchronous_replay_not_compose_or_usb_or_admission"
+    },
+    "after": {
+      "phases": [
+        {
+          "after_diagnostic_gc": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "148517600",
+              "art.gc.bytes-freed": "142544896",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "99",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5972704,
+            "native_allocated_bytes": 7243072,
+            "pss_bytes": 38023168
+          },
+          "attributed_thread_bytes": {},
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "148419296",
+              "art.gc.bytes-freed": "49758208",
+              "art.gc.gc-count": "1",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "65",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 98661088,
+            "native_allocated_bytes": 7264736,
+            "pss_bytes": 130617344
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": true,
+          "phase": "acquisition",
+          "sampled_peak_occupied_bytes": 98661088,
+          "start": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "3470048",
+              "art.gc.bytes-freed": "0",
+              "art.gc.gc-count": "0",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "0",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 3470048,
+            "native_allocated_bytes": 7238624,
+            "pss_bytes": 34900992
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 80
+        },
+        {
+          "after_diagnostic_gc": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "510223072",
+              "art.gc.bytes-freed": "504242176",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "260",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5980896,
+            "native_allocated_bytes": 7245152,
+            "pss_bytes": 37918720
+          },
+          "attributed_thread_bytes": {},
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "510124768",
+              "art.gc.bytes-freed": "383361024",
+              "art.gc.gc-count": "4",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "232",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 126763744,
+            "native_allocated_bytes": 7256304,
+            "pss_bytes": 158705664
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": true,
+          "phase": "acquisition_colors",
+          "sampled_peak_occupied_bytes": 133657312,
+          "start": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "149856992",
+              "art.gc.bytes-freed": "142544896",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "99",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 7312096,
+            "native_allocated_bytes": 7243520,
+            "pss_bytes": 39309312
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 43
+        },
+        {
+          "after_diagnostic_gc": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "925569760",
+              "art.gc.bytes-freed": "919572480",
+              "art.gc.gc-count": "8",
+              "art.gc.gc-count-rate-histogram": "1:1,4:1",
+              "art.gc.gc-time": "584",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5997280,
+            "native_allocated_bytes": 7693936,
+            "pss_bytes": 36058112
+          },
+          "attributed_thread_bytes": {},
+          "bitmap_created": true,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "925471456",
+              "art.gc.bytes-freed": "801042432",
+              "art.gc.gc-count": "7",
+              "art.gc.gc-count-rate-histogram": "1:1,4:1",
+              "art.gc.gc-time": "549",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 124429024,
+            "native_allocated_bytes": 23340272,
+            "pss_bytes": 170140672
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": true,
+          "phase": "acquisition_colors_roi_bitmap",
+          "sampled_peak_occupied_bytes": 202482400,
+          "start": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "511562464",
+              "art.gc.bytes-freed": "504242176",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "260",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 7320288,
+            "native_allocated_bytes": 7245152,
+            "pss_bytes": 39266304
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 37
+        }
+      ],
+      "physical": false,
+      "profiler_overhead": "start_end_platform_probes_and_first_last_hashes_not_subtracted; host_thread_attribution_includes_counter_read_overhead",
+      "recorder_created": false,
+      "scope": "fixture_synchronous_replay_not_compose_or_usb_or_admission"
+    },
+    "final_timing_only": {
+      "phases": [
+        {
+          "after_diagnostic_gc": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "148427488",
+              "art.gc.bytes-freed": "142467072",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "0:1",
+              "art.gc.gc-time": "137",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5960416,
+            "native_allocated_bytes": 7242640,
+            "pss_bytes": 37735424
+          },
+          "attributed_thread_bytes": {},
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "148329184",
+              "art.gc.bytes-freed": "49754112",
+              "art.gc.gc-count": "1",
+              "art.gc.gc-count-rate-histogram": "0:1",
+              "art.gc.gc-time": "109",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 98575072,
+            "native_allocated_bytes": 7264016,
+            "pss_bytes": 130268160
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "missed_40ms_deadlines": 20,
+          "paced_25_hz": true,
+          "phase": "acquisition",
+          "sampled_peak_occupied_bytes": 98575072,
+          "start": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "3379936",
+              "art.gc.bytes-freed": "0",
+              "art.gc.gc-count": "0",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "0",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 3412704,
+            "native_allocated_bytes": 7242624,
+            "pss_bytes": 33966080
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 80,
+          "window_elapsed_ns": 4806682498
+        },
+        {
+          "after_diagnostic_gc": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "1",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "122",
+              "art.gc.bytes-allocated": "510100192",
+              "art.gc.bytes-freed": "504131584",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "0:1",
+              "art.gc.gc-time": "388",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5968608,
+            "native_allocated_bytes": 7244752,
+            "pss_bytes": 37915648
+          },
+          "attributed_thread_bytes": {},
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "509936352",
+              "art.gc.bytes-freed": "257007616",
+              "art.gc.gc-count": "3",
+              "art.gc.gc-count-rate-histogram": "0:1",
+              "art.gc.gc-time": "260",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 252928736,
+            "native_allocated_bytes": 7272080,
+            "pss_bytes": 270683136
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "missed_40ms_deadlines": 120,
+          "paced_25_hz": true,
+          "phase": "acquisition_colors",
+          "sampled_peak_occupied_bytes": 252928736,
+          "start": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "149766880",
+              "art.gc.bytes-freed": "142467072",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "0:1",
+              "art.gc.gc-time": "137",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 7299808,
+            "native_allocated_bytes": 7243088,
+            "pss_bytes": 39023616
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 4,
+          "window_elapsed_ns": 6029734581
+        },
+        {
+          "after_diagnostic_gc": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "1",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+              "art.gc.blocking-gc-time": "122",
+              "art.gc.bytes-allocated": "925479648",
+              "art.gc.bytes-freed": "919494656",
+              "art.gc.gc-count": "8",
+              "art.gc.gc-count-rate-histogram": "0:1,5:1",
+              "art.gc.gc-time": "726",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5984992,
+            "native_allocated_bytes": 7693440,
+            "pss_bytes": 35932160
+          },
+          "attributed_thread_bytes": {},
+          "bitmap_created": true,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "1",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+              "art.gc.blocking-gc-time": "122",
+              "art.gc.bytes-allocated": "925381344",
+              "art.gc.bytes-freed": "752889856",
+              "art.gc.gc-count": "7",
+              "art.gc.gc-count-rate-histogram": "0:1,5:1",
+              "art.gc.gc-time": "692",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 172491488,
+            "native_allocated_bytes": 29598560,
+            "pss_bytes": 224319488
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "missed_40ms_deadlines": 120,
+          "paced_25_hz": true,
+          "phase": "acquisition_colors_roi_bitmap",
+          "sampled_peak_occupied_bytes": 216175328,
+          "start": {
+            "art_gc": {
+              "art.gc.blocking-gc-count": "1",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "122",
+              "art.gc.bytes-allocated": "511439584",
+              "art.gc.bytes-freed": "504131584",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "0:1",
+              "art.gc.gc-time": "388",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 7308000,
+            "native_allocated_bytes": 7244752,
+            "pss_bytes": 39263232
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 51,
+          "window_elapsed_ns": 7050784875
+        }
+      ],
+      "physical": false,
+      "profiler_overhead": "start_end_platform_probes_and_first_last_hashes_not_subtracted; host_thread_attribution_includes_counter_read_overhead",
+      "recorder_created": false,
+      "scope": "fixture_synchronous_replay_not_compose_or_usb_or_admission"
+    },
+    "receipt_sha256": [
+      "7cdfecde202d9214d4d1ffdc6712a60cac8244937315897420c8926df1dcdc77",
+      "666584d574b8ecaf0ef74bf1e53f44a3a1b5565ebb030b1e18ac4ec11e178cd7",
+      "9583b4e729cb65d1823d0fefcf42677b1c8b83cf9a84f40c2a17e333197e7ebe"
+    ]
+  },
+  "host": {
+    "before": {
+      "phases": [
+        {
+          "after_diagnostic_gc": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5480376
+          },
+          "attributed_thread_bytes": {
+            "parse_inspect_measure": 222956960
+          },
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 55007824
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": false,
+          "phase": "acquisition",
+          "sampled_peak_occupied_bytes": 162854528,
+          "start": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 7248392
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 25
+        },
+        {
+          "after_diagnostic_gc": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5447016
+          },
+          "attributed_thread_bytes": {
+            "parse_inspect_measure": 221751488,
+            "render_and_argb_copy": 212571704
+          },
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 70439744
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": false,
+          "phase": "acquisition_colors",
+          "sampled_peak_occupied_bytes": 96490336,
+          "start": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 6807528
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 20
+        },
+        {
+          "after_diagnostic_gc": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5471416
+          },
+          "attributed_thread_bytes": {
+            "bitmap": 8640,
+            "full_roi": 53181160,
+            "parse_inspect_measure": 221751360,
+            "render_and_argb_copy": 212366400
+          },
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 55766984
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": false,
+          "phase": "acquisition_colors_roi_bitmap",
+          "sampled_peak_occupied_bytes": 97710024,
+          "start": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 6774168
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 14
+        }
+      ],
+      "physical": false,
+      "profiler_overhead": "start_end_platform_probes_and_first_last_hashes_not_subtracted; host_thread_attribution_includes_counter_read_overhead",
+      "recorder_created": false,
+      "scope": "fixture_synchronous_replay_not_compose_or_usb_or_admission"
+    },
+    "after": {
+      "phases": [
+        {
+          "after_diagnostic_gc": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5426232
+          },
+          "attributed_thread_bytes": {
+            "parse_inspect_measure": 142596768
+          },
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 115380800
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": false,
+          "phase": "acquisition",
+          "sampled_peak_occupied_bytes": 115380800,
+          "start": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 7248392
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 84
+        },
+        {
+          "after_diagnostic_gc": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5463768
+          },
+          "attributed_thread_bytes": {
+            "parse_inspect_measure": 141382208,
+            "render_and_argb_copy": 212570816
+          },
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 84901776
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": false,
+          "phase": "acquisition_colors",
+          "sampled_peak_occupied_bytes": 98205648,
+          "start": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 6753384
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 27
+        },
+        {
+          "after_diagnostic_gc": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 5453968
+          },
+          "attributed_thread_bytes": {
+            "bitmap": 8640,
+            "full_roi": 53181160,
+            "parse_inspect_measure": 141382080,
+            "render_and_argb_copy": 212366400
+          },
+          "bitmap_created": false,
+          "diagnostic_gc_requested": true,
+          "end": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 36373448
+          },
+          "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+          "frames": 120,
+          "paced_25_hz": false,
+          "phase": "acquisition_colors_roi_bitmap",
+          "sampled_peak_occupied_bytes": 119817144,
+          "start": {
+            "java_max_bytes": 268435456,
+            "java_occupied_bytes": 6790920
+          },
+          "strong_owner_generations": 3,
+          "weak_owners_after_diagnostic_gc": 3,
+          "weak_owners_before_diagnostic_gc": 18
+        }
+      ],
+      "physical": false,
+      "profiler_overhead": "start_end_platform_probes_and_first_last_hashes_not_subtracted; host_thread_attribution_includes_counter_read_overhead",
+      "recorder_created": false,
+      "scope": "fixture_synchronous_replay_not_compose_or_usb_or_admission"
+    }
+  },
+  "saved_array_payload_bytes_per_ready_frame": 669696,
+  "admission": {
+    "changed": false,
+    "reservation_bytes": 81788928,
+    "safety_margin_bytes": 33554432,
+    "headroom_bytes": 115343360,
+    "physical_recording": false,
+    "physical_source_parity": false,
+    "physical_preview_freshness": "not_measured",
+    "production_gc": false
+  },
+  "source_artifact_parity": [
+    {
+      "case": "analysis-0",
+      "sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+      "entire_bytes_unchanged": true,
+      "python": {
+        "status": "passed",
+        "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "2211840",
+        "physical_stored_block_bytes": "2211840",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "analysis-1",
+      "sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+      "entire_bytes_unchanged": true,
+      "python": {
+        "status": "passed",
+        "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "2211840",
+        "physical_stored_block_bytes": "522651",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "full-0",
+      "sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+      "entire_bytes_unchanged": true,
+      "python": {
+        "status": "passed",
+        "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 6,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "acquisition": "1345536",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3557376",
+        "physical_stored_block_bytes": "3557376",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "full-1",
+      "sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+      "entire_bytes_unchanged": true,
+      "python": {
+        "status": "passed",
+        "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 6,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "acquisition": "1345536",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3557376",
+        "physical_stored_block_bytes": "1007761",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "native-0",
+      "sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+      "entire_bytes_unchanged": true,
+      "python": {
+        "status": "passed",
+        "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3538944",
+        "physical_stored_block_bytes": "3538944",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "native-1",
+      "sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+      "entire_bytes_unchanged": true,
+      "python": {
+        "status": "passed",
+        "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3538944",
+        "physical_stored_block_bytes": "1005483",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    }
+  ],
+  "tests": {
+    "jvm": 407,
+    "python": 64,
+    "pixel_focused": 13,
+    "pixel_baseline_pipeline": 1,
+    "pixel_final_timing_pipeline": 1,
+    "app_field_build_lint": "passed",
+    "api26_api35": "passed_89_per_API"
+  },
+  "corpus": {
+    "count": 51,
+    "manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "unchanged": true
+  },
+  "limitations": [
+    "Process ART counters include profiler/runtime overhead",
+    "Occupied heap is not reachable live heap",
+    "One explicitly diagnostic GC per synthetic phase is not admission",
+    "Finite synchronous replay does not measure USB, full UI, lifetime races or production recording",
+    "Historical physical traces remain unmodified",
+    "No universal live-allocation bound or safe physical admission established"
+  ],
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "art_ci": {
+    "run": {
+      "conclusion": "success",
+      "headSha": "8e928b22864c8cb3878c436f17deba069f28936f",
+      "status": "completed",
+      "url": "https://github.com/LounaMaili/LMThermal/actions/runs/38573024599"
+    },
+    "apis": [
+      {
+        "api": 26,
+        "tests": 89,
+        "status": "passed",
+        "source_sha": "8e928b22864c8cb3878c436f17deba069f28936f",
+        "original_owner_readbacks": [
+          {
+            "case": "analysis-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "2211840",
+              "physical_stored_block_bytes": "2211840",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "analysis-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "2211840",
+              "physical_stored_block_bytes": "522651",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "full-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 6,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "acquisition": "1345536",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3557376",
+              "physical_stored_block_bytes": "3557376",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "full-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 6,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "acquisition": "1345536",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3557376",
+              "physical_stored_block_bytes": "1007761",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "native-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3538944",
+              "physical_stored_block_bytes": "3538944",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "native-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3538944",
+              "physical_stored_block_bytes": "1005483",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        ],
+        "pipeline": {
+          "phases": [
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "914836816",
+                  "art.gc.bytes-freed": "907880584",
+                  "art.gc.gc-count": "360",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2316"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 6956232,
+                "native_allocated_bytes": 4901840,
+                "pss_bytes": 25994240
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": false,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "914836816",
+                  "art.gc.bytes-freed": "907880584",
+                  "art.gc.gc-count": "360",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2316"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 6956232,
+                "native_allocated_bytes": 4901840,
+                "pss_bytes": 25990144
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 0,
+              "paced_25_hz": true,
+              "phase": "acquisition",
+              "sampled_peak_occupied_bytes": 12777856,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "912551248",
+                  "art.gc.bytes-freed": "904278992",
+                  "art.gc.gc-count": "334",
+                  "art.gc.gc-count-rate-histogram": "197:1",
+                  "art.gc.gc-time": "2218"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 8272256,
+                "native_allocated_bytes": 10406664,
+                "pss_bytes": 35593216
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 4,
+              "weak_owners_before_diagnostic_gc": 4,
+              "window_elapsed_ns": 4800158750
+            },
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "917200208",
+                  "art.gc.bytes-freed": "910085112",
+                  "art.gc.gc-count": "420",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2603"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 7115096,
+                "native_allocated_bytes": 4879856,
+                "pss_bytes": 26147840
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": false,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "917200208",
+                  "art.gc.bytes-freed": "910085112",
+                  "art.gc.gc-count": "420",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2603"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 7115096,
+                "native_allocated_bytes": 4879856,
+                "pss_bytes": 26143744
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 3,
+              "paced_25_hz": true,
+              "phase": "acquisition_colors",
+              "sampled_peak_occupied_bytes": 12227784,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "916192592",
+                  "art.gc.bytes-freed": "907880584",
+                  "art.gc.gc-count": "360",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2316"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 8312008,
+                "native_allocated_bytes": 4902736,
+                "pss_bytes": 27341824
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 3,
+              "weak_owners_before_diagnostic_gc": 3,
+              "window_elapsed_ns": 4800162330
+            },
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "923790672",
+                  "art.gc.bytes-freed": "912325504",
+                  "art.gc.gc-count": "481",
+                  "art.gc.gc-count-rate-histogram": "110:1,156:1,197:1",
+                  "art.gc.gc-time": "2878"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 11465168,
+                "native_allocated_bytes": 6223352,
+                "pss_bytes": 31977472
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": true,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "923790672",
+                  "art.gc.bytes-freed": "912325504",
+                  "art.gc.gc-count": "481",
+                  "art.gc.gc-count-rate-histogram": "110:1,156:1,197:1",
+                  "art.gc.gc-time": "2878"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 11465168,
+                "native_allocated_bytes": 6223352,
+                "pss_bytes": 31973376
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 0,
+              "paced_25_hz": true,
+              "phase": "acquisition_colors_roi_bitmap",
+              "sampled_peak_occupied_bytes": 11448784,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "918555984",
+                  "art.gc.bytes-freed": "910085112",
+                  "art.gc.gc-count": "420",
+                  "art.gc.gc-count-rate-histogram": "156:1,197:1",
+                  "art.gc.gc-time": "2603"
+                },
+                "java_max_bytes": 402653184,
+                "java_occupied_bytes": 8470872,
+                "native_allocated_bytes": 4880752,
+                "pss_bytes": 27491328
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 4,
+              "weak_owners_before_diagnostic_gc": 4,
+              "window_elapsed_ns": 4800169200
+            }
+          ],
+          "physical": false,
+          "profiler_overhead": "start_end_platform_probes_and_first_last_hashes_not_subtracted; host_thread_attribution_includes_counter_read_overhead",
+          "recorder_created": false,
+          "scope": "fixture_synchronous_replay_not_compose_or_usb_or_admission"
+        },
+        "instrumentation_sha256": "45e3af1e0c166bac129a7a5a1ecb9a8e29394503b45a50b195803079b866a469"
+      },
+      {
+        "api": 35,
+        "tests": 89,
+        "status": "passed",
+        "source_sha": "8e928b22864c8cb3878c436f17deba069f28936f",
+        "original_owner_readbacks": [
+          {
+            "case": "analysis-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "2211840",
+              "physical_stored_block_bytes": "2211840",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "analysis-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "2211840",
+              "physical_stored_block_bytes": "522651",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "full-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 6,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "acquisition": "1345536",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3557376",
+              "physical_stored_block_bytes": "3557376",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "full-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 6,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "acquisition": "1345536",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3557376",
+              "physical_stored_block_bytes": "1007761",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "native-0",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3538944",
+              "physical_stored_block_bytes": "3538944",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          },
+          {
+            "case": "native-1",
+            "receipt": {
+              "status": "passed",
+              "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+              "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+              "observations": 6,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "1327104",
+                "temperature": "2211840"
+              },
+              "physical_decoded_block_bytes": "3538944",
+              "physical_stored_block_bytes": "1005483",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        ],
+        "pipeline": {
+          "phases": [
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "1619906560",
+                  "art.gc.bytes-freed": "1613544880",
+                  "art.gc.gc-count": "292",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2368",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 6361680,
+                "native_allocated_bytes": 5954272,
+                "pss_bytes": 55005184
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": false,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1619841024",
+                  "art.gc.bytes-freed": "1606614448",
+                  "art.gc.gc-count": "291",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2362",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 13226576,
+                "native_allocated_bytes": 5960752,
+                "pss_bytes": 61796352
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 0,
+              "paced_25_hz": true,
+              "phase": "acquisition",
+              "sampled_peak_occupied_bytes": 35316336,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1474269184",
+                  "art.gc.bytes-freed": "1445817744",
+                  "art.gc.gc-count": "273",
+                  "art.gc.gc-count-rate-histogram": "0:1,173:1",
+                  "art.gc.gc-time": "2243",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 28451440,
+                "native_allocated_bytes": 13849920,
+                "pss_bytes": 77173760
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 3,
+              "weak_owners_before_diagnostic_gc": 8,
+              "window_elapsed_ns": 4800120072
+            },
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "2",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "10",
+                  "art.gc.bytes-allocated": "1983119360",
+                  "art.gc.bytes-freed": "1976745392",
+                  "art.gc.gc-count": "341",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2676",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 6373968,
+                "native_allocated_bytes": 5955424,
+                "pss_bytes": 54956032
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": false,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "1983053824",
+                  "art.gc.bytes-freed": "1972817328",
+                  "art.gc.gc-count": "340",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2672",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 10236496,
+                "native_allocated_bytes": 5958192,
+                "pss_bytes": 58843136
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 2,
+              "paced_25_hz": true,
+              "phase": "acquisition_colors",
+              "sampled_peak_occupied_bytes": 15290960,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "1",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "5",
+                  "art.gc.bytes-allocated": "1621245952",
+                  "art.gc.bytes-freed": "1613544880",
+                  "art.gc.gc-count": "292",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2368",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 7701072,
+                "native_allocated_bytes": 5955168,
+                "pss_bytes": 56279040
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 3,
+              "weak_owners_before_diagnostic_gc": 4,
+              "window_elapsed_ns": 4800101416
+            },
+            {
+              "after_diagnostic_gc": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "3",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3,2:1",
+                  "art.gc.blocking-gc-time": "15",
+                  "art.gc.bytes-allocated": "2400366592",
+                  "art.gc.bytes-freed": "2393988528",
+                  "art.gc.gc-count": "397",
+                  "art.gc.gc-count-rate-histogram": "0:1,77:1,105:1,173:1",
+                  "art.gc.gc-time": "3015",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 6378064,
+                "native_allocated_bytes": 6404240,
+                "pss_bytes": 49235968
+              },
+              "attributed_thread_bytes": {},
+              "bitmap_created": true,
+              "diagnostic_gc_requested": true,
+              "end": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "2",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3,2:1",
+                  "art.gc.blocking-gc-time": "10",
+                  "art.gc.bytes-allocated": "2400301056",
+                  "art.gc.bytes-freed": "2390801840",
+                  "art.gc.gc-count": "396",
+                  "art.gc.gc-count-rate-histogram": "0:1,77:1,105:1,173:1",
+                  "art.gc.gc-time": "3010",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 9499216,
+                "native_allocated_bytes": 6852976,
+                "pss_bytes": 52828160
+              },
+              "float32_sha256": "2d0c94e89ff00152a2990a1f77df869f05f9d0bd9779547726d98af6e30dbec9",
+              "frames": 120,
+              "missed_40ms_deadlines": 3,
+              "paced_25_hz": true,
+              "phase": "acquisition_colors_roi_bitmap",
+              "sampled_peak_occupied_bytes": 15446608,
+              "start": {
+                "art_gc": {
+                  "art.gc.blocking-gc-count": "2",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "10",
+                  "art.gc.bytes-allocated": "1984458752",
+                  "art.gc.bytes-freed": "1976745392",
+                  "art.gc.gc-count": "341",
+                  "art.gc.gc-count-rate-histogram": "0:1,105:1,173:1",
+                  "art.gc.gc-time": "2676",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                },
+                "java_max_bytes": 201326592,
+                "java_occupied_bytes": 7713360,
+                "native_allocated_bytes": 5956192,
+                "pss_bytes": 56303616
+              },
+              "strong_owner_generations": 3,
+              "weak_owners_after_diagnostic_gc": 3,
+              "weak_owners_before_diagnostic_gc": 3,
+              "window_elapsed_ns": 4800097900
+            }
+          ],
+          "physical": false,
+          "profiler_overhead": "start_end_platform_probes_and_first_last_hashes_not_subtracted; host_thread_attribution_includes_counter_read_overhead",
+          "recorder_created": false,
+          "scope": "fixture_synchronous_replay_not_compose_or_usb_or_admission"
+        },
+        "instrumentation_sha256": "b3b6b115b2c6581c2ca84ff4966b5d6e15efc554b7ac779b6a1ea57623a9144f"
+      }
+    ]
+  }
+}

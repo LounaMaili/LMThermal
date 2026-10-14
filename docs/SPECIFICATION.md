@@ -139,9 +139,9 @@ framing, payload/index/recovery and timing/storage requirements for R3. PR #13
 integrated explicit owner acceptance; R1 #6 is closed. The [isolated R3 tools](lmtr-r3/README.md)
 provide a standalone Kotlin/JVM library and independent Python reader/writer,
 synthetic canonical corpus and cross-language validation. They are not imported by
-the Android application. R3 #8 remains open for disclosed platform/runtime and
-remaining conformance gates. Production recorder/backend/UI work remains blocked
-in [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
+the Android application. R3 #8 is closed after the finite contract/Windows gates and PR #14 merge at `8eb4ace`.
+The isolated [R4 foundation](lmtr-r4/README.md) supplies immutable module evidence, explicit profiles, byte-bounded admission/preparation/writer queues, genuine intake timers, acknowledged counts, qualified losses, shared append/index ownership and terminal readback.
+The recorder/adapter are not linked into the app; the optional source channel and guarded lifetime notifications are implemented, with host and test-only ART evidence. Physical module/lifecycle/resource acceptance remains pending in open #9. Recording product UI/backend export and R5/R6 remain outside this scope. See [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
 Accepted LMTX v1 remain unchanged.
 
 ### RJPEG (Radiometric JPEG)
@@ -337,3 +337,23 @@ without returning successful partial measurements. See the
 [hardening/API and platform boundary](lmtr-r3/HARDENING_REVIEW.md). The frozen
 LMTR v1 specification and production Android/legacy Desktop semantics are unchanged;
 native Windows validation remains an external R3 gate.
+
+### R4 source/lifecycle experimental extension
+
+The [R4 integration guide](lmtr-r4/ART_INTEGRATION.md) describes the optional authoritative
+observation route before UI conflation, module-owned deferred freezing and generation-bound
+lifetime adapter. Only the test harness links the adapter/recorder. Product camera controls,
+thermometry, single ownership, explicit Connect/initialize and native coordinates remain
+unchanged; no recorder UI or background service is enabled. ART and host evidence are scoped
+separately from pending real HT-301/Pixel8 acceptance.
+
+
+## R4 field-test preparation
+
+The [separate field APK](lmtr-r4/FIELD_VALIDATION.md) uses the existing single owner and optional authoritative lifecycle route, explicit Start/Stop, Android elapsed-realtime intake, bounded app-owned files and independent private source-oracle checks. It is a test-only integration, not a public recording feature; current resource/cadence admission and sampled safety stops apply only to that APK. The [conditional physical receipt](lmtr-r4/field-unattended-validation.json) records successful real initialization but refused Java-headroom admission before any LMTR; actual recording acceptance remains pending.
+
+Test-only [R4 memory diagnosis](lmtr-r4/MEMORY_ADMISSION.md) adds finite read-only phase sampling and immutable-owner writer operations. Constructor/public copy isolation, both full CHUNK validations and original reservations are unchanged.
+
+The [R4 live-heap follow-up](lmtr-r4/LIVE_HEAP.md) preserves source evidence and session semantics while eliminating temporary calibration/SHA copies. Replay attribution and diagnostic GC are test-only evidence; no safe physical recorder admission is asserted.
+
+[R4 presentation profiling](lmtr-r4/PRESENTATION_PERFORMANCE.md) retains exact Auto/ROI/color semantics, optional immutable ROI computation and single-owner display pixel transfer. Real headroom policy witnesses still fail; no production recording or safe-admission certification is implied.

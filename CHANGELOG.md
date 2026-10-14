@@ -4,6 +4,172 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 exact presentation allocation)
+
+- Retain the exact percentile full sort after rejecting a slower four-rank selection experiment; remove the redundant render validation scan. Add opt-in single-owner display ARGB transfer with copying Android Bitmap checks and explicit immutable HT ROI computation; preserve generic/delegated mask fallback, source bits, row-major statistics and session guards.
+
+### Added (R4 real Compose investigation)
+
+- Add bounded optional field-only render/ROI/weak-owner counters and no-recorder configuration windows. Preserve paired host/ART performance, the partial failed Pixel/HT Compose window and the completed corrected repeat with freshness/suppression measurements and normal Auto/ROI headroom policy refusals; keep110 MiB admission unchanged and physical LMTR pending.
+
+### Fixed (R4 diagnostic summary serialization)
+
+- Convert finite field rate/ratio diagnostics explicitly to BigDecimal before strict JSON encoding. Preserve the physical invalid_metadata failure and original partial rows; do not relax the wire encoder's Float/Double rejection. The corrected repeat completed after owner reconnection with no recorder or forced GC.
+
+### Added (R4 presentation runtime receipt)
+
+- Record exact9efdc1f API26/API35 101/101 tests and six independent original-owner memory-case readbacks per API, retaining the pre-test SDK-download failure and passing API35 retry. Pin actual physical APK provenance separately from the later rebuild; record37 unique current Pixel tests, unchanged51 fixtures and unresolved live recording admission.
+
+### Fixed (R4 source allocation churn)
+
+- Compare calibration copies in private immutable frame storage and hash the original image range directly, eliminating 669,696 temporary payload bytes per ready frame without changing numerical operations, liveness/controls, source ownership or public defensive copies. Preserve source Float32 and entire six-profile/codec fixture artifact bytes.
+
+### Added (R4 exact-code ART receipt)
+
+- Record exact8e928b2 API26/API35 89/89 runtime passes and six independent original-owner memory-case readbacks per API; preserve serial replay deadline misses and distinguish completed fixture checks from pending physical admission/smoke/profile gates.
+
+### Added (R4 pipeline heap attribution)
+
+- Add finite camera-free acquisition/colors/ROI/bitmap replay with host allocation counters, ART GC statistics, weak measurement owners and a strictly separate diagnostic GC. Preserve before/after and final timing receipts; distinguish reclaimable fixture generations from real-camera/Compose memory and retain the unchanged 78 MiB +32 MiB admission policy. Physical smoke remains pending.
+
+### Added (R4 measured heap refusal)
+
+- Record Pixel ready-state occupied Java 16.76–228.85 MB and headroom down to 39.59 MB: nine of 20 read-only ready samples fail the unchanged 110 MiB admission threshold. Preserve the partial fresh-process window and original refusing history; no physical LMTR, lucky-GC retry, long profile or reservation reduction follows.
+- Record 405 JVM/64 Python tests, six byte-identical pre/post engineering artifacts and12 host original-owner readbacks; actual Pixel12 camera-free tests/six readbacks and exact be41db4 API26/API35 88/88 tests plus six readbacks each pass. Keep measured occupancy and unproven generic peak-live accounting separate.
+
+### Fixed (R4 partial memory diagnostic receipts)
+
+- Refuse recorder Start while a read-only health window is active, preserving its no-recorder provenance and avoiding diagnostic sampling overhead during recorder admission.
+
+- Record completed sample count and cancellation/error classification for future read-only health windows instead of silently treating a partial diagnostic as complete. Preserve the observed11/20 fresh window without claiming its cause or rerunning for favorable GC.
+
+### Changed (R4 memory diagnosis)
+
+- Eliminate writer-side payload copies used only for hashes, concatenation and statistics. Retain constructor/public copy isolation, exact source bytes and both full validation boundaries; change no reservation factors, safety margin, queues or profile roles.
+- Add read-only finite field-health sampling before a source exists, using existing Runtime/Android probes without controls, recorder, forced GC or device settings. Distinguish occupied heap from reachable live memory and actual lifecycle from a diagnostic phase label.
+- Add six full-size existing-HT-fixture engineering cases across Analysis/Native/Full and STORED/DEFLATE, bounded ownership/queue assertions, sampled occupied/native/PSS observations and independent original-owner readback. Preserve canonical fixtures and previous refusal evidence.
+
+### Added (R4 conditional physical attempt)
+
+- Preserve actual Pixel 8/API37 HT-301 initialization and normal single-owner Close evidence on cd6606f. The 20-second Full smoke was refused for Java headroom before any LMTR was created; no longer profiles or automatic retries ran. Keep original private logs/OS snapshot locally and publish only sanitized metrics/hashes, without inferring recording parity or memory plateau.
+- Record 405 JVM, 64+8 Python and eight actual camera-free Pixel ART safety/clock/fixture passes and independent original-owner readback of three saved-room profile files. Keep previous host/emulator receipts and remaining physical smoke, matched profiles, memory/freshness/byte-parity/recovery gates distinct; PR #16 remains draft and #9 open.
+
+### Fixed (R4 admission refusal evidence)
+
+- Preserve exact sampled Runtime heap/headroom and read-only health/preflight facts before refusing field admission. A later GC/dumpsys snapshot cannot reconstruct an earlier safety refusal; do not reduce reservations or force GC to manufacture acceptance.
+
+### Added (R4 conditional unattended safety)
+
+- Record owner authorization for bounded unattended physical validation, conditional on existing permission/unlock/scene/device/resource prerequisites. Keep missing prerequisites and actual runs distinct from emulator evidence.
+- Add deterministic test-only resource/cadence safety policy and read-only Android probes; refuse unknown safety facts, stop unhealthy/interrupted runs and retain originals without automatic retry. Keep 4 MiB queues/chunks and existing production camera/thermometry behavior unchanged.
+- Use a 20-second Full smoke and activity-local keep-screen-on only during bounded experiments, clearing it on Stop/failure/background. No pairing, permission bypass, global settings, background service or physical fault injection.
+
+### Added (R4 final Phase A runtime receipts)
+
+- Record exact field code f90db85 with 398 JVM, 64+8 Python and 80/80 camera-free ART tests per API26/API35. Preserve source-byte parity for 14 engine files, 75 synthetic observations and three existing-room profile readbacks per API, plus the failed API26 scheduling checkpoint. Keep physical Pixel8/HT tests explicitly unexecuted/operator-gated.
+
+### Fixed (R4 matched measurement window)
+
+- Close acquisition/preview aggregates at Stop so the subsequent full readback and streaming hashes cannot inflate the matched performance interval. Keep codec/seal/drain timing active and report its separate finalization scope.
+
+### Fixed (R4 deterministic preparation-overload regression)
+
+- Preserve the genuine API26 failure at run 38450510713: the preparation-only test reserved just one writer entry and could independently drop its second already-prepared owner while HEADER sync lagged. Reserve both accepted owners in this test only, retain exact freeze/thread/two-ack assertions and add zero writer-loss assertion. Product/field queue capacities are unchanged; writer-overload coverage remains separate.
+
+### Fixed (R4 field failure publication)
+
+- Stop the bounded field run if its private metric writer fails and prevent a failed/missing terminal readback from enabling a longer run. Preserve diagnostic classification and original files; baseline without a capture does not manufacture a source-immutability verdict. Receipt-domain validation applies only during active intake; a later explicit source reopen cannot relabel an already interrupted run as a clock error.
+
+### Added (R4 operator-gated field preparation)
+
+- Add a separate test-only arm64 field APK reusing the existing single HT acquisition/preview owner, authoritative observer, adapter and recorder with explicit Start/Stop, app-owned bounded files, private streaming source oracles and read-only terminal recovery. Production app has no recorder dependency or recording UI.
+- Configure physical intake/timeline/timers with Android elapsedRealtimeNanos; retain truthful source IDs, unknown UTC/sensor/resolution and test domain/regression/recreation/suspend boundaries. Add conservative per-profile storage admission, unchanged 4 MiB queues/chunks, bounded metrics and private streaming ADB extraction/independent Python byte checks.
+- Add inert optional lifetime injection and diagnostic session-reason/gate-duration facts; camera controls, initialization and thermometry are unchanged. Optional seal/codec timing observers cannot alter encoded bytes or poison acknowledged commits.
+- Document the complete two-phase operator protocol and historical R2 comparison. Physical tests remain unexecuted and require explicit go-ahead; R4 #9/PR #16 remain open/draft, frozen wire/corpus and Desktop unchanged.
+
+### Added (R4 resumed validation and final runtime receipts)
+
+- Preserve interrupted documentation/reports and all failed experiments; record exact tested code `abea098`, 380 JVM/64 Python tests and actual 61/61 ART tests on both API26/API35. Independent Python checks 14 actual engine outputs, original bytes in three recovered prefixes, an honestly failed END/gap, 75 source observations per ART job and original source immutability.
+- Record current 120-second/3000-observation synthetic source on the same code SHA, original clock/intake/oracle hash checks, zero preparation/writer drops, 118 chunks/23 checkpoints, 198.535 ms Stop and separate charged queue/in-flight/pending peaks. Preserve prior run receipts and publish only sanitized metrics/hashes, not recordings or large JSONL files.
+- Document sticky noncertifiable loss boundaries, exceptional callback copy cost, exact runtime/environment receipts and reproducible host commands. R4 remains incomplete pending opt-in physical Pixel8/HT-301 source/lifecycle/cadence/freshness/memory/failure validation; no recording product UI, R5/R6, frozen wire/corpus or Desktop change.
+
+### Fixed (R4 precise worker-failure accounting)
+
+- Distinguish an idle preparation interruption with no admitted/queued evidence from a worker abandoning an intake item or queue. Only actual unrepresented evidence sets the sticky no-END condition; add an instance-specific interruption regression proving the empty failed recording can finalize honestly.
+
+### Added (R4 independent mixed-failure prefix evidence)
+
+- Extend the existing engine probe with an acknowledged prefix followed by unjournaled loss/multiple errors and an honestly finalized represented source failure. Python now checks original payload bytes in verified recovered prefixes and exact known-gap reasons/ranges, preserving all older outputs and the immutable canonical corpus.
+
+### Added (R4 clock/oracle and resource-peak continuation)
+
+- Add source-oracle SHA-256, exact original receipt/acquisition/schedule/device/source facts and genuine callback intake bounds to finite source stress; independent Python checks these without changing wire metadata. Expose charged preparation/writer in-flight and pending peaks alongside existing queue peaks; no capacity increase or ART/RSS claim.
+
+### Added (R4 combined-failure integrity regression matrix)
+
+- Cover both preparation/journal-exhaustion orderings, racing Stop/detach/source-error/memory pressure, multiple termination errors, repeated Stop after failure and unexpected preparation exit. Assert no noncertifiable loss can produce END, while completely journaled source failure can retain an honest failed END. Strengthen post-ack navigation recovery/source immutability assertions.
+
+### Added (R4 exceptional acquisition copy-cost probe)
+
+- Measure callback-side immutable ownership of synthetic malformed full-size transport separately from deferred HT evidence freezing; verify copied buffers cannot be mutated by the source. The host/ART test tool performs no camera access and times no parsing, thermometry, hashing, compression or I/O.
+
+### Fixed (R4 noncertifiable loss remains sticky)
+
+- Retain synthetic ART outputs/readbacks after a failing assertion while preserving the strict non-success verdict.
+- Preserve a sticky unrepresented-loss condition when the loss journal is exhausted or a preparation worker fails unexpectedly. A later exception may change diagnostics but cannot authorize END for abandoned evidence. Actual isolated API26 ART exposed the prior reason-overwrite race; add a deterministic mixed-failure regression, preserving the failed run and original assertions.
+
+### Added (R4 authoritative-source validation receipts)
+
+- Recorded 374 passing JVM tests, 64 Python tests, Android build/lint, unchanged accepted wire and all 51 pinned fixtures. Actual API26/API35 owner-guard checkpoints passed 55 ART tests each with independent Python readback of 12 engine files and 75 synthetic source observations per API; emulator evidence is not Pixel8/HT performance.
+- Recorded an exact-SHA 120-second 25 Hz non-USB host repeat: 3000 retained observations, 38 explicitly unavailable planes, zero preparation/writer drops, 118 chunks, 23 checkpoints and 184.802 ms Stop. Published sanitized queue/admission/copy-cost/integrity receipts and preserved earlier reporter/infrastructure failures and prior reports.
+- Updated source/lifecycle/configuration/roadmap documentation and kept physical adapter/cadence/freshness/memory/recovery gates pending. No product recording UI, controls, thermometry, frozen contract, canonical fixture or Desktop change.
+
+### Fixed (R4 ART build isolation)
+
+- Add a camera-free Gradle entry point excluding production app configuration and its NDK/CMake/UVC requirements, after an API26 job booted but failed provisioning an unrelated product NDK. Reuse the exact same contract, recorder and adapter sources; preserve the failure and product ABI.
+
+### Fixed (R4 emulator matrix literal)
+
+- Correct the API35 image target to a literal matrix value; expressions apply only when consuming the completed matrix. This is CI provisioning only.
+
+### Changed (R4 API26 emulator provisioning)
+
+- Use the official minimal AOSP x86_64 image for camera-free API26 tests after repeated pre-test Google image archive-download failures; API35 remains Google APIs. Tests need no Google services; keep all earlier failures and runtime gates unchanged.
+
+### Fixed (R4 optional owner notification races)
+
+- Serialize optional recording lifetime notifications with camera-owner generation invalidation, preventing a late open callback after immediate Close from reviving source intake. Isolate optional observer exceptions so original camera release can complete; add two deterministic owner regressions.
+
+### Fixed (R4 synthetic clock and preview evidence)
+
+- Keep synthetic preview cadence independent of camera acquisition statistics and leave actual common-clock resolution unknown instead of equating nanosecond units with measured precision. Preserve the third API26 pre-test SDK image-download failure.
+
+### Fixed (R4 emulator evidence gates)
+
+- Treat emulator log-buffer clearing as best-effort diagnostics while keeping strict instrumentation/readback verdicts; explicitly select and verify an emulator before any ADB operation. Preserve the API35 passing checkpoint and API26 pre-test logcat failure.
+
+### Added (R4 authoritative acquisition and lifecycle integration)
+
+- Added an optional module-owned acquisition observation channel before UI StateFlow conflation, with genuine nanosecond receipt witnesses, qualified native callback loss signals and immutable source owners. HT-301's existing gate/control/thermometry path is unchanged; the channel is inert without explicit subscription.
+- Added a separate camera-recording adapter module, deferred owned-evidence admission on the existing recorder preparation worker, exact HT-301 Float32/native/transport/settings/calibration evidence and guarded Start/Stop/lifecycle integration. The product does not link the adapter/recorder or expose recording UI.
+- Added session-generation guards, source-error outcomes, callback isolation, owner close/replacement/background/rotation/screen-off tests and an expanded ART harness. Fixed test-only evidence extraction after Gradle's automatic target uninstall; the first API26/API35 run passed 37 ART tests per emulator but its extraction gate failed and is preserved.
+
+### Added (R4 camera-free Android runtime harness)
+
+- Added a separate test-only Android application packaging the existing LMTR contract/recorder without production UVC/JNI or changing the product arm64 ABI. It shares recorder regressions and tests exact JSON/binary/hash/codec semantics, all 51 pinned inputs and real synthetic engine output.
+- Added exact-SHA branch-restricted API 26/35 x86_64 emulator CI with pinned setup actions, read-only permissions, disabled emulator cameras and retained logs/synthetic artifacts. Independent Python can read ART-produced outputs directly; the initial packaging checkpoint was pending until runtime artifacts were reviewed; the later receipts above record actual scope.
+
+### Added (R4 camera-free recorder foundation — 2026-10-13)
+
+- Added an isolated pure-Kotlin recorder module with owned module observations, exact Float32/masks/native/acquisition evidence, context/clock/session identities, explicit capability profiles and qualified source losses. It is not linked into the app and adds no user recording action, camera controls or thermometry change.
+- Implemented bounded asynchronous preparation/writer stages, separately accounted in-flight/pending/control reservations, truthful overload gaps, first-intake idle sealing and post-ack checkpoints, global segment transitions, idempotent cutoff/drain, local append/close/reopen and preserved incomplete files on uncertain failures.
+- Extracted the existing R3 writer/index into a shared incremental session used by both fixture and recorder paths, with private owned state and poisoned-owner guards. Wire/schema and all 51 pinned fixtures are unchanged.
+- Added deterministic non-USB simulations, failure/race tests and independent Python full readback of actual engineering outputs. At this initial foundation checkpoint ART had no available authorized device/emulator; later source/lifecycle/ART receipts above supersede that availability status, while physical live acceptance remains pending in open #9.
+
+### Changed (R3 integration — 2026-10-13)
+
+- Recorded owner-authorized PR #14 merge at `8eb4ace`, exact final Windows head/run scope and #8 closure; preserved R2 and all historical receipts. A separate CI follow-up PR #15 retains native Windows main/PR regression scheduling outside the accepted R3 merge.
+
 ### Added (R3 native Windows CI validation — 2026-10-13)
 
 - Added a branch-restricted, exact-SHA Windows GitHub Actions protocol with JDK17, Python3.13, bounded resources, read-only token permissions and persistent success/failure artifacts. It executes the existing independent suites and native NTFS sparse/full-integrity gate without camera or Android dependencies.

@@ -13,7 +13,8 @@ import org.lmthermal.core.LatestFrameState
 class CameraSessionOwner<P>(private val scope: CoroutineScope,
     private val activeChanged: (CameraSession<P>?) -> Unit = {},
     private val technicalFailure: (Throwable) -> Unit = {},
-    private val event: (Map<String, Any?>) -> Unit = {}) {
+    private val event: (Map<String, Any?>) -> Unit = {},
+    private val lifetime:CameraSessionLifetime<P>? = null) {
     private val mutex = Mutex()
     private val latest = LatestFrameState(CameraSessionState<P>())
     val state = latest.asStateFlow()
@@ -36,7 +37,7 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
     /** A fatal source ERROR or action failure must release too. Schedule outside the collector/mutex so close can await it. */
     @Synchronized private fun failed(token: Long, error: CameraError) {
         if (token != generation) return
-        invalidate(unavailable(state.value, CameraLifecycle.ERROR, CameraStatus(CameraStatusCode.ERROR), error))
+        invalidate(unavailable(state.value, CameraLifecycle.ERROR, CameraStatus(CameraStatusCode.ERROR), error), CameraCloseReason.FAILED)
         scope.launch {
             mutex.withLock {
                 if (activeGeneration != token) return@withLock
@@ -47,10 +48,22 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
     }
 
     /** Serialize generation change with eventual publication; no old observer can revive invalidated data. */
-    @Synchronized private fun invalidate(snapshot: CameraSessionState<P>): Long {
+    @Synchronized private fun invalidate(snapshot: CameraSessionState<P>, reason: CameraCloseReason? = null): Long {
+        if (reason != null) notifyLifetime { invalidated(reason) }
         generation++
         latest.value = snapshot
         return generation
+    }
+    /** Close may race module open/activeChanged. Serialize optional notifications with the
+     * same generation invalidation lock so a late open cannot revive recording intake.
+     * A broken opt-in observer must never prevent the original camera release path.
+     */
+    @Synchronized private fun observeOpened(token: Long, session: CameraSession<P>) {
+        if (token == generation) notifyLifetime { opened(session) }
+    }
+    private fun notifyLifetime(action: CameraSessionLifetime<P>.() -> Unit) {
+        try { lifetime?.action() }
+        catch (failure: Exception) { runCatching { technicalFailure(failure) } }
     }
     /** Presentation-only ownership guard. Pair the existing generation with the exact
      * published snapshot under the invalidation lock; StateFlow may conflate Close/open.
@@ -100,7 +113,7 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
     fun open(candidate: CameraCandidate<P>): Job {
         val token = invalidate(CameraSessionState(module = candidate.module.metadata, device = candidate.device,
             lifecycle = CameraLifecycle.OPENING, status = CameraStatus(CameraStatusCode.OPENING),
-            actions = setOf(CameraAction.CLOSE)))
+            actions = setOf(CameraAction.CLOSE)), CameraCloseReason.REPLACED)
         return scope.launch {
             mutex.withLock {
                 if (token != generation) return@withLock
@@ -110,7 +123,7 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
                     val session = candidate.module.open(candidate.device)
                     if (token != generation) { session.close(CameraCloseReason.REPLACED); return@withLock }
                     active = session; activeGeneration = token; sessionId = ++nextSession; opens++
-                    activeChanged(session); record("session_opened")
+                    activeChanged(session); observeOpened(token, session); record("session_opened")
                     collector = scope.launch {
                         session.state.collect { snapshot ->
                             if (!valid(candidate, snapshot)) {
@@ -154,7 +167,7 @@ class CameraSessionOwner<P>(private val scope: CoroutineScope,
     /** Clear current data synchronously, then await release. A newer open is serialized after that release. */
     fun close(reason: CameraCloseReason = CameraCloseReason.USER): Job {
         val previous = state.value
-        val token = invalidate(unavailable(previous, CameraLifecycle.CLOSED, CameraStatus(CameraStatusCode.CLOSED)))
+        val token = invalidate(unavailable(previous, CameraLifecycle.CLOSED, CameraStatus(CameraStatusCode.CLOSED)), reason)
         return scope.launch {
             mutex.withLock {
                 if (activeGeneration > token) return@withLock

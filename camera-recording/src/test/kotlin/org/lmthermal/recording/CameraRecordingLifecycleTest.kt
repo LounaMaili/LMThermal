@@ -1,0 +1,205 @@
+package org.lmthermal.recording
+
+import org.junit.Test
+import org.junit.Assert.*
+import org.lmthermal.camera.*
+import org.lmthermal.recorder.*
+import org.lmthermal.lmtr.*
+import kotlinx.coroutines.*
+import java.nio.file.Files
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.io.IOException
+
+/** No camera or UI. Real owner transitions and captured stale callbacks exercise the optional route. */
+class CameraRecordingLifecycleTest {
+    private fun file()=Files.createTempDirectory("source-r4-").resolve("recording.lmtr").toFile()
+    private fun done(binding:CameraRecorderBinding<Unit>):RecorderResult {
+        val result=binding.pendingStop()!!.get(10,TimeUnit.SECONDS);assertTrue(result.toString(),result.finalized);return result
+    }
+    private fun setup():Triple<RecordingTestSession,RecordingTestAdapter,CameraRecorderBinding<Unit>> {
+        val p=SimulatedRecordingModule();val identity=testIdentity(p);val session=RecordingTestSession(CameraObservationHub(identity),object:CameraDeviceIdentity{override val key="same_device"})
+        val adapter=RecordingTestAdapter(identity,p);val binding=CameraRecorderBinding<Unit>{adapter};binding.opened(session)
+        return Triple(session,adapter,binding)
+    }
+    @Test fun connectingAndConflatedPresentationNeverStartOrFeedRecording() {
+        val (session,adapter,binding)=setup()
+        repeat(100){session.hub.publish{error("No subscription may freeze data")};session.presentation(it.toLong())}
+        assertEquals(0,adapter.materializations);assertNull(binding.pendingStop())
+        val e=testEngine(adapter.producer,file());assertTrue(binding.start(e))
+        repeat(20){session.hub.publish{n->RecordingTestObservation(session.hub.identity,adapter.producer.observation(n),n,System.nanoTime())}}
+        repeat(200){session.presentation(it.toLong())};binding.stop();done(binding)
+        assertEquals(20L,e.snapshot().acknowledged);assertEquals(20,adapter.materializations)
+    }
+    @Test fun everyLifetimeExitCutsOffAndOnlyRotationRetainsSource() {
+        for(reason in CameraCloseReason.entries) {
+            val (session,a,b)=setup();val e=testEngine(a.producer,file());b.start(e)
+            session.hub.publish{n->RecordingTestObservation(a.identity,a.producer.observation(n),n,System.nanoTime())}
+            b.invalidated(reason);session.hub.publish{error("No old subscription")};val r=done(b)
+            assertEquals(1L,e.snapshot().acknowledged)
+            assertEquals(if(reason==CameraCloseReason.FAILED)"failed" else if(reason==CameraCloseReason.USER)"completed" else "interrupted",r.status)
+        }
+        val (s,a,b)=setup();val e=testEngine(a.producer,file());b.start(e)
+        val ui=CameraUiLifetime({b.invalidated(CameraCloseReason.BACKGROUND)})
+        val first=ui.started("en");ui.stopped(first,true,false);ui.started("en")
+        s.hub.publish{n->RecordingTestObservation(a.identity,a.producer.observation(n),n,System.nanoTime())}
+        assertNull(b.pendingStop());ui.screenOff();done(b);assertEquals(1L,e.snapshot().acknowledged)
+    }
+    @Test fun latestCapturedOldCallbackCannotEnterSameDeviceNewRecording() {
+        val p=SimulatedRecordingModule();val identity=testIdentity(p);var captured:CameraObservationConsumer?=null
+        val source=object:CameraObservationSource {
+            override val identity=identity
+            override fun subscribe(consumer:CameraObservationConsumer):AutoCloseable { captured=consumer;return AutoCloseable{} }
+        }
+        val a=RecordingTestAdapter(identity,p);val b=CameraRecorderBinding<Unit>{a}
+        val session=object:CameraSession<Unit> {
+            override val state=org.lmthermal.core.LatestFrameState(CameraSessionState<Unit>()).asStateFlow()
+            override val observations=source
+            override suspend fun perform(action:CameraAction){}
+            override suspend fun close(reason:CameraCloseReason){}
+        }
+        b.opened(session);val first=testEngine(p,file());b.start(first);val old=captured!!
+        old.observation(RecordingTestObservation(identity,p.observation(0),0,System.nanoTime()))
+        b.invalidated(CameraCloseReason.USER);done(b);b.opened(session)
+        val next=testEngine(p,file());assertTrue(b.start(next));val current=captured!!
+        old.observation(RecordingTestObservation(identity,p.observation(1),1,System.nanoTime()))
+        current.observation(RecordingTestObservation(identity,p.observation(0),0,System.nanoTime()))
+        b.stop();done(b);assertEquals(1L,next.snapshot().acknowledged);assertEquals(1L,b.staleCallbacks)
+    }
+    @Test fun stopDuringPreparationIsNonBlockingAndRepeatedStopHasOneCutoff() {
+        val (s,a,b)=setup();val entered=CountDownLatch(1);val release=CountDownLatch(1)
+        val e=testEngine(a.producer,file(),hook={entered.countDown();release.await(5,TimeUnit.SECONDS)})
+        b.start(e);s.hub.publish{n->RecordingTestObservation(a.identity,a.producer.observation(n),n,System.nanoTime())}
+        assertTrue(entered.await(5,TimeUnit.SECONDS));val start=System.nanoTime();val one=b.stop();assertSame(one,b.stop())
+        assertTrue(System.nanoTime()-start<TimeUnit.SECONDS.toNanos(1));assertFalse(one!!.isDone)
+        release.countDown();done(b);assertEquals(1L,e.snapshot().acknowledged)
+    }
+    @Test fun delayedFooterRetainsReservationAndBlocksNewRecordingUntilDrain() {
+        val (s,a,b)=setup();val f=file();val base=LocalRecorderBackend(f);val entered=CountDownLatch(1);val release=CountDownLatch(1)
+        val backend=object:RecorderBackend { override val destination=f
+            override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record {
+                if(type==LmtrFraming.CHUNK){entered.countDown();release.await(5,TimeUnit.SECONDS)}
+                return base.append(type,ordinal,previous,body)
+            };override fun close()=base.close() }
+        val e=testEngine(a.producer,f,backend=backend);b.start(e)
+        s.hub.publish{n->RecordingTestObservation(a.identity,a.producer.observation(n),n,System.nanoTime())};b.stop()
+        assertTrue(entered.await(5,TimeUnit.SECONDS));assertEquals(0L,e.snapshot().acknowledged)
+        val notStarted=testEngine(a.producer,file());assertFalse(b.start(notStarted));notStarted.stop()
+        release.countDown();done(b);assertEquals(1L,e.snapshot().acknowledged)
+    }
+    @Test fun sourceLossIsNotPreparationWriterOrPresentationLoss() {
+        val (s,a,b)=setup();val f=file();val e=testEngine(a.producer,f);b.start(e)
+        s.hub.loss("uvc_callback_replaced",3,1,2)
+        s.hub.publish{n->RecordingTestObservation(a.identity,a.producer.observation(n),n,System.nanoTime())};b.stop();val r=done(b)
+        assertEquals("3",r.report!!["summary"].obj()["known_missing_observations"])
+        assertEquals(0L,e.snapshot().preparationDrops);assertEquals(0L,e.snapshot().writerDrops)
+    }
+    @Test fun observerFailureDoesNotReleaseTheCameraOrSilentlyKeepRecording() {
+        val (s,_,_)=setup();var ended=false
+        s.hub.subscribe(object:CameraObservationConsumer {
+            override fun observation(value:CameraAcquiredObservation){error("Broken observer")}
+            override fun loss(value:CameraSourceLoss){}
+            override fun ended(reason:CameraCloseReason){ended=reason==CameraCloseReason.FAILED}
+        })
+        val p=SimulatedRecordingModule();s.hub.publish{n->RecordingTestObservation(s.hub.identity,p.observation(n),n,System.nanoTime())}
+        s.hub.publish{error("Broken observer was removed")};assertTrue(ended);assertEquals(0,s.closes)
+    }
+    @Test fun actualSessionOwnerStopsRecordingBeforeAwaitedCloseAndReplacement()=runBlocking {
+        val (s,a,b)=setup();val scope=CoroutineScope(SupervisorJob()+Dispatchers.Default)
+        val device=object:CameraDeviceIdentity{override val key="same_device"}
+        val module=object:CameraModule<Unit> {
+            override val metadata=s.hub.identity.module
+            override fun probe(device:CameraDeviceIdentity)=CameraProbeResult.SUPPORTED
+            override suspend fun open(device:CameraDeviceIdentity)=RecordingTestSession(CameraObservationHub(a.identity),device)
+        }
+        val owner=CameraSessionOwner(scope,lifetime=b)
+        owner.open(CameraCandidate(device,module)).join()
+        val e=testEngine(a.producer,file());assertTrue(b.start(e))
+        owner.close().join();done(b);assertEquals("finalized",e.snapshot().state)
+        owner.open(CameraCandidate(device,module)).join();assertTrue(owner.state.value.lifecycle!=CameraLifecycle.ERROR)
+        owner.background().join();scope.cancel()
+    }
+    @Test fun temperatureOnlyAndPreviewOnlySourcesUseSameGuardedRoute() {
+        for(thermal in listOf(true,false)) {
+            val p=SimulatedRecordingModule(thermal=thermal,native=false,acquisition=false,preview=!thermal)
+            val identity=testIdentity(p);val session=RecordingTestSession(CameraObservationHub(identity),object:CameraDeviceIdentity{override val key="not_usb"})
+            val adapter=RecordingTestAdapter(identity,p);val binding=CameraRecorderBinding<Unit>{adapter};binding.opened(session)
+            val engine=testEngine(p,file(),profile=if(thermal)RecordingProfile.ANALYSIS else RecordingProfile.VISUAL)
+            assertTrue(binding.start(engine));session.hub.publish{n->RecordingTestObservation(identity,p.observation(n),n,System.nanoTime())}
+            binding.stop();val result=done(binding);assertEquals(1L,engine.snapshot().acknowledged)
+            assertEquals(if(thermal)"1" else "0",result.report!!["summary"].obj()["temperature_planes"])
+        }
+    }
+    @Test fun sourceFreezeRunsOnExistingPreparationWorkerAndOverloadDoesNotFreezeRejectedOwner() {
+        val p=SimulatedRecordingModule();val stream=FrozenJson(p.stream);val f=file()
+        val entered=CountDownLatch(1);val release=CountDownLatch(1);var freezes=0;var thread:String?=null
+        val e=RecorderEngine(SimulatedRecordingModule.header(listOf(p)),listOf(p.stream),RecordingProfile.FULL,
+            // This test isolates preparation rejection. Reserve both accepted owners downstream,
+            // otherwise a slow HEADER sync can cause an unrelated writer-overload race.
+            RecorderLimits(preparationBytes=65536,writerBytes=131072,maxObservationBytes=65536),LocalRecorderBackend(f),
+            prepareHook={entered.countDown();release.await(5,TimeUnit.SECONDS)})
+        fun offer(n:Long)=RecordingOffer(p.id,n,stream,65536){freezes++;thread=Thread.currentThread().name;p.observation(n)}
+        e.admit(offer(0));assertTrue(entered.await(5,TimeUnit.SECONDS));e.admit(offer(1))
+        assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(offer(2)));assertEquals(0,freezes)
+        e.stop();release.countDown();val result=e.awaitStop(10000)!!;assertTrue(result.finalized)
+        assertEquals(2,freezes)
+        assertEquals("lmtr-preparation",thread)
+        assertEquals(0L,e.snapshot().writerDrops)
+        assertEquals(2L,e.snapshot().acknowledged)
+    }
+    @Test fun incorrectDeferredEvidenceFailsSourceWithoutClaimingWriterOverload() {
+        val p=SimulatedRecordingModule();val e=testEngine(p,file())
+        e.admit(RecordingOffer(p.id,0,FrozenJson(p.stream),65536){p.observation(1)})
+        e.stop();val result=e.awaitStop(10000)!!;assertTrue(result.toString(),result.finalized)
+        assertEquals("failed",result.status);assertEquals(0L,e.snapshot().acknowledged)
+        assertEquals(0L,e.snapshot().preparationDrops);assertEquals(0L,e.snapshot().writerDrops)
+    }
+
+    @Test fun closeRacingLateOpenCannotReviveRecorderSource()=runBlocking {
+        val (session, adapter, binding)=setup()
+        binding.invalidated(CameraCloseReason.USER)
+        val scope=CoroutineScope(SupervisorJob()+Dispatchers.Default)
+        val entered=CountDownLatch(1);val release=CountDownLatch(1)
+        val device=object:CameraDeviceIdentity{override val key="same_device"}
+        val module=object:CameraModule<Unit> {
+            override val metadata=session.hub.identity.module
+            override fun probe(device:CameraDeviceIdentity)=CameraProbeResult.SUPPORTED
+            override suspend fun open(device:CameraDeviceIdentity)=RecordingTestSession(CameraObservationHub(adapter.identity),device)
+        }
+        val owner=CameraSessionOwner(scope,activeChanged={current->
+            if(current!=null){entered.countDown();check(release.await(5,TimeUnit.SECONDS))}
+        },lifetime=binding)
+        try {
+            val opening=owner.open(CameraCandidate(device,module))
+            assertTrue(entered.await(5,TimeUnit.SECONDS))
+            val closing=owner.close();release.countDown();opening.join();closing.join()
+            // The captured module open completed after immediate Close invalidated its epoch.
+            val refused=testEngine(adapter.producer,file())
+            assertFalse(binding.start(refused));assertTrue(refused.awaitStop(10000)!!.finalized)
+            assertEquals(CameraLifecycle.CLOSED,owner.state.value.lifecycle)
+        } finally { release.countDown();scope.cancel() }
+    }
+    @Test fun brokenOptionalLifetimeObserverCannotBlockCameraRelease()=runBlocking {
+        val (session,_,_)=setup();val scope=CoroutineScope(SupervisorJob()+Dispatchers.Default)
+        val device=object:CameraDeviceIdentity{override val key="same_device"}
+        val owned=RecordingTestSession(CameraObservationHub(session.hub.identity),device)
+        val module=object:CameraModule<Unit> {
+            override val metadata=session.hub.identity.module
+            override fun probe(device:CameraDeviceIdentity)=CameraProbeResult.SUPPORTED
+            override suspend fun open(device:CameraDeviceIdentity)=owned
+        }
+        var failures=0
+        val observer=object:CameraSessionLifetime<Unit> {
+            override fun opened(session:CameraSession<Unit>){error("Broken optional observer")}
+            override fun invalidated(reason:CameraCloseReason){error("Broken optional observer")}
+        }
+        val owner=CameraSessionOwner(scope,technicalFailure={failures++},lifetime=observer)
+        try {
+            owner.open(CameraCandidate(device,module)).join()
+            owner.close().join()
+            assertEquals(1,owned.closes);assertEquals(CameraLifecycle.CLOSED,owner.state.value.lifecycle)
+            assertEquals(3,failures)
+        } finally { scope.cancel() }
+    }
+
+}

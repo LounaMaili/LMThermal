@@ -204,3 +204,5 @@ The operator confirmed readiness, responsive recognizable preview, and Close/Ope
 into existing raw14 returning **RAW14_UNSETTLED** without initialization. No Zoom GET
 controlled this run. The separate native-equivalent LUT validity gate remains deferred.
 Host receipt/event timings are not sensor exposure timestamps or physical calibration.
+
+Liveness SHA-256 now consumes the same immutable image byte range directly, avoiding an image-sized temporary copy. Trailer exclusion, held-frame decisions, controls and settling/readiness timing remain unchanged; see [allocation validation](lmtr-r4/LIVE_HEAP.md).

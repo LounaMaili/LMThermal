@@ -93,3 +93,38 @@ This does not open USB or initialize radiometry. Configuration recreation uses t
 ViewModel; locale changes and ordinary background stops release as defined in
 [ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md). `CameraEntryDeviceTest` verifies
 repeat entry on the Pixel without opening the camera.
+
+## Camera-free R4 ART harness
+
+`lmtr-art` is a separate test-only application (min26/compile35), no launcher/USB
+permission/native build. Product `app` remains arm64-v8a. Run its isolated entry point
+without configuring the product NDK/CMake/UVC project:
+
+```bash
+./gradlew -p tools/lmtr-r4-art :lmtr-art:assembleDebug :lmtr-art:assembleDebugAndroidTest
+mkdir -p /tmp/lmtr-art-reports
+bash tools/validate_lmtr_r4_art.sh /tmp/lmtr-art-reports
+```
+
+Use JDK17/SDK35 and an already running **camera-disabled emulator**, not the physical
+phone. The script selects `adb -e`, verifies `ro.kernel.qemu=1`, runs instrumentation
+manually and extracts only synthetic app-owned files for independent Python readback.
+The Gradle connected-test task uninstalls the target and is unsuitable for retaining
+private synthetic outputs. Local reports/binaries stay outside Git.
+
+CI `.github/workflows/lmtr-r4-art.yml` runs only the focused R4 branch: API26 AOSP
+and API35 Google APIs x86_64, pinned emulator action, read-only token, 45-minute job
+bounds and 30-day artifacts. Exact source SHA and device identity are recorded; no
+secrets, pairing, production APK, USB camera or manual prompts are required.
+See [runtime evidence](lmtr-r4/ART_INTEGRATION.md) for actual executed scope/failures.
+
+
+## R4 field-test APK (not a product recorder)
+
+Build `:lmtr-field:assembleDebug :lmtr-field:lintDebug`; the separate package `org.lmthermal.field` reuses arm64 native transport and adds no product dependency. See [field protocol and authorization boundary](lmtr-r4/FIELD_VALIDATION.md). Conditional unattended physical validation is owner-authorized after all safety/permission prerequisites pass; missing prerequisites leave Phase B pending. The dedicated foreground test Activity uses bounded keep-screen-on and read-only safety probes, without changing device settings.
+
+
+Read-only R4 heap-phase sampling and full-size fixture memory probes are documented in
+[lmtr-r4/MEMORY_ADMISSION.md](lmtr-r4/MEMORY_ADMISSION.md); no field/production forced GC or lowered admission factors are used. The separate [camera-free replay probe](lmtr-r4/LIVE_HEAP.md) may request one explicitly diagnostic GC after each measured phase, never for admission.
+
+The field-only PROFILE_PRESENTATION intent profiles an already-ready session without controls/recording, with scoped keep-screen-on and10-s measured windows after3-s transitions. See [protocol, failure and limits](lmtr-r4/PRESENTATION_PERFORMANCE.md); no global screen-lock/security setting or forced GC is used.

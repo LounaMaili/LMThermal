@@ -1,0 +1,69 @@
+{
+  "scope": "R4 camera-free foundation, not complete Android recorder acceptance",
+  "base_main": "8eb4aceaf8bb36a8061c932b3121f898b81b4af3",
+  "normative_commit": "8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f",
+  "canonical_corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+  "platform": "Fedora Linux",
+  "jvm_tests": {
+    "lmtr-contract": {
+      "tests": 71,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-recorder": {
+      "tests": 33,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "core": {
+      "tests": 232,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "python_tests": {
+    "tests": 64,
+    "failures": 0,
+    "skipped": 0
+  },
+  "r4_engine_interop": {
+    "cases": 12,
+    "completed_files": 10,
+    "deterministic_repeat_identical": true,
+    "source_hashes_unchanged": true,
+    "recovered_prefixes": 2
+  },
+  "r3_regression": {
+    "cases_per_reader": 51,
+    "independent_kotlin_rewrites": 33,
+    "canonical_plan_byte_comparisons": 33,
+    "json_vectors": 43,
+    "seek_cases": 44,
+    "hostile_combination_cases": 29,
+    "pinned_original_generator_check": true
+  },
+  "android_build": "assembleDebug passed; recorder not linked into app",
+  "android_lint": "lintDebug passed",
+  "art": {
+    "status": "NOT EXECUTED",
+    "adb_devices": 0,
+    "mdns_endpoints": 0,
+    "sdk_emulator_executable": "absent",
+    "avd_inventory": "directory_absent",
+    "operator_camera_pairing_actions": false
+  },
+  "resources": "configured owned-byte estimates and queue bounds, not measured ART/RSS or wall-time guarantees",
+  "pending": [
+    "camera-free ART packaging/runtime",
+    "module-owned authoritative observation adapter",
+    "lifecycle integration",
+    "matched real HT-301/Pixel8 cadence, preview age, memory and stop/recovery",
+    "actual Android source-byte independent full readback",
+    "recorder Windows portability",
+    "backend durability/export gates"
+  ],
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

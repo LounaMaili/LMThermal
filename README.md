@@ -168,10 +168,8 @@ def get_temp_evn(a, env_term, b):
 
 The [Accepted LMTR v1 wire contract](docs/LMTR_WIRE_V1.md) records explicit owner
 acceptance of `r1b-review-2`, D1–D10 and historical conversion approach B on
-2026-10-13. Wire rules are frozen for R3, while implementation conformance and
-end-user recording release remain unproven. Scoped R2 evidence/history is preserved;
-R1b was integrated through PR #13 and #6 is closed. The isolated [R3 implementation](docs/lmtr-r3/README.md) now provides pure JVM and independent Python contract tools plus synthetic canonical files; #8 remains open for outstanding conformance gates. The [current R3 hardening matrix](docs/lmtr-r3/HARDENING_REVIEW.md) separates contract/platform gates from optional recovery and R4/R6 duties. Production recording/R4/R5 are not implemented
-or authorized here. Accepted LMTX still v1 remains unchanged. The
+2026-10-13. Wire rules are frozen; finite R3 conformance is integrated, while end-user recording remains unreleased. Scoped R2 evidence/history is preserved;
+R1b was integrated through PR #13 and #6 is closed. The isolated [R3 implementation](docs/lmtr-r3/README.md) now provides pure JVM and independent Python contract tools plus synthetic canonical files; #8 is closed after PR #14 integration at `8eb4ace`. The [current R3 hardening matrix](docs/lmtr-r3/HARDENING_REVIEW.md) separates contract/platform gates from optional recovery and R4/R6 duties. The isolated [R4 camera-free foundation](docs/lmtr-r4/README.md) and [test-only ART route](docs/lmtr-r4/ART_INTEGRATION.md) now implement authoritative acquisition callbacks, deferred adapters, guarded lifecycle integration and a bounded asynchronous engine; #9 remains open for physical integration/live acceptance. ART runtime receipts are scoped in the linked integration guide. No recording UI or R5/R6 implementation is included. Accepted LMTX still v1 remains unchanged. The
 [decision history](docs/LMTR_R1B_OWNER_DECISIONS.md), [architecture](docs/COMMON_RECORDING_DESIGN.md)
 and [R1–R7 roadmap](docs/RECORDING_IMPLEMENTATION_PLAN.md) retain review/provenance.
 
@@ -229,3 +227,14 @@ for the original full-payload Android camera test.
 ## Licence
 
 À déterminer.
+
+
+Test-only conditionally owner-authorized field preparation and executable protocol are described in [R4 field validation](docs/lmtr-r4/FIELD_VALIDATION.md). Device visibility alone does not authorize recording. The [conditional physical attempt](docs/lmtr-r4/field-unattended-validation.json) reached ready but refused smoke admission for Java headroom; actual LMTR field acceptance remains pending.
+
+The [R4 memory audit](docs/lmtr-r4/MEMORY_ADMISSION.md) separates occupied Java heap from native/graphics, RSS/PSS and unchanged logical admission; fixture-only memory tests do not establish real recording acceptance.
+
+The [measured R4 memory follow-up](docs/lmtr-r4/memory-admission-validation.json) reproduces insufficient ready-state headroom; actual LMTR smoke/sustained acceptance remains pending.
+
+The [R4 allocation follow-up](docs/lmtr-r4/LIVE_HEAP.md) isolates fixture acquisition/presentation churn and eliminates redundant temporary copies. Physical recorder admission remains unresolved; no new recording feature is exposed.
+
+[Measured R4 presentation optimizations](docs/lmtr-r4/PRESENTATION_PERFORMANCE.md) preserve source/pixel bits and retain the failed exact-selector, partial failed profile and completed corrected Compose evidence. The recorder is still experimental and physical admission remains pending.

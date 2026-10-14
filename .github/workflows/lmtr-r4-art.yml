@@ -1,0 +1,65 @@
+name: LMTR R4 camera-free ART
+on:
+  push:
+    branches: [feat/lmtr-r4-recorder-foundation]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: lmtr-r4-art-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  art:
+    if: github.ref == 'refs/heads/feat/lmtr-r4-recorder-foundation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - api: 26
+            target: default
+          - api: 35
+            target: google_apis
+    env:
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs=-Xmx1536m -Dorg.gradle.workers.max=2 -Dkotlin.daemon.jvm.options=-Xmx768m'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Exact source and KVM preflight
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          mkdir -p "$RUNNER_TEMP/lmtr-art-evidence"
+          git rev-parse HEAD > "$RUNNER_TEMP/lmtr-art-evidence/source-sha.txt"
+      - name: ART instrumentation on camera-disabled emulator
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2
+        with:
+          api-level: ${{ matrix.api }}
+          arch: x86_64
+          target: ${{ matrix.target }}
+          disable-animations: true
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot -camera-back none -camera-front none
+          script: bash tools/validate_lmtr_r4_art.sh "$RUNNER_TEMP/lmtr-art-evidence"
+      - name: Retain exact runtime logs and synthetic readback
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: lmtr-r4-art-api${{ matrix.api }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/lmtr-art-evidence/
+            lmtr-art/build/outputs/androidTest-results/
+            lmtr-art/build/reports/androidTests/
+          retention-days: 30
+          if-no-files-found: warn

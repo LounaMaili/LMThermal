@@ -1,0 +1,4595 @@
+{
+  "status": "retained_exact_optimizations_real_UI_probe_completed_admission_unresolved",
+  "baseline_commit": "e98ce49cd8e899e718a48b45b17092edf1fc99b7",
+  "retained_optimizations": [
+    "one_full_validation_scan_in_render",
+    "explicit_immutable_HT_ROI_computation_generic_copy_fallback",
+    "single_owner_ARGB_transfer_to_copying_Android_Bitmap"
+  ],
+  "exact_selection": {
+    "verdict": "rejected_slower_on_host_and_ART",
+    "source_sha256": "e42807b656a554dfb9e9c0fc04812e33526ae232cbe0e5c360c8a50c9cc9fffb",
+    "host": {
+      "baseline_commit": "e98ce49cd8e899e718a48b45b17092edf1fc99b7",
+      "cases": [
+        {
+          "case": "room/range",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 468376,
+                "p50": 442616,
+                "p95": 443240
+              },
+              "thread_cpu_ns": {
+                "max": 3000314,
+                "p50": 1745403,
+                "p95": 2016980
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 2009148,
+                "p50": 1751739,
+                "p95": 1925839
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 3962811,
+                "p50": 3653303,
+                "p95": 3920410
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 5229919,
+                "p50": 3666678,
+                "p95": 3999306
+              }
+            }
+          ]
+        },
+        {
+          "case": "room/render",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 1769768,
+                "p50": 1769768,
+                "p95": 1769768
+              },
+              "thread_cpu_ns": {
+                "max": 2622090,
+                "p50": 2496502,
+                "p95": 2620849
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 2637194,
+                "p50": 2507175,
+                "p95": 2628424
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 1327464,
+                "p50": 1327464,
+                "p95": 1327464
+              },
+              "thread_cpu_ns": {
+                "max": 4529520,
+                "p50": 4116739,
+                "p95": 4345973
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 4549813,
+                "p50": 4139265,
+                "p95": 4362003
+              }
+            }
+          ]
+        },
+        {
+          "case": "room/roi",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 474283,
+                "p50": 361614,
+                "p95": 447283
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 1193383,
+                "p50": 361698,
+                "p95": 471447
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 368,
+                "p50": 368,
+                "p95": 368
+              },
+              "thread_cpu_ns": {
+                "max": 272366,
+                "p50": 197567,
+                "p95": 259826
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 269509,
+                "p50": 196019,
+                "p95": 257259
+              }
+            }
+          ]
+        },
+        {
+          "case": "random/range",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 6460112,
+                "p50": 5874529,
+                "p95": 6225895
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 6492381,
+                "p50": 5899194,
+                "p95": 6252372
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 7222929,
+                "p50": 6883334,
+                "p95": 7214311
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 7273176,
+                "p50": 6914349,
+                "p95": 7243886
+              }
+            }
+          ]
+        },
+        {
+          "case": "random/render",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 1769768,
+                "p50": 1769768,
+                "p95": 1769768
+              },
+              "thread_cpu_ns": {
+                "max": 6616749,
+                "p50": 6359033,
+                "p95": 6610430
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 6714739,
+                "p50": 6379632,
+                "p95": 6695449
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 1327464,
+                "p50": 1327464,
+                "p95": 1327464
+              },
+              "thread_cpu_ns": {
+                "max": 7542994,
+                "p50": 7323057,
+                "p95": 7479026
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 8258311,
+                "p50": 7350266,
+                "p95": 7569304
+              }
+            }
+          ]
+        },
+        {
+          "case": "random/roi",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 212677,
+                "p50": 155997,
+                "p95": 174937
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 209269,
+                "p50": 154679,
+                "p95": 176729
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 180687,
+                "p50": 158147,
+                "p95": 179157
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 178959,
+                "p50": 156829,
+                "p95": 177829
+              }
+            }
+          ]
+        },
+        {
+          "case": "ordered/range",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 149668,
+                "p50": 141868,
+                "p95": 146618
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 148299,
+                "p50": 141259,
+                "p95": 147559
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 892496,
+                "p50": 892496,
+                "p95": 892496
+              },
+              "thread_cpu_ns": {
+                "max": 9906489,
+                "p50": 5930149,
+                "p95": 6301563
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 9944930,
+                "p50": 5956984,
+                "p95": 6339322
+              }
+            }
+          ]
+        },
+        {
+          "case": "ordered/render",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 1769768,
+                "p50": 1769768,
+                "p95": 1769768
+              },
+              "thread_cpu_ns": {
+                "max": 441903,
+                "p50": 384984,
+                "p95": 430083
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 440397,
+                "p50": 385808,
+                "p95": 428457
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 1777344,
+                "p50": 1777344,
+                "p95": 1777344
+              },
+              "thread_cpu_ns": {
+                "max": 6473421,
+                "p50": 6124097,
+                "p95": 6467461
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 6516401,
+                "p50": 6149373,
+                "p95": 6513751
+              }
+            }
+          ]
+        },
+        {
+          "case": "ordered/roi",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 268606,
+                "p50": 158337,
+                "p95": 222527
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 265638,
+                "p50": 158079,
+                "p95": 219949
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 273575,
+                "p50": 153017,
+                "p95": 233906
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 270639,
+                "p50": 154829,
+                "p95": 231299
+              }
+            }
+          ]
+        },
+        {
+          "case": "plateau/range",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 202607,
+                "p50": 181827,
+                "p95": 201567
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 204339,
+                "p50": 181579,
+                "p95": 203309
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 1476578,
+                "p50": 1368419,
+                "p95": 1448948
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 1485211,
+                "p50": 1380321,
+                "p95": 1462571
+              }
+            }
+          ]
+        },
+        {
+          "case": "plateau/render",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 1769768,
+                "p50": 1769768,
+                "p95": 1769768
+              },
+              "thread_cpu_ns": {
+                "max": 572892,
+                "p50": 434543,
+                "p95": 562921
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 1607640,
+                "p50": 435677,
+                "p95": 580937
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 1327464,
+                "p50": 1327464,
+                "p95": 1327464
+              },
+              "thread_cpu_ns": {
+                "max": 2242916,
+                "p50": 1575816,
+                "p95": 1789233
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 2250127,
+                "p50": 1583620,
+                "p95": 1792599
+              }
+            }
+          ]
+        },
+        {
+          "case": "plateau/roi",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 149769,
+                "p50": 129638,
+                "p95": 135808
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 168209,
+                "p50": 128429,
+                "p95": 140870
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 137858,
+                "p50": 129888,
+                "p95": 135358
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 141899,
+                "p50": 128939,
+                "p95": 137029
+              }
+            }
+          ]
+        }
+      ],
+      "forced_gc": false,
+      "order": "alternating_old_new",
+      "physical": false,
+      "samples_per_version": 32,
+      "scope": "synchronous_same_data_not_USB_Compose_preview_or_live_heap_bound",
+      "warmup_per_version": 8
+    },
+    "pixel": {
+      "baseline_commit": "e98ce49cd8e899e718a48b45b17092edf1fc99b7",
+      "cases": [
+        {
+          "case": "room/range",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "42660576",
+              "art.gc.bytes-freed": "0",
+              "art.gc.gc-count": "0",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "0",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 42660576,
+            "native_allocated_bytes": 7244672
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "13726432",
+              "art.gc.bytes-freed": "0",
+              "art.gc.gc-count": "0",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "0",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 13726432,
+            "native_allocated_bytes": 7244464
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 8990112,
+                "p50": 8932535,
+                "p95": 8983522
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 9029012,
+                "p50": 8965455,
+                "p95": 9023030
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 32671996,
+                "p50": 32609703,
+                "p95": 32658775
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 33281576,
+                "p50": 32718343,
+                "p95": 33011230
+              }
+            }
+          ]
+        },
+        {
+          "case": "room/render",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "168227552",
+              "art.gc.bytes-freed": "44576768",
+              "art.gc.gc-count": "1",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "47",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 123650784,
+            "native_allocated_bytes": 7247264
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "67826400",
+              "art.gc.bytes-freed": "44576768",
+              "art.gc.gc-count": "1",
+              "art.gc.gc-count-rate-histogram": "",
+              "art.gc.gc-time": "47",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 23249632,
+            "native_allocated_bytes": 7243792
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 33105714,
+                "p50": 32218912,
+                "p95": 32457682
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 33716960,
+                "p50": 32369670,
+                "p95": 32922892
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 50604164,
+                "p50": 50000448,
+                "p95": 50450766
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 50881348,
+                "p50": 50195475,
+                "p95": 50748169
+              }
+            }
+          ]
+        },
+        {
+          "case": "room/roi",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "186118880",
+              "art.gc.bytes-freed": "158912512",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "157",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 27206368,
+            "native_allocated_bytes": 7247680
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "171832032",
+              "art.gc.bytes-freed": "158912512",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "157",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 12919520,
+            "native_allocated_bytes": 7247744
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 6992920,
+                "p50": 6917807,
+                "p95": 6979697
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 7314413,
+                "p50": 6954060,
+                "p95": 7057617
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 6728190,
+                "p50": 6638387,
+                "p95": 6700520
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 6738851,
+                "p50": 6654663,
+                "p95": 6738484
+              }
+            }
+          ]
+        },
+        {
+          "case": "random/range",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "225329888",
+              "art.gc.bytes-freed": "158912512",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "157",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 66417376,
+            "native_allocated_bytes": 7252464
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "194331360",
+              "art.gc.bytes-freed": "158912512",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "157",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 35418848,
+            "native_allocated_bytes": 7253088
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 15559164,
+                "p50": 15374715,
+                "p95": 15498494
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 15863729,
+                "p50": 15429851,
+                "p95": 15855428
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 43368246,
+                "p50": 43064492,
+                "p95": 43293128
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 43633138,
+                "p50": 43256429,
+                "p95": 43627482
+              }
+            }
+          ]
+        },
+        {
+          "case": "random/render",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "353452768",
+              "art.gc.bytes-freed": "312573952",
+              "art.gc.gc-count": "3",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "249",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 40878816,
+            "native_allocated_bytes": 7244160
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "250921696",
+              "art.gc.bytes-freed": "158912512",
+              "art.gc.gc-count": "2",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "157",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 92009184,
+            "native_allocated_bytes": 7252352
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 39769085,
+                "p50": 38697877,
+                "p95": 39434286
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 40528198,
+                "p50": 38875123,
+                "p95": 40409587
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 61341880,
+                "p50": 60499755,
+                "p95": 60878257
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 63672119,
+                "p50": 60793864,
+                "p95": 61622681
+              }
+            }
+          ]
+        },
+        {
+          "case": "random/roi",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "389202656",
+              "art.gc.bytes-freed": "312573952",
+              "art.gc.gc-count": "3",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "249",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 76628704,
+            "native_allocated_bytes": 7244160
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "360596192",
+              "art.gc.bytes-freed": "312573952",
+              "art.gc.gc-count": "3",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "249",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 48022240,
+            "native_allocated_bytes": 7244160
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 7028158,
+                "p50": 6943766,
+                "p95": 7014892
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 7063680,
+                "p50": 6968302,
+                "p95": 7062581
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 6913736,
+                "p50": 6846801,
+                "p95": 6906332
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 6951741,
+                "p50": 6877563,
+                "p95": 6947347
+              }
+            }
+          ]
+        },
+        {
+          "case": "ordered/range",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "443593440",
+              "art.gc.bytes-freed": "312573952",
+              "art.gc.gc-count": "3",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "249",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 131019488,
+            "native_allocated_bytes": 7249376
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:1",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "400437984",
+              "art.gc.bytes-freed": "312573952",
+              "art.gc.gc-count": "3",
+              "art.gc.gc-count-rate-histogram": "1:1",
+              "art.gc.gc-time": "249",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 87864032,
+            "native_allocated_bytes": 7249376
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 6524413,
+                "p50": 6464356,
+                "p95": 6515667
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 6545329,
+                "p50": 6487223,
+                "p95": 6545166
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 59407146,
+                "p50": 58851519,
+                "p95": 59024820
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 59872436,
+                "p50": 59107178,
+                "p95": 59763387
+              }
+            }
+          ]
+        },
+        {
+          "case": "ordered/render",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "586994400",
+              "art.gc.bytes-freed": "540061696",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "1:1,2:1",
+              "art.gc.gc-time": "386",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 46932704,
+            "native_allocated_bytes": 7244352
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "472306400",
+              "art.gc.bytes-freed": "450490368",
+              "art.gc.gc-count": "4",
+              "art.gc.gc-count-rate-histogram": "1:1,2:1",
+              "art.gc.gc-time": "277",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 21816032,
+            "native_allocated_bytes": 7247712
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 30262940,
+                "p50": 29900271,
+                "p95": 30163083
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 31222209,
+                "p50": 30011515,
+                "p95": 31154582
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 76991742,
+                "p50": 76542397,
+                "p95": 76913570
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 78877971,
+                "p50": 77006348,
+                "p95": 77734009
+              }
+            }
+          ]
+        },
+        {
+          "case": "ordered/roi",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "622711520",
+              "art.gc.bytes-freed": "540061696",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "1:1,2:1",
+              "art.gc.gc-time": "386",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 82649824,
+            "native_allocated_bytes": 7244480
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "594137824",
+              "art.gc.bytes-freed": "540061696",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "1:1,2:1",
+              "art.gc.gc-time": "386",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 54076128,
+            "native_allocated_bytes": 7244352
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 6974569,
+                "p50": 6917725,
+                "p95": 6968629
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 7037028,
+                "p50": 6940226,
+                "p95": 7002808
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 6889608,
+                "p50": 6830689,
+                "p95": 6878013
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 8184448,
+                "p50": 6866903,
+                "p95": 7374552
+              }
+            }
+          ]
+        },
+        {
+          "case": "plateau/range",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "658907872",
+              "art.gc.bytes-freed": "540061696",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "1:1,2:1",
+              "art.gc.gc-time": "386",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 118846176,
+            "native_allocated_bytes": 7249568
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "630301408",
+              "art.gc.bytes-freed": "540061696",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "1:1,2:1",
+              "art.gc.gc-time": "386",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 90239712,
+            "native_allocated_bytes": 7249568
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 9499795,
+                "p50": 9337607,
+                "p95": 9462077
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 9788982,
+                "p50": 9377604,
+                "p95": 9609822
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 49545614,
+                "p50": 45617760,
+                "p95": 45834998
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 53661825,
+                "p50": 45819946,
+                "p95": 46417399
+              }
+            }
+          ]
+        },
+        {
+          "case": "plateau/render",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:3",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "783983328",
+              "art.gc.bytes-freed": "684933120",
+              "art.gc.gc-count": "6",
+              "art.gc.gc-count-rate-histogram": "1:1,2:2",
+              "art.gc.gc-time": "498",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 99050208,
+            "native_allocated_bytes": 7247744
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:2",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "683909856",
+              "art.gc.bytes-freed": "540061696",
+              "art.gc.gc-count": "5",
+              "art.gc.gc-count-rate-histogram": "1:1,2:1",
+              "art.gc.gc-time": "386",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 143848160,
+            "native_allocated_bytes": 7249568
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 33258789,
+                "p50": 32773763,
+                "p95": 33191043
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 33403036,
+                "p50": 32920084,
+                "p95": 33364217
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 63698162,
+                "p50": 63070310,
+                "p95": 63680990
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 64658814,
+                "p50": 63358846,
+                "p95": 64638469
+              }
+            }
+          ]
+        },
+        {
+          "case": "plateau/roi",
+          "parity": true,
+          "platform_after": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:3",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "819700448",
+              "art.gc.bytes-freed": "684933120",
+              "art.gc.gc-count": "6",
+              "art.gc.gc-count-rate-histogram": "1:1,2:2",
+              "art.gc.gc-time": "498",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 134767328,
+            "native_allocated_bytes": 7247744
+          },
+          "platform_before": {
+            "gc": {
+              "art.gc.blocking-gc-count": "0",
+              "art.gc.blocking-gc-count-rate-histogram": "0:3",
+              "art.gc.blocking-gc-time": "0",
+              "art.gc.bytes-allocated": "791126752",
+              "art.gc.bytes-freed": "684933120",
+              "art.gc.gc-count": "6",
+              "art.gc.gc-count-rate-histogram": "1:1,2:2",
+              "art.gc.gc-time": "498",
+              "art.gc.objects-allocated": null,
+              "art.gc.pre-oome-gc-count": null,
+              "art.gc.total-time-waiting-for-gc": null
+            },
+            "java_occupied_bytes": 106193632,
+            "native_allocated_bytes": 7247744
+          },
+          "versions": [
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 6990072,
+                "p50": 6893797,
+                "p95": 6958576
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 7093425,
+                "p50": 6914591,
+                "p95": 7004313
+              }
+            },
+            {
+              "allocated_bytes": null,
+              "thread_cpu_ns": {
+                "max": 6894205,
+                "p50": 6806804,
+                "p95": 6884237
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 7237223,
+                "p50": 6838460,
+                "p95": 6923868
+              }
+            }
+          ]
+        }
+      ],
+      "forced_gc": false,
+      "order": "alternating_old_new",
+      "physical": false,
+      "samples_per_version": 32,
+      "scope": "synchronous_same_data_not_USB_Compose_preview_or_live_heap_bound",
+      "warmup_per_version": 8
+    }
+  },
+  "accepted_costs": {
+    "host": {
+      "baseline_commit": "e98ce49cd8e899e718a48b45b17092edf1fc99b7",
+      "cases": [
+        {
+          "case": "room/range",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 468376,
+                "p50": 442616,
+                "p95": 443240
+              },
+              "thread_cpu_ns": {
+                "max": 3057693,
+                "p50": 1750603,
+                "p95": 1982020
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 1985598,
+                "p50": 1756279,
+                "p95": 1971608
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 1964111,
+                "p50": 1742713,
+                "p95": 1958620
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 3264781,
+                "p50": 1749449,
+                "p95": 1980348
+              }
+            }
+          ]
+        },
+        {
+          "case": "room/render",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 1769768,
+                "p50": 1769768,
+                "p95": 1769768
+              },
+              "thread_cpu_ns": {
+                "max": 2744388,
+                "p50": 2525761,
+                "p95": 2729058
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 2771854,
+                "p50": 2531885,
+                "p95": 2738413
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 1327464,
+                "p50": 1327464,
+                "p95": 1327464
+              },
+              "thread_cpu_ns": {
+                "max": 2530091,
+                "p50": 2317004,
+                "p95": 2503741
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 2556354,
+                "p50": 2325656,
+                "p95": 2537215
+              }
+            }
+          ]
+        },
+        {
+          "case": "room/roi",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 509963,
+                "p50": 363865,
+                "p95": 456903
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 1540321,
+                "p50": 368038,
+                "p95": 504197
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 368,
+                "p50": 368,
+                "p95": 368
+              },
+              "thread_cpu_ns": {
+                "max": 254806,
+                "p50": 196227,
+                "p95": 208597
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 258999,
+                "p50": 195629,
+                "p95": 215129
+              }
+            }
+          ]
+        },
+        {
+          "case": "random/range",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 6179425,
+                "p50": 5887910,
+                "p95": 5997408
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 6224493,
+                "p50": 5910624,
+                "p95": 6018814
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 6034747,
+                "p50": 5881620,
+                "p95": 5953908
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 6126903,
+                "p50": 5904865,
+                "p95": 6018004
+              }
+            }
+          ]
+        },
+        {
+          "case": "random/render",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 1769768,
+                "p50": 1769768,
+                "p95": 1769768
+              },
+              "thread_cpu_ns": {
+                "max": 6619150,
+                "p50": 6227525,
+                "p95": 6578949
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 6688170,
+                "p50": 6258442,
+                "p95": 6675150
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 1327464,
+                "p50": 1327464,
+                "p95": 1327464
+              },
+              "thread_cpu_ns": {
+                "max": 6820366,
+                "p50": 6135227,
+                "p95": 6551140
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 7824533,
+                "p50": 6160743,
+                "p95": 6586620
+              }
+            }
+          ]
+        },
+        {
+          "case": "random/roi",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 176257,
+                "p50": 135888,
+                "p95": 166587
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 174939,
+                "p50": 134809,
+                "p95": 165279
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 168678,
+                "p50": 136138,
+                "p95": 164287
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 173189,
+                "p50": 136330,
+                "p95": 162709
+              }
+            }
+          ]
+        },
+        {
+          "case": "ordered/range",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 273416,
+                "p50": 181777,
+                "p95": 273285
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 278809,
+                "p50": 180139,
+                "p95": 271898
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 264406,
+                "p50": 180987,
+                "p95": 262586
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 262969,
+                "p50": 179749,
+                "p95": 261278
+              }
+            }
+          ]
+        },
+        {
+          "case": "ordered/render",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 1769768,
+                "p50": 1769768,
+                "p95": 1769768
+              },
+              "thread_cpu_ns": {
+                "max": 496002,
+                "p50": 390784,
+                "p95": 439443
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 494397,
+                "p50": 391748,
+                "p95": 444127
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 1327464,
+                "p50": 1327464,
+                "p95": 1327464
+              },
+              "thread_cpu_ns": {
+                "max": 407854,
+                "p50": 340235,
+                "p95": 403993
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 1641731,
+                "p50": 341148,
+                "p95": 411778
+              }
+            }
+          ]
+        },
+        {
+          "case": "ordered/roi",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 171448,
+                "p50": 146467,
+                "p95": 162578
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 170179,
+                "p50": 145189,
+                "p95": 161269
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 152118,
+                "p50": 146317,
+                "p95": 150918
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 165839,
+                "p50": 145709,
+                "p95": 155839
+              }
+            }
+          ]
+        },
+        {
+          "case": "plateau/range",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 380295,
+                "p50": 194297,
+                "p95": 375684
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 384067,
+                "p50": 192959,
+                "p95": 380548
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442616,
+                "p50": 442616,
+                "p95": 442616
+              },
+              "thread_cpu_ns": {
+                "max": 386004,
+                "p50": 196127,
+                "p95": 379704
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 384697,
+                "p50": 195319,
+                "p95": 378298
+              }
+            }
+          ]
+        },
+        {
+          "case": "plateau/render",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 1769768,
+                "p50": 1769768,
+                "p95": 1769768
+              },
+              "thread_cpu_ns": {
+                "max": 600721,
+                "p50": 432933,
+                "p95": 494042
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 603516,
+                "p50": 431817,
+                "p95": 503587
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 1327464,
+                "p50": 1327464,
+                "p95": 1327464
+              },
+              "thread_cpu_ns": {
+                "max": 533022,
+                "p50": 378054,
+                "p95": 406324
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 1544671,
+                "p50": 380528,
+                "p95": 406778
+              }
+            }
+          ]
+        },
+        {
+          "case": "plateau/roi",
+          "parity": true,
+          "platform_after": {},
+          "platform_before": {},
+          "versions": [
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 171937,
+                "p50": 134078,
+                "p95": 157438
+              },
+              "version": "baseline",
+              "wall_ns": {
+                "max": 170709,
+                "p50": 132669,
+                "p95": 156749
+              }
+            },
+            {
+              "allocated_bytes": {
+                "max": 442728,
+                "p50": 442728,
+                "p95": 442728
+              },
+              "thread_cpu_ns": {
+                "max": 152098,
+                "p50": 133468,
+                "p95": 150478
+              },
+              "version": "candidate",
+              "wall_ns": {
+                "max": 150860,
+                "p50": 132179,
+                "p95": 149139
+              }
+            }
+          ]
+        }
+      ],
+      "forced_gc": false,
+      "order": "alternating_old_new",
+      "physical": false,
+      "samples_per_version": 32,
+      "scope": "synchronous_same_data_not_USB_Compose_preview_or_live_heap_bound",
+      "warmup_per_version": 8
+    },
+    "pixel_runs": [
+      {
+        "baseline_commit": "e98ce49cd8e899e718a48b45b17092edf1fc99b7",
+        "cases": [
+          {
+            "case": "room/range",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "42947296",
+                "art.gc.bytes-freed": "0",
+                "art.gc.gc-count": "0",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "0",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 42947296,
+              "native_allocated_bytes": 7244928
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "13816544",
+                "art.gc.bytes-freed": "0",
+                "art.gc.gc-count": "0",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "0",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 13816544,
+              "native_allocated_bytes": 7248880
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 9073159,
+                  "p50": 8927409,
+                  "p95": 9052571
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 9207968,
+                  "p50": 8972209,
+                  "p95": 9161377
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 9135458,
+                  "p50": 8973713,
+                  "p95": 9108521
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 9199096,
+                  "p50": 9026774,
+                  "p95": 9147543
+                }
+              }
+            ]
+          },
+          {
+            "case": "room/render",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "168743648",
+                "art.gc.bytes-freed": "54747136",
+                "art.gc.gc-count": "1",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "96",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 113996512,
+              "native_allocated_bytes": 7243632
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "68178656",
+                "art.gc.bytes-freed": "54747136",
+                "art.gc.gc-count": "1",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "96",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 13431520,
+              "native_allocated_bytes": 7243696
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 32762574,
+                  "p50": 32261027,
+                  "p95": 32506877
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 32913900,
+                  "p50": 32367432,
+                  "p95": 32663045
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 26888915,
+                  "p50": 26364297,
+                  "p95": 26754598
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 27167277,
+                  "p50": 26476034,
+                  "p95": 26995850
+                }
+              }
+            ]
+          },
+          {
+            "case": "room/roi",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "186602208",
+                "art.gc.bytes-freed": "54747136",
+                "art.gc.gc-count": "1",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "96",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 131855072,
+              "native_allocated_bytes": 7244272
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "172315360",
+                "art.gc.bytes-freed": "54747136",
+                "art.gc.gc-count": "1",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "96",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 117568224,
+              "native_allocated_bytes": 7244272
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6906127,
+                  "p50": 6832844,
+                  "p95": 6901285
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 7224203,
+                  "p50": 6855347,
+                  "p95": 7115519
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6727540,
+                  "p50": 6668294,
+                  "p95": 6716309
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 6778646,
+                  "p50": 6691122,
+                  "p95": 6755901
+                }
+              }
+            ]
+          },
+          {
+            "case": "random/range",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "227418848",
+                "art.gc.bytes-freed": "54747136",
+                "art.gc.gc-count": "1",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "96",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 172671712,
+              "native_allocated_bytes": 7249600
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "195142368",
+                "art.gc.bytes-freed": "54747136",
+                "art.gc.gc-count": "1",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "96",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 140395232,
+              "native_allocated_bytes": 7249600
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 15358519,
+                  "p50": 15176310,
+                  "p95": 15351399
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 15446126,
+                  "p50": 15231201,
+                  "p95": 15435140
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 15428630,
+                  "p50": 15262248,
+                  "p95": 15428509
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 15645793,
+                  "p50": 15328207,
+                  "p95": 15515869
+                }
+              }
+            ]
+          },
+          {
+            "case": "random/render",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "357147360",
+                "art.gc.bytes-freed": "220966912",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "218",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 136180448,
+              "native_allocated_bytes": 7247424
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "253436640",
+                "art.gc.bytes-freed": "220966912",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "218",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 32469728,
+              "native_allocated_bytes": 7248032
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 39034016,
+                  "p50": 38671754,
+                  "p95": 38916748
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 39499674,
+                  "p50": 38837565,
+                  "p95": 39314820
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 33250285,
+                  "p50": 32751954,
+                  "p95": 33197187
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 33417846,
+                  "p50": 32895711,
+                  "p95": 33361368
+                }
+              }
+            ]
+          },
+          {
+            "case": "random/roi",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "392897248",
+                "art.gc.bytes-freed": "220966912",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "218",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 171930336,
+              "native_allocated_bytes": 7247424
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "364323552",
+                "art.gc.bytes-freed": "220966912",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "218",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 143356640,
+              "native_allocated_bytes": 7247424
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6914837,
+                  "p50": 6835245,
+                  "p95": 6907755
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 6968994,
+                  "p50": 6859782,
+                  "p95": 6948079
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6856932,
+                  "p50": 6805380,
+                  "p95": 6856364
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 6910686,
+                  "p50": 6832967,
+                  "p95": 6904012
+                }
+              }
+            ]
+          },
+          {
+            "case": "ordered/range",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "429060832",
+                "art.gc.bytes-freed": "220966912",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "218",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 208093920,
+              "native_allocated_bytes": 7252336
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "400487136",
+                "art.gc.bytes-freed": "220966912",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "218",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 179520224,
+              "native_allocated_bytes": 7252448
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6597332,
+                  "p50": 6511109,
+                  "p95": 6578655
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 6861613,
+                  "p50": 6529704,
+                  "p95": 6794556
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6649089,
+                  "p50": 6569988,
+                  "p95": 6628703
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 6873128,
+                  "p50": 6600912,
+                  "p95": 6777913
+                }
+              }
+            ]
+          },
+          {
+            "case": "ordered/render",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "554201824",
+                "art.gc.bytes-freed": "458698752",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "0:1,2:1",
+                "art.gc.gc-time": "272",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 95503072,
+              "native_allocated_bytes": 7244272
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "454062816",
+                "art.gc.bytes-freed": "220966912",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "0:1",
+                "art.gc.gc-time": "218",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 233095904,
+              "native_allocated_bytes": 7252336
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 32637205,
+                  "p50": 29897952,
+                  "p95": 30192909
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 33541382,
+                  "p50": 30044963,
+                  "p95": 30939576
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 24460042,
+                  "p50": 24054608,
+                  "p95": 24312664
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 24575236,
+                  "p50": 24190389,
+                  "p95": 24423951
+                }
+              }
+            ]
+          },
+          {
+            "case": "ordered/roi",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "589918944",
+                "art.gc.bytes-freed": "458698752",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "0:1,2:1",
+                "art.gc.gc-time": "272",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 131220192,
+              "native_allocated_bytes": 7244336
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "561345248",
+                "art.gc.bytes-freed": "458698752",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "0:1,2:1",
+                "art.gc.gc-time": "272",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 102646496,
+              "native_allocated_bytes": 7244272
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6885579,
+                  "p50": 6827025,
+                  "p95": 6874593
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 6909139,
+                  "p50": 6849446,
+                  "p95": 6907267
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6842531,
+                  "p50": 6786051,
+                  "p95": 6824137
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 6871582,
+                  "p50": 6810831,
+                  "p95": 6851604
+                }
+              }
+            ]
+          },
+          {
+            "case": "plateau/range",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "626180832",
+                "art.gc.bytes-freed": "610177024",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "0:1,2:1",
+                "art.gc.gc-time": "393",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 16003808,
+              "native_allocated_bytes": 7247840
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "597508832",
+                "art.gc.bytes-freed": "458698752",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "0:1,2:1",
+                "art.gc.gc-time": "272",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 138810080,
+              "native_allocated_bytes": 7249424
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 9564086,
+                  "p50": 9381633,
+                  "p95": 9444375
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 9675903,
+                  "p50": 9414633,
+                  "p95": 9505940
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 11116659,
+                  "p50": 9471273,
+                  "p95": 9846639
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 12769450,
+                  "p50": 9505208,
+                  "p95": 11110271
+                }
+              }
+            ]
+          },
+          {
+            "case": "plateau/render",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "751190752",
+                "art.gc.bytes-freed": "610177024",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "0:1,2:1",
+                "art.gc.gc-time": "393",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 141013728,
+              "native_allocated_bytes": 7247552
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "651182816",
+                "art.gc.bytes-freed": "610177024",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "0:1,2:1",
+                "art.gc.gc-time": "393",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 41005792,
+              "native_allocated_bytes": 7247776
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 33046467,
+                  "p50": 32803018,
+                  "p95": 33042561
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 33962321,
+                  "p50": 32943969,
+                  "p95": 33224894
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 27415204,
+                  "p50": 26862750,
+                  "p95": 27313721
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 27698039,
+                  "p50": 26968547,
+                  "p95": 27476766
+                }
+              }
+            ]
+          },
+          {
+            "case": "plateau/roi",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "786940640",
+                "art.gc.bytes-freed": "610177024",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "0:1,2:1",
+                "art.gc.gc-time": "393",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 176763616,
+              "native_allocated_bytes": 7247552
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "758334176",
+                "art.gc.bytes-freed": "610177024",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "0:1,2:1",
+                "art.gc.gc-time": "393",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 148157152,
+              "native_allocated_bytes": 7247552
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6870848,
+                  "p50": 6801064,
+                  "p95": 6841390
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 7349040,
+                  "p50": 6827433,
+                  "p95": 7163412
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6805216,
+                  "p50": 6772300,
+                  "p95": 6797731
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 6858765,
+                  "p50": 6795329,
+                  "p95": 6858032
+                }
+              }
+            ]
+          }
+        ],
+        "forced_gc": false,
+        "order": "alternating_old_new",
+        "physical": false,
+        "samples_per_version": 32,
+        "scope": "synchronous_same_data_not_USB_Compose_preview_or_live_heap_bound",
+        "warmup_per_version": 8
+      },
+      {
+        "baseline_commit": "e98ce49cd8e899e718a48b45b17092edf1fc99b7",
+        "cases": [
+          {
+            "case": "room/range",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "43012832",
+                "art.gc.bytes-freed": "0",
+                "art.gc.gc-count": "0",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "0",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 43012832,
+              "native_allocated_bytes": 7241760
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "13882080",
+                "art.gc.bytes-freed": "0",
+                "art.gc.gc-count": "0",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "0",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 13882080,
+              "native_allocated_bytes": 7241536
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 9051961,
+                  "p50": 8982055,
+                  "p95": 9035033
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 9400106,
+                  "p50": 9014282,
+                  "p95": 9079183
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 9071980,
+                  "p50": 9042115,
+                  "p95": 9071694
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 9130290,
+                  "p50": 9077311,
+                  "p95": 9127360
+                }
+              }
+            ]
+          },
+          {
+            "case": "room/render",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "168874720",
+                "art.gc.bytes-freed": "139767808",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "133",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 29106912,
+              "native_allocated_bytes": 7247552
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "68244192",
+                "art.gc.bytes-freed": "43601920",
+                "art.gc.gc-count": "1",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "24",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 24642272,
+              "native_allocated_bytes": 7244160
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 35071409,
+                  "p50": 32302410,
+                  "p95": 32669108
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 35726725,
+                  "p50": 32450765,
+                  "p95": 33316487
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 28312949,
+                  "p50": 26410927,
+                  "p95": 27132482
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 31843140,
+                  "p50": 26505167,
+                  "p95": 28808919
+                }
+              }
+            ]
+          },
+          {
+            "case": "room/roi",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "186766048",
+                "art.gc.bytes-freed": "139767808",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "133",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 46998240,
+              "native_allocated_bytes": 7248192
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "172446432",
+                "art.gc.bytes-freed": "139767808",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "133",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 32678624,
+              "native_allocated_bytes": 7248192
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6988525,
+                  "p50": 6860433,
+                  "p95": 6942260
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 7000895,
+                  "p50": 6886394,
+                  "p95": 6990316
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6689087,
+                  "p50": 6628254,
+                  "p95": 6683920
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 7117675,
+                  "p50": 6654826,
+                  "p95": 6719727
+                }
+              }
+            ]
+          },
+          {
+            "case": "random/range",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "227582688",
+                "art.gc.bytes-freed": "139767808",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "133",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 87814880,
+              "native_allocated_bytes": 7253456
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "195273440",
+                "art.gc.bytes-freed": "139767808",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "133",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 55505632,
+              "native_allocated_bytes": 7253456
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 15700722,
+                  "p50": 15476686,
+                  "p95": 15667033
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 16084269,
+                  "p50": 15540283,
+                  "p95": 15789226
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 15859296,
+                  "p50": 15556722,
+                  "p95": 15769205
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 15944661,
+                  "p50": 15618652,
+                  "p95": 15838257
+                }
+              }
+            ]
+          },
+          {
+            "case": "random/render",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "357311200",
+                "art.gc.bytes-freed": "331276288",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "261",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 26034912,
+              "native_allocated_bytes": 7244848
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "253502176",
+                "art.gc.bytes-freed": "139767808",
+                "art.gc.gc-count": "2",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "133",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 113734368,
+              "native_allocated_bytes": 7253392
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 40323851,
+                  "p50": 38911418,
+                  "p95": 39439290
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 41043172,
+                  "p50": 39071533,
+                  "p95": 40362224
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 33668173,
+                  "p50": 32995975,
+                  "p95": 33552818
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 33849487,
+                  "p50": 33156901,
+                  "p95": 33778849
+                }
+              }
+            ]
+          },
+          {
+            "case": "random/roi",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "393061088",
+                "art.gc.bytes-freed": "331276288",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "261",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 61784800,
+              "native_allocated_bytes": 7244784
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "364454624",
+                "art.gc.bytes-freed": "331276288",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "261",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 33178336,
+              "native_allocated_bytes": 7244848
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6956583,
+                  "p50": 6858927,
+                  "p95": 6945964
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 7011434,
+                  "p50": 6882691,
+                  "p95": 6976888
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 7955811,
+                  "p50": 6861247,
+                  "p95": 6937825
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 8729207,
+                  "p50": 6886963,
+                  "p95": 6978231
+                }
+              }
+            ]
+          },
+          {
+            "case": "ordered/range",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "429224672",
+                "art.gc.bytes-freed": "331276288",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "261",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 97948384,
+              "native_allocated_bytes": 7249760
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "400650976",
+                "art.gc.bytes-freed": "331276288",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "261",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 69374688,
+              "native_allocated_bytes": 7249872
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6714437,
+                  "p50": 6599446,
+                  "p95": 6699301
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 7016398,
+                  "p50": 6628337,
+                  "p95": 6861613
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6787108,
+                  "p50": 6671753,
+                  "p95": 6766154
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 6806315,
+                  "p50": 6702230,
+                  "p95": 6806112
+                }
+              }
+            ]
+          },
+          {
+            "case": "ordered/render",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "554234592",
+                "art.gc.bytes-freed": "331276288",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "261",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 222958304,
+              "native_allocated_bytes": 7249696
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "454226656",
+                "art.gc.bytes-freed": "331276288",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "261",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 122950368,
+              "native_allocated_bytes": 7249760
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 30260983,
+                  "p50": 29780681,
+                  "p95": 30226724
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 30740641,
+                  "p50": 29870483,
+                  "p95": 30343261
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 24305339,
+                  "p50": 23947998,
+                  "p95": 24284142
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 24441366,
+                  "p50": 24046834,
+                  "p95": 24376872
+                }
+              }
+            ]
+          },
+          {
+            "case": "ordered/roi",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "590017248",
+                "art.gc.bytes-freed": "331276288",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "261",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 258740960,
+              "native_allocated_bytes": 7253552
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "561410784",
+                "art.gc.bytes-freed": "331276288",
+                "art.gc.gc-count": "3",
+                "art.gc.gc-count-rate-histogram": "",
+                "art.gc.gc-time": "261",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 230134496,
+              "native_allocated_bytes": 7249696
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 8567831,
+                  "p50": 6900147,
+                  "p95": 7407998
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 9730631,
+                  "p50": 6929240,
+                  "p95": 8251831
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 7290569,
+                  "p50": 6914755,
+                  "p95": 7147625
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 7401652,
+                  "p50": 6934693,
+                  "p95": 7225220
+                }
+              }
+            ]
+          },
+          {
+            "case": "plateau/range",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "626213600",
+                "art.gc.bytes-freed": "575819776",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "3:1",
+                "art.gc.gc-time": "392",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 50393824,
+              "native_allocated_bytes": 7253456
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "597639904",
+                "art.gc.bytes-freed": "575819776",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "3:1",
+                "art.gc.gc-time": "392",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 21820128,
+              "native_allocated_bytes": 7253520
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 9585815,
+                  "p50": 9503419,
+                  "p95": 9547159
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 9885986,
+                  "p50": 9532145,
+                  "p95": 9640747
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 9699504,
+                  "p50": 9610637,
+                  "p95": 9690879
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 9746622,
+                  "p50": 9643962,
+                  "p95": 9744792
+                }
+              }
+            ]
+          },
+          {
+            "case": "plateau/render",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "751223520",
+                "art.gc.bytes-freed": "575819776",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "3:1",
+                "art.gc.gc-time": "392",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 175403744,
+              "native_allocated_bytes": 7253232
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "651215584",
+                "art.gc.bytes-freed": "575819776",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "3:1",
+                "art.gc.gc-time": "392",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 75395808,
+              "native_allocated_bytes": 7253296
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 33135008,
+                  "p50": 32747110,
+                  "p95": 33103396
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 33494467,
+                  "p50": 32862102,
+                  "p95": 33301106
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 27230510,
+                  "p50": 26961263,
+                  "p95": 27189537
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 27361002,
+                  "p50": 27107544,
+                  "p95": 27343710
+                }
+              }
+            ]
+          },
+          {
+            "case": "plateau/roi",
+            "parity": true,
+            "platform_after": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "786973408",
+                "art.gc.bytes-freed": "575819776",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "3:1",
+                "art.gc.gc-time": "392",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 211153632,
+              "native_allocated_bytes": 7253232
+            },
+            "platform_before": {
+              "gc": {
+                "art.gc.blocking-gc-count": "0",
+                "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                "art.gc.blocking-gc-time": "0",
+                "art.gc.bytes-allocated": "758399712",
+                "art.gc.bytes-freed": "575819776",
+                "art.gc.gc-count": "4",
+                "art.gc.gc-count-rate-histogram": "3:1",
+                "art.gc.gc-time": "392",
+                "art.gc.objects-allocated": null,
+                "art.gc.pre-oome-gc-count": null,
+                "art.gc.total-time-waiting-for-gc": null
+              },
+              "java_occupied_bytes": 182579936,
+              "native_allocated_bytes": 7253232
+            },
+            "versions": [
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6903279,
+                  "p50": 6825724,
+                  "p95": 6888632
+                },
+                "version": "baseline",
+                "wall_ns": {
+                  "max": 6974405,
+                  "p50": 6850220,
+                  "p95": 6922078
+                }
+              },
+              {
+                "allocated_bytes": null,
+                "thread_cpu_ns": {
+                  "max": 6878174,
+                  "p50": 6839681,
+                  "p95": 6873454
+                },
+                "version": "candidate",
+                "wall_ns": {
+                  "max": 6904379,
+                  "p50": 6864664,
+                  "p95": 6892863
+                }
+              }
+            ]
+          }
+        ],
+        "forced_gc": false,
+        "order": "alternating_old_new",
+        "physical": false,
+        "samples_per_version": 32,
+        "scope": "synchronous_same_data_not_USB_Compose_preview_or_live_heap_bound",
+        "warmup_per_version": 8
+      }
+    ],
+    "scope": "paired_test_reference_operations_not_live_product_FPS",
+    "overhead": "counter_reads_and_reference_object_overhead_not_subtracted"
+  },
+  "physical": {
+    "camera": "HT-301",
+    "device": "Pixel 8",
+    "api": 37,
+    "authorized_scene_verified": true,
+    "initial_mode": "DISPLAY",
+    "explicit_initialization": [
+      "32772",
+      "32800",
+      "32768"
+    ],
+    "recorder_started": false,
+    "forced_gc": false,
+    "locked_window": {
+      "samples": 10,
+      "publication_per_second": 24.798681005484973,
+      "started_per_second": 25.008839319090775,
+      "counters_last": {
+        "events": {
+          "completed": 240,
+          "published": 239,
+          "rejected_after": 1,
+          "request": 240,
+          "started": 240
+        },
+        "observed_alive_weak_owners": 31,
+        "observed_weak_owners": 128,
+        "reachability_scope": "sampled_HT_measurements_else_wrappers_not_entire_heap_no_forced_GC",
+        "render_wall_ns": {
+          "count": 240,
+          "max_ns": "45874756",
+          "omitted": "0",
+          "p50_ns": "29608073",
+          "p95_ns": "40449219"
+        },
+        "roi_wall_ns": {
+          "count": 0,
+          "max_ns": null,
+          "omitted": "0",
+          "p50_ns": null,
+          "p95_ns": null
+        },
+        "weak_owner_capacity": 128
+      },
+      "occupied_min_bytes": 17105088,
+      "occupied_max_bytes": 162791616,
+      "headroom_min_bytes": 105643840,
+      "scope": "partial_window_before_summary_serialization_failure_no_freshness_distribution"
+    },
+    "health_windows": [
+      {
+        "configuration": "auto_no_roi",
+        "samples": 20,
+        "all_ready": true,
+        "java_max_bytes": 268435456,
+        "occupied_min_bytes": 22286528,
+        "occupied_max_bytes": 197320896,
+        "headroom_min_bytes": 71114560,
+        "headroom_below_110MiB": 7,
+        "GC_count_delta": 1,
+        "scope": "read_only_policy_evaluation_not_actual_recorder_admission"
+      },
+      {
+        "configuration": "auto_large_roi",
+        "samples": 20,
+        "all_ready": true,
+        "java_max_bytes": 268435456,
+        "occupied_min_bytes": 18120896,
+        "occupied_max_bytes": 186364096,
+        "headroom_min_bytes": 82071360,
+        "headroom_below_110MiB": 4,
+        "GC_count_delta": 2,
+        "scope": "read_only_policy_evaluation_not_actual_recorder_admission"
+      }
+    ],
+    "planned_probe_complete": false,
+    "failure": "strict_JSON_rejected_Double_diagnostic_rates_at_first_summary",
+    "failure_fixed": "explicit_finite_BigDecimal_conversion_in_field_only_report",
+    "suppressed_window_executed": false,
+    "source_ownership": {
+      "opens": 1,
+      "releases": 1,
+      "active_owners_after_Close": 0
+    },
+    "followup": "corrected_probe_completed_after_operator_reconnection; retain_first_failure",
+    "corrected_repeat": {
+      "complete": true,
+      "phases": [
+        {
+          "elapsed_ns": "10552398850",
+          "metrics": {
+            "acquisition_thread_cpu_delta_ns": "5693601557",
+            "append_sync": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "body_to_logical_ratio": null,
+            "checkpoint_intervals": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "chunk_body_bytes": "0",
+            "codec_call_wall": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "codec_decoded_bytes": "0",
+            "codec_ratio": null,
+            "codec_stored_bytes": "0",
+            "encode_validation_ns_not_codec_only": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "gate_fps": 25.003245076584463,
+            "held": "0",
+            "intervals": {
+              "count": 263,
+              "max_ns": "45999878",
+              "omitted": "0",
+              "p50_ns": "39949951",
+              "p95_ns": "42480672"
+            },
+            "invalid": "0",
+            "known_source_losses": "0",
+            "limitations": [
+              "finite_samples_not_infinite_memory_bound",
+              "preview_collection_not_display_latency",
+              "encode_includes_hash_validation_codec_call_report_is_separate",
+              "cpu_ticks_need_os_CLK_TCK_no_guessed_scale"
+            ],
+            "logical_retained_bytes": "0",
+            "measurement_gate_wall": {
+              "count": 264,
+              "max_ns": "26584595",
+              "omitted": "0",
+              "p50_ns": "17610148",
+              "p95_ns": "20295451"
+            },
+            "observed_gate_deliveries": "264",
+            "preview_age": {
+              "count": 264,
+              "max_ns": "78730337",
+              "omitted": "0",
+              "p50_ns": "54478388",
+              "p95_ns": "67653759"
+            },
+            "preview_publication_fps": 25.098314449499235,
+            "preview_publications": "264",
+            "recorder_thread_cpu_final_ticks": {},
+            "recorder_thread_cpu_initial_ticks": {},
+            "rss_first_bytes": "434638848",
+            "rss_last_bytes": "377528320",
+            "sample_span_ns": "9487013066",
+            "sampled_memory_peaks": {
+              "java_used_bytes": "165355712",
+              "native_allocated_bytes": "51822752",
+              "pss_bytes": "392104960",
+              "rss_bytes": "450203648"
+            },
+            "samples": "10",
+            "seal_encode_plus_append": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "source_loss_reasons": {},
+            "source_window_closed": false,
+            "unavailable": "0",
+            "unknown_source_loss_signals": "0",
+            "valid": "264"
+          },
+          "phase": "locked_no_roi",
+          "presentation": {
+            "events": {
+              "completed": 264,
+              "published": 264,
+              "request": 264,
+              "started": 264
+            },
+            "observed_alive_weak_owners": 6,
+            "observed_weak_owners": 128,
+            "reachability_scope": "sampled_HT_measurements_else_wrappers_not_entire_heap_no_forced_GC",
+            "render_wall_ns": {
+              "count": 264,
+              "max_ns": "52884521",
+              "omitted": "0",
+              "p50_ns": "30798381",
+              "p95_ns": "40544474"
+            },
+            "roi_wall_ns": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "weak_owner_capacity": 128
+          },
+          "received_delta": "264",
+          "recorder_created": false,
+          "render_suppressed": false,
+          "samples": 10,
+          "java_headroom_min_bytes": 106053440,
+          "occupied_health_max_bytes": 162382016,
+          "headroom_below_110MiB": 1,
+          "gc_count_delta": 4,
+          "art_allocated_bytes_delta": 572563456,
+          "weak_owner_min": 2,
+          "weak_owner_max": 67,
+          "publication_rate_by_phase_elapsed": 25.01800810912298,
+          "source_cadence_method": "gate_receipt_interval_rate_not_serial_replay",
+          "allocation_counter_sample_span_ns": 9487103601,
+          "observed_art_allocation_bytes_per_second": 60351765.94252099
+        },
+        {
+          "elapsed_ns": "10583003016",
+          "metrics": {
+            "acquisition_thread_cpu_delta_ns": "5685082215",
+            "append_sync": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "body_to_logical_ratio": null,
+            "checkpoint_intervals": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "chunk_body_bytes": "0",
+            "codec_call_wall": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "codec_decoded_bytes": "0",
+            "codec_ratio": null,
+            "codec_stored_bytes": "0",
+            "encode_validation_ns_not_codec_only": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "gate_fps": 24.999180819930242,
+            "held": "0",
+            "intervals": {
+              "count": 264,
+              "max_ns": "46558431",
+              "omitted": "0",
+              "p50_ns": "39967611",
+              "p95_ns": "42401896"
+            },
+            "invalid": "0",
+            "known_source_losses": "0",
+            "limitations": [
+              "finite_samples_not_infinite_memory_bound",
+              "preview_collection_not_display_latency",
+              "encode_includes_hash_validation_codec_call_report_is_separate",
+              "cpu_ticks_need_os_CLK_TCK_no_guessed_scale"
+            ],
+            "logical_retained_bytes": "0",
+            "measurement_gate_wall": {
+              "count": 265,
+              "max_ns": "24736857",
+              "omitted": "0",
+              "p50_ns": "17725179",
+              "p95_ns": "20883016"
+            },
+            "observed_gate_deliveries": "265",
+            "preview_age": {
+              "count": 265,
+              "max_ns": "92200196",
+              "omitted": "0",
+              "p50_ns": "58052041",
+              "p95_ns": "70849974"
+            },
+            "preview_publication_fps": 25.0938746866724,
+            "preview_publications": "265",
+            "recorder_thread_cpu_final_ticks": {},
+            "recorder_thread_cpu_initial_ticks": {},
+            "rss_first_bytes": "328290304",
+            "rss_last_bytes": "356028416",
+            "sample_span_ns": "9524606410",
+            "sampled_memory_peaks": {
+              "java_used_bytes": "174911680",
+              "native_allocated_bytes": "48387936",
+              "pss_bytes": "398035968",
+              "rss_bytes": "442089472"
+            },
+            "samples": "10",
+            "seal_encode_plus_append": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "source_loss_reasons": {},
+            "source_window_closed": false,
+            "unavailable": "0",
+            "unknown_source_loss_signals": "0",
+            "valid": "265"
+          },
+          "phase": "auto_no_roi",
+          "presentation": {
+            "events": {
+              "completed": 265,
+              "published": 265,
+              "request": 265,
+              "started": 265
+            },
+            "observed_alive_weak_owners": 55,
+            "observed_weak_owners": 128,
+            "reachability_scope": "sampled_HT_measurements_else_wrappers_not_entire_heap_no_forced_GC",
+            "render_wall_ns": {
+              "count": 265,
+              "max_ns": "57853475",
+              "omitted": "0",
+              "p50_ns": "32164022",
+              "p95_ns": "43476969"
+            },
+            "roi_wall_ns": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "weak_owner_capacity": 128
+          },
+          "received_delta": "265",
+          "recorder_created": false,
+          "render_suppressed": false,
+          "samples": 10,
+          "java_headroom_min_bytes": 97406784,
+          "occupied_health_max_bytes": 171028672,
+          "headroom_below_110MiB": 2,
+          "gc_count_delta": 4,
+          "art_allocated_bytes_delta": 684490752,
+          "weak_owner_min": 2,
+          "weak_owner_max": 56,
+          "publication_rate_by_phase_elapsed": 25.040151609080862,
+          "source_cadence_method": "gate_receipt_interval_rate_not_serial_replay",
+          "allocation_counter_sample_span_ns": 9521622563,
+          "observed_art_allocation_bytes_per_second": 71888036.67348225
+        },
+        {
+          "elapsed_ns": "10517008509",
+          "metrics": {
+            "acquisition_thread_cpu_delta_ns": "5280356670",
+            "append_sync": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "body_to_logical_ratio": null,
+            "checkpoint_intervals": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "chunk_body_bytes": "0",
+            "codec_call_wall": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "codec_decoded_bytes": "0",
+            "codec_ratio": null,
+            "codec_stored_bytes": "0",
+            "encode_validation_ns_not_codec_only": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "gate_fps": 25.005847743955794,
+            "held": "0",
+            "intervals": {
+              "count": 262,
+              "max_ns": "47959351",
+              "omitted": "0",
+              "p50_ns": "40077393",
+              "p95_ns": "42237346"
+            },
+            "invalid": "0",
+            "known_source_losses": "0",
+            "limitations": [
+              "finite_samples_not_infinite_memory_bound",
+              "preview_collection_not_display_latency",
+              "encode_includes_hash_validation_codec_call_report_is_separate",
+              "cpu_ticks_need_os_CLK_TCK_no_guessed_scale"
+            ],
+            "logical_retained_bytes": "0",
+            "measurement_gate_wall": {
+              "count": 263,
+              "max_ns": "27615722",
+              "omitted": "0",
+              "p50_ns": "16611409",
+              "p95_ns": "20790813"
+            },
+            "observed_gate_deliveries": "263",
+            "preview_age": {
+              "count": 263,
+              "max_ns": "88407923",
+              "omitted": "0",
+              "p50_ns": "55318974",
+              "p95_ns": "71370165"
+            },
+            "preview_publication_fps": 25.10128991091746,
+            "preview_publications": "263",
+            "recorder_thread_cpu_final_ticks": {},
+            "recorder_thread_cpu_initial_ticks": {},
+            "rss_first_bytes": "336404480",
+            "rss_last_bytes": "365203456",
+            "sample_span_ns": "9464311854",
+            "sampled_memory_peaks": {
+              "java_used_bytes": "146870464",
+              "native_allocated_bytes": "44080352",
+              "pss_bytes": "365420544",
+              "rss_bytes": "425578496"
+            },
+            "samples": "10",
+            "seal_encode_plus_append": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "source_loss_reasons": {},
+            "source_window_closed": false,
+            "unavailable": "0",
+            "unknown_source_loss_signals": "0",
+            "valid": "263"
+          },
+          "phase": "auto_full_roi",
+          "presentation": {
+            "events": {
+              "completed": 263,
+              "published": 263,
+              "request": 263,
+              "roi_completed": 263,
+              "started": 263
+            },
+            "observed_alive_weak_owners": 56,
+            "observed_weak_owners": 128,
+            "reachability_scope": "sampled_HT_measurements_else_wrappers_not_entire_heap_no_forced_GC",
+            "render_wall_ns": {
+              "count": 263,
+              "max_ns": "50069865",
+              "omitted": "0",
+              "p50_ns": "30883423",
+              "p95_ns": "41700154"
+            },
+            "roi_wall_ns": {
+              "count": 263,
+              "max_ns": "21621053",
+              "omitted": "0",
+              "p50_ns": "7267496",
+              "p95_ns": "15809733"
+            },
+            "weak_owner_capacity": 128
+          },
+          "received_delta": "263",
+          "recorder_created": false,
+          "render_suppressed": false,
+          "samples": 10,
+          "java_headroom_min_bytes": 85151552,
+          "occupied_health_max_bytes": 183283904,
+          "headroom_below_110MiB": 1,
+          "gc_count_delta": 4,
+          "art_allocated_bytes_delta": 685408256,
+          "weak_owner_min": 2,
+          "weak_owner_max": 47,
+          "publication_rate_by_phase_elapsed": 25.00711107868136,
+          "source_cadence_method": "gate_receipt_interval_rate_not_serial_replay",
+          "allocation_counter_sample_span_ns": 9466255051,
+          "observed_art_allocation_bytes_per_second": 72405428.78966637
+        },
+        {
+          "elapsed_ns": "10724121547",
+          "metrics": {
+            "acquisition_thread_cpu_delta_ns": "6923012089",
+            "append_sync": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "body_to_logical_ratio": null,
+            "checkpoint_intervals": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "chunk_body_bytes": "0",
+            "codec_call_wall": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "codec_decoded_bytes": "0",
+            "codec_ratio": null,
+            "codec_stored_bytes": "0",
+            "encode_validation_ns_not_codec_only": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "gate_fps": 24.99982492163809,
+            "held": "0",
+            "intervals": {
+              "count": 267,
+              "max_ns": "50473551",
+              "omitted": "0",
+              "p50_ns": "39961182",
+              "p95_ns": "43226075"
+            },
+            "invalid": "0",
+            "known_source_losses": "0",
+            "limitations": [
+              "finite_samples_not_infinite_memory_bound",
+              "preview_collection_not_display_latency",
+              "encode_includes_hash_validation_codec_call_report_is_separate",
+              "cpu_ticks_need_os_CLK_TCK_no_guessed_scale"
+            ],
+            "logical_retained_bytes": "0",
+            "measurement_gate_wall": {
+              "count": 268,
+              "max_ns": "26698649",
+              "omitted": "0",
+              "p50_ns": "19671020",
+              "p95_ns": "22153483"
+            },
+            "observed_gate_deliveries": "268",
+            "preview_age": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "preview_publication_fps": 0,
+            "preview_publications": "0",
+            "recorder_thread_cpu_final_ticks": {},
+            "recorder_thread_cpu_initial_ticks": {},
+            "rss_first_bytes": "373153792",
+            "rss_last_bytes": "357044224",
+            "sample_span_ns": "9647267664",
+            "sampled_memory_peaks": {
+              "java_used_bytes": "116711616",
+              "native_allocated_bytes": "22729728",
+              "pss_bytes": "316579840",
+              "rss_bytes": "375029760"
+            },
+            "samples": "10",
+            "seal_encode_plus_append": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "source_loss_reasons": {},
+            "source_window_closed": false,
+            "unavailable": "0",
+            "unknown_source_loss_signals": "0",
+            "valid": "268"
+          },
+          "phase": "suppressed",
+          "presentation": {
+            "events": {},
+            "observed_alive_weak_owners": 0,
+            "observed_weak_owners": 0,
+            "reachability_scope": "sampled_HT_measurements_else_wrappers_not_entire_heap_no_forced_GC",
+            "render_wall_ns": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "roi_wall_ns": {
+              "count": 0,
+              "max_ns": null,
+              "omitted": "0",
+              "p50_ns": null,
+              "p95_ns": null
+            },
+            "weak_owner_capacity": 128
+          },
+          "received_delta": "268",
+          "recorder_created": false,
+          "render_suppressed": true,
+          "samples": 10,
+          "java_headroom_min_bytes": 154406720,
+          "occupied_health_max_bytes": 114028736,
+          "headroom_below_110MiB": 0,
+          "gc_count_delta": 3,
+          "art_allocated_bytes_delta": 360751104,
+          "weak_owner_min": 0,
+          "weak_owner_max": 0,
+          "publication_rate_by_phase_elapsed": 0.0,
+          "source_cadence_method": "gate_receipt_interval_rate_not_serial_replay",
+          "allocation_counter_sample_span_ns": 9650005457,
+          "observed_art_allocation_bytes_per_second": 37383512.95317822
+        }
+      ],
+      "forced_gc": false,
+      "recorder_started": false,
+      "source_ownership_after_close": {
+        "opens": 1,
+        "releases": 1,
+        "active_owners": 0
+      },
+      "limitations": [
+        "finite_sequential_windows_not_matched_old_new_live_workflow",
+        "publication_collection_age_not_LCD_or_sensor_latency",
+        "weak_history_only_last128_measurements_not_reachable_live_heap",
+        "health_and_memory_probes_sample_at_different_times",
+        "window_boundary_can_bias_count_over_receipt_span_FPS"
+      ],
+      "apk_sha256": "21e1965f88dd6b223612ab42339b60ce8127f6e7998308fafbbd7a556a42242b"
+    }
+  },
+  "admission": {
+    "changed": false,
+    "estimated_reservation_bytes": 81788928,
+    "safety_margin_bytes": 33554432,
+    "required_java_headroom_bytes": 115343360,
+    "safe_model_established": false,
+    "physical_LMTR_created": false
+  },
+  "tests": {
+    "jvm": 417,
+    "python": 64,
+    "pixel_final_art": 23,
+    "pixel_app_presenter_roi": 13,
+    "report_fix_ART": 3,
+    "API26_API35": {
+      "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/38585293749",
+      "source_commit": "9efdc1f054017ea9e404213b14e28b9184038dee",
+      "verdict": "passed",
+      "attempt1_API35": "SDK image download failed before emulator or test execution; retained separately",
+      "API26": {
+        "tests_passed": 101,
+        "artifact": "lmtr-r4-art-api26-38585293749-1",
+        "readbacks": [
+          {
+            "kind": "python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "3fefbc2e53a883246afdb9776979547cd6935e0fad97539f0a3e3f90734f0e23"
+          },
+          {
+            "kind": "python-source-readback.json",
+            "status": "passed",
+            "receipt_sha256": "84ec24afbd8ef0ee266c74ebf63caab42b4a11fe7f751d7e88a44be08ed70187"
+          },
+          {
+            "kind": "field-analysis.json",
+            "status": "passed",
+            "receipt_sha256": "abb0cd526ed1441d4e8b5e89de3f8f97e5630b39b95abfa2869081f3a4a59d83"
+          },
+          {
+            "kind": "field-native.json",
+            "status": "passed",
+            "receipt_sha256": "d8157ca1db662b3e477a263f6474937dc93a01fec65c8843f7ab2e733fc1177d"
+          },
+          {
+            "kind": "field-full.json",
+            "status": "passed",
+            "receipt_sha256": "ed6ed6ff77b905b7a4c3b19cb51f18fba94e9dd09476f34baeb07ed8402f68fb"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/analysis-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "8071d763d29193b26002b33d20ab01ab6ce660733f99a3a9f4dab543113f91de"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/analysis-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "85f935fda5869e14598ffd75dadfd4b282d211a9b8c36304fdf7963b2637a3cb"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/full-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "50ceb957405fe6e14935190cc354d045d1098c980458491d72c1ad0093559fe4"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/full-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "fc4f60b92d8be1d96f48a656892469bb301c0e7483355af0816282b1e3bc35fe"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/native-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "583277c484e5b17003ecbcfea4e8864c64a20666ba3726dadc16df0ba698d757"
+          },
+          {
+            "kind": "files/r4/memory-55bb612e-5ad6-4c28-9f32-e49a844c9f92/native-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "1efb3185287bce47b0067b7c4ed899195a7b56295d86c2e7314dec56f230fd23"
+          }
+        ],
+        "six_memory_original_owner_readbacks": 6,
+        "instrumentation_sha256": "3f1d3b9130e78e3a49777cef0cf370034b38a48999773a524450c654c435bf7a"
+      },
+      "API35": {
+        "tests_passed": 101,
+        "artifact": "lmtr-r4-art-api35-38585293749-2",
+        "readbacks": [
+          {
+            "kind": "python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "3fefbc2e53a883246afdb9776979547cd6935e0fad97539f0a3e3f90734f0e23"
+          },
+          {
+            "kind": "python-source-readback.json",
+            "status": "passed",
+            "receipt_sha256": "a8f5c7691fdf37ec36792ff2e2e7675e9e2c7de82859c9dbd7524bd625282ea0"
+          },
+          {
+            "kind": "field-analysis.json",
+            "status": "passed",
+            "receipt_sha256": "6a043afc6f760e94c4e6b48a58a239170dcbe625fb4dd2ee27439ac2cea52e76"
+          },
+          {
+            "kind": "field-native.json",
+            "status": "passed",
+            "receipt_sha256": "7340dd41a1dad9a7e8d78aa0ffc0bf8d880cd6b73d372a526d8976bc8a8fa148"
+          },
+          {
+            "kind": "field-full.json",
+            "status": "passed",
+            "receipt_sha256": "e57e304b2f94f9fa3cc425e7bf3bde0b60d14f550cee26eea3ed1ba783e230b7"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/analysis-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "8071d763d29193b26002b33d20ab01ab6ce660733f99a3a9f4dab543113f91de"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/analysis-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "85f935fda5869e14598ffd75dadfd4b282d211a9b8c36304fdf7963b2637a3cb"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/full-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "50ceb957405fe6e14935190cc354d045d1098c980458491d72c1ad0093559fe4"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/full-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "fc4f60b92d8be1d96f48a656892469bb301c0e7483355af0816282b1e3bc35fe"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/native-0/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "583277c484e5b17003ecbcfea4e8864c64a20666ba3726dadc16df0ba698d757"
+          },
+          {
+            "kind": "files/r4/memory-a37b83af-0125-4800-adc8-23bfd0340177/native-1/python-readback.json",
+            "status": "passed",
+            "receipt_sha256": "1efb3185287bce47b0067b7c4ed899195a7b56295d86c2e7314dec56f230fd23"
+          }
+        ],
+        "six_memory_original_owner_readbacks": 6,
+        "instrumentation_sha256": "495e89efc8449e574aa0f991276b292dfd5620cd8e55fb7af06e723fecc6212d"
+      }
+    },
+    "canonical_fixtures": 51,
+    "pixel_unique_current": 37,
+    "pixel_overlap_note": "23 initial field/runtime + 3 report-fix overlap by 2 counter tests = 24 field/runtime; 13 app tests are separate. 37 unique tests, not 39."
+  },
+  "corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+  "source_fixture_artifact_parity": [
+    {
+      "case": "analysis-0",
+      "sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+      "entire_bytes_identical_to_prior": true,
+      "readback": {
+        "status": "passed",
+        "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "2211840",
+        "physical_stored_block_bytes": "2211840",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "analysis-1",
+      "sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+      "entire_bytes_identical_to_prior": true,
+      "readback": {
+        "status": "passed",
+        "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "2211840",
+        "physical_stored_block_bytes": "522651",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "full-0",
+      "sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+      "entire_bytes_identical_to_prior": true,
+      "readback": {
+        "status": "passed",
+        "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 6,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "acquisition": "1345536",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3557376",
+        "physical_stored_block_bytes": "3557376",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "full-1",
+      "sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+      "entire_bytes_identical_to_prior": true,
+      "readback": {
+        "status": "passed",
+        "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 6,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "acquisition": "1345536",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3557376",
+        "physical_stored_block_bytes": "1007761",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "native-0",
+      "sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+      "entire_bytes_identical_to_prior": true,
+      "readback": {
+        "status": "passed",
+        "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3538944",
+        "physical_stored_block_bytes": "3538944",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    },
+    {
+      "case": "native-1",
+      "sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+      "entire_bytes_identical_to_prior": true,
+      "readback": {
+        "status": "passed",
+        "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3538944",
+        "physical_stored_block_bytes": "1005483",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    }
+  ],
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "code_sha256": {
+    "core/src/main/kotlin/org/lmthermal/core/CelsiusPresentation.kt": "7772acef90558face71684a6f7de2dd31b785f10f46d2d95b0faaee7a67c6245",
+    "core/src/main/kotlin/org/lmthermal/core/NativeRoi.kt": "8bca84fd1dbac0a8d825f83a674f49c62ae28cb548570b8c8ef0dc730a4513b6",
+    "core/src/main/kotlin/org/lmthermal/camera/CameraContract.kt": "db863ba43296a18ac9b479ba7647b5aa8a3ff95a475943071a4ff00048274343",
+    "core/src/main/kotlin/org/lmthermal/camera/ht301/Ht301ModuleProfile.kt": "b883fe3ee3b795a26904cfd9970f83a4ff24ce0f57f2f03a6b1b8b84badebaa1",
+    "core/src/main/kotlin/org/lmthermal/core/NativeEquivalentThermometry.kt": "2e69ebd8fc91f0ed8bd79d6b50c924aa27050ae73a390f20909427e3699be16e",
+    "app/src/main/java/org/lmthermal/app/CelsiusPresenter.kt": "f27559fd36b0447fbc7c0713160e5a94568ea99349747f266eca41142f73a5e2",
+    "app/src/main/java/org/lmthermal/app/RoiPresenter.kt": "91e80f8581fa8d5125cd5082024ed779d3c06376d419ee15f87fa97b3eea6046",
+    "lmtr-field/src/main/java/org/lmthermal/field/FieldActivity.kt": "508e75e2a94ef4f240300ceecb11bdee989f72433a342fa1946a48c6d6c44201",
+    "lmtr-field/src/main/java/org/lmthermal/field/FieldMetrics.kt": "a070e291a4cb4d7fbb2a622f12f293cf64d6e40b2b486e5e4b2d55e7cb089c8d",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/PresentationCounters.kt": "b738c4f63858149180f0319447d0f4bd0d070e0793a8a8ceff284c2f8ec8155d",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldMetricNumber.kt": "bf026769d1c29c692af4a5666bc1df44fd7d6a5090f3bbcadbe5a47f1deab72e"
+  },
+  "runtime_checkpoint": "9efdc1f054017ea9e404213b14e28b9184038dee",
+  "physical_apk_audit": {
+    "physical_apk_sha256": "21e1965f88dd6b223612ab42339b60ce8127f6e7998308fafbbd7a556a42242b",
+    "rebuilt_apk_sha256": "2cbd7092109a3efddd619c34e762944607b33b7004add972345d2d7795a251e0",
+    "differing_zip_members": [
+      "classes10.dex",
+      "classes4.dex"
+    ],
+    "dex_methods": {
+      "4": {
+        "methods": 145,
+        "missing": [],
+        "changed": [],
+        "unchanged_count": 145
+      },
+      "10": {
+        "methods": 295,
+        "missing": [],
+        "changed": [
+          "org.lmthermal.field.FieldActivity$onCreate$1$2.invoke:(Landroidx/compose/runtime/Composer;I)V"
+        ],
+        "unchanged_count": 294
+      }
+    },
+    "scope": "Decoded symbolic executable instructions compared excluding debug positions and DEX index/address renumbering; this is not a byte-identical APK claim or a formal semantic equivalence proof. Only the field Compose onCreate UI method differs after rebuild; camera/thermometry/presenter/ROI/profile measurement methods are unchanged. Both actual APK and rebuilt APK retained privately."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "callback_ownership_copy_max_ns": "240290",
+  "callback_ownership_copy_p50_ns": "85081",
+  "callback_ownership_copy_p95_ns": "90880",
+  "ownership_verified": true,
+  "samples": 50,
+  "scope": "synthetic malformed transport wrapper/copy; no parser, thermometry, hash, codec or I/O within timing; not physical camera performance",
+  "synthetic_transport_bytes": 224255
+}

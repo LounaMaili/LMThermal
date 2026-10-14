@@ -1,0 +1,103 @@
+{
+  "status": "passed_host_phase_a",
+  "physical_executed": false,
+  "jvm_tests": 398,
+  "python_contract_tests": 64,
+  "field_python_tests": 8,
+  "art_current_revision": "passed_exact_final_code",
+  "builds": [
+    "app assembleDebug/lintDebug",
+    "lmtr-field assembleDebug/lintDebug",
+    "isolated lmtr-art packaging"
+  ],
+  "field_helpers_jvm_tests": 18,
+  "existing_room_engineering_readbacks": [
+    {
+      "profile": "analysis",
+      "status": "passed",
+      "source_sha256": "980b50d46ec0f98b64c63058b3c6cc9ddd295b4ef31aef9dd10a0009acf56cb4",
+      "oracle_sha256": "a2292062151fdb1664d533972644f076a7c324a469e374b177ae05191d99d7ba",
+      "observations": 3,
+      "unavailable": 1,
+      "same_observation_views": 0,
+      "recovery": false,
+      "integrity_scope": "full",
+      "terminal": "completed",
+      "source_unchanged": true,
+      "retained_role_bytes": {
+        "temperature": "884736"
+      },
+      "physical_decoded_block_bytes": "884736",
+      "physical_stored_block_bytes": "209219",
+      "binary_parity": "pre_transform_original_owner_hashes",
+      "context_parity": "adapter_metadata_cross_check_only",
+      "physical_accuracy": "not_independently_validated",
+      "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+    },
+    {
+      "profile": "native",
+      "status": "passed",
+      "source_sha256": "69d61888c90b733eb623baec8421d3565f9fac220c5b38631d3b93f08dc29f72",
+      "oracle_sha256": "e809dc50282cda0d0f10935b22c18922e90769a1ff2ace699557acb783f00240",
+      "observations": 3,
+      "unavailable": 1,
+      "same_observation_views": 0,
+      "recovery": false,
+      "integrity_scope": "full",
+      "terminal": "completed",
+      "source_unchanged": true,
+      "retained_role_bytes": {
+        "native_samples": "663552",
+        "temperature": "884736"
+      },
+      "physical_decoded_block_bytes": "1548288",
+      "physical_stored_block_bytes": "450725",
+      "binary_parity": "pre_transform_original_owner_hashes",
+      "context_parity": "adapter_metadata_cross_check_only",
+      "physical_accuracy": "not_independently_validated",
+      "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+    },
+    {
+      "profile": "full",
+      "status": "passed",
+      "source_sha256": "0c8bf78105886bdcdb12471b392f5db96a32bc1bb76b847f64fbec2aaff8f42d",
+      "oracle_sha256": "6ca5eef34f5109fb9e1d0ec2ef89883969ecd7a6abcea146971692597253e562",
+      "observations": 3,
+      "unavailable": 1,
+      "same_observation_views": 3,
+      "recovery": false,
+      "integrity_scope": "full",
+      "terminal": "completed",
+      "source_unchanged": true,
+      "retained_role_bytes": {
+        "native_samples": "663552",
+        "acquisition": "672768",
+        "temperature": "884736"
+      },
+      "physical_decoded_block_bytes": "1557504",
+      "physical_stored_block_bytes": "451860",
+      "binary_parity": "pre_transform_original_owner_hashes",
+      "context_parity": "adapter_metadata_cross_check_only",
+      "physical_accuracy": "not_independently_validated",
+      "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+    }
+  ],
+  "canonical_corpus": "51 existing cases unchanged",
+  "wire_changed": false,
+  "pixel_ht_tests": "NOT_EXECUTED; explicit Phase B operator go-ahead required",
+  "metrics_limitations": [
+    "native callback arrival interval distribution unavailable; gate intervals qualified separately",
+    "sampled memory and CPU not infinite bounds",
+    "collection freshness not optical latency"
+  ],
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+  "corpus_runtime_cases_per_reader": 51,
+  "source_and_capture_hashes": "streaming independent original-owner binary parity; actual Pixel gate pending",
+  "art_last_reviewed_code_sha": "f90db853e9eee854eb8c562d09c4f4592c663db5",
+  "art_last_reviewed_run": 38453472955,
+  "art_last_reviewed_tests_per_api": 80,
+  "earlier_failed_art_run": 38450510713,
+  "final_code_sha": "f90db853e9eee854eb8c562d09c4f4592c663db5",
+  "field_apk_sha256": "6e5e3c9e8e5d99decd1519c9ef8eb9bf67e34b4ab4a29ec488ada1b5e64c34d9"
+}

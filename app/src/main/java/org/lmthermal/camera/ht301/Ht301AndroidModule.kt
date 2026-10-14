@@ -27,6 +27,7 @@ class Ht301ModuleSession(private val controller: Ht301CameraController,
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default.limitedParallelism(1))
     init { controller.enterForeground(); controller.connect() }
     override val state = controller.state.map { adapt(it) }.stateIn(scope, SharingStarted.Eagerly, adapt(controller.state.value))
+    override val observations:CameraObservationSource get() = controller.observations
     override val diagnostics: @Composable () -> Unit = { Ht301DiagnosticPanel(controller) }
     override suspend fun perform(action: CameraAction) {
         require(action == CameraAction.INITIALIZE_MEASUREMENT)
