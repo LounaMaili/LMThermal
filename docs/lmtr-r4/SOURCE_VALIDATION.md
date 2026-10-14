@@ -156,4 +156,4 @@ R4 is incomplete; #9 and draft PR #16 stay open.
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
 
-The [operator-gated field harness](FIELD_VALIDATION.md) now explicitly configures Android elapsedRealtimeNanos intake/origin and original source-clock correlation. It prepares independent original-owner byte hashes and private streaming extraction; no real Pixel8/HT-301 acquisition is claimed.
+The [conditionally authorized field harness](FIELD_VALIDATION.md) now explicitly configures Android elapsedRealtimeNanos intake/origin and original source-clock correlation. It prepares independent original-owner byte hashes and private streaming extraction; no real Pixel8/HT-301 acquisition is claimed.

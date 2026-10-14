@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 conditional unattended safety)
+
+- Record owner authorization for bounded unattended physical validation, conditional on existing permission/unlock/scene/device/resource prerequisites. Keep missing prerequisites and actual runs distinct from emulator evidence.
+- Add deterministic test-only resource/cadence safety policy and read-only Android probes; refuse unknown safety facts, stop unhealthy/interrupted runs and retain originals without automatic retry. Keep 4 MiB queues/chunks and existing production camera/thermometry behavior unchanged.
+- Use a 20-second Full smoke and activity-local keep-screen-on only during bounded experiments, clearing it on Stop/failure/background. No pairing, permission bypass, global settings, background service or physical fault injection.
+
 ### Added (R4 final Phase A runtime receipts)
 
 - Record exact field code f90db85 with 398 JVM, 64+8 Python and 80/80 camera-free ART tests per API26/API35. Preserve source-byte parity for 14 engine files, 75 synthetic observations and three existing-room profile readbacks per API, plus the failed API26 scheduling checkpoint. Keep physical Pixel8/HT tests explicitly unexecuted/operator-gated.

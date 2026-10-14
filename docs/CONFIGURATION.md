@@ -121,4 +121,4 @@ See [runtime evidence](lmtr-r4/ART_INTEGRATION.md) for actual executed scope/fai
 
 ## R4 field-test APK (not a product recorder)
 
-Build `:lmtr-field:assembleDebug :lmtr-field:lintDebug`; the separate package `org.lmthermal.field` reuses arm64 native transport and adds no product dependency. See [field protocol and authorization boundary](lmtr-r4/FIELD_VALIDATION.md). No physical install/ADB operation is authorized during camera-free preparation.
+Build `:lmtr-field:assembleDebug :lmtr-field:lintDebug`; the separate package `org.lmthermal.field` reuses arm64 native transport and adds no product dependency. See [field protocol and authorization boundary](lmtr-r4/FIELD_VALIDATION.md). Conditional unattended physical validation is owner-authorized after all safety/permission prerequisites pass; missing prerequisites leave Phase B pending. The dedicated foreground test Activity uses bounded keep-screen-on and read-only safety probes, without changing device settings.

@@ -88,7 +88,7 @@ object FieldPreflightCli {
     @JvmStatic fun main(args:Array<String>) {
         val free=args.firstOrNull()?.takeIf { it!="unknown" }?.toLong()
         println(LmtrJson.encode(mapOf("physical_executed" to false,"plans" to listOf(
-            FieldPreflight(RecordingProfile.FULL,10,free).report())+listOf(RecordingProfile.ANALYSIS,RecordingProfile.NATIVE,RecordingProfile.FULL).map {
+            FieldPreflight(RecordingProfile.FULL,20,free).report())+listOf(RecordingProfile.ANALYSIS,RecordingProfile.NATIVE,RecordingProfile.FULL).map {
             FieldPreflight(it,146,free).report() })).toString(Charsets.UTF_8))
     }
 }

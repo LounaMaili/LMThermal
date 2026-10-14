@@ -239,4 +239,4 @@ SHAs, environment, verdicts and prior failure. These are emulator helper/engine
 tests, not the arm64 field UI or real Pixel/HT performance/lifecycle validation.
 The field APK build/lint and 398 host JVM/64+8 Python gates pass separately.
 This final documentation update does not alter tested code; R4 #9/PR #16 remain
-open/draft, and physical Phase B requires explicit operator go-ahead.
+open/draft, and physical Phase B now has conditional owner authorization; prerequisite checks and actual field receipts remain required.

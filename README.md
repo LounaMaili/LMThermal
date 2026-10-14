@@ -229,4 +229,4 @@ for the original full-payload Android camera test.
 À déterminer.
 
 
-Test-only operator-gated field preparation and executable protocol are described in [R4 field validation](docs/lmtr-r4/FIELD_VALIDATION.md). Physical recording is not authorized by device visibility and remains pending.
+Test-only conditionally owner-authorized field preparation and executable protocol are described in [R4 field validation](docs/lmtr-r4/FIELD_VALIDATION.md). Physical recording is not authorized by device visibility and remains pending.

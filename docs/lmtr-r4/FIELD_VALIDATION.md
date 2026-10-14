@@ -1,6 +1,7 @@
 # R4 isolated physical-field preparation
 
-**Phase A: prepared; physical Pixel 8 / HT-301 execution is NOT authorized or completed.**
+**Phase A: prepared; conditional unattended physical validation is owner-authorized.**
+Real Pixel 8 / HT-301 results must still be recorded separately from host/ART evidence.
 [PR #16](https://github.com/LounaMaili/LMThermal/pull/16) remains draft and
 [R4 #9](https://github.com/LounaMaili/LMThermal/issues/9) remains open. The accepted
 [wire v1](../LMTR_WIRE_V1.md) and 51 pinned canonical fixtures are unchanged.
@@ -18,13 +19,13 @@ Neither change sends controls or changes initialization, parsing or thermometry.
 
 ```bash
 ./gradlew :lmtr-field:assembleDebug :lmtr-field:lintDebug
-# ONLY AFTER explicit operator authorization, through already-paired wireless ADB:
+# After prerequisite checks under the owner authorization, through already-paired wireless ADB:
 adb -s <paired-wireless-serial> install -r lmtr-field/build/outputs/apk/debug/lmtr-field-debug.apk
 adb -s <paired-wireless-serial> shell am start -n org.lmthermal.field/org.lmthermal.field.FieldActivity
 ```
 
 The launcher performs discovery only. **Connect/Open**, USB/camera authorization
-and **Initialize radiometric** remain explicit existing operator actions. Opening,
+and **Initialize radiometric** remain explicit existing actions; the owner authorizes their unattended execution only after all prerequisites pass. Opening,
 Start, Stop, baseline collection and recorder timers never initialize the camera.
 Close other camera apps first; do not run two USB camera applications simultaneously.
 There is no USB-attach auto-launcher, service, destination picker, share route or
@@ -98,7 +99,7 @@ stop/preserve evidence; no compression ratio is promised.
 | Native | 663552 | 17408000 | 2623356928 | 2891792384 |
 | Full | 666624 | 17484800 | 2634569728 | 2903005184 |
 
-The 10-second Full smoke cap is 256,636,928 bytes; required free 525,072,384 bytes.
+The 20-second Full smoke cap is 431,484,928 bytes; required free 699,920,384 bytes.
 Each run has a new UUID directory. Budget/storage/thermal conditions must be checked
 again before each sustained run. Capacity can change after Start. Successful local
 footer sync does not certify physical power-loss durability, directory persistence,
@@ -251,9 +252,38 @@ elapsedRealtime witness test and the same helper regressions/three source-oracle
 readbacks. A built instrumentation APK is not a runtime pass; receipts separately
 identify executed exact-SHA jobs. No physical ADB/Pixel/camera was used in Phase A.
 
-## Operator checklist — explicit Phase B go-ahead required
+## Conditional unattended Phase B authorization
 
-Before any physical install/run, present this checklist and obtain explicit go-ahead:
+The owner explicitly authorized non-destructive unattended validation on 2026-10-14.
+No separate routine go-ahead is required. Before each run verify online paired Pixel 8,
+attached HT-301, existing CAMERA/USB grants, unlocked foreground, explicitly authorized
+non-sensitive scene, battery/storage/thermal health, compatible clocks and admissible
+memory. Missing prerequisites mean skip physical work and continue Phase A; never pair,
+bypass a lock, synthesize a permission grant or wait indefinitely for the owner.
+
+The owner may grant normal permissions before becoming unavailable. Installation is not
+a permission grant; the owner confirmed normal Connect/permissions and the authorized
+scene for this session. The actual execution receipt remains the authority for results.
+
+The dedicated Activity applies `FLAG_KEEP_SCREEN_ON` only while a bounded test runs,
+clears it on Stop/refusal/finalization/disposal/onStop, and changes no device setting.
+One-second read-only probes stop on battery <30%, Android thermal status >=SEVERE (3),
+free storage <256 MiB, Android low-memory, Java/system headroom <32 MiB or sampled RSS
+increment >128 MiB from admission. Start additionally requires 78 MiB logical reservation
+plus that 32 MiB headroom, known RSS/storage/thermal/battery, current permission/unlock
+and a currently valid ready measurement. API26 lacks authoritative thermal status and
+therefore cannot authorize unattended physical tests through this policy.
+
+Three seconds without callbacks or valid measurements, regressed/future clock witnesses,
+five consecutive approximately one-second samples below half nominal callback cadence,
+or queue/in-flight/control/pending bounds stop and preserve the run. Pending scratch is
+bounded by preferred chunk + negotiated maximum observation; it includes entry metadata.
+These conservative refusal thresholds are not performance acceptance thresholds or proof
+of an infinite memory bound. A safety stop blocks further runs until diagnosis. Existing
+source/lifecycle/clock and independent original-role checks remain necessary; sampling
+cannot certify every instantaneous resource excursion or anticipate a blocking sync.
+
+Bounded sequence (never automatically chain a failed run):
 
 1. Install **the exact reviewed field debug APK** above, not a production recorder.
    Close other camera apps. Existing wireless pairing only; camera USB occupies the
@@ -267,26 +297,25 @@ Before any physical install/run, present this checklist and obtain explicit go-a
    radiometric once when normal session logic permits/requires it. Do not replug or
    resend controls simply for recording. An unsettled reopen may require a normal
    documented fresh display start; coordinate any needed physical reconnect.
-4. **Smoke 10s first.** Stop automatically or tap Stop test. Copy/review original
+4. **Smoke 20s first.** Stop automatically or tap Stop test. Copy/review original
    bytes, clocks, roles, preflight, counters and recovery. Do not proceed if wrong.
 5. Then **Baseline 146s without recorder**, Analysis 146s, Native 146s and Full 146s,
    each including actual 20s warmup then ~126s measured. Same scene/light movement,
    screen/power/storage/thermal conditions as practical. Wait for Stop/read-only check
    and inspect each run before the next; do not auto-chain a failing configuration.
-6. Bounded additional short runs: Stop while camera continues; rotate; ordinary
-   Home/screen off; explicit Close and rapid same-device reopen. Check exactly one
+6. Bounded additional short runs: Stop/repeated Stop while camera continues; rotate; ordinary
+   Home/background; explicit Close and rapid same-device reopen. Check exactly one
    owner/release, current unavailable values and no implicit initialization. No
    unbounded service or background acquisition is tested.
-7. Only with coordinated operator approval: one ordinary camera unplug during a
-   short run; preserve interrupted file and verify prefix/terminal semantics. No
-   unsafe USB faults, scripted power cycling or physical power-loss certification.
+7. No physical disconnect, power cycle, wiring/USB fault injection or destructive
+   filesystem/power-loss tests. Software interruption/recovery only where supported.
 8. **Safe stop:** tap Stop test, wait for checked status; Close releases camera.
    Timeout/failure: keep originals/app state, diagnose/pull privately, do not claim
    saved pending frames or erase incomplete files. If app/process dies, preserve
    app-owned files and inspect read-only after explicit operator action.
 
-No physical results, storage availability, Pixel memory/thermal facts or source-parity
-claim are asserted yet. Remaining R4 gates are actual authorized HT-301/Pixel smoke,
+Do not infer physical results or source parity from preparation or device availability.
+Actual sampled device preflight facts and run results require separate receipts. Remaining R4 gates are actual authorized HT-301/Pixel smoke,
 matched profile cadence/freshness/process memory/lifecycle/recovery and review of
 instrumentation limitations. Optional backend/Windows recorder tests remain separately
 scoped; R6 export and physical power-loss assurances are not borrowed from R3/R2.

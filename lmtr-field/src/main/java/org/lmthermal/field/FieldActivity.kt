@@ -5,6 +5,7 @@ import android.app.Application
 import android.os.Bundle
 import android.os.StatFs
 import android.os.SystemClock
+import android.view.WindowManager
 import android.graphics.Bitmap
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,6 +52,9 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     private var header:Obj?=null
     private var finishing=false
     private var diagnosticFailure:String?=null
+    @Volatile private var safetyFailure:String?=null
+    @Volatile private var foreground=false
+    @Volatile private var lastValidNs:Long?=null
     private val stopRequestNs=java.util.concurrent.atomic.AtomicLong()
     private val stopRequestWallNs=java.util.concurrent.atomic.AtomicLong()
     private var closeWallNs:Long?=null
@@ -64,8 +68,10 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     private val writeLock=Any()
     val status=MutableStateFlow("No test started; Connect and initialization remain explicit")
     val busy=MutableStateFlow(false)
+    val running=MutableStateFlow(false)
     private val route=FieldSourceRoute<Bitmap>(observer={ source ->
         metrics.observation(source)
+        if(source.measurement!=null)lastValidNs=source.receivedMonotonicNs
         // A new baseline-only source after cutoff must not upgrade the old interrupted run.
         runCatching { if(engine?.snapshot()?.state=="recording")clock?.source(source.identity.receiptClockId,source.receivedMonotonicNs) }
             .onFailure { engine?.failSource("field_source_clock_changed_or_regressed") }
@@ -99,19 +105,25 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     fun start(profile:RecordingProfile?,seconds:Int) {
         if(busy.value)return
         busy.value=true
+        running.value=true
         scope.launch {
             try {
                 val adapter=checkNotNull(route.adapter){"Connect/Open first; no authoritative source"}
                 val preflight=FieldPreflight(profile?:RecordingProfile.FULL,seconds,
                     runCatching { StatFs(getApplication<Application>().filesDir.path).availableBytes }.getOrNull())
                 check(preflight.permitted){"Known insufficient storage: ${preflight.requiredFreeBytes} bytes required"}
+                val health=fieldHealth(getApplication(),foreground)
+                check(FieldSafety.refusal(health,preflight,true)==null){"Safety preflight refused: ${FieldSafety.refusal(health,preflight,true)}"}
+                check(camera.state.value.status.code==CameraStatusCode.MEASUREMENT_READY && camera.state.value.measurement!=null){"Explicit initialization and current valid measurement required before field Start"}
+                val safety=FieldSafety(preflight,checkNotNull(health.rssBytes),SystemClock.elapsedRealtimeNanos(),camera.state.value.statistics.received)
                 val id=UUID.randomUUID().toString()
                 val root=File(getApplication<Application>().filesDir,"r4-field/$id");check(root.mkdirs())
-                directory=root;diagnosticFailure=null;storageCap=preflight.storageCapBytes;oracleBytes=java.util.concurrent.atomic.AtomicLong();traceBytes=java.util.concurrent.atomic.AtomicLong();stopRequestNs.set(0);stopRequestWallNs.set(0);closeWallNs=null;metrics=FieldMetrics();runStart=SystemClock.elapsedRealtimeNanos();initialStatistics=camera.state.value.statistics;latestStatistics=initialStatistics;measured=seconds<=20
+                directory=root;diagnosticFailure=null;safetyFailure=null;storageCap=preflight.storageCapBytes;oracleBytes=java.util.concurrent.atomic.AtomicLong();traceBytes=java.util.concurrent.atomic.AtomicLong();stopRequestNs.set(0);stopRequestWallNs.set(0);closeWallNs=null;metrics=FieldMetrics();runStart=SystemClock.elapsedRealtimeNanos();initialStatistics=camera.state.value.statistics;latestStatistics=initialStatistics;measured=seconds<=20
                 // Both intake and timeline origin use the exact API used by HT receipt, including suspend.
                 val selectedClock=FieldClock(SystemClock::elapsedRealtimeNanos);clock=selectedClock;header=selectedClock.header()
                 File(root,"preflight.json").writeBytes(LmtrJson.encode(preflight.report()+mapOf("run_id" to id,
                     "baseline" to (profile==null),"private_wall_clock_label" to java.time.Instant.now().toString(),
+                    "health" to health.report(),"safety_policy" to "sampled_1hz_battery30_thermal3_storage256MiB_heap32MiB_rss128MiB_stale3s_half_cadence5samples",
                     "wall_clock_quality" to "unqualified_not_lmtr_utc_anchor")))
                 if(profile!=null) {
                     synchronized(writeLock){oracle=File(root,"oracle.jsonl").bufferedWriter()}
@@ -139,6 +151,13 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                         while(isActive && SystemClock.elapsedRealtimeNanos()-runStart<seconds*1000000000L) {
                             val snapshot=engine?.snapshot()
                             val state=camera.state.value
+                            val currentHealth=fieldHealth(getApplication(),foreground)
+                            val withinBounds=snapshot==null || (snapshot.preparationQueuedBytes<=preflight.limits.preparationBytes &&
+                                snapshot.writerQueuedBytes<=preflight.limits.writerBytes && snapshot.controlBytes<=preflight.limits.controlBytes &&
+                                snapshot.preparationInFlightBytes<=preflight.limits.maxObservationBytes && snapshot.writerInFlightBytes<=preflight.limits.maxObservationBytes &&
+                                snapshot.pendingBytes<=preflight.limits.preferredChunkBytes+preflight.limits.maxObservationBytes)
+                            val safetyReason=safety.check(currentHealth,SystemClock.elapsedRealtimeNanos(),state.statistics.received,lastValidNs,withinBounds)
+                            if(safetyReason!=null)stopForSafety(safetyReason)
                             if(state.statistics.received>=latestStatistics.received)latestStatistics=state.statistics
                             if(!measured && SystemClock.elapsedRealtimeNanos()-runStart>=20000000000L) {
                                 metrics=FieldMetrics();measured=true;initialStatistics=latestStatistics
@@ -148,9 +167,11 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                                 "session_state" to state.status.detail?.machineCode,"callback_fps" to state.statistics.callbackFps,
                                 "received" to state.statistics.received.toString(),"replaced" to state.statistics.replaced.toString(),
                                 "malformed" to state.statistics.malformed.toString(),"recorder" to snapshot?.let(::fieldSnapshot),
+                                "health" to currentHealth.report(),"safety_stop_reason" to safetyFailure,
                                 "thermal" to runCatching { File("/sys/class/thermal/thermal_zone0/temp").readText().trim() }.getOrNull())
                             val sampleBytes=LmtrJson.encode(sample);check(sampleBytes.size<=65536)
                             localTrace.write(sampleBytes.toString(Charsets.UTF_8));localTrace.newLine();localTrace.flush();traceBytes.addAndGet(sampleBytes.size+1L)
+                            if(safetyFailure!=null)break
                             if(snapshot?.state in listOf("finalized","failed"))break
                             delay(1000)
                         }
@@ -166,6 +187,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                     finishSafely()
                 }
             } catch(error:Exception) {
+                running.value=false
                 status.value="Test refused/failed: ${error.message}; originals retained"
                 engine?.failSource("field_setup_failed")
                 val stopped=engine?.awaitStop(10000)
@@ -178,10 +200,21 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     }
     /** Stop cuts source intake synchronously; drain/reopen/hash/inventory remain off UI. */
     fun stop() { if(!busy.value)return;requestStop();sampler?.cancel();scope.launch { sampler?.join();finishSafely() } }
+    /** Unhealthy runs cannot enable a later run; retain honest interrupted termination and originals. */
+    private fun stopForSafety(reason:String) {
+        if(safetyFailure==null)safetyFailure=reason
+        engine?.stop("field_safety_$reason",true);requestStop()
+    }
+    /** Foreground activity only: lifecycle loss stops intake, even during a recorder-free baseline. */
+    fun foreground(value:Boolean) {
+        foreground=value
+        if(!value && busy.value){stopForSafety("foreground_lost");stop()}
+    }
     /** Reserve final diagnostics until all worker/file ownership is resolved; no overlapping Start. */
     @Synchronized private fun claimFinish():Boolean { if(!busy.value || finishing)return false;finishing=true;return true }
     /** Bounds the actual nonblocking Stop request; it is not a fabricated source-failure cutoff. */
     private fun requestStop() {
+        running.value=false
         val start=SystemClock.elapsedRealtimeNanos();metrics.closeSourceWindow();route.stop()
         if(stopRequestNs.compareAndSet(0,start))stopRequestWallNs.set(SystemClock.elapsedRealtimeNanos()-start)
     }
@@ -192,6 +225,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         return current.workersTerminated()
     }
     private suspend fun finishSafely() {
+        running.value=false
         try { finish() } catch(error:Exception) {
             engine?.failSource("field_diagnostic_failure")
             status.value="Stop/readback diagnostic failed: ${error.javaClass.simpleName}; all files retained; inspect locally"
@@ -229,6 +263,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
             "backend_close_wall_ns" to closeWallNs?.toString(),"stop_cutoff_authority" to "engine_serialized_witness_request_window_not_assumed_first_on_source_failure",
             "recorder_snapshot" to current?.snapshot()?.let(::fieldSnapshot),"finalized" to result?.finalized,"termination_status" to result?.status,
             "termination_reason" to result?.reason,"reopen" to reopened,"source_sha256" to before,"source_unchanged" to if(before==null)null else (before==after),"diagnostic_failure" to diagnosticFailure,
+            "safety_stop_reason" to safetyFailure,
             "clock_correlation" to "source_receipt_and_recorder_intake_use_Android_elapsedRealtimeNanos_same_boot",
             "utc_sensor_resolution" to "unknown","warning" to NativeEquivalentThermometry.WARNING)
         File(root,"private-report.json").writeBytes(LmtrJson.encode(report))
@@ -236,12 +271,12 @@ class FieldModel(application:Application):AndroidViewModel(application) {
             mapOf("file" to it.name,"bytes" to it.length().toString(),"sha256" to fileHash(it)) }
         File(root,"inventory.json").writeBytes(LmtrJson.encode(mapOf("files" to inventory)))
         engine=null;clock=null;finishing=false
-        val refused=diagnosticFailure!=null || fieldReopenFailed(reopened,capture.exists())
+        val refused=safetyFailure!=null || diagnosticFailure!=null || fieldReopenFailed(reopened,capture.exists())
         busy.value=refused
         status.value=if(refused)"Diagnostic/read-only check failed: ${root.name}; originals retained; no longer run before inspection"
             else "Stopped and read-only checked: ${root.name}; private files retained; inspect before longer run"
     }
-    fun memoryPressure() { engine?.memoryPressure() }
+    fun memoryPressure() { if(busy.value){stopForSafety("android_memory_pressure");stop()} }
     override fun onCleared() { route.stop();lifetime.dispose();presenter.dispose();camera.dispose();scope.launch { sampler?.cancelAndJoin();finishSafely();scope.cancel() } }
 }
 
@@ -255,11 +290,18 @@ class FieldActivity:AppCompatActivity() {
         token=model.lifetime.started(resources.configuration.locales.toLanguageTags())
         setContent {
             val state by model.status.collectAsState();val busy by model.busy.collectAsState()
+            val running by model.running.collectAsState()
+            // Only this bounded foreground experiment may keep the screen awake; never a setting.
+            DisposableEffect(running) {
+                if(running)window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                onDispose {window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)}
+            }
             MaterialTheme { Column(Modifier.fillMaxSize().safeDrawingPadding()) {
                 Text("R4 test only — $state",Modifier.padding(6.dp))
                 Row {
                     Button(enabled=!busy,onClick={model.start(null,146)}){Text("Baseline")}
-                    Button(enabled=!busy,onClick={model.start(RecordingProfile.FULL,10)}){Text("Smoke 10s")}
+                    Button(enabled=!busy,onClick={model.start(RecordingProfile.FULL,20)}){Text("Smoke 20s")}
                     Button(enabled=busy,onClick=model::stop){Text("Stop test")}
                 }
                 Row {
@@ -272,7 +314,7 @@ class FieldActivity:AppCompatActivity() {
             } }
         }
     }
-    override fun onStart(){super.onStart();model.camera.enterForeground()}
-    override fun onStop(){model.lifetime.stopped(token,isChangingConfigurations,isFinishing);super.onStop()}
+    override fun onStart(){super.onStart();model.foreground(true);model.camera.enterForeground()}
+    override fun onStop(){window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);if(!isChangingConfigurations)model.foreground(false);model.lifetime.stopped(token,isChangingConfigurations,isFinishing);super.onStop()}
     override fun onTrimMemory(level:Int){super.onTrimMemory(level);if(level==TRIM_MEMORY_RUNNING_CRITICAL || level>=TRIM_MEMORY_COMPLETE)model.memoryPressure()}
 }
