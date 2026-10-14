@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 admission refusal evidence)
+
+- Preserve exact sampled Runtime heap/headroom and read-only health/preflight facts before refusing field admission. A later GC/dumpsys snapshot cannot reconstruct an earlier safety refusal; do not reduce reservations or force GC to manufacture acceptance.
+
 ### Added (R4 conditional unattended safety)
 
 - Record owner authorization for bounded unattended physical validation, conditional on existing permission/unlock/scene/device/resource prerequisites. Keep missing prerequisites and actual runs distinct from emulator evidence.

@@ -7,12 +7,14 @@ import org.lmthermal.lmtr.Obj
  */
 data class FieldHealth(val batteryPercent:Int?,val thermalStatus:Int?,val freeBytes:Long?,
     val javaHeadroomBytes:Long,val systemAvailableBytes:Long,val systemLowMemory:Boolean,
-    val rssBytes:Long?,val cameraPermission:Boolean,val foregroundUnlocked:Boolean) {
+    val rssBytes:Long?,val cameraPermission:Boolean,val foregroundUnlocked:Boolean,
+    val javaMaxBytes:Long?=null,val javaUsedBytes:Long?=null) {
     fun report():Obj=mapOf("battery_percent" to batteryPercent,"android_thermal_status" to thermalStatus,
         "free_bytes" to freeBytes?.toString(),"java_headroom_bytes" to javaHeadroomBytes.toString(),
         "system_available_bytes" to systemAvailableBytes.toString(),"system_low_memory" to systemLowMemory,
         "rss_bytes" to rssBytes?.toString(),"camera_permission" to cameraPermission,
-        "foreground_unlocked" to foregroundUnlocked)
+        "foreground_unlocked" to foregroundUnlocked,"java_max_bytes" to javaMaxBytes?.toString(),
+        "java_used_bytes" to javaUsedBytes?.toString())
 }
 
 /** Conservative test policy, not a claim that sampled RSS bounds ART or indefinite runtime.

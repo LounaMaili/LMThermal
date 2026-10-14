@@ -26,12 +26,13 @@ internal fun fieldHealth(context:Context,foreground:Boolean):FieldHealth {
     val memory=ActivityManager.MemoryInfo()
     context.getSystemService(ActivityManager::class.java).getMemoryInfo(memory)
     val runtime=Runtime.getRuntime()
+    val javaMax=runtime.maxMemory();val javaUsed=runtime.totalMemory()-runtime.freeMemory()
     val rss=runCatching {File("/proc/self/status").readLines().first {it.startsWith("VmRSS:")}
         .trim().split(Regex("\\s+"))[1].toLong()*1024}.getOrNull()
     return FieldHealth(if(level>=0 && scale>0)level*100/scale else null,
         if(Build.VERSION.SDK_INT>=29)power.currentThermalStatus else null,
         runCatching {StatFs(context.filesDir.path).availableBytes}.getOrNull(),
-        runtime.maxMemory()-(runtime.totalMemory()-runtime.freeMemory()),memory.availMem,memory.lowMemory,rss,
+        javaMax-javaUsed,memory.availMem,memory.lowMemory,rss,
         ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED,
-        foreground && power.isInteractive && !context.getSystemService(KeyguardManager::class.java).isKeyguardLocked)
+        foreground && power.isInteractive && !context.getSystemService(KeyguardManager::class.java).isKeyguardLocked,javaMax,javaUsed)
 }

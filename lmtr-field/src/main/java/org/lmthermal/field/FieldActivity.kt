@@ -113,7 +113,15 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                     runCatching { StatFs(getApplication<Application>().filesDir.path).availableBytes }.getOrNull())
                 check(preflight.permitted){"Known insufficient storage: ${preflight.requiredFreeBytes} bytes required"}
                 val health=fieldHealth(getApplication(),foreground)
-                check(FieldSafety.refusal(health,preflight,true)==null){"Safety preflight refused: ${FieldSafety.refusal(health,preflight,true)}"}
+                val safetyRefusal=FieldSafety.refusal(health,preflight,true)
+                // Persist actual admission-time quantities even if no recording can safely be created.
+                // A later dumpsys/GC snapshot is not a substitute for the refusing Runtime witness.
+                val admissionDirectory=File(getApplication<Application>().filesDir,"r4-admission")
+                check(admissionDirectory.isDirectory || admissionDirectory.mkdirs())
+                File(admissionDirectory,"${UUID.randomUUID()}.json").writeBytes(LmtrJson.encode(mapOf(
+                    "health" to health.report(),"plan" to preflight.report(),"safety_refusal" to safetyRefusal,
+                    "recording_created" to false,"scope" to "admission_witness_not_run_completion")))
+                check(safetyRefusal==null){"Safety preflight refused: $safetyRefusal"}
                 check(camera.state.value.status.code==CameraStatusCode.MEASUREMENT_READY && camera.state.value.measurement!=null){"Explicit initialization and current valid measurement required before field Start"}
                 val safety=FieldSafety(preflight,checkNotNull(health.rssBytes),SystemClock.elapsedRealtimeNanos(),camera.state.value.statistics.received)
                 val id=UUID.randomUUID().toString()

@@ -267,6 +267,9 @@ scene for this session. The actual execution receipt remains the authority for r
 
 The dedicated Activity applies `FLAG_KEEP_SCREEN_ON` only while a bounded test runs,
 clears it on Stop/refusal/finalization/disposal/onStop, and changes no device setting.
+App-private `files/r4-admission/<UUID>.json` retains actual sampled health/heap and plan
+before admission, including refusals that create no LMTR. It is not a completed-run receipt;
+the private extraction tool for completed runs does not implicitly include these files.
 One-second read-only probes stop on battery <30%, Android thermal status >=SEVERE (3),
 free storage <256 MiB, Android low-memory, Java/system headroom <32 MiB or sampled RSS
 increment >128 MiB from admission. Start additionally requires 78 MiB logical reservation
