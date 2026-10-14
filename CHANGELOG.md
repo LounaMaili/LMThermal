@@ -4,6 +4,15 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 measured heap refusal)
+
+- Record Pixel ready-state occupied Java 16.76–228.85 MB and headroom down to 39.59 MB: nine of 20 read-only ready samples fail the unchanged 110 MiB admission threshold. Preserve the partial fresh-process window and original refusing history; no physical LMTR, lucky-GC retry, long profile or reservation reduction follows.
+- Record 405 JVM/64 Python tests, six byte-identical pre/post engineering artifacts and12 host original-owner readbacks; actual Pixel12 camera-free tests/six readbacks and exact be41db4 API26/API35 88/88 tests plus six readbacks each pass. Keep measured occupancy and unproven generic peak-live accounting separate.
+
+### Fixed (R4 partial memory diagnostic receipts)
+
+- Record completed sample count and cancellation/error classification for future read-only health windows instead of silently treating a partial diagnostic as complete. Preserve the observed11/20 fresh window without claiming its cause or rerunning for favorable GC.
+
 ### Changed (R4 memory diagnosis)
 
 - Eliminate writer-side payload copies used only for hashes, concatenation and statistics. Retain constructor/public copy isolation, exact source bytes and both full validation boundaries; change no reservation factors, safety margin, queues or profile roles.

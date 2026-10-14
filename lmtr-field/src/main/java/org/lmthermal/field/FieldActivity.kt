@@ -80,7 +80,8 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         healthSampler=scope.launch {
             val root=File(getApplication<Application>().filesDir,"r4-memory/${UUID.randomUUID()}")
             check(root.mkdirs())
-            File(root,"health.jsonl").bufferedWriter().use { output ->
+            var completed=0;var failure:String?=null
+            try { File(root,"health.jsonl").bufferedWriter().use { output ->
                 repeat(20) { index ->
                     val state=camera.state.value
                     val plan=FieldPreflight(RecordingProfile.FULL,20,null)
@@ -91,10 +92,18 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                         "admission_refusal" to FieldSafety.refusal(health,plan,true),
                         "memory" to FieldMetrics().sample(),"heap_semantics" to "occupied_includes_uncollected_garbage_not_reachable_live_heap")
                     output.write(LmtrJson.encode(row).toString(Charsets.UTF_8));output.newLine();output.flush()
+                    completed++
                     delay(100)
                 }
+            } } catch(cancelled:CancellationException) {failure="cancelled";throw cancelled}
+            catch(error:Exception) {failure=error.javaClass.simpleName}
+            finally {
+                // A partial diagnostic window is evidence, not an implicitly successful 20-sample run.
+                File(root,"sampling.json").writeBytes(LmtrJson.encode(mapOf("planned_samples" to 20,
+                    "completed_samples" to completed,"complete" to (completed==20 && failure==null),
+                    "failure_class" to failure,"phase_label" to label,"recorder_created" to false)))
+                status.value="Read-only health ${if(completed==20 && failure==null)"sampled" else "incomplete"}: ${root.name}; no source/recorder action"
             }
-            status.value="Read-only health sampled: ${root.name}; no source/recorder action"
         }
     }
     private val route=FieldSourceRoute<Bitmap>(observer={ source ->

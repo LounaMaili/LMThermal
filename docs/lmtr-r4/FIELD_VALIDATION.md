@@ -259,6 +259,9 @@ separate current physical attempt and camera-free Pixel safety tests are reporte
 [Memory admission audit](MEMORY_ADMISSION.md) distinguishes occupied Java heap, native/graphics,
 RSS/PSS and logical reservations. The 78 MiB accounting and 32 MiB margin remain unchanged.
 Read-only health sampling creates no camera action or recording; phase labels are observational.
+The [new memory receipt](memory-admission-validation.json) reproduces insufficient ready-state
+headroom in 9/20 samples. No real LMTR or sustained profile is accepted; completed samples and
+partial/error classifications remain explicit.
 
 ## Actual conditional physical attempt — admission refused
 

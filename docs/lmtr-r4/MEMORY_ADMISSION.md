@@ -1,6 +1,7 @@
 # R4 memory admission diagnosis
 
-Status: investigation; no reduced admission requirement or physical recorder acceptance.
+Status: ready-state refusal reproduced; no safe reduction of admission established and no physical LMTR created.
+[Exact-SHA memory receipt](memory-admission-validation.json) records all actual/fixture/ART evidence separately.
 The [previous refusal](field-unattended-validation.json) remains historical evidence.
 [Field protocol](FIELD_VALIDATION.md), [source ownership](SOURCE_VALIDATION.md) and
 [R2 review](../recording-r2/COMPLETION_REVIEW.md) retain their separate scope.
@@ -21,8 +22,41 @@ normal explicit field Connect subsequently succeeded without a new prompt. The
 empty dumpsys permission section was not proof that normal USB open would fail.
 This connected display sample does not explain the earlier Celsius-mode refusal.
 
-Physical smoke remains conditional on actual ready-state witnesses, safety, ART and
-host gates. If another admission refuses, preserve its exact witness and stop.
+New read-only sampling on recorder code `be41db4` and field APK SHA-256
+`af80253b93ee8e3613d9eed74399c778fb7fffa8dcbd4483391e85b4773fa6a5`
+used one deliberately fresh process, without forced GC/relaunch retries. The Pixel had
+normal field USB access, an authorized non-sensitive scene and thermal status 0.
+
+| Phase | Actual samples | Occupied Java minimum/maximum (B) | Minimum headroom (B) |
+|---|---:|---:|---:|
+| Fresh process |11/20 (partial)|4724608 /26408240|242027216|
+| Foreground idle |20/20|6819488 /39026336|229409120|
+| Connected/display (includes opening)|20/20|7151808 /96383168|172052288|
+| Actually RADIOMETRIC_READY |20/20|16761024 /228847808|39587648|
+
+Java maximum is 268435456 B (256 MiB). **Nine of 20 ready samples fail the unchanged
+115343360 B requirement**; the worst occupied snapshot is218.25 MiB with37.75 MiB
+headroom. This reproduces the refusal condition before any recorder is created.
+Two natural GCs occurred in the ready window and allocation/free counters advanced.
+The wide occupied range is consistent with allocation/GC churn; no exact reachable
+live-heap bound, leak diagnosis or individual presentation/thermometry attribution
+is established. This window evaluates admission read-only; it is not a second
+attempt to create a recorder or a successful admission chosen between GCs.
+
+Ready-phase separately sampled peaks: native allocated 44977696 B, RSS 480600064 B,
+PSS 420301824 B. Component peaks need not be simultaneous and must not be added.
+Graphics/bitmap peak is not separately measured. The fresh window is partial with
+cause not established; its original 11 samples are preserved, not promoted to a full
+window. A follow-up field-only diagnostic patch adds explicit completed/cancel/error
+receipts; it was build/lint checked without repeating that window or physical tests.
+
+No 20-second real file or source oracle exists; no original current-camera byte parity,
+recording throughput, queue/memory stability or recorder Stop/recovery is certified.
+The normal Close again left zero active owners. No long run, forced GC, favorable-GC
+selection, capacity increase, margin reduction or profile downgrade followed. The
+copy optimization below cannot fix pre-encoder source/presentation heap occupancy.
+Further physical work requires a credible source/Java live-allocation/admission proof
+while retaining the safety margin and evidence. Camera/thermometry were not changed.
 
 ## Allocation audit (unchanged 78 MiB accounting)
 
@@ -57,7 +91,7 @@ before its source/oracle reservation is reused.
 
 The relevant inventory depends on actual logical/stored block sizes, JSON object
 expansion, JVM/ART liveness and native codec allocations. Eliminating a proven copy is
-not grounds to lower 12× scratch or16× control. Generic/jumbo metadata and all transient
+not grounds to lower 12× scratch or 16× control. Generic/jumbo metadata and all transient
 allocator overhead are not certified by a six-observation sample. All original factors
 and safety limits remain unchanged until a stronger admission proof exists.
 
@@ -78,9 +112,27 @@ from physical LMTR recording. All engineering outputs stay outside the canonical
 
 Read-only field sampling uses action `org.lmthermal.field.SAMPLE_HEALTH` and phase extra
 `fresh_process`, `foreground_idle`, `connected`, `ready` or `before_admission`. It writes
-20 samples at100 ms to a new app-private `files/r4-memory/<UUID>/health.jsonl`. Labels do
+20 samples at 100 ms to a new app-private `files/r4-memory/<UUID>/health.jsonl`. Labels do
 not imply readiness: each sample carries actual lifecycle, measurement availability,
 health/refusal and process metrics. It never connects, initializes or starts a recorder.
 Fresh-process isolation is deliberate and finite, not repeated relaunches for lucky GC.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## Executed host/ART checks
+
+- 405 JVM tests;64 Python contract tests; app/field build and lint pass. Admission refusal
+  regressions still check insufficient Java/system heap, storage, permission and lifecycle.
+- Six old/new full-size engineering files are **byte-identical**, with12 independent
+  Python original-owner readbacks. The private pre-edit recorder JAR and all outputs remain.
+- Six sequential cases per host process have GC-dependent occupied peaks; some candidate
+  peaks are higher. Do not claim uniform memory improvement from these samples. The proven
+  benefit is eliminating specific duplicate arrays without changing encoded bytes.
+- The original unchanged fixture oracle independently checks Float32, native/acquisition,
+  same-observation views, unavailable states, source facts/context/intake and immutability.
+  It is fixture evidence, not current physical source parity or calibrated temperature.
+- Actual Pixel camera-free ART:12 tests, six full-size case files independently checked.
+- Exact code `be41db4`: [API26/API35 run 38562284281](https://github.com/LounaMaili/LMThermal/actions/runs/38562284281)
+  passes 88/88 tests, retains six memory cases/readbacks per API and all prior engineering outputs.
+- The frozen wire and 51 pinned canonical fixtures remain unchanged. #9 stays OPEN and
+  PR #16 DRAFT/unmerged. R4 is not finished; R5/R6/R7 and Desktop are untouched.
