@@ -122,3 +122,7 @@ See [runtime evidence](lmtr-r4/ART_INTEGRATION.md) for actual executed scope/fai
 ## R4 field-test APK (not a product recorder)
 
 Build `:lmtr-field:assembleDebug :lmtr-field:lintDebug`; the separate package `org.lmthermal.field` reuses arm64 native transport and adds no product dependency. See [field protocol and authorization boundary](lmtr-r4/FIELD_VALIDATION.md). Conditional unattended physical validation is owner-authorized after all safety/permission prerequisites pass; missing prerequisites leave Phase B pending. The dedicated foreground test Activity uses bounded keep-screen-on and read-only safety probes, without changing device settings.
+
+
+Read-only R4 heap-phase sampling and full-size fixture memory probes are documented in
+[lmtr-r4/MEMORY_ADMISSION.md](lmtr-r4/MEMORY_ADMISSION.md); no forced GC or lowered admission factors are used.

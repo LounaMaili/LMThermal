@@ -17,7 +17,8 @@ internal object RecordingChunk {
         codecMetric:((Long,Long,Long)->Unit)?=null,now:()->Long=System::nanoTime): ByteArray {
         require(entries.isNotEmpty() && entries.size<=32)
         val blocks=mutableListOf<Obj>();val stored=mutableListOf<ByteArray>();var storedAt=0L
-        val groups=linkedMapOf<List<String>,MutableList<ByteArray>>()
+        // Retain references to immutable owners, not a second entire CHUNK of payload copies.
+        val groups=linkedMapOf<List<String>,MutableList<RecordingPayload>>()
         fun key(p:Obj)=listOf("role","encoding_id","dtype","byte_order").map { p[it].text() }
         val features=header["required_features"].arr().map { it.text() }
         val viewFeature="org.lmthermal.lmtr.contiguous-native-view-v1"
@@ -26,16 +27,16 @@ internal object RecordingChunk {
             if(pending.entry["kind"]!="observation") pending.entry else {
                 val acquisition=pending.payloads.find { it.role=="acquisition" }
                 val descriptors=pending.payloads.map { payload ->
-                    val original=payload.descriptor.value();val bytes=payload.bytes()
+                    val original=payload.descriptor.value()
                     require(original.keys.none { it in listOf("kind","block_id","offset","length","hash","parent_payload_id") })
-                    val base=original+mapOf("length" to bytes.size.toString(),"hash" to LmtrChunk.sha(bytes))
+                    val base=original+mapOf("length" to payload.size.toString(),"hash" to payload.contentHash())
                     if(payload.acquisitionViewOffset!=null && acquisition!=null && viewFeature in features) {
                         require(payload.role=="native_samples" && payload.matchesSlice(acquisition,payload.acquisitionViewOffset)) { "Native view is not exact source evidence" }
                         hasView=true
                         base+mapOf("kind" to "view","offset" to payload.acquisitionViewOffset.toString(),"parent_payload_id" to "acquisition")
                     } else {
                         val group=groups.getOrPut(key(original)){mutableListOf()}
-                        val offset=group.sumOf { it.size.toLong() };group.add(bytes)
+                        val offset=group.sumOf { it.size.toLong() };group.add(payload)
                         base+mapOf("kind" to "materialized","_group" to key(original),"offset" to offset.toString())
                     }
                 }
@@ -43,8 +44,8 @@ internal object RecordingChunk {
                 var measurement=pending.entry["measurement"].obj()
                 if(temperature!=null && !measurement.containsKey("statistics")) {
                     val geometry=temperature.descriptor.value()["geometry"].obj()
-                    val mask=pending.payloads.find { it.role=="validity" }?.bytes()
-                    measurement=measurement+("statistics" to LmtrChunk.statistics(temperature.bytes(),mask,geometry["width_px"].i(),geometry["height_px"].i())+mapOf("method" to "finite-valid-row-major-f64-v1","temperature_payload_id" to "temperature","unit" to "Cel"))
+                    val mask=pending.payloads.find { it.role=="validity" }
+                    measurement=measurement+("statistics" to temperature.statistics(mask,geometry["width_px"].i(),geometry["height_px"].i())+mapOf("method" to "finite-valid-row-major-f64-v1","temperature_payload_id" to "temperature","unit" to "Cel"))
                 }
                 pending.entry+mapOf("payloads" to descriptors,"measurement" to measurement)
             }
@@ -56,7 +57,7 @@ internal object RecordingChunk {
         for((index,key) in keys.withIndex()) {
             val slices=groups.getValue(key);val decoded=slices.sumOf { it.size.toLong() }
             require(decoded<=67108864L)
-            val all=ByteArray(decoded.toInt());var at=0;for(bytes in slices){bytes.copyInto(all,at);at+=bytes.size}
+            val all=ByteArray(decoded.toInt());var at=0;for(payload in slices){payload.copyInto(all,at);at+=payload.size}
             val started=if(codecMetric!=null)now() else 0L
             val encoded=LmtrCodec.encode(all,codec)
             // Test-only observer times only the existing codec call, leaving encoded bytes unchanged.

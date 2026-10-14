@@ -254,6 +254,12 @@ readbacks. A built instrumentation APK is not a runtime pass; receipts separatel
 identify executed exact-SHA jobs. No physical ADB/Pixel/camera was used for those earlier Phase A receipts. The
 separate current physical attempt and camera-free Pixel safety tests are reported below.
 
+## Memory diagnosis follow-up
+
+[Memory admission audit](MEMORY_ADMISSION.md) distinguishes occupied Java heap, native/graphics,
+RSS/PSS and logical reservations. The 78 MiB accounting and 32 MiB margin remain unchanged.
+Read-only health sampling creates no camera action or recording; phase labels are observational.
+
 ## Actual conditional physical attempt — admission refused
 
 [Sanitized receipt](field-unattended-validation.json) pins the actual Pixel execution to

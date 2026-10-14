@@ -69,6 +69,34 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     val status=MutableStateFlow("No test started; Connect and initialization remain explicit")
     val busy=MutableStateFlow(false)
     val running=MutableStateFlow(false)
+    private var healthSampler:Job?=null
+    /** Read-only diagnostic using the existing health witness, even before a USB source exists.
+     * A phase label is not authority: each sample also retains actual lifecycle/readiness facts.
+     * No recorder, source connection, controls, GC or device-setting changes occur here.
+     */
+    fun sampleHealth(label:String) {
+        if(busy.value || healthSampler?.isActive==true)return
+        require(label in setOf("fresh_process","foreground_idle","connected","ready","before_admission"))
+        healthSampler=scope.launch {
+            val root=File(getApplication<Application>().filesDir,"r4-memory/${UUID.randomUUID()}")
+            check(root.mkdirs())
+            File(root,"health.jsonl").bufferedWriter().use { output ->
+                repeat(20) { index ->
+                    val state=camera.state.value
+                    val plan=FieldPreflight(RecordingProfile.FULL,20,null)
+                    val health=fieldHealth(getApplication(),foreground)
+                    val row=health.report()+mapOf("sample" to index,"phase_label" to label,
+                        "session_state" to state.status.detail?.machineCode,"lifecycle" to state.lifecycle.name,
+                        "measurement_available" to (state.measurement!=null),"recorder_created" to false,
+                        "admission_refusal" to FieldSafety.refusal(health,plan,true),
+                        "memory" to FieldMetrics().sample(),"heap_semantics" to "occupied_includes_uncollected_garbage_not_reachable_live_heap")
+                    output.write(LmtrJson.encode(row).toString(Charsets.UTF_8));output.newLine();output.flush()
+                    delay(100)
+                }
+            }
+            status.value="Read-only health sampled: ${root.name}; no source/recorder action"
+        }
+    }
     private val route=FieldSourceRoute<Bitmap>(observer={ source ->
         metrics.observation(source)
         if(source.measurement!=null)lastValidNs=source.receivedMonotonicNs
@@ -296,6 +324,7 @@ class FieldActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
         token=model.lifetime.started(resources.configuration.locales.toLanguageTags())
+        if(intent.action=="org.lmthermal.field.SAMPLE_HEALTH")model.sampleHealth(intent.getStringExtra("phase") ?: "foreground_idle")
         setContent {
             val state by model.status.collectAsState();val busy by model.busy.collectAsState()
             val running by model.running.collectAsState()
@@ -321,6 +350,10 @@ class FieldActivity:AppCompatActivity() {
                 }) }
             } }
         }
+    }
+    override fun onNewIntent(intent:android.content.Intent) {
+        super.onNewIntent(intent)
+        if(intent.action=="org.lmthermal.field.SAMPLE_HEALTH")model.sampleHealth(intent.getStringExtra("phase") ?: "foreground_idle")
     }
     override fun onStart(){super.onStart();model.foreground(true);model.camera.enterForeground()}
     override fun onStop(){window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);if(!isChangingConfigurations)model.foreground(false);model.lifetime.stopped(token,isChangingConfigurations,isFinishing);super.onStop()}

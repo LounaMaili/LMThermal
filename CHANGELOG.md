@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 memory diagnosis)
+
+- Eliminate writer-side payload copies used only for hashes, concatenation and statistics. Retain constructor/public copy isolation, exact source bytes and both full validation boundaries; change no reservation factors, safety margin, queues or profile roles.
+- Add read-only finite field-health sampling before a source exists, using existing Runtime/Android probes without controls, recorder, forced GC or device settings. Distinguish occupied heap from reachable live memory and actual lifecycle from a diagnostic phase label.
+- Add six full-size existing-HT-fixture engineering cases across Analysis/Native/Full and STORED/DEFLATE, bounded ownership/queue assertions, sampled occupied/native/PSS observations and independent original-owner readback. Preserve canonical fixtures and previous refusal evidence.
+
 ### Added (R4 conditional physical attempt)
 
 - Preserve actual Pixel 8/API37 HT-301 initialization and normal single-owner Close evidence on cd6606f. The 20-second Full smoke was refused for Java headroom before any LMTR was created; no longer profiles or automatic retries ran. Keep original private logs/OS snapshot locally and publish only sanitized metrics/hashes, without inferring recording parity or memory plateau.

@@ -29,5 +29,14 @@ python3 tools/check_lmtr_r4.py --existing "$reports_dir/files/r4/source/generate
 for profile in analysis native full; do
   python3 tools/check_lmtr_r4_field.py "$reports_dir/files/r4/field-oracle/$profile" --report "$reports_dir/field-$profile.json"
 done
+# Each full-size memory probe owns a new directory; preserve all prior engineering artifacts.
+for probe in "$reports_dir"/files/r4/memory-*; do
+  test -d "$probe" || continue
+  for profile in analysis native full; do
+    for codec in 0 1; do
+      python3 tools/check_lmtr_r4_field.py "$probe/$profile-$codec" --report "$probe/$profile-$codec/python-readback.json"
+    done
+  done
+done
 test -z "$(git status --porcelain)"
 exit "$instrumentation_verdict"

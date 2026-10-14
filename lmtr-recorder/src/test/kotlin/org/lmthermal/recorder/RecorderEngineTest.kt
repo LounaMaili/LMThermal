@@ -28,7 +28,10 @@ class RecorderEngineTest {
     @Test fun allProfilesPreserveExactTemperatureAndInterpretationContext() {
         for(profile in listOf(RecordingProfile.ANALYSIS,RecordingProfile.NATIVE,RecordingProfile.FULL))for(codec in 0..1) {
             val m=SimulatedRecordingModule();val file=output();val e=engine(m,file,profile,codec)
-            val o=m.observation(0,masked=true);assertEquals(Admission.ACCEPTED,e.admit(o));finished(e)
+            val o=m.observation(0,masked=true)
+            // External copy mutation cannot alter the immutable owners used directly by encoding.
+            val external=o.payloads.first { it.role=="temperature" }.bytes();external[0]=(external[0].toInt() xor 255).toByte()
+            assertEquals(Admission.ACCEPTED,e.admit(o));finished(e)
             val chunk=chunks(file).single();assertArrayEquals(o.payloads.first { it.role=="temperature" }.bytes(),chunk.payloads["1:temperature"])
             val expected=when(profile){RecordingProfile.ANALYSIS->setOf("temperature","validity");RecordingProfile.NATIVE->setOf("temperature","validity","native_samples");else->setOf("temperature","validity","native_samples","acquisition")}
             assertEquals(expected,chunk.payloads.keys.map { it.substringAfter(':') }.toSet())

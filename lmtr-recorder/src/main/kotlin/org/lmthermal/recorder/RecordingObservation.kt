@@ -19,6 +19,13 @@ class RecordingPayload(descriptor: Obj, bytes: ByteArray, val acquisitionViewOff
     val size: Int get() = owned.size
     val role: String get() = descriptor.value()["role"].text()
     fun bytes(): ByteArray = owned.copyOf()
+    /** Writer-only operations never expose the retained mutable array. Public copy access stays owned.
+     * Avoid duplicating every payload merely to hash, concatenate or calculate its existing cache.
+     */
+    internal fun contentHash():String = LmtrChunk.sha(owned)
+    internal fun copyInto(target:ByteArray,offset:Int) { owned.copyInto(target,offset) }
+    internal fun statistics(mask:RecordingPayload?,width:Int,height:Int):Obj =
+        LmtrChunk.statistics(owned,mask?.owned,width,height)
     internal fun matchesSlice(parent: RecordingPayload, offset: Long): Boolean =
         offset >= 0 && offset <= parent.size.toLong() - size && owned.indices.all { owned[it] == parent.owned[offset.toInt()+it] }
 }

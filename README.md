@@ -230,3 +230,5 @@ for the original full-payload Android camera test.
 
 
 Test-only conditionally owner-authorized field preparation and executable protocol are described in [R4 field validation](docs/lmtr-r4/FIELD_VALIDATION.md). Device visibility alone does not authorize recording. The [conditional physical attempt](docs/lmtr-r4/field-unattended-validation.json) reached ready but refused smoke admission for Java headroom; actual LMTR field acceptance remains pending.
+
+The [R4 memory audit](docs/lmtr-r4/MEMORY_ADMISSION.md) separates occupied Java heap from native/graphics, RSS/PSS and unchanged logical admission; fixture-only memory tests do not establish real recording acceptance.
