@@ -286,3 +286,42 @@ HT-301 (1514:0001); battery77%. The field process is absent. No APK is installed
 no camera is opened and no initialization/recording is attempted: current scene and
 permission/session ownership were not established, and safe memory admission remains
 unproven. This is connectivity evidence only, not a new Pixel memory or real-camera test.
+
+## Final resumed ART receipt
+
+Runtime `530a45831a748f7723b34836cc5e7b2416ecdeed` passes **115/115 on each API26/API35**
+in [run39770147729](https://github.com/LounaMaili/LMThermal/actions/runs/39770147729).
+Both exact source-SHA receipts, new codec parity/capacity/failure regressions, original
+source readbacks and paired six-case codec probes were inspected. Each API retains
+13 independent reader report files, including engine/source manifests,3 field profiles,
+6 full-size memory cases and2 finite replay files. All six complete memory-case files
+are also byte-identical to the host on each API (12 exact whole-file comparisons). No physical phone is used by CI.
+437 host JVM executions and64 Python tests, build/lint,51 pinned corpus/33 canonical-plan
+comparisons, normative/localization/module/reference and diff checks pass.
+
+The new ART replays **fail no-drop throughput**, retaining correct explicit gaps:
+
+| Emulator | STORED saved / prep drops / writer drops | DEFLATE saved / prep drops / writer drops |
+|---|---|---|
+| API26 |97 /0 /103|83 /0 /117|
+| API35 |89 /1 /110|77 /0 /123|
+
+Each requested200 offers at25 Hz; all four finalized and independently read back with
+original-owner parity for saved data and explicit loss accounting. The `retained_failure`
+verdict remains; it is not relabeled by the green instrumentation result. No causal
+performance comparison to other CI hosts/runs is claimed.
+
+Writer service is the observed bottleneck on these emulators: API26 seal-encode median
+163/218 ms (STORED/DEFLATE) plus sequential append medians147/155 ms; API35 encode195/
+247 ms plus append155/173 ms. Four ready observations arrive about every160 ms. Those
+are separate phase distributions, not a median calculated by summing medians. Individual
+DEFLATE group-call medians are about16/12 ms (API26/API35), much smaller than whole
+encode/validation/append phases. Both full checks remain mandatory; attribution within
+metadata canonicalization, validation, filesystem and scheduling is not isolated here.
+Minimum sampled Java headroom stays about369 MB on API26 and146 MB on API35; no replay
+memory guard stops. This does not diagnose physical Pixel throughput or establish its
+safe live UI admission. The next engineering gate remains the restricted root/object
+proof and then the conditional physical smoke, not larger queues or weaker validation.
+
+The final evidence-only documentation commit leaves the runtime above unchanged.
+Previous failed/cancelled runs, local worktrees and private recordings remain preserved.

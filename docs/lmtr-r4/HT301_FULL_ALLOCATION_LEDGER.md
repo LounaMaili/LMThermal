@@ -121,3 +121,93 @@ recording, Pixel camera-free ART execution or real preview-memory diagnostic is 
 by this resumed host/emulator checkpoint.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## Additional source/presentation roots found during the code audit
+
+These are code roles, not a summed owner census. Counting each wrapper as a new full
+matrix would double-count shared measurements; treating every wrapper as the same
+current generation would miss asynchronously retained older frames.
+
+- `Ht301CameraController` receives a Java T-byte `transport.read()` array, and
+  `Ht301Frame.parse` makes the immutable T-byte copy. The input Java array can overlap
+  the processing iteration. The JNI replacement slot is a separate native vector;
+  libuvc/USB buffers and its reserved capacity are outside Java accounting.
+- `NativeEquivalentThermometry.measure` builds a16,384-entry lookup (65,536 array bytes)
+  during computation. The returned `RadiometricMeasurement` retains only its trace,
+  source frame, indices and Float32 matrix, not that lookup array. It still contributes
+  transient allocation/garbage. No native arithmetic or ownership code is changed here.
+- Controller `LatestFrameState`, `Ht301ModuleSession.stateIn`, `CameraSessionOwner`'s
+  latest state and their mapping/collector coroutine locals can refer to separate
+  generations. `CelsiusPresenter` also has combine input caches/locals, one conflated
+  pending request, one active render and a published snapshot. No matrix copies are
+  implied merely by each reference.
+- Auto rendering copies the source Float32 matrix F, creates a sorted F-byte copy,
+  and creates F bytes of display ARGB; Locked omits the sorted copy. These temporary
+  array payloads are3F or2F respectively, before object/sort/runtime overhead. The
+  256-entry legend adds1,024 bytes, then Android Bitmaps copy pixel data into separate
+  backing. Old published/displayed bitmaps can overlap the new bitmap. Compose image,
+  gesture and collected-state lifetimes are not certified by the presenter channel cap.
+- `RoiPresenter` has combine caches, a collectLatest request/computation and its latest
+  result retaining the displayed measurement. HT's explicit immutable ROI provider
+  avoids another full-plane copy; generic-module fallback still copies and must not be
+  charged as this restricted HT optimization. Cancellation is cooperative, not proof
+  of immediate release or GC.
+- The dedicated field screen has no capture exporter model attached to ThermalScreen;
+  a production still-export capture is not silently included in this restricted scope.
+  Field source-oracle writes and bounded distributions add their own allocations.
+- `JournalState` retains original canonical clock evidence across segments, with a
+  local4,096-clock cap, not one growing per image. A fixed single HT session has one
+  receipt clock; module/session replacement changes that scope. `SummaryAccumulator`
+  retains only declared stream/role counters. Index pages and clock JSON still need
+  explicit object/header allowance; their cardinality caps do not certify16 MiB live
+  heap under arbitrary modules.
+
+A specific next improvement to evaluate is **direct exact Float32 packing into a new
+private recorder payload owner**, avoiding the existing matrix-copy -> encoding-array
+-> defensive-owner triple. It needs an immutable-source read interface and a constructor
+that cannot expose/reuse its owned buffer, plus raw-bit/source-original parity and
+failure tests. This is an allocation design recommendation, not implemented behavior
+or permission to lower admission before the separate UI/root/object analysis.
+
+## Coverage map and reproducible host checks
+
+This is a composed test matrix, **not every adversary repeated across every full-size
+profile**. Source/thread/byte semantics can be tested deterministically with small
+modules; acquisition-size allocation/codec behavior needs the actual full-size fixture.
+
+| Scenario | Evidence / scope |
+|---|---|
+| Analysis, Native, Full × both codecs | `HtMemoryProbe`: six full-size fixture files,6 observations each; one unsettled +5 available; whole-file baseline parity and independent original-source Python |
+| Requested25 Hz + concurrent writer | `HtRecorderStressProbe`: matched producer baseline,200 Full offers per codec; immutable full-size source/gate/oracle; host no drops; emulator overload retained separately |
+| Compressible/incompressible expansion and boundaries | `RecordingDeflateTest` + `RecorderCodecProbe`: deterministic binary patterns through1,769,472 bytes, exact original codec output; not real acquisition |
+| Producer/writer mismatch and queue saturation | Existing deterministic `RecorderEngineTest` blocked preparation/backend, explicit prep/writer gaps and exact capacity accounting; small synthetic modules, not a new full-size burst/cadence proof |
+| Maximum metadata / optional fields | New exact16 KiB source boundary and near1 MiB descriptor closure rejection, both codecs; existing80 KiB descriptor pending singleton test |
+| OOM and cancellation-like workspace failure | Each output segment/final result allocation injected; independent subsequent call unchanged; existing engine preparation/partial-append/late-preparation failure tests preserve prefix and sticky loss |
+| Timer/Stop/slow sync/lifecycle/source errors | Existing engine and bridge races; acknowledgement never precedes footer sync; Stop timeout is not completion; no physical detach fault is induced |
+| Complete and incomplete recovery |14 independent engine interop files plus original-source full-size readbacks;51 immutable R3 corpus +64 Python tests; no canonical files regenerated |
+| Physical simultaneous UI + recorder memory/freshness | PENDING; previous real refusals and preview-only UI observations remain historical |
+
+Build with the repository JDK17/SDK and Gradle environment from CONFIGURATION.md:
+
+```bash
+./gradlew :core:test :lmtr-contract:test :lmtr-recorder:test \
+  :camera-recording:test :lmtr-field-support:test :app:testDebugUnitTest \
+  :app:assembleDebug :app:lintDebug :lmtr-field:assembleDebug :lmtr-field:lintDebug \
+  :lmtr-art:assembleDebug :lmtr-art:assembleDebugAndroidTest \
+  :lmtr-recorder:writeTestRuntimeClasspath :lmtr-field-support:writeTestRuntimeClasspath
+java -Xmx256m -cp "$(cat lmtr-recorder/build/test-runtime-classpath.txt)" \
+  org.lmthermal.recorder.RecorderCodecProbe /new/private/codec-cost.json
+java -Xmx256m -cp "$(cat lmtr-field-support/build/test-runtime-classpath.txt)" \
+  org.lmthermal.field.HtMemoryProbe /new/private/memory
+java -Xmx256m -cp "$(cat lmtr-field-support/build/test-runtime-classpath.txt)" \
+  org.lmthermal.field.HtRecorderStressProbe /new/private/stress
+PYTHONDONTWRITEBYTECODE=1 python3 tools/check_lmtr_r4_field.py \
+  /new/private/memory/full-1 --report /new/private/full-readback.json
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/lmtr_v1/tests -v
+git diff --check
+```
+
+Use unique private output directories. Copy runtime classpath entries before probing if
+another build might replace JARs/classes. Do not run the emulator-only ART script against
+a physical device; GitHub-hosted camera-disabled API26/API35 jobs provide that route.
+Retain failed verdicts and original files even when an independent recovery succeeds.

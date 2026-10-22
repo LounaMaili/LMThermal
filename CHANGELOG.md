@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 bounded workspace runtime receipt)
+
+- Record exact530a458 API26/API35 115/115 ART tests and independent readbacks, plus437 host JVM/64 Python passes. Preserve new emulator overload failures separately from correctness success; document sequential writer-service latency and unchanged safe-admission/physical gates.
+
 ### Changed (R4 bounded writer workspace and resumed evidence)
 
 - Replace recorder-only geometric DEFLATE output growth with capped call-local64 KiB segments and independent copy-out; retain exact file bytes, both complete validations and failure/recovery rules. Add allocation/cancellation/metadata-boundary tests and a paired codec allocation probe; keep queues and78+32 MiB admission unchanged.
