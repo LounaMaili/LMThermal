@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 complete prepared and pending ownership)
+
+- Charge writer queues for complete prepared byte/JSON owners instead of deferred-source allowances; retain4 MiB capacities and3 MiB preparation offers. Include optional descriptors/context/segment closure in pending limits; preserve negotiated whole singletons and explicit overload for resolved metadata growth.
+- Batch the independent test oracle's original Float32 bits through one local4 KiB scratch instead of one digest call per pixel. Preserve exact hashes and all source evidence; persist replay refusals before assertions and stop configurations after memory/engine failure. Keep real-device access prohibited and78+32 MiB admission unchanged.
+
 ### Changed (R4 incremental recorder allocation)
 
 - Execute both complete CHUNK validation boundaries on private bounded windows, without logical/view payload copies or compressed-input copies; preserve independent public reader arrays and all binary/numerical checks. STORED encoding retains its private concatenation without another copy. Keep admission/queue budgets unchanged.

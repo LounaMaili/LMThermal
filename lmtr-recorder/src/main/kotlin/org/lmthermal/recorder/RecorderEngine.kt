@@ -231,14 +231,16 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                 } }
                 catch(_:Exception) { drop="source_loss";synchronized(lock){reserveControlLocked();terminateLocked("failed","invalid_module_evidence","invalid_module_evidence");failureCode="source_failure"} }
                 synchronized(lock) {
-                    if(prepared!=null && writerQueued+item.offer.chargedBytes>limits.writerBytes) {
+                    if(prepared!=null && writerQueued+prepared.ownedBytes>limits.writerBytes) {
                         if(!reserveControlLocked()) { prepFlight=0;throw IllegalStateException("loss_journal_exhausted") }
                         prepared=null;drop="writer_overload";writerDrops++
                     }
                     if(state=="failed"){prepFlight=0;return}
                     val stream=prepared?.stream ?: FrozenJson(item.offer.stream.value()+("policy" to mapOf(
                         "level" to profile.wire,"choice" to "explicit","requested_roles" to RecordingProfiles.requested(profile,item.offer.stream.value()["capabilities"].obj()))))
-                    val charge=if(prepared==null)0L else item.offer.chargedBytes
+                    // The writer owns the resolved byte/JSON owners, never the deferred HT source.
+                    // Keep its byte capacity unchanged; count the actual prepared ownership.
+                    val charge=prepared?.ownedBytes ?: 0L
                     writer.add(Work(prepared,item.offer.streamId,item.offer.sequence,item.witness,stream,drop,charge,item.loss))
                     writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;unresolvedIntake=false;lock.notifyAll()
                 }
@@ -289,13 +291,19 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             if(append!!.uncheckpointedChunks==0)firstUncoveredAck=null
         }
         fun add(entry:Obj,context:Obj?=null,payloads:List<RecordingPayload> = emptyList(),witness:Long) {
-            val bytes=payloads.sumOf { it.size.toLong() }
+            // Count complete pending closure, not only image payload bytes. Optional descriptors
+            // and contexts can be much larger than tiny payloads; excluding them hid retained
+            // ownership until the final wire metadata check. Shared closure is overcharged safely.
+            val bytes=payloads.sumOf { it.size.toLong()+it.descriptor.byteSize }+
+                LmtrJson.encode(entry).size+LmtrJson.encode(active!!).size+
+                (context?.let { LmtrJson.encode(it).size } ?: 0)
             // Thresholds apply to every entry, including segment closure and Stop.
+            // A negotiated singleton above preferred remains whole; the hard wire checks still apply.
             if(pending.isNotEmpty() && (pending.size==MAX_CHUNK_ENTRIES ||
                 witness-firstPendingWitness!!>=SEAL_INTERVAL_NS || pendingBytes+bytes>limits.preferredChunkBytes))seal()
             pending.add(PendingEntry(entry,active!!,context,payloads))
             if(firstPendingWitness==null)firstPendingWitness=witness
-            synchronized(lock){pendingBytes+=bytes+LmtrJson.encode(entry).size;maxPending=maxOf(maxPending,pendingBytes)}
+            synchronized(lock){pendingBytes+=bytes;maxPending=maxOf(maxPending,pendingBytes)}
             if(pendingBytes>=limits.preferredChunkBytes)seal()
         }
         fun start(witness:Long,why:String) {

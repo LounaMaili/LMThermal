@@ -75,7 +75,9 @@ object RecordingInteropProbe {
             "kotlin" to LmtrReader(navFile).use { it.check(full=true,recover=true) },"verify_prefix_payloads" to true,
             "expected" to prefixExpected))
         // Mixed unrepresented loss must preserve an actual acknowledged source prefix, never END.
-        val lostFile=File(root,"unjournaled-loss.lmtr");val cap=m.observation(0).ownedBytes
+        val lostFile=File(root,"unjournaled-loss.lmtr")
+        // Negotiate one complete prepared observation, including resolved policy/retention JSON.
+        val cap=maxOf(m.observation(0).ownedBytes,RecordingProfiles.select(m.observation(0),RecordingProfile.FULL).ownedBytes)
         val lostClock=java.util.concurrent.atomic.AtomicLong(0);val block=java.util.concurrent.atomic.AtomicBoolean(false)
         val entered=java.util.concurrent.CountDownLatch(1);val release=java.util.concurrent.CountDownLatch(1)
         val lost=RecorderEngine(SimulatedRecordingModule.header(listOf(m)),listOf(m.stream),RecordingProfile.FULL,

@@ -100,7 +100,14 @@ object RecordingProfiles {
 
 /** Internal worker-owned prepared observation; no UI or camera lifetime retained. */
 class PreparedObservation internal constructor(val streamId: String,val sequence: Long,val stream: FrozenJson,
-    val context: FrozenJson,val facts: FrozenJson,val payloads: List<RecordingPayload>)
+    val context: FrozenJson,val facts: FrozenJson,val payloads: List<RecordingPayload>) {
+    /** Once prepared, no deferred source closure remains. Charge every retained binary/JSON owner,
+     * including resolved policy/retention metadata, rather than the source's peak freeze allowance.
+     * Object headers/allocator slack remain in the independent conservative admission allowance.
+     */
+    val ownedBytes: Long = payloads.sumOf { it.size.toLong() + it.descriptor.byteSize } +
+        stream.byteSize + context.byteSize + facts.byteSize
+}
 
 /** Qualified module-reported loss. Counts require original ranges or an explicit signal;
  * unknown losses retain null count/ranges and their reason, never inferred camera FPS.

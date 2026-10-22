@@ -1,5 +1,5 @@
 {
-  "status": "host_checkpoint_ART_pending_physical_prohibited",
+  "status": "complete_owner_accounting_host_checkpoint_ART_pending_physical_prohibited",
   "baseline_commit": "4f88e8450068493e56eef1783a75658acb8fdd98",
   "physical_device_accessed": false,
   "physical_authorization": "revoked_Pixel_reserved_for_LMarchery",
@@ -528,18 +528,1085 @@
     "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
   },
   "host_tests": {
-    "jvm": 421,
+    "jvm": 426,
     "python": 64,
     "canonical_fixtures_unchanged": 51,
-    "additional_focused_recorder_cases": 42
+    "additional_focused_recorder_cases": 45
   },
   "failures_retained": [
     "initial baseline snapshot skipped nonexistent classpath entries; corrected without losing originals",
     "first replay classpath was concurrently rebuilt, causing NoClassDefFoundError; preserve failed files and rerun with copied immutable classpath",
     "wrong initial Python discovery directory rejected before tests; correct 64-test suite passed",
-    "first valid replay retains 4 STORED and 2 DEFLATE writer drops; not a throughput pass"
+    "first valid replay retains 4 STORED and 2 DEFLATE writer drops; not a throughput pass",
+    "prepared-owner singleton/interop fixtures omitted resolved retention JSON in their tiny negotiated writer capacity; preserve failing tests/probe, negotiate complete prepared owner in test fixtures; actual4 MiB queues unchanged"
   ],
   "binary_file_parity": [
+    {
+      "case": "analysis-0",
+      "sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+      "whole_file_identical": true
+    },
+    {
+      "case": "analysis-1",
+      "sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+      "whole_file_identical": true
+    },
+    {
+      "case": "full-0",
+      "sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+      "whole_file_identical": true
+    },
+    {
+      "case": "full-1",
+      "sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+      "whole_file_identical": true
+    },
+    {
+      "case": "native-0",
+      "sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+      "whole_file_identical": true
+    },
+    {
+      "case": "native-1",
+      "sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+      "whole_file_identical": true
+    }
+  ],
+  "prepared_owner_host_stress": {
+    "baseline": {
+      "elapsed_ns": "1962612691",
+      "intervals": {
+        "count": 49,
+        "max_ns": "41461457",
+        "omitted": "0",
+        "p50_ns": "39773030",
+        "p95_ns": "40792242"
+      },
+      "observations": 50
+    },
+    "cases": [
+      {
+        "admission": {
+          "count": 200,
+          "max_ns": "2608860",
+          "omitted": "0",
+          "p50_ns": "60739",
+          "p95_ns": "178069"
+        },
+        "append": {
+          "count": 50,
+          "max_ns": "55769746",
+          "omitted": "0",
+          "p50_ns": "23355898",
+          "p95_ns": "50251509"
+        },
+        "codec": 0,
+        "codec_wall": {
+          "count": 100,
+          "max_ns": "730304",
+          "omitted": "0",
+          "p50_ns": "470",
+          "p95_ns": "1050"
+        },
+        "intake_elapsed_ns": "7962055824",
+        "java_max_bytes": "268435456",
+        "memory_guard_stopped": false,
+        "minimum_headroom_bytes": "78966736",
+        "observations_offered": 200,
+        "occupied_native_rss_pss_peaks": {
+          "java_occupied_bytes": "189468720"
+        },
+        "original_input_not_mutated": true,
+        "platform_after": {},
+        "platform_before": {},
+        "platform_before_stop": {},
+        "producer_intervals": {
+          "count": 199,
+          "max_ns": "42272851",
+          "omitted": "0",
+          "p50_ns": "40301106",
+          "p95_ns": "40579395"
+        },
+        "requested_fps": 25,
+        "schedule_lateness": {
+          "count": 200,
+          "max_ns": "3643992",
+          "omitted": "0",
+          "p50_ns": "1828970",
+          "p95_ns": "2433224"
+        },
+        "seal_encode": {
+          "count": 50,
+          "max_ns": "104941023",
+          "omitted": "0",
+          "p50_ns": "15890696",
+          "p95_ns": "28025611"
+        },
+        "snapshot": {
+          "accepted": "200",
+          "acknowledged": "200",
+          "checkpoints": "2",
+          "chunks": "50",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "3559627",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "894269",
+          "max_writer_queued_bytes": "2682801",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "stop_ns": "121368005",
+        "verdict": "completed_no_drops"
+      },
+      {
+        "admission": {
+          "count": 200,
+          "max_ns": "133119",
+          "omitted": "0",
+          "p50_ns": "47320",
+          "p95_ns": "69779"
+        },
+        "append": {
+          "count": 50,
+          "max_ns": "58295426",
+          "omitted": "0",
+          "p50_ns": "23943584",
+          "p95_ns": "47003844"
+        },
+        "codec": 1,
+        "codec_wall": {
+          "count": 100,
+          "max_ns": "13321326",
+          "omitted": "0",
+          "p50_ns": "9559805",
+          "p95_ns": "12388984"
+        },
+        "intake_elapsed_ns": "7962265833",
+        "java_max_bytes": "268435456",
+        "memory_guard_stopped": false,
+        "minimum_headroom_bytes": "48691664",
+        "observations_offered": 200,
+        "occupied_native_rss_pss_peaks": {
+          "java_occupied_bytes": "219743792"
+        },
+        "original_input_not_mutated": true,
+        "platform_after": {},
+        "platform_before": {},
+        "platform_before_stop": {},
+        "producer_intervals": {
+          "count": 199,
+          "max_ns": "42753197",
+          "omitted": "0",
+          "p50_ns": "40282606",
+          "p95_ns": "40498724"
+        },
+        "requested_fps": 25,
+        "schedule_lateness": {
+          "count": 200,
+          "max_ns": "4489711",
+          "omitted": "0",
+          "p50_ns": "1756018",
+          "p95_ns": "2228784"
+        },
+        "seal_encode": {
+          "count": 50,
+          "max_ns": "44116586",
+          "omitted": "0",
+          "p50_ns": "39576852",
+          "p95_ns": "43162713"
+        },
+        "snapshot": {
+          "accepted": "200",
+          "acknowledged": "200",
+          "checkpoints": "2",
+          "chunks": "50",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "3559627",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "894269",
+          "max_writer_queued_bytes": "1788538",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "stop_ns": "105503288",
+        "verdict": "completed_no_drops"
+      }
+    ],
+    "forced_gc": false,
+    "sampling": "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
+    "scope": "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
+    "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+  },
+  "prepared_owner_host_memory": {
+    "cases": [
+      {
+        "codec": 0,
+        "observations": 6,
+        "profile": "analysis",
+        "reserved_bytes": "81788928",
+        "sampled_peaks": {
+          "java_max_bytes": "268435456",
+          "java_occupied_bytes": "47833992"
+        },
+        "samples": 65,
+        "scope": "saved_fixture_occupied_samples_not_current_camera_or_reachable_heap",
+        "snapshot": {
+          "accepted": "6",
+          "acknowledged": "6",
+          "checkpoints": "1",
+          "chunks": "1",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "2223965",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "448223",
+          "max_writer_queued_bytes": "448223",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "source_owner_array_bytes": "1108992"
+      },
+      {
+        "codec": 1,
+        "observations": 6,
+        "profile": "analysis",
+        "reserved_bytes": "81788928",
+        "sampled_peaks": {
+          "java_max_bytes": "268435456",
+          "java_occupied_bytes": "61331184"
+        },
+        "samples": 27,
+        "scope": "saved_fixture_occupied_samples_not_current_camera_or_reachable_heap",
+        "snapshot": {
+          "accepted": "6",
+          "acknowledged": "6",
+          "checkpoints": "1",
+          "chunks": "1",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "2223965",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "448223",
+          "max_writer_queued_bytes": "448223",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "source_owner_array_bytes": "1108992"
+      },
+      {
+        "codec": 0,
+        "observations": 6,
+        "profile": "native",
+        "reserved_bytes": "81788928",
+        "sampled_peaks": {
+          "java_max_bytes": "268435456",
+          "java_occupied_bytes": "119002864"
+        },
+        "samples": 38,
+        "scope": "saved_fixture_occupied_samples_not_current_camera_or_reachable_heap",
+        "snapshot": {
+          "accepted": "6",
+          "acknowledged": "6",
+          "checkpoints": "1",
+          "chunks": "1",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "3550901",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "669785",
+          "max_writer_queued_bytes": "669785",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "source_owner_array_bytes": "1108992"
+      },
+      {
+        "codec": 1,
+        "observations": 6,
+        "profile": "native",
+        "reserved_bytes": "81788928",
+        "sampled_peaks": {
+          "java_max_bytes": "268435456",
+          "java_occupied_bytes": "186111728"
+        },
+        "samples": 36,
+        "scope": "saved_fixture_occupied_samples_not_current_camera_or_reachable_heap",
+        "snapshot": {
+          "accepted": "6",
+          "acknowledged": "6",
+          "checkpoints": "1",
+          "chunks": "1",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "3550901",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "669785",
+          "max_writer_queued_bytes": "669785",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "source_owner_array_bytes": "1108992"
+      },
+      {
+        "codec": 0,
+        "observations": 6,
+        "profile": "full",
+        "reserved_bytes": "81788928",
+        "sampled_peaks": {
+          "java_max_bytes": "268435456",
+          "java_occupied_bytes": "201540352"
+        },
+        "samples": 43,
+        "scope": "saved_fixture_occupied_samples_not_current_camera_or_reachable_heap",
+        "snapshot": {
+          "accepted": "6",
+          "acknowledged": "6",
+          "checkpoints": "1",
+          "chunks": "2",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "4006266",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "894251",
+          "max_writer_queued_bytes": "894251",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "source_owner_array_bytes": "1108992"
+      },
+      {
+        "codec": 1,
+        "observations": 6,
+        "profile": "full",
+        "reserved_bytes": "81788928",
+        "sampled_peaks": {
+          "java_max_bytes": "268435456",
+          "java_occupied_bytes": "123937432"
+        },
+        "samples": 47,
+        "scope": "saved_fixture_occupied_samples_not_current_camera_or_reachable_heap",
+        "snapshot": {
+          "accepted": "6",
+          "acknowledged": "6",
+          "checkpoints": "1",
+          "chunks": "2",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "4006266",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "894251",
+          "max_writer_queued_bytes": "894251",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "source_owner_array_bytes": "1108992"
+      }
+    ],
+    "forced_gc": false
+  },
+  "complete_owner_host_stress": {
+    "baseline": {
+      "elapsed_ns": "1966310491",
+      "intervals": {
+        "count": 49,
+        "max_ns": "42084926",
+        "omitted": "0",
+        "p50_ns": "39891321",
+        "p95_ns": "40893274"
+      },
+      "observations": 50
+    },
+    "cases": [
+      {
+        "admission": {
+          "count": 200,
+          "max_ns": "2492583",
+          "omitted": "0",
+          "p50_ns": "55430",
+          "p95_ns": "143999"
+        },
+        "append": {
+          "count": 50,
+          "max_ns": "85908059",
+          "omitted": "0",
+          "p50_ns": "24688948",
+          "p95_ns": "52115666"
+        },
+        "codec": 0,
+        "codec_wall": {
+          "count": 100,
+          "max_ns": "670626",
+          "omitted": "0",
+          "p50_ns": "410",
+          "p95_ns": "780"
+        },
+        "failure": null,
+        "finalized": true,
+        "intake_elapsed_ns": "7961700702",
+        "java_max_bytes": "268435456",
+        "memory_guard_stopped": false,
+        "minimum_headroom_bytes": "77836256",
+        "observations_offered": 200,
+        "occupied_native_rss_pss_peaks": {
+          "java_occupied_bytes": "190599200"
+        },
+        "original_input_not_mutated": true,
+        "platform_after": {},
+        "platform_before": {},
+        "platform_before_stop": {},
+        "producer_intervals": {
+          "count": 199,
+          "max_ns": "41904197",
+          "omitted": "0",
+          "p50_ns": "40243568",
+          "p95_ns": "40502637"
+        },
+        "reason": "user_stop",
+        "refused_admission": null,
+        "requested_fps": 25,
+        "schedule_lateness": {
+          "count": 200,
+          "max_ns": "3468738",
+          "omitted": "0",
+          "p50_ns": "1697325",
+          "p95_ns": "2386218"
+        },
+        "seal_encode": {
+          "count": 50,
+          "max_ns": "117345329",
+          "omitted": "0",
+          "p50_ns": "17368298",
+          "p95_ns": "57261160"
+        },
+        "snapshot": {
+          "accepted": "200",
+          "acknowledged": "200",
+          "checkpoints": "2",
+          "chunks": "50",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "3580745",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "894269",
+          "max_writer_queued_bytes": "3577068",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "stop_ns": "96328117",
+        "verdict": "completed_no_drops"
+      },
+      {
+        "admission": {
+          "count": 200,
+          "max_ns": "446917",
+          "omitted": "0",
+          "p50_ns": "50630",
+          "p95_ns": "85360"
+        },
+        "append": {
+          "count": 50,
+          "max_ns": "76816543",
+          "omitted": "0",
+          "p50_ns": "24256951",
+          "p95_ns": "33369907"
+        },
+        "codec": 1,
+        "codec_wall": {
+          "count": 100,
+          "max_ns": "16852712",
+          "omitted": "0",
+          "p50_ns": "10305398",
+          "p95_ns": "13304267"
+        },
+        "failure": null,
+        "finalized": true,
+        "intake_elapsed_ns": "7961945720",
+        "java_max_bytes": "268435456",
+        "memory_guard_stopped": false,
+        "minimum_headroom_bytes": "48673488",
+        "observations_offered": 200,
+        "occupied_native_rss_pss_peaks": {
+          "java_occupied_bytes": "219761968"
+        },
+        "original_input_not_mutated": true,
+        "platform_after": {},
+        "platform_before": {},
+        "platform_before_stop": {},
+        "producer_intervals": {
+          "count": 199,
+          "max_ns": "43339547",
+          "omitted": "0",
+          "p50_ns": "40239439",
+          "p95_ns": "40549567"
+        },
+        "reason": "user_stop",
+        "refused_admission": null,
+        "requested_fps": 25,
+        "schedule_lateness": {
+          "count": 200,
+          "max_ns": "5154623",
+          "omitted": "0",
+          "p50_ns": "1845554",
+          "p95_ns": "2368624"
+        },
+        "seal_encode": {
+          "count": 50,
+          "max_ns": "74351980",
+          "omitted": "0",
+          "p50_ns": "41100413",
+          "p95_ns": "46315496"
+        },
+        "snapshot": {
+          "accepted": "200",
+          "acknowledged": "200",
+          "checkpoints": "2",
+          "chunks": "50",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "3580740",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "894269",
+          "max_writer_queued_bytes": "2682807",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "stop_ns": "118435362",
+        "verdict": "completed_no_drops"
+      }
+    ],
+    "forced_gc": false,
+    "sampling": "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
+    "scope": "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
+    "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+  },
+  "intermediate_CI": {
+    "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/39721535846",
+    "commit": "bd744fa32172d6a0a66b8480e635ffeb6a7a2311",
+    "verdict": "failed_retained",
+    "API35": "105/106; full-size replay saw stopped/refused admission; original harness failed before writing precise summary; prefix recovered independently",
+    "API26": "Artifact retained on GitHub; log download not yet inspected",
+    "prefix": {
+      "status": "recovered",
+      "verified_prefix_bytes": "26321652",
+      "unknown_tail": true,
+      "integrity_scope": "full_verified_prefix",
+      "summary": {
+        "chunks": "45",
+        "entries": "146",
+        "first_entry": "0",
+        "first_timeline_ns": "22749780",
+        "gap_events": "106",
+        "known_missing_observations": "106",
+        "last_entry": "145",
+        "last_timeline_ns": "5789130171",
+        "logical_bytes": {
+          "acquisition": "8745984",
+          "module_extension": "0",
+          "native_samples": "8626176",
+          "preview": "0",
+          "temperature": "17252352",
+          "validity": "0",
+          "visible": "0"
+        },
+        "measurable_planes": "39",
+        "observations": "39",
+        "physical_payload_bytes": "25998336",
+        "streams": [
+          {
+            "gap_events": "106",
+            "known_missing_observations": "106",
+            "logical_bytes": {
+              "acquisition": "8745984",
+              "module_extension": "0",
+              "native_samples": "8626176",
+              "preview": "0",
+              "temperature": "17252352",
+              "validity": "0",
+              "visible": "0"
+            },
+            "measurable_planes": "39",
+            "observations": "39",
+            "stream_id": "primary",
+            "temperature_planes": "39",
+            "unknown_gap_events": "0"
+          }
+        ],
+        "temperature_planes": "39",
+        "unknown_gap_events": "0"
+      }
+    }
+  },
+  "pending_changes": [
+    "prepared writer queue charges all actual owned payload/descriptor/resolved JSON bytes, not deferredsource allowance",
+    "pending CHUNK charge now includes descriptors/context/segment closure",
+    "field-only source oracle uses a call-local4 KiB scratch; hash bits unchanged",
+    "finite replay persists terminal failure diagnostics before assertion and skips further configurations after unresolved memory/engine failure"
+  ],
+  "host_engine_readback": {
+    "status": "passed",
+    "cases": [
+      {
+        "name": "analysis-0",
+        "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+        "observations": 2,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "native-0",
+        "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+        "observations": 2,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "full-0",
+        "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+        "observations": 2,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "analysis-1",
+        "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+        "observations": 2,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "native-1",
+        "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+        "observations": 2,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "full-1",
+        "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+        "observations": 2,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "independent-native-acquisition",
+        "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+        "observations": 2,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "temperature-only",
+        "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+        "observations": 2,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "preview-only",
+        "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+        "observations": 2,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "multistream-geometry",
+        "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+        "observations": 4,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "torn-tail",
+        "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+        "observations": 1,
+        "status": "recovered",
+        "integrity_scope": "full_verified_prefix",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "navigation-failure",
+        "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+        "observations": 1,
+        "status": "recovered",
+        "integrity_scope": "full_verified_prefix",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "unjournaled-loss",
+        "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+        "observations": 1,
+        "status": "recovered",
+        "integrity_scope": "full_verified_prefix",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      },
+      {
+        "name": "represented-source-failure",
+        "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+        "observations": 0,
+        "status": "valid",
+        "integrity_scope": "full",
+        "source_unchanged": true,
+        "original_oracle_sha256": null,
+        "clock_and_intake_oracle_checked": false
+      }
+    ],
+    "generated_scope": "noncanonical R4 engineering outputs",
+    "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+  },
+  "host_contract_conformance": {
+    "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+    "base_main": "fe029363062cdf54d6cefa9d4f24265e80188091",
+    "canonical_plan_byte_comparisons": 33,
+    "codec_adversarial_cross_cases": 3,
+    "compatibility_runtime_cases": 8,
+    "compressed_byte_equality": "not required; exact logical bytes and descriptor hashes compared",
+    "corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "independent_python_full_cases": 51,
+    "java": "openjdk version \"17.0.20.1\" 2026-08-18",
+    "json_vectors": [
+      {
+        "canonical_sha256": "eaf23ca6e4fc163864baa33d71ba53553b7fd274f8c0e11be17b3ff27d964639",
+        "id": "scalar-order",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "bd61fe3ccfcd82b057d5114175b7e884c4962354faac75c73dfcea14fb34b752",
+        "id": "exact-values",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "abf7775dd6827e7021d7d1a69e49a8919a5bceaba990e31154f56aa961d164ed",
+        "id": "escapes",
+        "status": "valid"
+      },
+      {
+        "error": "invalid_metadata",
+        "id": "duplicate",
+        "status": "error"
+      },
+      {
+        "error": "invalid_metadata",
+        "id": "surrogate",
+        "status": "error"
+      },
+      {
+        "error": "invalid_metadata",
+        "id": "bom",
+        "status": "error"
+      },
+      {
+        "error": "invalid_metadata",
+        "id": "utf8",
+        "status": "error"
+      },
+      {
+        "error": "invalid_metadata",
+        "id": "nonfinite",
+        "status": "error"
+      },
+      {
+        "canonical_sha256": "d64d9e5daed4fe4e3b3ac72b5bf77b5320a1d2e82f4fed72b0475fe5144858c0",
+        "id": "number-9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "43c8e92bd5552bd45030718eb9366d6d6500623793c248666d77dca01ba337c0",
+        "id": "number-1e-7",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "2d6412ab0155bb89d63b73dbf83334b26b39d03e8c832cc253c6a6caceba9733",
+        "id": "number-1e-6",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "8a532d80ed64868e7d2786e6a6339b465fe0f03db6399590aa520d054875ce8c",
+        "id": "number-1e-5",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "b052bd3ccbe7980595ac047049b16d202b5598c1e9e1a2495df84105950ebf26",
+        "id": "number-1e19",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "356acd219b8c369fc389513fb5c3f9fc2977fff3c432bab9df5b1e3a2800b072",
+        "id": "number-1e20",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "bb6eae31d900fd1a83c636fb07ab8932ace171d259044e3fab794510e3a444c4",
+        "id": "number-1e21",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "3cf8dedbb75dfe2ad5fec86341f320e70a56c7c190ad210a157fe26db8e8e336",
+        "id": "number-1e-4096",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "cd0935dc449323de116c6ab0848d2d890626c110d19b49b8308280c28ba31373",
+        "id": "number-1e4096",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "5bff452c5ed93f2e87a23984db5a15050c6477335fdec955b70063bb2d692bf1",
+        "id": "number-0e5120",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "5bff452c5ed93f2e87a23984db5a15050c6477335fdec955b70063bb2d692bf1",
+        "id": "number-0e-5120",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "5bff452c5ed93f2e87a23984db5a15050c6477335fdec955b70063bb2d692bf1",
+        "id": "number--0e5120",
+        "status": "valid"
+      },
+      {
+        "error": "resource_limit",
+        "id": "refused-number-20",
+        "status": "error"
+      },
+      {
+        "error": "resource_limit",
+        "id": "refused-number-21",
+        "status": "error"
+      },
+      {
+        "error": "resource_limit",
+        "id": "refused-number-22",
+        "status": "error"
+      },
+      {
+        "error": "resource_limit",
+        "id": "refused-number-23",
+        "status": "error"
+      },
+      {
+        "error": "resource_limit",
+        "id": "refused-number-24",
+        "status": "error"
+      },
+      {
+        "error": "resource_limit",
+        "id": "refused-number-25",
+        "status": "error"
+      },
+      {
+        "error": "resource_limit",
+        "id": "refused-number-26",
+        "status": "error"
+      },
+      {
+        "error": "resource_limit",
+        "id": "refused-number-27",
+        "status": "error"
+      },
+      {
+        "error": "resource_limit",
+        "id": "refused-number-28",
+        "status": "error"
+      },
+      {
+        "canonical_sha256": "49381e97a34f6741d843c48a3ddc51d22eb4b8131ee7692f8c690a3a15c5d5c2",
+        "id": "token-1024",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "8a7b729fa9d02bc14909992852d4bbcaa33afd390a1cd546d62a152f3d5a024d",
+        "id": "string-16383",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "6d957e52378b87327c1d994156d347ec091fc0191b08c7c4b9f562f5df380c56",
+        "id": "string-16384",
+        "status": "valid"
+      },
+      {
+        "error": "resource_limit",
+        "id": "string-16385",
+        "status": "error"
+      },
+      {
+        "canonical_sha256": "7917b0f76973f56a00c154b6dc905283c4222d4d324d1de290c678148bbf9673",
+        "id": "depth-31",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "a75992ed9d5aa9c979d72fa57169e5f0658731149df9801231bb0b05a3b263d3",
+        "id": "depth-32",
+        "status": "valid"
+      },
+      {
+        "error": "resource_limit",
+        "id": "depth-33",
+        "status": "error"
+      },
+      {
+        "canonical_sha256": "38f06d8266bd95628224829bed46e64422d0d1ddd6b4de188fb6e3f30d8a5cb5",
+        "id": "elements-65534",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "8594b21b96c77e582406233c032143c038972eb5b7a1b6e70ecfd563fda54e96",
+        "id": "elements-65535",
+        "status": "valid"
+      },
+      {
+        "error": "resource_limit",
+        "id": "elements-65536",
+        "status": "error"
+      },
+      {
+        "canonical_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "id": "json-bytes-1048575",
+        "status": "valid"
+      },
+      {
+        "canonical_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "id": "json-bytes-1048576",
+        "status": "valid"
+      },
+      {
+        "error": "resource_limit",
+        "id": "json-bytes-1048577",
+        "status": "error"
+      },
+      {
+        "error": "resource_limit",
+        "id": "canonical-expansion-budget",
+        "status": "error"
+      }
+    ],
+    "jvm_heap_cap_bytes": 268435456,
+    "kotlin_to_python_full_positive_cases": 33,
+    "navigation_recovery_cross_cases": 2,
+    "normative_commit": "8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f",
+    "pending": [
+      "real native Windows",
+      "ART runtime",
+      "asynchronous recorder timers/backend durability",
+      "arbitrary damaged framing range discovery/external index cache"
+    ],
+    "platform": "Linux",
+    "python": "3.14.8",
+    "python_to_kotlin_full_cases": 51,
+    "read_only_scan_cross_cases": 4,
+    "source_immutability": "all corpus sources and Kotlin-produced files unchanged by read/recovery",
+    "status": "passed",
+    "time_stream_seek_cross_cases": 44
+  },
+  "final_six_file_parity": [
     {
       "case": "analysis-0",
       "sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",

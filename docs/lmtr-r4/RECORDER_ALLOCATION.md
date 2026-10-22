@@ -1,6 +1,6 @@
 # R4 incremental recorder allocation engineering
 
-Status: host checkpoint; ART pending. **Physical Pixel8/HT-301 access is prohibited
+Status: complete-owner host checkpoint; final ART pending. **Physical Pixel8/HT-301 access is prohibited
 for this session (Pixel reserved for LMarchery).** No local ADB command, pairing,
 installation, configuration/file inspection or camera access is permitted. Existing
 physical results remain historical, not a new simultaneous-preview/recorder validation.
@@ -89,3 +89,110 @@ a second process, hidden preview or omitted evidence. Safe simultaneous admissio
 pending, and physical validation is independently prohibited for this session.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## Complete ownership accounting checkpoint
+
+The writer queue now charges `PreparedObservation.ownedBytes`: every retained payload,
+its descriptor and resolved stream/context/facts JSON. It no longer charges the deferred
+source's3 MiB freeze allowance after that source closure is absent from `Work`. The
+preparation charge stays3 MiB; both queues stay4 MiB. Multiple prepared owners fitting
+4 MiB are allowed, not an enlargement of that capacity. Object/header/slack costs remain
+separate. Shared JSON may be overcharged; it is never assumed free.
+
+Resolved retention/policy JSON can grow beyond input metadata. A deliberately tiny
+writer budget now truthfully emits a writer-overload gap in that case. Singleton and
+loss-prefix test fixtures negotiate the complete prepared owner rather than accidentally
+omitting that JSON. An assertion about exact queued bytes is exercised with a blocked
+backend and four complete prepared owners; overload behavior stays explicit.
+
+Pending CHUNK accounting also includes payload descriptors, context and segment closure,
+not merely binary lengths and entry JSON. Shared closure is conservatively charged more
+than once. Without this change,32 tiny payloads could retain large optional descriptors
+while the pending counter stayed small, then fail only at final metadata encoding.
+An adversarial80 KiB optional descriptor now seals whole negotiated singleton entries;
+no optional value is dropped. Preferred size remains a target; wire hard limits and
+both complete checks remain mandatory.
+
+The host final replay retains200/200 observations for each codec with zero preparation/
+writer drops. Max prepared writer queue is3577068 B (STORED) and2682807 B (DEFLATE),
+versus unchanged4194304 B capacity. Peak pending charge is about3.581 MB. These are
+accounting counters, not measured peak reachable heap. Recorded inputs/settings/context,
+Float32/native/transport evidence and native views pass independent source-oracle checks.
+No causal uniform GC/CPU improvement is inferred from sequential runs.
+
+### Oracle overhead and fixed scratch
+
+The first API35 emulator replay at `bd744fa` reached a stopped/refused admission before
+the original harness saved a detailed result. The preserved file independently recovers
+39 observations and106 represented gaps (74 preparation,32 writer), with unknown tail
+and no END. This is a failed finite replay, not a passing25 Hz gate; the precise terminal
+cause was not retained. The new harness persists refusal, terminal result and snapshot
+before assertions and does not launch another configuration after unresolved memory or
+engine failure. Prefix readback is explicitly recovery, never complete-file acceptance.
+
+The independent field oracle previously called `MessageDigest.update` once per Float32
+pixel (110592 calls/frame). It now batches original bits into one call-local4096-byte
+scratch (108 full updates/frame), retaining the original matrix copy and independence
+from recorder-produced payloads. Extra scratch is4092 bytes versus the old4-byte cell,
+not a new full-plane buffer or shared pool. Independent ByteBuffer/hash vectors cover
+empty/partial/full batches, signed zero, infinities, NaN payloads and source immutability.
+This optimizes test/oracle overhead, not native thermometry or product presentation.
+
+## Conservative lifetime conclusion and architectural recommendation
+
+There is now a defensible bound on the admitted **serialized/binary owner charges**:
+preparation queued/in flight, prepared writer queued/in flight, complete pending closure,
+entry count, metadata/record hard limits, codec/decode budget and rolling index limits.
+The two validation calls do not overlap their decoded outputs, but dead bytes may still
+occupy the heap. Loss journal reservations are independent; exhaustion remains sticky
+and cannot produce END. Sampled process memory is not added to native/PSS peaks as if
+all were simultaneous Java objects.
+
+This is **not yet a complete Java peak-live/admission proof**. Remaining gaps include:
+
+- Actual simultaneous source/controller/Compose/graphics roots versus reclaimable garbage.
+- Freeze/oracle temporary overlap and JVM/ART collection timing.
+- JSON map/string/BigDecimal expansion and index/frontier object/header overhead.
+- Encoder concatenation, BAOS growth/backing/output and native zlib lifetime, not solely
+  logical decoded lengths. A default codec may return valid bytes without preprovisioning
+  every later application allocation.
+
+The110 MiB instantaneous gate is an intentionally conservative refusal heuristic. It
+can reject garbage-heavy healthy preview, but these host/emulator observations do not
+justify replacing it with a lower arbitrary number.78 MiB +32 MiB, queues, profiles,
+source evidence and runtime guards remain unchanged. No claim that256 MiB is inherently
+insufficient follows from occupied-heap samples.
+
+| Alternative | Decision for this checkpoint |
+|---|---|
+| Remove redundant validation/codec-input arrays | Implemented; same bytes/checks, measurable allocation reduction |
+| Charge actual prepared and complete pending ownership | Implemented with bounds/overflow-loss regressions; queues unchanged |
+| Bounded oracle scratch | Implemented, exclusive call-local4 KiB; exact original bits |
+| Shared image/codec scratch pool | Deferred: requires exclusive lease/release and explicit expansion/failure caps; a pool alone adds permanent live memory |
+| Smaller preferred CHUNK | Not adopted:4 MiB remains tested baseline; could increase closure/index work and does not bound JSON/UI roots |
+| HT-specific smaller maximum observation/reservation | Not adopted: malformed/unavailable observations and transient freeze costs must remain covered; no generic module assumption |
+| Staged actual arena provisioning | Recommended next engineering step after a restricted HT allocation ledger; provisioning cannot authorize future UI allocations or favorable-GC retry |
+| largeHeap/second process/hidden preview | Not introduced; separate owner architectural review if a complete ledger still cannot fit |
+
+**Recommendation:** keep R4 admission blocked. Next implement a restricted, explicit HT
+allocation ledger with a writer-owned bounded encode/decode arena and a separate metadata
+object budget; prove exclusive sequential reuse across both validations, failure cleanup
+and original-owner parity. Reassess simultaneous source/UI live roots independently.
+Only that evidence can justify a staged provisioned admission change. Do not use an
+emulator no-drop replay or lower allocation volume as a substitute for this proof.
+
+## Future physical gate (not authorized in this session)
+
+A future owner must explicitly release the Pixel from LMarchery and reauthorize physical
+LMThermal access; online ADB alone is insufficient. First finish the conservative combined
+memory model and validate the exact pushed runtime on isolated ART. Then require normal
+unlocked foreground access, attached HT-301, valid normal permissions, newly verified
+non-sensitive scene, battery/thermal/storage/system-memory checks and normal Compose.
+Do not alter security settings, force GC or retry Start for a favorable sample.
+
+Under that new authorization only: retain a matched preview baseline, evaluate/persist
+normal admission once, and stop on refusal. If admitted, one20-second Full file plus its
+pre-transform source oracle, explicit Stop/Close and independent Python full byte/mask/
+native/acquisition/context/intake/loss/immutability validation are required. Measure real
+cadence/freshness, queues, sealing and memory separately. No extended profiles follow
+without separate authorization. This session creates **only synthetic fixture LMTRs**.

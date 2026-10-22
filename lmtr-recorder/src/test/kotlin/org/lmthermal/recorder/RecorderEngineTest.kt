@@ -121,6 +121,33 @@ class RecorderEngineTest {
         until("writer loss"){e.snapshot().writerDrops>0};release.countDown();finished(e)
         val s=e.snapshot();assertTrue(s.maxWriterQueuedBytes<=cap);assertEquals(s.accepted,s.acknowledged+s.writerDrops)
     }
+    @Test fun writerAccountsPreparedOwnersWithoutChargingTheDeferredSourceAgain() {
+        val m=SimulatedRecordingModule();val f=output();val base=LocalRecorderBackend(f);val time=AtomicLong(0)
+        val entered=CountDownLatch(1);val release=CountDownLatch(1);val cap=1048576L
+        val backend=object:RecorderBackend {
+            override val destination=f
+            override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record {
+                if(type==LmtrFraming.CHUNK){entered.countDown();check(release.await(5,TimeUnit.SECONDS))}
+                return base.append(type,ordinal,previous,body)
+            }
+            override fun close()=base.close()
+        }
+        val e=engine(m,f,backend=backend,now=time::get,limits=RecorderLimits(preparationBytes=cap,writerBytes=cap,maxObservationBytes=cap))
+        fun offer(n:Long):RecordingOffer {val original=m.observation(n);return RecordingOffer(m.id,n,original.stream,cap){original}}
+        e.admit(offer(0));until("pending"){e.snapshot().pendingBytes>0};time.set(1000000000);e.wakeTimers()
+        assertTrue(entered.await(5,TimeUnit.SECONDS));var expected=0L
+        try {
+            for(n in 1L..4L) {
+                expected+=RecordingProfiles.select(m.observation(n),RecordingProfile.FULL).ownedBytes
+                assertEquals(Admission.ACCEPTED,e.admit(offer(n)))
+                until("prepared owner $n"){e.snapshot().let {it.preparationQueuedBytes==0L && it.preparationInFlightBytes==0L}}
+            }
+            assertEquals(expected,e.snapshot().writerQueuedBytes);assertTrue(expected<cap)
+            assertEquals(0L,e.snapshot().writerDrops)
+        } finally {release.countDown()}
+        finished(e);assertEquals(5L,e.snapshot().acknowledged);assertTrue(e.snapshot().maxWriterQueuedBytes<=cap)
+    }
+
     @Test fun sourceDetachFinalizesInterruptedWithNoInventedLostCount() {
         val m=SimulatedRecordingModule();val e=engine(m);e.admit(m.observation(0));e.stop("source_detached",true)
         val r=e.awaitStop(10000)!!;assertTrue(r.toString(),r.finalized);assertEquals("interrupted",r.status);assertEquals(0L,e.snapshot().preparationDrops)
@@ -426,8 +453,40 @@ class RecorderEngineTest {
         }
     }
 
+    @Test fun largeOptionalDescriptorsCannotHideBehindTinyPendingPayloads() {
+        val m=SimulatedRecordingModule();val f=output()
+        val e=engine(m,f,now={0L},limits=RecorderLimits(maxObservationBytes=262144,preferredChunkBytes=65536))
+        for(n in 0L..2L) {
+            val original=m.observation(n)
+            val payloads=original.payloads.mapIndexed {i,p->if(i==0)RecordingPayload(
+                p.descriptor.value()+("future_optional" to List(20){"x".repeat(4096)}),p.bytes()) else p}
+            assertEquals(Admission.ACCEPTED,e.admit(RecordingObservation(m.id,n,original.stream.value(),
+                original.context.value(),original.facts.value(),payloads)))
+        }
+        finished(e)
+        val containing=chunks(f).filter {it.metadata["entries"].arr().any {e->e.obj()["kind"]=="observation"}}
+        assertEquals(3,containing.size)
+        for(chunk in containing) {
+            val entry=chunk.metadata["entries"].arr().map {it.obj()}.single {it["kind"]=="observation"}
+            assertEquals(20,entry["payloads"].arr().first().obj()["future_optional"].arr().size)
+        }
+        assertTrue(e.snapshot().maxPendingBytes>=81920)
+    }
+
+    @Test fun resolvedMetadataGrowthCannotExceedWriterByteCapacity() {
+        val m=SimulatedRecordingModule();val f=output();val original=m.observation(0);val cap=original.ownedBytes
+        assertTrue(RecordingProfiles.select(original,RecordingProfile.FULL).ownedBytes>cap)
+        val e=engine(m,f,limits=RecorderLimits(preparationBytes=cap,writerBytes=cap,maxObservationBytes=cap,preferredChunkBytes=1))
+        e.admit(original);finished(e)
+        assertEquals(1L,e.snapshot().writerDrops);assertEquals(0L,e.snapshot().acknowledged)
+        assertEquals(0L,e.snapshot().maxWriterQueuedBytes)
+        assertEquals("writer_overload",chunks(f).flatMap {it.metadata["entries"].arr().map {e->e.obj()}}.single {it["kind"]=="gap"}["category"])
+    }
+
     @Test fun negotiatedObservationAbovePreferredTargetStaysWholeInSingleton() {
-        val m=SimulatedRecordingModule();val f=output();val cap=m.observation(0).ownedBytes
+        val m=SimulatedRecordingModule();val f=output();val original=m.observation(0)
+        // A singleton must negotiate the resolved policy/retention JSON as well as payload bytes.
+        val cap=maxOf(original.ownedBytes,RecordingProfiles.select(original,RecordingProfile.FULL).ownedBytes)
         val e=engine(m,f,limits=RecorderLimits(preparationBytes=cap,writerBytes=cap,maxObservationBytes=cap,preferredChunkBytes=1))
         e.admit(m.observation(0));finished(e)
         val observationChunk=chunks(f).single { it.metadata["entries"].arr().any { it.obj()["kind"]=="observation" } }

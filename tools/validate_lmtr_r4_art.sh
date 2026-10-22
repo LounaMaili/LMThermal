@@ -43,7 +43,13 @@ done
 for probe in "$reports_dir"/files/r4/recorder-stress-*; do
   test -d "$probe" || continue
   for codec in 0 1; do
-    python3 tools/check_lmtr_r4_field.py "$probe/full-$codec" --report "$probe/full-$codec/python-readback.json"
+    case_dir="$probe/full-$codec"
+    test -f "$case_dir/capture.lmtr" || continue
+    recovery=()
+    if python3 -c 'import json,sys; sys.exit(json.load(open(sys.argv[1]))["finalized"])' "$case_dir/run-result.json"; then
+      recovery=(--recover)
+    fi
+    python3 tools/check_lmtr_r4_field.py "$case_dir" "${recovery[@]}" --report "$case_dir/python-readback.json"
   done
 done
 test -z "$(git status --porcelain)"

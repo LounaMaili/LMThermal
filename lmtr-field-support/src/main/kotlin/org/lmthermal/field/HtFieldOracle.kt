@@ -12,13 +12,26 @@ import java.security.MessageDigest
  */
 object HtFieldOracle {
     private fun digest(bytes:ByteArray)=mapOf("hash" to LmtrChunk.sha(bytes),"length" to bytes.size.toString())
+    /** Independent original-bit oracle with one call-local4 KiB scratch, not110592 tiny digest
+     * updates per HT frame. No shared pool or recorder-produced bytes are used. Preserve NaN payloads,
+     * signed zero and row-major little-endian order; the last partial batch has no padding authority.
+     */
+    fun float32Hash(values:FloatArray):String {
+        val hash=MessageDigest.getInstance("SHA-256");val scratch=ByteArray(4096);var used=0
+        for(value in values) {
+            val bits=value.toRawBits()
+            for(index in 0..3)scratch[used++]=(bits ushr (index*8)).toByte()
+            if(used==scratch.size){hash.update(scratch);used=0}
+        }
+        if(used>0)hash.update(scratch,0,used)
+        return hash.digest().joinToString(""){"%02x".format(it.toInt() and 255)}
+    }
     fun capture(source:CameraAcquiredObservation):Obj {
         require(source is Ht301AcquiredObservation)
         val roles=linkedMapOf<String,Any?>()
         source.measurement?.let { m ->
-            val sha=MessageDigest.getInstance("SHA-256");val cell=ByteArray(4);val values=m.matrix()
-            for(value in values) { val bits=value.toRawBits();for(index in 0..3)cell[index]=(bits ushr (index*8)).toByte();sha.update(cell) }
-            roles["temperature"]=mapOf("hash" to sha.digest().joinToString(""){"%02x".format(it.toInt() and 255)},"length" to (values.size*4).toString())
+            val values=m.matrix()
+            roles["temperature"]=mapOf("hash" to float32Hash(values),"length" to (values.size*4).toString())
             m.validityMask()?.let { roles["validity"]=digest(it) }
         }
         val raw=source.frame?.takeIf { source.inspection.mode==FrameMode.RAW14 && source.inspection.reason==null }?.imageBytes()
