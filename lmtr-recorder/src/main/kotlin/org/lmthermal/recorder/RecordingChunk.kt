@@ -59,7 +59,9 @@ internal object RecordingChunk {
             require(decoded<=67108864L)
             val all=ByteArray(decoded.toInt());var at=0;for(payload in slices){payload.copyInto(all,at);at+=payload.size}
             val started=if(codecMetric!=null)now() else 0L
-            val encoded=LmtrCodec.encode(all,codec)
+            // This concatenation is a private writer allocation: STORED can retain it directly.
+            // The public codec API still returns a defensive copy to independent consumers.
+            val encoded=if(codec==0)all else LmtrCodec.encode(all,codec)
             // Test-only observer times only the existing codec call, leaving encoded bytes unchanged.
             if(codecMetric!=null)runCatching { codecMetric.invoke(now()-started,all.size.toLong(),encoded.size.toLong()) }
             stored.add(encoded)
@@ -82,7 +84,7 @@ internal object RecordingChunk {
         require(size<=LmtrFraming.MAX_RECORD_BYTES-112L)
         val body=ByteArray(size.toInt());ByteBuffer.wrap(body).order(ByteOrder.LITTLE_ENDIAN).putInt(json.size).put(json)
         var at=4+json.size;for(bytes in stored){bytes.copyInto(body,at);at+=bytes.size}
-        LmtrChunk.decode(body,header,validationBudget) // Full checks before any promised footer.
+        LmtrChunk.validate(body,header,validationBudget) // Full checks before any promised footer.
         return body
     }
 }

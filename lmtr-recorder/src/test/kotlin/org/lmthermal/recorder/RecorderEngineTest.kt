@@ -144,6 +144,69 @@ class RecorderEngineTest {
         assertFalse(e.awaitStop(10000)!!.finalized);assertTrue(f.exists());val r=LmtrReader(f).use { it.check(full=true,recover=true) }
         assertEquals("recovered",r["status"]);assertEquals("full_verified_prefix",r["integrity_scope"])
     }
+    @Test fun preparationAllocationFailurePoisonsEndAndPreservesAcknowledgedPrefix() {
+        val m=SimulatedRecordingModule();val f=output();val time=AtomicLong(0);var preparation=0
+        val e=engine(m,f,now=time::get,hook={if(++preparation==2)throw OutOfMemoryError("injected, not heap exhaustion")})
+        e.admit(m.observation(0));until("first pending"){e.snapshot().pendingBytes>0}
+        time.set(1000000000);e.wakeTimers();until("first ack"){e.snapshot().acknowledged==1L}
+        e.admit(m.observation(1));val result=e.awaitStop(10000)!!
+        assertFalse(result.finalized);assertEquals("allocation_failed",result.reason)
+        until("workers release"){e.workersTerminated()}
+        assertEquals(Admission.STOPPED,e.admit(m.observation(2)))
+        assertEquals(0L,e.snapshot().preparationQueuedBytes);assertEquals(0L,e.snapshot().writerQueuedBytes)
+        val before=f.readBytes();val report=LmtrReader(f).use {it.check(full=true,recover=true)}
+        assertEquals("recovered",report["status"]);assertEquals("full_verified_prefix",report["integrity_scope"])
+        assertArrayEquals(before,f.readBytes())
+    }
+
+    @Test fun allocationFailureRejectsLatePreparationDuringSlowBackendClose() {
+        val m=SimulatedRecordingModule();val f=output();val base=LocalRecorderBackend(f);val time=AtomicLong(0)
+        val appending=CountDownLatch(1);val failWriter=CountDownLatch(1);val preparing=CountDownLatch(1)
+        val finishPreparation=CountDownLatch(1);val closing=CountDownLatch(1);val finishClose=CountDownLatch(1);var prepared=0
+        val backend=object:RecorderBackend {
+            override val destination=f
+            override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record {
+                if(type==LmtrFraming.CHUNK){appending.countDown();check(failWriter.await(5,TimeUnit.SECONDS));throw OutOfMemoryError("injected")}
+                return base.append(type,ordinal,previous,body)
+            }
+            override fun close(){closing.countDown();check(finishClose.await(5,TimeUnit.SECONDS));base.close()}
+        }
+        val e=engine(m,f,backend=backend,now=time::get,hook={if(++prepared==2){preparing.countDown();check(finishPreparation.await(5,TimeUnit.SECONDS))}})
+        try {
+            e.admit(m.observation(0));until("first pending"){e.snapshot().pendingBytes>0}
+            time.set(1000000000);e.wakeTimers();assertTrue(appending.await(5,TimeUnit.SECONDS))
+            e.admit(m.observation(1));assertTrue(preparing.await(5,TimeUnit.SECONDS))
+            failWriter.countDown();assertTrue(closing.await(5,TimeUnit.SECONDS));finishPreparation.countDown()
+            until("late preparation released"){e.snapshot().preparationInFlightBytes==0L}
+            assertEquals(0L,e.snapshot().writerQueuedBytes);assertEquals("failed",e.snapshot().state)
+        } finally {failWriter.countDown();finishPreparation.countDown();finishClose.countDown()}
+        assertFalse(e.awaitStop(10000)!!.finalized);until("workers release"){e.workersTerminated()}
+    }
+
+    @Test fun writerAllocationFailureNeverCertifiesPartialBodyOrRepairEnd() {
+        val m=SimulatedRecordingModule();val f=output();val base=LocalRecorderBackend(f);var chunks=0
+        val backend=object:RecorderBackend {
+            override val destination=f
+            override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record {
+                if(type==LmtrFraming.CHUNK && ++chunks==2) {
+                    java.io.RandomAccessFile(f,"rw").use {it.seek(it.length());it.write(byteArrayOf(1,2,3));it.fd.sync()}
+                    throw OutOfMemoryError("injected after partial write")
+                }
+                return base.append(type,ordinal,previous,body)
+            }
+            override fun close()=base.close()
+        }
+        val time=AtomicLong(0);val e=engine(m,f,backend=backend,now=time::get)
+        e.admit(m.observation(0));until("first pending"){e.snapshot().pendingBytes>0}
+        time.set(1000000000);e.wakeTimers();until("first ack"){e.snapshot().acknowledged==1L}
+        e.admit(m.observation(1));e.stop();val result=e.awaitStop(10000)!!
+        assertFalse(result.finalized);assertEquals("allocation_failed",result.reason)
+        until("workers release"){e.workersTerminated()};assertEquals(1L,e.snapshot().acknowledged)
+        val before=f.readBytes();val report=LmtrReader(f).use {it.check(full=true,recover=true)}
+        assertEquals("recovered",report["status"]);assertEquals("full_verified_prefix",report["integrity_scope"])
+        assertArrayEquals(before,f.readBytes())
+    }
+
     @Test fun closeFailureCannotPublishCompletion() {
         val m=SimulatedRecordingModule();val f=output();val base=LocalRecorderBackend(f)
         val b=object:RecorderBackend { override val destination=f;override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray)=base.append(type,ordinal,previous,body)

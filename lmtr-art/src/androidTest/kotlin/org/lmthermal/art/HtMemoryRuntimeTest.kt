@@ -4,6 +4,8 @@ import android.os.Debug
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Test
 import org.lmthermal.field.HtMemoryProbe
+import org.lmthermal.field.RecorderAllocationProbe
+import org.lmthermal.field.HtRecorderStressProbe
 import java.io.File
 import java.util.UUID
 
@@ -15,5 +17,18 @@ class HtMemoryRuntimeTest {
             val memory=Debug.MemoryInfo();Debug.getMemoryInfo(memory)
             mapOf("native_allocated_bytes" to Debug.getNativeHeapAllocatedSize(),"pss_bytes" to memory.totalPss*1024L)
         }
+        RecorderAllocationProbe.run(root,File(root,"validation-cost.json")) {
+            mapOf("runtime" to Debug.getRuntimeStats(),"native_allocated_bytes" to Debug.getNativeHeapAllocatedSize(),
+                "java_occupied_bytes" to Runtime.getRuntime().let {it.totalMemory()-it.freeMemory()})
+        }
     }
+    @Test fun fullSizeFiniteRecorderReplayReportsCadenceAndBothCodecs() {
+        val root=File(InstrumentationRegistry.getInstrumentation().targetContext.filesDir,"r4/recorder-stress-${UUID.randomUUID()}")
+        HtRecorderStressProbe.run(root,android.os.SystemClock::elapsedRealtimeNanos) {
+            val info=Debug.MemoryInfo();Debug.getMemoryInfo(info)
+            mapOf("runtime" to Debug.getRuntimeStats(),"native_allocated_bytes" to Debug.getNativeHeapAllocatedSize(),
+                "pss_bytes" to info.totalPss*1024L)
+        }
+    }
+
 }

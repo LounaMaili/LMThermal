@@ -38,5 +38,13 @@ for probe in "$reports_dir"/files/r4/memory-*; do
     done
   done
 done
+# New full-size replay is synthetic, not physical field acceptance. Preserve and independently
+# verify each completed file even if cadence/memory metrics honestly retain a failed configuration.
+for probe in "$reports_dir"/files/r4/recorder-stress-*; do
+  test -d "$probe" || continue
+  for codec in 0 1; do
+    python3 tools/check_lmtr_r4_field.py "$probe/full-$codec" --report "$probe/full-$codec/python-readback.json"
+  done
+done
 test -z "$(git status --porcelain)"
 exit "$instrumentation_verdict"

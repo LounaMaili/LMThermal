@@ -140,3 +140,7 @@ at8e928b22864c8cb3878c436f17deba069f28936f. Historical failures remain preserved
 ## Targeted presentation follow-up
 
 [Measured presentation/ROI work](PRESENTATION_PERFORMANCE.md) retains the rejected exact selector, byte-preserving optimizations and completed finite corrected Compose windows, with the original failed session preserved. Real memory policy witnesses still refuse; no physical recording or safe combined-memory admission is claimed.
+
+## Incremental recorder follow-up
+
+[Recorder allocation engineering](RECORDER_ALLOCATION.md) separates actual buffer lifetimes from logical admission. This session excludes physical device access; the admission and physical recording gates remain pending.

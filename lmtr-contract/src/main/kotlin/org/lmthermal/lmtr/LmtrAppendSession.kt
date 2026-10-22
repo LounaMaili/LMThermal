@@ -103,8 +103,8 @@ class LmtrAppendSession(header: Obj, private val sink: LmtrRecordSink,
     }
     /** Validate all closure/payload data before acknowledging a CHUNK. */
     fun appendChunk(body: ByteArray) = guarded {
-        val meta=LmtrChunk.metadata(body).first
-        LmtrChunk.decode(body,header,validationBudget);state.accept(meta)
+        val meta=LmtrChunk.validate(body,header,validationBudget)
+        state.accept(meta)
         val r=append(LmtrFraming.CHUNK,body);summary.accept(meta)
         // Source acknowledgment precedes any potentially delayed index/checkpoint I/O.
         onChunkAcknowledged(summary.json())

@@ -357,3 +357,5 @@ Test-only [R4 memory diagnosis](lmtr-r4/MEMORY_ADMISSION.md) adds finite read-on
 The [R4 live-heap follow-up](lmtr-r4/LIVE_HEAP.md) preserves source evidence and session semantics while eliminating temporary calibration/SHA copies. Replay attribution and diagnostic GC are test-only evidence; no safe physical recorder admission is asserted.
 
 [R4 presentation profiling](lmtr-r4/PRESENTATION_PERFORMANCE.md) retains exact Auto/ROI/color semantics, optional immutable ROI computation and single-owner display pixel transfer. Real headroom policy witnesses still fail; no production recording or safe-admission certification is implied.
+
+The [R4 allocation investigation](lmtr-r4/RECORDER_ALLOCATION.md) adds full synchronous validation without materialized payload copies; public reader ownership and both complete writer checks remain. No wire or physical-admission guarantee changes.

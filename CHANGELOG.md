@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 incremental recorder allocation)
+
+- Execute both complete CHUNK validation boundaries on private bounded windows, without logical/view payload copies or compressed-input copies; preserve independent public reader arrays and all binary/numerical checks. STORED encoding retains its private concatenation without another copy. Keep admission/queue budgets unchanged.
+- Add best-effort allocation-failure cutoff and sticky loss, immutable-prefix recovery regressions, full-size25 Hz fixture replay and baseline/candidate allocation measurements. Preserve initial writer-overload and classpath-rebuild failures. Physical Pixel/HT access is prohibited in this session; ART and safe combined admission remain separate pending gates.
+
+
 ### Changed (R4 exact presentation allocation)
 
 - Retain the exact percentile full sort after rejecting a slower four-rank selection experiment; remove the redundant render validation scan. Add opt-in single-owner display ARGB transfer with copying Android Bitmap checks and explicit immutable HT ROI computation; preserve generic/delegated mask fallback, source bits, row-major statistics and session guards.

@@ -238,3 +238,5 @@ The [measured R4 memory follow-up](docs/lmtr-r4/memory-admission-validation.json
 The [R4 allocation follow-up](docs/lmtr-r4/LIVE_HEAP.md) isolates fixture acquisition/presentation churn and eliminates redundant temporary copies. Physical recorder admission remains unresolved; no new recording feature is exposed.
 
 [Measured R4 presentation optimizations](docs/lmtr-r4/PRESENTATION_PERFORMANCE.md) preserve source/pixel bits and retain the failed exact-selector, partial failed profile and completed corrected Compose evidence. The recorder is still experimental and physical admission remains pending.
+
+[Incremental R4 recorder allocation](docs/lmtr-r4/RECORDER_ALLOCATION.md) keeps physical access prohibited for the current session and distinguishes exact copy reductions from unresolved safe admission.

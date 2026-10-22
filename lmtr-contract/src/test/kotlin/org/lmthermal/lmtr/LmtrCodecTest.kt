@@ -99,6 +99,15 @@ class LmtrCodecTest {
         }
     }
 
+    @Test fun boundedCompressedRangeIgnoresSurroundingBytesButRejectsExtraStreamInput() {
+        val fixed = hex("7801cb48cdc9c90700062c0215")
+        val surrounded = byteArrayOf(99, 88, 77) + fixed + byteArrayOf(66, 55)
+        assertArrayEquals("hello".toByteArray(), LmtrCodec.decode(surrounded, 3, fixed.size, 1, 5, 5))
+        failure("invalid_payload") { LmtrCodec.decode(surrounded, 3, fixed.size + 1, 1, 5, 5) }
+        for ((offset, length) in listOf(-1 to 5, 0 to -1, Int.MAX_VALUE to 5, 3 to Int.MAX_VALUE))
+            failure("invalid_payload") { LmtrCodec.decode(surrounded, offset, length, 1, 5, 5) }
+    }
+
     @Test fun hardLimitsLocalBudgetAndUnsupportedCodecsAreDistinct() {
         for (codec in listOf(-1, 2, 65535)) {
             failure("unsupported_codec") { LmtrCodec.encode(byteArrayOf(1), codec) }

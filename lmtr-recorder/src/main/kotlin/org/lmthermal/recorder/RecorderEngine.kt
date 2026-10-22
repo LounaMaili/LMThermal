@@ -93,6 +93,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     // Sticky evidence failure: later exceptions may change the diagnostic reason, never
     // restore permission to certify END after a delivered/admitted item lost its journal.
     private var unrepresentedLoss=false
+    private var allocationFailed=false
     private var stopped=false;private var prepDone=false;private var lastWitness=origin
     private var terminationWitness:Long?=null
     private var failureCode="local_resource_limit"
@@ -242,9 +243,23 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;unresolvedIntake=false;lock.notifyAll()
                 }
             }
+        } catch(_:OutOfMemoryError) {
+            // A failed allocation may have abandoned a delivered owner before any loss record.
+            // Drop heavy queued references, poison END permission and preserve only the committed prefix.
+            allocationFailure()
         } catch(_:InterruptedException) { synchronized(lock){unrepresentedLoss=unrepresentedLoss || unresolvedIntake || intake.isNotEmpty();terminateLocked("failed","preparation_interrupted","preparation_interrupted")} }
         catch(_:Exception) { synchronized(lock){unrepresentedLoss=unrepresentedLoss || unresolvedIntake || intake.isNotEmpty();terminateLocked("failed","preparation_failed","preparation_failed")} }
         finally { synchronized(lock){prepFlight=0;prepDone=true;lock.notifyAll()} }
+    }
+
+    /** Best-effort bounded failure path, not permission to retry Start after an OOM. No GC,
+     * payload allocation, repair END or exception formatting is attempted here. A truly exhausted
+     * runtime may still kill the process; previously synchronized records remain recovery evidence.
+     */
+    private fun allocationFailure() = synchronized(lock) {
+        allocationFailed=true;unrepresentedLoss=true;stopped=true;status="failed"
+        reason="allocation_failed";failure="allocation_failed";state="failed"
+        intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()
     }
 
     /** One file/index owner. No footer acknowledgment is counted before its sync returns. */
@@ -337,11 +352,18 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             val report=LmtrReader(backend.destination).use { it.check(full=false) }
             synchronized(lock){state="finalized"}
             completion.complete(RecorderResult(true,terminal.first,terminal.second,report,null))
+        } catch(_:OutOfMemoryError) {
+            allocationFailure()
+            if(!backendCloseAttempted)try { backendCloseAttempted=true;backend.close() }
+                catch(_:Exception) { } catch(_:OutOfMemoryError) { }
+            synchronized(lock){state="failed"}
+            completion.complete(RecorderResult(false,"failed","allocation_failed",null,"allocation_failed"))
         } catch(error:Exception) {
             // Any uncertain body/footer/sync/close halts append. Never fabricate a repair END.
             if(!backendCloseAttempted)try { backendCloseAttempted=true;backend.close() } catch(_:Exception) { }
-            synchronized(lock){stopped=true;state="failed";failure=error.javaClass.simpleName;intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()}
-            completion.complete(RecorderResult(false,"failed","write_or_validation_failure",null,error.toString()))
-        } finally { synchronized(lock){writerFlight=0;pendingBytes=0} }
+            synchronized(lock){stopped=true;state="failed";failure=if(allocationFailed)"allocation_failed" else error.javaClass.simpleName;intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()}
+            completion.complete(if(allocationFailed)RecorderResult(false,"failed","allocation_failed",null,"allocation_failed")
+                else RecorderResult(false,"failed","write_or_validation_failure",null,error.toString()))
+        } finally { pending.clear();synchronized(lock){writerFlight=0;pendingBytes=0} }
     }
 }

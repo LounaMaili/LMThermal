@@ -1,6 +1,10 @@
 # R4 isolated physical-field preparation
 
-**Phase A: prepared; conditional unattended physical validation is owner-authorized.**
+**Current session override (2026-10-22): physical Pixel8/HT-301 access is prohibited; Pixel8 is reserved for LMarchery.**
+Do not run local ADB, inspect/control/install on the phone or access the camera.
+The historical procedure below is for a future separately authorized session only.
+
+**Phase A: prepared; earlier conditional authorization is historical and revoked for this session.**
 Real Pixel 8 / HT-301 results must still be recorded separately from host/ART evidence.
 [PR #16](https://github.com/LounaMaili/LMThermal/pull/16) remains draft and
 [R4 #9](https://github.com/LounaMaili/LMThermal/issues/9) remains open. The accepted

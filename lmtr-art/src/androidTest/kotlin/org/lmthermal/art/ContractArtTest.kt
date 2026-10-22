@@ -43,6 +43,32 @@ class ContractArtTest {
             assertArrayEquals(bytes,file.readBytes())
         }
     }
+    @Test fun fullValidationOnlyMatchesReaderForCommittedCorpusChunks() {
+        val cases=LmtrJson.parse(asset("manifest.json"))["cases"].arr().map {it.obj()}
+        val root=File(instrumentation.targetContext.cacheDir,"validate-${java.util.UUID.randomUUID()}").apply {mkdirs()}
+        var compared=0
+        fun verdict(action:()->Obj):String = try {String(LmtrJson.encode(action()))}
+            catch(error:LmtrFailure){"error:"+error.code}
+        for(case in cases) {
+            val file=File(root,case["id"].text()+".lmtr").apply {writeBytes(asset(case["file"].text()))}
+            java.io.RandomAccessFile(file,"r").use {input ->
+                var at=0L;var header:Obj?=null
+                while(at<input.length()) {
+                    val record=try {LmtrFraming.read(input,at)}catch(_:LmtrFailure){break}
+                    at+=record.length
+                    if(record.type==LmtrFraming.HEADER)header=try {LmtrJson.parse(record.body)}catch(_:LmtrFailure){null}
+                    if(record.type==LmtrFraming.CHUNK && header!=null) {
+                        val h=header!!
+                        assertEquals(case["id"].text(),verdict {LmtrChunk.decode(record.body,h).metadata},
+                            verdict {LmtrChunk.validate(record.body,h)})
+                        compared++
+                    }
+                }
+            }
+        }
+        assertTrue("Exercise payload-bearing and hostile committed bodies",compared>=10)
+    }
+
     @Test fun authoritativeSourceAdapterProducesSyntheticReadback() {
         val output=File(instrumentation.targetContext.filesDir,"r4/source/generated")
         org.lmthermal.recording.CameraRecordingStressProbe.main(arrayOf(output.absolutePath,"3"))
