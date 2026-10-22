@@ -397,3 +397,31 @@ The [pipeline heap investigation](LIVE_HEAP.md) is camera-free fixture attributi
 See the [updated R4 acceptance matrix](LIVE_HEAP.md#updated-r4-acceptance-matrix) for the completed copy/fixture checks and unresolved live-admission/physical gates.
 
 The field-only `org.lmthermal.field.PROFILE_PRESENTATION` action requires an existing current ready measurement and starts no recorder/controls. Its bounded configuration windows, safety stops, report-serialization failure and exact limitations are documented in [presentation investigation](PRESENTATION_PERFORMANCE.md). Stop test cancels this probe; settings/ROI and normal rendering are restored.
+
+## Bounded normal-preview owner/memory diagnostic
+
+The test-only `org.lmthermal.field.SAMPLE_LIVE_MEMORY` Activity action requires an already
+ready current measurement. It never Connects, initializes or starts a recorder. It keeps
+the normal preview enabled, selects Auto/full native ROI, waits3 seconds, then retains
+20 one-second samples in a unique private `files/r4-live-memory/<UUID>` directory.
+It restores prior presentation settings/ROI and clears the bounded keep-screen-on flag
+on completion/failure/cancellation. No global screen setting or forced GC is used.
+
+Rows retain source cadence/preview freshness, render/ROI counters, natural-GC/allocation
+counters, occupied/native/PSS/RSS snapshots and read-only78+32 MiB policy observations.
+The common camera, rendered and ROI roles receive per-sample anonymous owner IDs. Explicit
+HT wrappers sharing one immutable evidence owner collapse; equal sequence numbers alone
+do not collapse distinct owners. The helper retains no strong history or matrix copies.
+Its three visible roles and128 weak history are **not** all source/controller/coroutine/
+Compose roots, and neither an observed policy pass nor weak-owner collection proves safe
+recorder admission. This action has no suppressed phase, unlike the historical profiler.
+
+```bash
+adb -s <verified-wireless-Pixel-serial> shell am start \
+  -n org.lmthermal.field/org.lmthermal.field.FieldActivity \
+  -a org.lmthermal.field.SAMPLE_LIVE_MEMORY
+```
+
+Normal permissions/current scene and device safety prerequisites still apply. No record
+or extended profile follows automatically. Missing USB permission or a required physical
+display reset is a blocker to report, not authority to bypass security or invent readiness.

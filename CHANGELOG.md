@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 normal-preview live owner diagnostic)
+
+- Add a bounded field-only Auto/full-ROI memory window with source/preview/GC/resource counters and three explicitly scoped visible-owner roles. Preserve normal preview, source controls,78+32 MiB admission and production UI ownership. Test identity aliasing, equal-sequence distinction and no retained history; a sampled role census is not a heap/admission proof.
+
+
 ### Added (R4 bounded workspace runtime receipt)
 
 - Record exact530a458 API26/API35 115/115 ART tests and independent readbacks, plus437 host JVM/64 Python passes. Preserve new emulator overload failures separately from correctness success; document sequential writer-service latency and unchanged safe-admission/physical gates.
