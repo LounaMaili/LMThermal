@@ -1,0 +1,56 @@
+{
+  "scope": "earlier working-tree engineering output; retained privately; not physical",
+  "cases": [
+    {
+      "profile": "analysis",
+      "status": "passed",
+      "source_sha256": "68783c2277e38bd70131cdd8c03424fbe4c8c0a67d658bec76490ab3486be535",
+      "oracle_sha256": "843603c087172ae538a619f238b7c12cf310122db86bea6c67358e70e09de664",
+      "observations": 3,
+      "unavailable": 1,
+      "same_observation_views": 0,
+      "recovery": false,
+      "integrity_scope": "full",
+      "terminal": "completed",
+      "source_unchanged": true,
+      "binary_parity": "pre_transform_original_owner_hashes",
+      "context_parity": "adapter_metadata_cross_check_only",
+      "physical_accuracy": "not_independently_validated",
+      "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+    },
+    {
+      "profile": "native",
+      "status": "passed",
+      "source_sha256": "13285b1cd45cbc09526b43d6eb7676ae9e6f3c73fc254cd61cbbcbf3b079fceb",
+      "oracle_sha256": "f0e36d1f57f27c90999cc40d41f1df614fddef1b6be1d894e6edf3ad475fc78d",
+      "observations": 3,
+      "unavailable": 1,
+      "same_observation_views": 0,
+      "recovery": false,
+      "integrity_scope": "full",
+      "terminal": "completed",
+      "source_unchanged": true,
+      "binary_parity": "pre_transform_original_owner_hashes",
+      "context_parity": "adapter_metadata_cross_check_only",
+      "physical_accuracy": "not_independently_validated",
+      "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+    },
+    {
+      "profile": "full",
+      "status": "passed",
+      "source_sha256": "b1e7138a983c31c12d2e6b38395163321328140a7d65facacfc0c1d70f68ad4a",
+      "oracle_sha256": "c714a8e66ef0260def16bb7499da34e8ca723a239551f63b6330bccd2cad6bac",
+      "observations": 3,
+      "unavailable": 1,
+      "same_observation_views": 3,
+      "recovery": false,
+      "integrity_scope": "full",
+      "terminal": "completed",
+      "source_unchanged": true,
+      "binary_parity": "pre_transform_original_owner_hashes",
+      "context_parity": "adapter_metadata_cross_check_only",
+      "physical_accuracy": "not_independently_validated",
+      "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+    }
+  ]
+}

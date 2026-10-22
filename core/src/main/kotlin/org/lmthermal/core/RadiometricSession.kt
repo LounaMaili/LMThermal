@@ -1,7 +1,5 @@
 package org.lmthermal.core
 
-import java.security.MessageDigest
-
 /** Only the three evidence-backed HT-301 operations; callers cannot invent control values. */
 enum class RadiometricCommand(val zoomAbsolute: Int) {
     SELECT_RAW14(32772), SELECT_NORMAL_RANGE(32800), SHUTTER_REFRESH(32768)
@@ -110,7 +108,7 @@ class RadiometricSession(
         if (!ownsConnection()) { cancel(); return }
         val wasActive = snapshot().active
         sequence = frameSequence; mode = inspection.mode
-        val digest = frame?.let { MessageDigest.getInstance("SHA-256").digest(it.imageBytes()) }
+        val digest = frame?.imageDigest()
         val repeated = digest != null && previousDigest?.contentEquals(digest) == true
         previousDigest = digest
         val validRaw = mode == FrameMode.RAW14 && inspection.reason == null
@@ -133,7 +131,7 @@ class RadiometricSession(
         advanceDueCommand()
         if (wasActive || snapshot().active) emit("frame", inspection, mapOf("repeated_image" to repeated, "summary_valid" to inspection.summaryValid,
             "inspection_reason" to inspection.reason, "frame_bytes" to frame?.size,
-            "image_bytes" to frame?.imageBytes()?.size, "trailer_bytes" to frame?.trailerBytes()?.size))
+            "image_bytes" to frame?.let { Ht301Layout.IMAGE_BYTES }, "trailer_bytes" to frame?.let { Ht301Layout.TRAILER_BYTES }))
     }
 
     /** Timeouts with no payload do not advance evidence; the transport owner handles acquisition failure. */

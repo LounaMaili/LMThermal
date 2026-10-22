@@ -6,6 +6,8 @@ import org.lmthermal.app.NativeUvcTransport
 import org.lmthermal.app.NumericEvidence
 import org.lmthermal.app.ThermometryDiagnostics
 import org.lmthermal.camera.CameraCloseReason
+import org.lmthermal.camera.CameraObservationHub
+import org.lmthermal.camera.CameraSourceIdentity
 
 import android.Manifest
 import android.app.PendingIntent
@@ -59,6 +61,7 @@ data class Ht301CameraSnapshot(
  * StateFlow has one current snapshot; the native callback also has a one-frame replacement slot.
  */
 class Ht301CameraController(private val context: Context, private val target: UsbDevice) {
+    val observations=CameraObservationHub(CameraSourceIdentity(Ht301ModuleProfile.metadata))
     private val manager = context.getSystemService(UsbManager::class.java)
     private val worker = Dispatchers.IO.limitedParallelism(1)
     private val scope = CoroutineScope(SupervisorJob() + worker)
@@ -80,7 +83,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
             when (intent.action) {
                 UsbManager.ACTION_USB_DEVICE_DETACHED -> {
                     val device = intent.getParcelableExtra<UsbDevice>(UsbManager.EXTRA_DEVICE)
-                    if (device?.deviceName == wantedDevice) close("Camera unplugged")
+                    if (device?.deviceName == wantedDevice) close("Camera unplugged",CameraCloseReason.DETACHED)
                     discover()
                 }
                 UsbManager.ACTION_USB_DEVICE_ATTACHED -> discover()
@@ -110,7 +113,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
     /** Recheck already-attached devices on foreground/recreation without taking ownership automatically. */
     fun enterForeground() { foreground = true; discover() }
     /** Background releases bandwidth and fd; returning requires an explicit Connect. */
-    fun leaveForeground() { foreground = false; close("Closed in background") }
+    fun leaveForeground() { foreground = false; close("Closed in background",CameraCloseReason.BACKGROUND) }
     /** Read-only discovery leaves an active stream intact. */
     fun discover() {
         if (streamJob?.isActive == true) return
@@ -192,6 +195,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
                     var lastLog = cadenceStart
                     var lastMeasurementLog = cadenceStart
                     var previousMeasurementAvailable = false
+                    var previousReplaced=0L;var previousMalformed=0L;var previousReceiptNs:Long?=null
                     try {
                         while (isActive && token == generation) {
                             if (inventoryRequest.getAndSet(-1L) == token && !session.snapshot().active && !transition.snapshot().active) {
@@ -226,6 +230,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
                             session.tick()
                             val bytes = transport.read()
                             ensureActive()
+                            val receiptNs=SystemClock.elapsedRealtimeNanos()
                             val now = SystemClock.elapsedRealtime()
                             if (bytes == null) {
                                 if (now - lastFrameAt > 5000) error("No UVC payload for 5 seconds; close/reconnect")
@@ -246,6 +251,14 @@ class Ht301CameraController(private val context: Context, private val target: Us
                             val measurementStart = SystemClock.elapsedRealtimeNanos()
                             val measurement = MeasurementGate.evaluate(session.snapshot().state, frame, counters[4], now)
                             val measurementNs = SystemClock.elapsedRealtimeNanos() - measurementStart
+                            // This optional route precedes StateFlow/rendering. Existing immutable owners
+                            // are retained only by an explicit recorder subscriber; no controls or thermometry.
+                            if(counters[1]>previousReplaced)observations.loss("uvc_callback_replaced",counters[1]-previousReplaced,previousReceiptNs,receiptNs)
+                            if(counters[2]>previousMalformed)observations.loss("uvc_callback_malformed",counters[2]-previousMalformed,previousReceiptNs,receiptNs)
+                            previousReplaced=counters[1];previousMalformed=counters[2];previousReceiptNs=receiptNs
+                            observations.publish { ordinal -> Ht301AcquiredObservation(observations.identity,ordinal,
+                                counters[4],receiptNs,frame,inspection,session.snapshot().state,measurement,
+                                if(frame==null)bytes else null,session.snapshot().reason,measurementNs) }
                             val available = measurement.measurement != null
                             if (available != previousMeasurementAvailable || now - lastMeasurementLog >= 2000) {
                                 thermometryEvidence.record(ThermometryDiagnostics.event(measurement, session.snapshot().state,
@@ -276,6 +289,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (error: Exception) {
+                observations.finish(CameraCloseReason.FAILED)
                 Log.e("LMThermal", "Transport failed", error)
                 mutableState.updateIf({ token == generation }) { previous -> previous.copy(
                     usb = UsbState(UsbPhase.ERROR, error.message ?: "Transport error"), bitmap = null,
@@ -297,7 +311,8 @@ class Ht301CameraController(private val context: Context, private val target: Us
             "native_width" to Ht301Layout.WIDTH, "native_height" to Ht301Layout.IMAGE_HEIGHT)
     }
     /** Immediately clear stale presentation; worker cancellation releases the native handle asynchronously. */
-    fun close(message: String = "Closed") {
+    fun close(message: String = "Closed", sourceReason:CameraCloseReason = CameraCloseReason.USER) {
+        observations.finish(sourceReason)
         generation++
         initializeRequest.set(-1L)
         inventoryRequest.set(-1L)
@@ -319,7 +334,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
             CameraCloseReason.DETACHED -> "Camera unplugged"
             CameraCloseReason.BACKGROUND -> "Closed in background"
             else -> "Closed"
-        })
+        },reason)
         previousJob?.join()
         context.unregisterReceiver(receiver)
         scope.cancel()

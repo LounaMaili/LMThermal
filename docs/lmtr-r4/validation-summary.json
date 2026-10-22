@@ -1,0 +1,113 @@
+{
+  "scope": "R4 authoritative source/lifecycle continuation: host + camera-free ART, not complete physical Android recorder acceptance",
+  "base_main": "8eb4aceaf8bb36a8061c932b3121f898b81b4af3",
+  "normative_commit": "8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f",
+  "canonical_corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+  "platform": "Fedora Linux",
+  "jvm_tests": {
+    "lmtr-contract": {
+      "tests": 71,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-recorder": {
+      "tests": 39,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "core": {
+      "tests": 232,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "camera-recording": {
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "app": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "python_tests": {
+    "tests": 64,
+    "failures": 0,
+    "skipped": 0
+  },
+  "r4_engine_interop": {
+    "cases": 14,
+    "completed_end": 10,
+    "honestly_failed_end": 1,
+    "recovered_prefixes": 3,
+    "source_bits_and_hashes_unchanged": true,
+    "receipt": "resumed-engine-interop.json"
+  },
+  "r3_regression": {
+    "cases_per_reader": 51,
+    "independent_kotlin_rewrites": 33,
+    "canonical_plan_byte_comparisons": 33,
+    "json_vectors": 43,
+    "seek_cases": 44,
+    "hostile_combination_cases": 29,
+    "pinned_original_generator_check": true
+  },
+  "android_build": "app assembleDebug and isolated test-only ART packaging passed; recorder/adapter not linked into product",
+  "android_lint": "lintDebug passed",
+  "art": {
+    "status": "EXECUTED_AND_REVIEWED_ON_EMULATORS",
+    "receipt": "art-final-code-validation.json",
+    "run_id": 38435068678,
+    "source_sha": "abea098e69332f0a16ee779f6181c3af9040947c",
+    "api26_tests": 61,
+    "api35_tests": 61,
+    "engine_readback_cases_per_api": 14,
+    "source_readback_observations_per_api": 75,
+    "original_clock_and_intake_oracle_checked": true,
+    "physical_hardware": false,
+    "scope": "Exact tested code checkpoint; later documentation only commits explicitly separated."
+  },
+  "resources": "charged queue/in-flight/pending counters and finite host copy costs; no measured ART/RSS plateau or filesystem wall-time/power-loss guarantee",
+  "pending": [
+    "opt-in physical HT-301/Pixel8 adapter and lifecycle validation",
+    "matched real cadence, preview freshness, clean-process memory, stop/recovery",
+    "actual physical Android source-byte full independent readback",
+    "native Windows recorder and applicable local backend gates",
+    "R6 backend/provider publication and durability: outside this task"
+  ],
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "historical_foundation_receipt": "foundation-validation-summary.json",
+  "source": {
+    "status": "implemented_opt_in_inert_by_default",
+    "host_stress_receipt": "source-stress-final.json",
+    "host_readback_receipt": "source-readback-final.json",
+    "source_sha": "abea098e69332f0a16ee779f6181c3af9040947c",
+    "seconds": 120,
+    "observations": 3000,
+    "preparation_drops": 0,
+    "writer_drops": 0,
+    "copy_cost_receipt": "ht-copy-cost-final.json",
+    "app_recording_ui": false,
+    "file_sha256": "e1a0a230fea25009e2c4b6f0a944b0bab33f08651b47bb7985eb19d8c4285887",
+    "oracle_sha256": "91b8572aa45fa2fa985159425e72f8ab2b31ae0c9edd629e1f6c4380a5ea082b",
+    "original_clock_and_intake_oracle_checked": true,
+    "ownership_copy_receipt": "ownership-copy-cost-final.json",
+    "valid_temperature_planes": 2962,
+    "explicitly_unavailable_observations": 38
+  },
+  "regression_checks": {
+    "hardening_cases": 29,
+    "cancellation": "passed with cooperative boundary limitations",
+    "editorial_contract_schema_examples_precision": "passed; not runtime conformance",
+    "module_boundaries": "passed",
+    "localization": "passed 10 self-tests and 110/110 language parity"
+  },
+  "validated_source_sha": "abea098e69332f0a16ee779f6181c3af9040947c",
+  "jvm_test_total": 380
+}

@@ -1,5 +1,14 @@
 # R3 implementation checklist and acceptance coverage
 
+> **Integration update:** PR #14 merged at `8eb4aceaf8bb36a8061c932b3121f898b81b4af3`
+> from reviewed `fb857b6`; #8 is closed for finite R3 contract conformance. Final Windows
+> run [38393731476](https://github.com/LounaMaili/LMThermal/actions/runs/38393731476)
+> tested that exact head. Older pending/draft statements below are checkpoint history.
+> [R4 foundation](../lmtr-r4/README.md) now reuses extracted `LmtrAppendSession` mechanics;
+> `LmtrWriter.writePlan` retains recipe-only fixture generation. The frozen wire/corpus
+> are unchanged; ART and actual Android recording remain unvalidated.
+
+
 Base main `fe029363062cdf54d6cefa9d4f24265e80188091` contains accepted R1b.
 Normative authority: [LMTR v1 at acceptance commit](https://github.com/LounaMaili/LMThermal/blob/8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f/docs/LMTR_WIRE_V1.md).
 R3 branch `feat/lmtr-r3-contract-conformance`; #8 stays open, no R3 merge or R4/R5.

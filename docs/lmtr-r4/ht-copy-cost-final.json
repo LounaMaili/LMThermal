@@ -1,0 +1,13 @@
+{
+  "charged_bytes": "3145728",
+  "fixture": "existing sanitized room frame; not exported",
+  "freeze_max_ns": "2759572",
+  "freeze_p50_ns": "770050",
+  "freeze_p95_ns": "1123580",
+  "offer_max_ns": "19140",
+  "offer_p50_ns": "10460",
+  "offer_p95_ns": "12180",
+  "samples": 50,
+  "scope": "host synthetic copy/metadata cost; thermometry evaluated once outside timing, no SHA/compression/I/O",
+  "source_retained_bytes": "1108992"
+}

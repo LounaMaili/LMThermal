@@ -1,0 +1,103 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "name": "analysis-0",
+      "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+      "observations": 2,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "native-0",
+      "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+      "observations": 2,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "full-0",
+      "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+      "observations": 2,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "analysis-1",
+      "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+      "observations": 2,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "native-1",
+      "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+      "observations": 2,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "full-1",
+      "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+      "observations": 2,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "independent-native-acquisition",
+      "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+      "observations": 2,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "temperature-only",
+      "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+      "observations": 2,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "preview-only",
+      "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+      "observations": 2,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "multistream-geometry",
+      "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+      "observations": 4,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true
+    },
+    {
+      "name": "torn-tail",
+      "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+      "observations": 1,
+      "status": "recovered",
+      "integrity_scope": "full_verified_prefix",
+      "source_unchanged": true
+    },
+    {
+      "name": "navigation-failure",
+      "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+      "observations": 1,
+      "status": "recovered",
+      "integrity_scope": "full_verified_prefix",
+      "source_unchanged": true
+    }
+  ],
+  "generated_scope": "noncanonical R4 engineering outputs",
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

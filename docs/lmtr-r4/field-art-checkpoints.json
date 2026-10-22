@@ -1,0 +1,1958 @@
+{
+  "scope": "camera-free emulators and existing sanitized room input, not physical Pixel/HT",
+  "checkpoints": [
+    {
+      "run_id": 38449569251,
+      "source_sha": "e1ab47a2951203da76acc1f733cb4ae2ce2d5d76",
+      "url": "https://github.com/LounaMaili/LMThermal/actions/runs/38449569251",
+      "overall": "passed",
+      "apis": [
+        {
+          "api": 26,
+          "test_count": 79,
+          "instrumentation": "passed",
+          "model": "Android SDK built for x86_64",
+          "abis": "x86_64,x86",
+          "instrumentation_sha256": "54ad50bbfdb1df9092b3b8ce8a2da130913f2a7cdabd7976441865c244e22981",
+          "engine_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "analysis-0",
+                "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-0",
+                "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-0",
+                "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "analysis-1",
+                "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-1",
+                "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-1",
+                "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "independent-native-acquisition",
+                "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "temperature-only",
+                "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "preview-only",
+                "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "multistream-geometry",
+                "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+                "observations": 4,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "torn-tail",
+                "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "navigation-failure",
+                "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "unjournaled-loss",
+                "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "represented-source-failure",
+                "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+                "observations": 0,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "source_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "source-25hz",
+                "sha256": "a7007bf70555ab5437a5748ae73a685cc587de8fb703356f43e573d589afeff9",
+                "observations": 75,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": "3b52000fd2a0a05d041c70b695b3b879a83c17b815f7407aae09a95a8bff46ef",
+                "clock_and_intake_oracle_checked": true
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "field_readbacks": {
+            "analysis": {
+              "status": "passed",
+              "source_sha256": "92c4feb25342cde994b825d49df639d3e8d049cf7e3c8fa1f8a98f056eadb43a",
+              "oracle_sha256": "fa9e542fce4838c4b8c1a49d3057cdfc000765fd0726d2a6d240a5c68428f781",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "884736",
+              "physical_stored_block_bytes": "209219",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "native": {
+              "status": "passed",
+              "source_sha256": "d6edde2ea527040944494a862da9f62745146d23a5ff9bfd9d6abc7e7164c74e",
+              "oracle_sha256": "e8f4ae71390b519735d9a57774a295bf185715e32548218307c05aca3bf6b3aa",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1548288",
+              "physical_stored_block_bytes": "450725",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "full": {
+              "status": "passed",
+              "source_sha256": "26a1b75566768fc270e73a9e5591692c35e523381d4265fc399b591b4f0e096a",
+              "oracle_sha256": "5512d4c68adcf21a2a1fb6599f86901da2aa99d6398705c6681eff8ba96a1e6d",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 3,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "acquisition": "672768",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1557504",
+              "physical_stored_block_bytes": "451860",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        },
+        {
+          "api": 35,
+          "test_count": 79,
+          "instrumentation": "passed",
+          "model": "sdk_gphone64_x86_64",
+          "abis": "x86_64,arm64-v8a",
+          "instrumentation_sha256": "c2ed4f5bbefdc054029f01150605a6a60536c5978a84452ed1e47507c1c272cd",
+          "engine_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "analysis-0",
+                "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-0",
+                "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-0",
+                "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "analysis-1",
+                "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-1",
+                "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-1",
+                "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "independent-native-acquisition",
+                "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "temperature-only",
+                "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "preview-only",
+                "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "multistream-geometry",
+                "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+                "observations": 4,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "torn-tail",
+                "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "navigation-failure",
+                "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "unjournaled-loss",
+                "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "represented-source-failure",
+                "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+                "observations": 0,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "source_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "source-25hz",
+                "sha256": "059f33f5112cedc6cddfe7b36a79ad67765bd17ee0a012698874c022f07c38da",
+                "observations": 75,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": "9a379112f0f780ebf5d6da6fc59c2d5997ba79017b5d2d5e7214f59cd629b48a",
+                "clock_and_intake_oracle_checked": true
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "field_readbacks": {
+            "analysis": {
+              "status": "passed",
+              "source_sha256": "92381d7376ccae4b068e10d7fb0263246211ec94024d59bac92bb850454a1134",
+              "oracle_sha256": "ba9ed1a6ab5e4a0deac38d2ab8475f5889169b24487004c4447170a8d62a4fcd",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "884736",
+              "physical_stored_block_bytes": "209219",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "native": {
+              "status": "passed",
+              "source_sha256": "3580b9162f60309b9d1af037695418a46b59f28abffaa4c9028ed2e749d95ec6",
+              "oracle_sha256": "f6ab117b8860eaee1b5f5be9d920d1ca3a8c2aa5cf88374e9b9d8c41a1adbdc9",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1548288",
+              "physical_stored_block_bytes": "450725",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "full": {
+              "status": "passed",
+              "source_sha256": "d64ac71789585066878f0c62482b806fc53c32be2f3322d3c481de6e920b2e9b",
+              "oracle_sha256": "8e85db234163d9d752f3dcd9514c7140815afbc1ec77575149d9e5ee98105775",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 3,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "acquisition": "672768",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1557504",
+              "physical_stored_block_bytes": "451860",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "run_id": 38450510713,
+      "source_sha": "f2230c0e9de1a694d55b4d37e114d5b873d34f15",
+      "url": "https://github.com/LounaMaili/LMThermal/actions/runs/38450510713",
+      "overall": "failed_assertion_preserved",
+      "apis": [
+        {
+          "api": 26,
+          "test_count": 80,
+          "instrumentation": "failed",
+          "model": "Android SDK built for x86_64",
+          "abis": "x86_64,x86",
+          "instrumentation_sha256": "f1ac73538977f11cc95dfd4a3b1e93a3f3dcce9aa39da0ceaea2574c50d922f9",
+          "engine_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "analysis-0",
+                "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-0",
+                "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-0",
+                "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "analysis-1",
+                "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-1",
+                "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-1",
+                "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "independent-native-acquisition",
+                "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "temperature-only",
+                "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "preview-only",
+                "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "multistream-geometry",
+                "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+                "observations": 4,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "torn-tail",
+                "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "navigation-failure",
+                "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "unjournaled-loss",
+                "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "represented-source-failure",
+                "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+                "observations": 0,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "source_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "source-25hz",
+                "sha256": "1d9169f135bbb53a518b2a7d135371e857b8137a4e239fb45216352b71f25994",
+                "observations": 75,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": "bbf3cc54bd7f5d468da25344bd43712c6a6b05795c7dab41a6615d0f789255f9",
+                "clock_and_intake_oracle_checked": true
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "field_readbacks": {
+            "analysis": {
+              "status": "passed",
+              "source_sha256": "28a988e43a3f2f82709a255f1daefee8244333d2e44983620a0bdef5171064a3",
+              "oracle_sha256": "6adf3bdfdb389bd441f06c825d16b2e1c4f20e69bfc948ac8a64ef06a5dfe261",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "884736",
+              "physical_stored_block_bytes": "209219",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "native": {
+              "status": "passed",
+              "source_sha256": "1f5cabbb8c9e825b5fde3e6b74612fc9533aa0fb6e06f2dad9ef542a8da03c82",
+              "oracle_sha256": "9ff60c8dcefc9ff72d0ad1764b159a8e4fc8391fa08880c0c296defe5a5ceff8",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1548288",
+              "physical_stored_block_bytes": "450725",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "full": {
+              "status": "passed",
+              "source_sha256": "c1aa3dfdbb156f0ceb2c40aa27326c04a7966fb3ee90f5e3c37045a53f81ca47",
+              "oracle_sha256": "82507d74e242101fffa01fd25f594f821742d019e6b27480c60e318279f22dc8",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 3,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "acquisition": "672768",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1557504",
+              "physical_stored_block_bytes": "451860",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        },
+        {
+          "api": 35,
+          "test_count": 80,
+          "instrumentation": "passed",
+          "model": "sdk_gphone64_x86_64",
+          "abis": "x86_64,arm64-v8a",
+          "instrumentation_sha256": "2805a6eb761626991a7102b940285b6ad8994c75497d6baf45a9754a45ff0bde",
+          "engine_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "analysis-0",
+                "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-0",
+                "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-0",
+                "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "analysis-1",
+                "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-1",
+                "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-1",
+                "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "independent-native-acquisition",
+                "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "temperature-only",
+                "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "preview-only",
+                "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "multistream-geometry",
+                "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+                "observations": 4,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "torn-tail",
+                "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "navigation-failure",
+                "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "unjournaled-loss",
+                "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "represented-source-failure",
+                "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+                "observations": 0,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "source_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "source-25hz",
+                "sha256": "b4b0f4ec4868ebda73f3ec0489615fa72e785ece102dd10a18578c69e95ad32a",
+                "observations": 75,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": "a02d2adaa23e520dfe9dcbb06e642ff91ed59c82db4069d7673c981b7bad2010",
+                "clock_and_intake_oracle_checked": true
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "field_readbacks": {
+            "analysis": {
+              "status": "passed",
+              "source_sha256": "cb2f6088077c4549a3aef3de9414f6a8d1799e94edb1235e625a18c30dfff1ee",
+              "oracle_sha256": "01d3439f23aa41fbd5888945ac7f804d02d004bb92ec48d2b71b3fbc0fe18e07",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "884736",
+              "physical_stored_block_bytes": "209219",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "native": {
+              "status": "passed",
+              "source_sha256": "17bb4dc2065e67ce7cd751b1fc3fcb758a0600ad83e89a610fb651462d840088",
+              "oracle_sha256": "39a5f51e015b39e3c12b552535dc05ecb8351183ab7bf627d5fbeb9cbaf76c70",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1548288",
+              "physical_stored_block_bytes": "450725",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "full": {
+              "status": "passed",
+              "source_sha256": "bd7591768c7b3d86b3d463a319c341d3ce0ab60898cce043622cba6e4750fcce",
+              "oracle_sha256": "2a045eac3d7fea63d2b08cd5911cf304871848cbb76f6c01c8b169642ed4aa65",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 3,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "acquisition": "672768",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1557504",
+              "physical_stored_block_bytes": "451860",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "run_id": 38451708337,
+      "source_sha": "60cc5fda37e9a6d0b5da7aa8b1d5b9efd57625b8",
+      "url": "https://github.com/LounaMaili/LMThermal/actions/runs/38451708337",
+      "overall": "passed",
+      "apis": [
+        {
+          "api": 26,
+          "test_count": 80,
+          "instrumentation": "passed",
+          "model": "Android SDK built for x86_64",
+          "abis": "x86_64,x86",
+          "instrumentation_sha256": "9fe50f7f1850028526559ba639113855feca224a4a1cc510fc5d1ad9cd85c15c",
+          "engine_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "analysis-0",
+                "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-0",
+                "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-0",
+                "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "analysis-1",
+                "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-1",
+                "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-1",
+                "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "independent-native-acquisition",
+                "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "temperature-only",
+                "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "preview-only",
+                "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "multistream-geometry",
+                "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+                "observations": 4,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "torn-tail",
+                "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "navigation-failure",
+                "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "unjournaled-loss",
+                "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "represented-source-failure",
+                "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+                "observations": 0,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "source_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "source-25hz",
+                "sha256": "3e0bb383f86df631b8d805512144e6d040b0858816721ce8ae73bc0f267f689a",
+                "observations": 75,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": "312d75b5b8b2b72a0ed5dc47d795a24a16aad73f50f4b53f0c97c893beb53fcb",
+                "clock_and_intake_oracle_checked": true
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "field_readbacks": {
+            "analysis": {
+              "status": "passed",
+              "source_sha256": "3bd313f61f0a8c262e53ea4efd7e604bb8589c9882ccb894d1e48c4d04fa3f47",
+              "oracle_sha256": "6187c21578608de9ab6917546fc48a5633d6a01e7bbe7e493af14414fc27857e",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "884736",
+              "physical_stored_block_bytes": "209219",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "native": {
+              "status": "passed",
+              "source_sha256": "c32622085b0f6988149c7b2ba3d4e337fa36cc6ee27042ce7186ba22cd3b2e22",
+              "oracle_sha256": "34fd4d6a929ba53a7b198270822d07c769207d7f791c182df0667f4490ad860c",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1548288",
+              "physical_stored_block_bytes": "450725",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "full": {
+              "status": "passed",
+              "source_sha256": "a5e22d1e7d80a4104d44a79f33482acd96327e83458c46a83d5a7502ad2cac0d",
+              "oracle_sha256": "0810465071549533122266703d2e3396a02f484904fcb538d28e79e097359f21",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 3,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "acquisition": "672768",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1557504",
+              "physical_stored_block_bytes": "451860",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        },
+        {
+          "api": 35,
+          "test_count": 80,
+          "instrumentation": "passed",
+          "model": "sdk_gphone64_x86_64",
+          "abis": "x86_64,arm64-v8a",
+          "instrumentation_sha256": "aa7fbdfef53eb2d9968c78d211b4701bd8d5b87cd81048438e86aeb5230c918a",
+          "engine_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "analysis-0",
+                "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-0",
+                "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-0",
+                "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "analysis-1",
+                "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-1",
+                "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-1",
+                "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "independent-native-acquisition",
+                "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "temperature-only",
+                "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "preview-only",
+                "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "multistream-geometry",
+                "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+                "observations": 4,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "torn-tail",
+                "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "navigation-failure",
+                "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "unjournaled-loss",
+                "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "represented-source-failure",
+                "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+                "observations": 0,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "source_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "source-25hz",
+                "sha256": "7223d0e82b24eeaaedf3e2e61fc3a8d7201941f755d7ef511180a74320411044",
+                "observations": 75,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": "9f1b9023adbf79db0d2718a9971be007e942ac668b6c1e77b744a6382e907987",
+                "clock_and_intake_oracle_checked": true
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "field_readbacks": {
+            "analysis": {
+              "status": "passed",
+              "source_sha256": "80fad2fb7d9b208a53cd342c0354faf6db0fcc57cc1a47ceb7097a29782d9b94",
+              "oracle_sha256": "ab702d11ce4cff022216c82833dce2d6e2a8dd067b09c2957aaf52fdd050f441",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "884736",
+              "physical_stored_block_bytes": "209219",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "native": {
+              "status": "passed",
+              "source_sha256": "d4538f74a3ae7a5cbc40ba06c0f384e5904a85a798434bf0918cada05e277703",
+              "oracle_sha256": "27a29917dad2548d0e165a485237344a3ed7f1983a87fb53f6823a2aab234d4e",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1548288",
+              "physical_stored_block_bytes": "450725",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "full": {
+              "status": "passed",
+              "source_sha256": "20c42ebfbb5f1c4cfdf8468cc087edd89f3162764ddeec69bbf2b07efc9d2308",
+              "oracle_sha256": "e9e5ad6db380c97742c10275a4c24d52b923ecaef7c74f5a4f41cd3fcdb0f555",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 3,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "acquisition": "672768",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1557504",
+              "physical_stored_block_bytes": "451860",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "run_id": 38453472955,
+      "source_sha": "f90db853e9eee854eb8c562d09c4f4592c663db5",
+      "url": "https://github.com/LounaMaili/LMThermal/actions/runs/38453472955",
+      "overall": "passed",
+      "apis": [
+        {
+          "api": 26,
+          "test_count": 80,
+          "instrumentation": "passed",
+          "model": "Android SDK built for x86_64",
+          "abis": "x86_64,x86",
+          "instrumentation_sha256": "d7ba559df3665e9b8b1af6f4268f46996ce8ac93f349d835fa60a069c9716cf8",
+          "engine_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "analysis-0",
+                "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-0",
+                "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-0",
+                "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "analysis-1",
+                "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-1",
+                "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-1",
+                "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "independent-native-acquisition",
+                "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "temperature-only",
+                "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "preview-only",
+                "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "multistream-geometry",
+                "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+                "observations": 4,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "torn-tail",
+                "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "navigation-failure",
+                "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "unjournaled-loss",
+                "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "represented-source-failure",
+                "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+                "observations": 0,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "source_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "source-25hz",
+                "sha256": "6da99f5f1dda1ff6444a49367de492ef24178e1bbdd35f0e71d2d4dbb12f0b97",
+                "observations": 75,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": "21bf1c71f2e9887808c180f47459fcff0a4ede62e92375da1d5415d9f2d4dd75",
+                "clock_and_intake_oracle_checked": true
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "field_readbacks": {
+            "analysis": {
+              "status": "passed",
+              "source_sha256": "b1b24ab62f95b5c1f2826d4e1ec197d34cfeba2f1c6ddeb6fa4a5a65bd81a615",
+              "oracle_sha256": "22b01e2735062e660ca6da8e45f0adba606b207217096e4010ee0e6485a61765",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "884736",
+              "physical_stored_block_bytes": "209219",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "native": {
+              "status": "passed",
+              "source_sha256": "5e60cb473a44ec9f96cbefcc23d677c288f0b4e1d2994c8e3a4ae8b03b2750b1",
+              "oracle_sha256": "5d420dc6b5d213cc202bf0d7ff5a5db5f45dd34dc2e535989b019002c1b991cc",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1548288",
+              "physical_stored_block_bytes": "450725",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "full": {
+              "status": "passed",
+              "source_sha256": "de7e2291bcb11291579c86db959298e294e4d098bfa5ce8cefef87f44dddeb32",
+              "oracle_sha256": "5e8ff0d5b0c36029e90bc2d6e449a06daac8879255ed22466c609dec254b3332",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 3,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "acquisition": "672768",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1557504",
+              "physical_stored_block_bytes": "451860",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        },
+        {
+          "api": 35,
+          "test_count": 80,
+          "instrumentation": "passed",
+          "model": "sdk_gphone64_x86_64",
+          "abis": "x86_64,arm64-v8a",
+          "instrumentation_sha256": "cb61b19d5429ea02c622ca37578b0d6eb49231389df86a24d9190cb884fca991",
+          "engine_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "analysis-0",
+                "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-0",
+                "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-0",
+                "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "analysis-1",
+                "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "native-1",
+                "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "full-1",
+                "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "independent-native-acquisition",
+                "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "temperature-only",
+                "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "preview-only",
+                "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+                "observations": 2,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "multistream-geometry",
+                "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+                "observations": 4,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "torn-tail",
+                "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "navigation-failure",
+                "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "unjournaled-loss",
+                "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+                "observations": 1,
+                "status": "recovered",
+                "integrity_scope": "full_verified_prefix",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              },
+              {
+                "name": "represented-source-failure",
+                "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+                "observations": 0,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": null,
+                "clock_and_intake_oracle_checked": false
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "source_readback": {
+            "status": "passed",
+            "cases": [
+              {
+                "name": "source-25hz",
+                "sha256": "a7f8fdb99c54256e84b66626175d4d1bac8989ff5605f7c7ff1e963522954de6",
+                "observations": 75,
+                "status": "valid",
+                "integrity_scope": "full",
+                "source_unchanged": true,
+                "original_oracle_sha256": "3cab691ed1dc495cc168353c367343ffeeadd48d4a028b892161b12c4fb09fcf",
+                "clock_and_intake_oracle_checked": true
+              }
+            ],
+            "generated_scope": "noncanonical R4 engineering outputs",
+            "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+          },
+          "field_readbacks": {
+            "analysis": {
+              "status": "passed",
+              "source_sha256": "d1c86300e86de901557f9298f95b9b790ee23225e712da3c76e6f9c89ed5f704",
+              "oracle_sha256": "e429661e22c4a1bb331acc82d6f8ecd67eca1d82dfe34b7252bb61b3f66419eb",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "884736",
+              "physical_stored_block_bytes": "209219",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "native": {
+              "status": "passed",
+              "source_sha256": "826cbc7bad112406c0aaecb37eb72b680dd1ce85f88dd4cf6a4dd1a838385f53",
+              "oracle_sha256": "436a43c91082f7d9dfb9bb8e0334c1d4b3adfb494c577077f5fb2748c6cb2692",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 0,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1548288",
+              "physical_stored_block_bytes": "450725",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            },
+            "full": {
+              "status": "passed",
+              "source_sha256": "fb9a04d602513e44c5d28de2ba962cb2ecf78ce46362699a5956025dc0d43af2",
+              "oracle_sha256": "6b41397114dce26fd5f07c541b3bf35a1fe84157db1669dfd3243578b66cc813",
+              "observations": 3,
+              "unavailable": 1,
+              "same_observation_views": 3,
+              "recovery": false,
+              "integrity_scope": "full",
+              "terminal": "completed",
+              "source_unchanged": true,
+              "retained_role_bytes": {
+                "native_samples": "663552",
+                "acquisition": "672768",
+                "temperature": "884736"
+              },
+              "physical_decoded_block_bytes": "1557504",
+              "physical_stored_block_bytes": "451860",
+              "binary_parity": "pre_transform_original_owner_hashes",
+              "context_parity": "adapter_metadata_cross_check_only",
+              "physical_accuracy": "not_independently_validated",
+              "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

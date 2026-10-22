@@ -13,71 +13,7 @@ object LmtrWriter {
         demand(!destination.exists() && destination.createNewFile(),"storage_failure")
         try {
             RandomAccessFile(destination,"rw").use { file ->
-                var ordinal=0L;var previous=LmtrFraming.SENTINEL
-                fun append(type:Int,body:ByteArray):Record {
-                    val record=LmtrFraming.append(file,type,ordinal,previous,body)
-                    previous=record.offset;ordinal=LmtrChunk.add(ordinal,1);return record
-                }
-                append(LmtrFraming.HEADER,LmtrJson.encode(header))
-                val levels=mutableListOf<MutableList<Obj>>();val state=JournalState();val summary=SummaryAccumulator(header)
-                var lastChunk:Obj?=null;var previousCheckpoint:Obj?=null;var sinceCheckpoint=0
-                fun makePage(depth:Int,children:List<Obj>):Obj {
-                    demand(depth in 0..7 && children.isNotEmpty() && children.size<=256,"resource_limit")
-                    val refs=children.map { it["record"].obj() };val streamIds=children.flatMap { it["stream_ids"].arr().map { v->v.text() } }.sorted().distinct()
-                    val page=linkedMapOf<String,Any?>("depth" to depth,"children" to children,"first" to refs.first()["first"],"last" to refs.last()["last"],
-                        "time_first_ns" to children.first()["time_first_ns"],"time_last_ns" to children.last()["time_last_ns"],"stream_ids" to streamIds,
-                        "chunks" to children.fold(0L){n,c->LmtrChunk.add(n,c["_chunks"].d())}.toString(),
-                        "entries" to children.fold(0L){n,c->LmtrChunk.add(n,c["_entries"].d())}.toString())
-                    page["children"]=children.map { it.filterKeys { k->!k.startsWith("_") } }
-                    LmtrMetadata.local("IndexPage",page);demand(LmtrJson.encode(page).size<=524288,"resource_limit");return page
-                }
-                fun pageChild(depth:Int,children:List<Obj>):Obj {
-                    val page=makePage(depth,children);val r=append(LmtrFraming.INDEX,LmtrJson.encode(page))
-                    return linkedMapOf("record" to RecordRef(r.offset,r.length,r.ordinal,page["first"].d(),page["last"].d(),r.refHash).json(),
-                        "time_first_ns" to page["time_first_ns"],"time_last_ns" to page["time_last_ns"],"stream_ids" to page["stream_ids"],
-                        "_chunks" to page["chunks"],"_entries" to page["entries"])
-                }
-                fun push(initialDepth:Int,initial:Obj) {
-                    var depth=initialDepth;var child=initial
-                    while(true) {
-                        demand(depth<=7,"resource_limit");while(levels.size<=depth)levels.add(mutableListOf())
-                        val pending=levels[depth]
-                        if(pending.isNotEmpty() && (pending.size==256 || try { LmtrJson.encode(makePage(depth,pending+child)).size>524288 } catch(e:LmtrFailure){ if(e.code=="resource_limit")true else throw e })) {
-                            val promoted=pageChild(depth,pending.toList());pending.clear();
-                            // Recursively promoting needs no duration-sized reference list.
-                            pending.add(child);depth++;child=promoted;continue
-                        }
-                        pending.add(child);return
-                    }
-                }
-                fun snapshotRoot():Obj? {
-                    var carry=emptyList<Obj>();var depth=0
-                    while(depth<levels.size || carry.isNotEmpty()) {
-                        val pending=if(depth<levels.size)levels[depth].toList() else emptyList()
-                        val children=pending+carry
-                        if(children.isEmpty()){depth++;continue}
-                        // Snapshot pages do not mutate rolling pending state. A
-                        // full upper level plus a lower snapshot may have 257
-                        // children; split it before promotion rather than failing
-                        // a valid recording at the first multi-level checkpoint.
-                        if(depth>0 && children.size==1 && levels.drop(depth+1).all { it.isEmpty() })return children.single()["record"].obj()
-                        demand(depth<=7,"resource_limit")
-                        carry=partitionIndexChildren(children) { group ->
-                            try { makePage(depth,group);true }
-                            catch(e:LmtrFailure) { if(e.code=="resource_limit")false else throw e }
-                        }.map { pageChild(depth,it) }
-                        depth++
-                    }
-                    return null
-                }
-
-                fun checkpoint():Pair<Record,Obj> {
-                    val root=snapshotRoot();val value=linkedMapOf<String,Any?>("recording_id" to header["recording_id"],"root" to root,
-                        "last_chunk" to lastChunk,"previous_checkpoint" to previousCheckpoint,"summary" to summary.json())
-                    LmtrMetadata.local("Checkpoint",value);val r=append(LmtrFraming.CHECKPOINT,LmtrJson.encode(value))
-                    val s=summary.json();previousCheckpoint=RecordRef(r.offset,r.length,r.ordinal,s["first_entry"]?.d(),s["last_entry"]?.d(),r.refHash).json()
-                    sinceCheckpoint=0;return r to value
-                }
+                val session=LmtrAppendSession(header,file)
                 for (item in plan["chunks"].arr().map { it.obj() }) {
                     val original=item["metadata"].obj();val recipes=item["payload_recipes"].obj()
                     // Plans have provisional stored offsets/hashes, not wire
@@ -142,23 +78,10 @@ object LmtrWriter {
                     val bodySize=LmtrChunk.add(4L+json.size,offset);demand(bodySize<=LmtrFraming.MAX_RECORD_BYTES-112,"resource_limit")
                     val body=ByteArray(bodySize.toInt());ByteBuffer.wrap(body).order(ByteOrder.LITTLE_ENDIAN).putInt(json.size).put(json)
                     var at=4+json.size;for(b in stored){b.copyInto(body,at);at+=b.size}
-                    LmtrChunk.decode(body,header);state.accept(meta)
-                    val r=append(LmtrFraming.CHUNK,body);summary.accept(meta)
-                    val first=entries.first();val last=entries.last()
-                    val ref=RecordRef(r.offset,r.length,r.ordinal,first["entry_id"].d(),last["entry_id"].d(),r.refHash).json();lastChunk=ref
-                    val segments=meta["segments"].arr().map { it.obj() }.associateBy { it["id"].text() };val ids=sortedSetOf<String>()
-                    for(e in entries)if(e["stream_id"]!=null)ids.add(e["stream_id"].text())else ids.addAll(segments.getValue(e["segment_id"].text())["streams"].arr().map { it.obj()["stream_id"].text() })
-                    push(0,linkedMapOf("record" to ref,"time_first_ns" to first["timeline_ns"],"time_last_ns" to last["timeline_ns"],"stream_ids" to ids.toList(),"_chunks" to "1","_entries" to entries.size.toString()))
-                    sinceCheckpoint++;if(sinceCheckpoint==32)checkpoint()
+                    session.appendChunk(body)
                 }
-                demand(state.activeSegment==null,"invalid_metadata")
-                val (cpRecord,cp)=checkpoint();val s=summary.json()
-                // Earlier creation UTC is not evidence of this Stop/publication.
-                // Missing finalization-clock input must remain explicitly unknown.
-                val end=linkedMapOf<String,Any?>("recording_id" to header["recording_id"],"root" to cp["root"],
-                    "checkpoint" to RecordRef(cpRecord.offset,cpRecord.length,cpRecord.ordinal,s["first_entry"]?.d(),s["last_entry"]?.d(),cpRecord.refHash).json(),
-                    "summary" to s,"status" to "completed","reason" to "synthetic_fixture_stop","finalization_time" to (plan["finalization_time"]?:mapOf("status" to "unknown","clock_source" to "host_utc","reason" to "not_recorded")),"error" to null)
-                LmtrMetadata.local("End",end);append(LmtrFraming.END,LmtrJson.encode(end))
+                session.finish("completed","synthetic_fixture_stop",plan["finalization_time"]?.obj()
+                    ?: mapOf("status" to "unknown","clock_source" to "host_utc","reason" to "not_recorded"))
             }
             // Directory persistence/platform close failures are not certified by
             // this synthetic-plan harness. Production backend admission is R4 work.
@@ -166,19 +89,9 @@ object LmtrWriter {
         } catch(e:Exception) { throw e } // Preserve this owned unfinished file as failure evidence.
     }
 
-    /** Split a snapshot frontier by fanout and exact body admission, preserving order. */
-    internal fun partitionIndexChildren(children: List<Obj>, fits: (List<Obj>) -> Boolean): List<List<Obj>> {
-        val groups=mutableListOf<List<Obj>>();var pending=mutableListOf<Obj>()
-        for(child in children) {
-            if(pending.isNotEmpty() && (pending.size==256 || !fits(pending+child))) {
-                groups.add(pending.toList());pending=mutableListOf()
-            }
-            demand(fits(listOf(child)),"resource_limit")
-            pending.add(child)
-        }
-        if(pending.isNotEmpty())groups.add(pending.toList())
-        return groups
-    }
+    /** Retained test entry point; rolling index partitioning belongs to the shared append owner. */
+    internal fun partitionIndexChildren(children: List<Obj>, fits: (List<Obj>) -> Boolean): List<List<Obj>> =
+        LmtrAppendSession.partitionIndexChildren(children,fits)
 
     /** Synthetic recipe construction is a fixture transport, never wire calibration logic. */
     fun recipe(value: Obj): ByteArray {

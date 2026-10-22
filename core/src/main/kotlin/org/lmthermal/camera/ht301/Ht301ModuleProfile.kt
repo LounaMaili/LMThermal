@@ -18,7 +18,7 @@ object Ht301ModuleProfile : CameraModuleDefinition {
 /** Zero-reinterpretation adapter: the original raw/calibration/trailer/LUT evidence remains owned and accessible.
  * Shared consumers see only native geometry/Celsius/extrema and optional namespaced sample evidence.
  */
-class Ht301ThermalMeasurement(val evidence: RadiometricMeasurement) : ThermalMeasurement, org.lmthermal.exchange.ExportEvidenceProvider {
+class Ht301ThermalMeasurement(val evidence: RadiometricMeasurement) : ThermalMeasurement, ImmutableRoiProvider, org.lmthermal.exchange.ExportEvidenceProvider {
     override val geometry = Ht301ModuleProfile.GEOMETRY
     override val sequence get() = evidence.sequence
     override val receivedMonotonicMs get() = evidence.receivedMonotonicMs
@@ -30,6 +30,7 @@ class Ht301ThermalMeasurement(val evidence: RadiometricMeasurement) : ThermalMea
     override val matrixMinimum get() = evidence.matrixMinimum
     override val matrixMaximum get() = evidence.matrixMaximum
     override fun matrix(): FloatArray = evidence.matrix()
+    override fun roiStatistics(roi: NativeRect): RoiStatistics = evidence.roiStatistics(roi)
     override fun temperature(pixel: NativePixel): Float {
         geometry.offset(pixel)
         return evidence.temperature(pixel.x, pixel.y)

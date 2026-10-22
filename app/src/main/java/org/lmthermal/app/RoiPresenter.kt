@@ -25,7 +25,8 @@ internal fun roiSourceKey(source: CameraSessionState<*>): RoiSourceKey? = source
  * Camera loss gates publication and the screen immediately; no previous ROI temperature can revive.
  */
 class RoiPresenter(context: Context, private val camera: StateFlow<CameraSessionState<Bitmap>>,
-    private val presentation: StateFlow<CelsiusPresentationSnapshot>) {
+    private val presentation: StateFlow<CelsiusPresentationSnapshot>,
+    private val diagnostic: ((String, ThermalMeasurement, Long) -> Unit)? = null) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default.limitedParallelism(1))
     private val mutableSelection = MutableStateFlow(NativeRoiSelection())
     val selection = mutableSelection.asStateFlow()
@@ -64,6 +65,9 @@ class RoiPresenter(context: Context, private val camera: StateFlow<CameraSession
                 }
                 ensureActive()
                 val elapsed = (SystemClock.elapsedRealtimeNanos() - start) / 1e6
+                if (statistics != null && measurement != null) diagnostic?.let {
+                    runCatching { it("roi_completed", measurement, (elapsed * 1e6).toLong()) }
+                }
                 val result = RoiPresentationSnapshot(request.selected, measurement, statistics, elapsed)
                 var published = false
                 latest.updateIf({ scope.isActive && mutableSelection.value == request.selected &&

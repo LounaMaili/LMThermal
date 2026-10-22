@@ -69,6 +69,7 @@ class LmtrChunkTest {
             val source = body(case)
             val before = source.bytes.copyOf()
             val decoded = LmtrChunk.decode(source.bytes, source.header)
+            assertEquals(decoded.metadata, LmtrChunk.validate(source.bytes, source.header))
             for ((key, value) in case["payload_recipes"].obj()) {
                 assertArrayEquals("case=${case["id"]} payload=$key", recipe(value.obj()), decoded.payloads.getValue(key))
                 assertEquals(LmtrChunk.sha(recipe(value.obj())), decoded.logicalHashes[key])
@@ -91,10 +92,12 @@ class LmtrChunkTest {
         val invalidMask = recipe(source["payload_recipes"].obj()["1:validity"].obj()).apply { this[0] = 2 }
         val invalidMaskBody = body(source, mapOf("1:validity" to invalidMask))
         failure("invalid_payload") { LmtrChunk.decode(invalidMaskBody.bytes, invalidMaskBody.header) }
+            failure("invalid_payload") { LmtrChunk.validate(invalidMaskBody.bytes, invalidMaskBody.header) }
         val invalidFiller = recipe(source["payload_recipes"].obj()["1:temperature"].obj())
         ByteBuffer.wrap(invalidFiller).order(ByteOrder.LITTLE_ENDIAN).putInt(12, Int.MIN_VALUE)
         val invalidFillerBody = body(source, mapOf("1:temperature" to invalidFiller))
         failure("invalid_payload") { LmtrChunk.decode(invalidFillerBody.bytes, invalidFillerBody.header) }
+            failure("invalid_payload") { LmtrChunk.validate(invalidFillerBody.bytes, invalidFillerBody.header) }
     }
 
     @Test fun integrityMatchingNonfiniteValidTemperatureRejects() {
@@ -105,6 +108,7 @@ class LmtrChunkTest {
             ByteBuffer.wrap(changed).order(ByteOrder.LITTLE_ENDIAN).putInt(0, bits)
             val invalid = body(source, mapOf("1:temperature" to changed))
             failure("invalid_payload") { LmtrChunk.decode(invalid.bytes, invalid.header) }
+            failure("invalid_payload") { LmtrChunk.validate(invalid.bytes, invalid.header) }
         }
     }
 
@@ -112,6 +116,7 @@ class LmtrChunkTest {
         val source = body(case("01"))
         source.bytes[source.bytes.lastIndex] = (source.bytes.last().toInt() xor 1).toByte()
         failure("committed_payload_integrity") { LmtrChunk.decode(source.bytes, source.header) }
+        failure("committed_payload_integrity") { LmtrChunk.validate(source.bytes, source.header) }
     }
 
     @Test fun fullNativeViewIsExactParentSliceAndTrailerIsExcluded() {
@@ -122,6 +127,16 @@ class LmtrChunkTest {
         assertEquals(224256, parent.size); assertEquals(221184, native.size)
         assertArrayEquals(parent.copyOfRange(0, native.size), native)
         assertEquals(3072, parent.size - native.size)
+    }
+
+    @Test fun readerPayloadsAndViewsNeverBorrowTheInputBody() {
+        val source = body(case("04"))
+        val decoded = LmtrChunk.decode(source.bytes, source.header)
+        val before = decoded.payloads.mapValues { it.value.copyOf() }
+        source.bytes.fill(0)
+        for ((id, bytes) in before) assertArrayEquals(bytes, decoded.payloads.getValue(id))
+        decoded.payloads.getValue("1:acquisition").fill(0)
+        assertArrayEquals(before.getValue("1:native_samples"), decoded.payloads.getValue("1:native_samples"))
     }
 
     @Test fun maskStatisticsTiesNoValidAndNativeRoiAreDeterministic() {
@@ -147,5 +162,6 @@ class LmtrChunkTest {
         failure("invalid_container") { LmtrChunk.metadata(byteArrayOf(1, 0, 0, 0)) }
         val source = body(case("01"))
         failure("local_resource_limit") { LmtrChunk.decode(source.bytes, source.header, 0) }
+        failure("local_resource_limit") { LmtrChunk.validate(source.bytes, source.header, 0) }
     }
 }

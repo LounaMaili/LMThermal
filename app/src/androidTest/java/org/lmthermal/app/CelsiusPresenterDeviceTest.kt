@@ -16,6 +16,25 @@ import org.lmthermal.camera.ht301.*
 /** Exercise the actual bounded Android renderer and close/cancellation races without opening USB or a window. */
 @RunWith(AndroidJUnit4::class)
 class CelsiusPresenterDeviceTest {
+    @Test fun fieldSuppressionClearsOnlyPresentationAndResumesWithSameSourceAndSettings() = runBlocking {
+        val source=camera();val base=source.value;val enabled=java.util.concurrent.atomic.AtomicBoolean(true)
+        val events=java.util.concurrent.ConcurrentHashMap<String,java.util.concurrent.atomic.AtomicInteger>()
+        val presenter=CelsiusPresenter(InstrumentationRegistry.getInstrumentation().targetContext,source,
+            diagnostic={event,_,_->events.computeIfAbsent(event){java.util.concurrent.atomic.AtomicInteger()}.incrementAndGet()},
+            renderingEnabled=enabled::get)
+        try {
+            presenter.setLocked(CelsiusRange(25.0,45.0));waitUntil{presenter.state.value.measurement!=null}
+            enabled.set(false)
+            source.value=base.copy(measurement=object:ThermalMeasurement by base.measurement!!{override val sequence=1L})
+            waitUntil{presenter.state.value.measurement==null}
+            assertNotNull(source.value.measurement);assertFalse(presenter.settings.value.automatic)
+            enabled.set(true)
+            source.value=base.copy(measurement=object:ThermalMeasurement by base.measurement!!{override val sequence=2L})
+            waitUntil{presenter.state.value.measurement?.sequence==2L}
+            assertEquals(CelsiusRange(25.0,45.0),presenter.state.value.range)
+            assertTrue((events["published"]?.get() ?: 0)>=2)
+        } finally {presenter.dispose()}
+    }
     private fun camera(): MutableStateFlow<CameraSessionState<Bitmap>> {
         val context = InstrumentationRegistry.getInstrumentation().context
         val raw = context.assets.open("thermometry/warm-hand-settled.raw").use { it.readBytes() }

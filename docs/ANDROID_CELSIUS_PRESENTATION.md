@@ -245,3 +245,7 @@ coordinates are unchanged. The System/French/English selector uses Android app l
 Locale recreation releases the camera and requires explicit reopen, so no old rendered
 Celsius is carried into a new locale session. Wrapping action rows accommodate longer labels.
 See ANDROID_LOCALIZATION.md and its camera-free synthetic layout/number tests.
+
+## R4 allocation and profiling follow-up
+
+The percentile full sort/interpolation is unchanged; a slower exact selector was rejected. Rendering validates once and transfers display-only pixels once to a copying Android Bitmap; public unconsumed ARGB access remains defensive. HT ROI opts into immutable module-owned statistics with full-plane validation; generic/delegated masked modules retain defensive fallback. Optional diagnostic observers are null in production; generation/conflation/ROI guards are unchanged. See [benchmarks and partial real UI evidence](lmtr-r4/PRESENTATION_PERFORMANCE.md).

@@ -17,10 +17,7 @@ data class FrameParameters(val correction: Float, val reflected: Float, val ambi
     companion object {
         /** Verify the calibration copy byte-for-byte before trusting either copy. */
         fun decode(frame: Ht301Frame): FrameParameters {
-            val raw = frame.transportBytes()
-            require((0 until Ht301Layout.CALIBRATION_BYTES).all {
-                raw[Ht301Layout.CALIBRATION + it] == raw[Ht301Layout.CALIBRATION_COPY + it]
-            }) { "Calibration copy mismatch" }
+            require(frame.calibrationCopiesMatch()) { "Calibration copy mismatch" }
             fun f(offset: Int): Float = Float.fromBits(frame.word(offset) or (frame.word(offset + 2) shl 16))
             val p = Ht301Layout.PARAMETERS
             val c = Ht301Layout.CALIBRATION
@@ -64,6 +61,11 @@ class RadiometricMeasurement internal constructor(val source: Ht301Frame,
     val sequence: Long, val receivedMonotonicMs: Long) {
     fun raw14(): IntArray = indices.copyOf()
     fun matrix(): FloatArray = temperatures.copyOf()
+    /** Compute exact ROI statistics on immutable private storage without a full-plane copy.
+     * The shared algorithm still validates the whole plane, including outside the rectangle.
+     */
+    fun roiStatistics(roi: NativeRect): RoiStatistics = RoiStatistics.calculate(
+        NativeImageGeometry(Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT), temperatures, roi)
     /** Never reverse/rotate thermometry to follow screen orientation. */
     fun temperature(x: Int, y: Int): Float {
         require(x in 0 until Ht301Layout.WIDTH && y in 0 until Ht301Layout.IMAGE_HEIGHT)

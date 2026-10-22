@@ -1,0 +1,331 @@
+# R4 incremental recorder allocation engineering
+
+Status: restricted HT allocation ledger and bounded writer-output follow-up; safe physical
+admission remains unproven. The previous Pixel/LMarchery isolation applied to the earlier
+checkpoint only. The owner explicitly lifted it for the resumed session, conditionally:
+normal permissions, verified scene/safety and justified admission are still required.
+The old no-device-access record is preserved; it is not a current prohibition.
+
+[Exact receipts](recorder-allocation-validation.json) retain the baseline at
+`4f88e8450068493e56eef1783a75658acb8fdd98`, before/after allocation and failed replays.
+The frozen wire and51 canonical fixtures are unchanged. PR16 remains draft, issue9 open.
+
+## What the78 MiB budget actually means
+
+The unchanged logical formula is preparation4 MiB + writer4 MiB + two3 MiB in-flight
+charges +12×max(preferred4 MiB, observation3 MiB) +16×control1 MiB =78 MiB.
+The separate32 MiB margin makes the current instantaneous headroom gate110 MiB.
+These are **admission accounting**, not preallocated arenas or a proof of a peak heap.
+
+| Owner/stage | Retained binary owners / overlap |
+|---|---|
+| Current acquisition, controller, render/ROI, Android graphics | Outside incremental recorder charges; previous real UI sample is not a reachable-live upper bound |
+| Deferred preparation queue |4 MiB charged; one HT offer at3 MiB retains one immutable source, not a borrowed USB lease |
+| Preparation in flight | One immutable source plus freezing copies and original-owner oracle. Independent of writer work; transient copies are not bounded by the3 MiB charge alone |
+| Prepared writer queue |4 MiB accounting; prepared observations own bytes/JSON and no source closure; the historical implementation charged3 MiB per item |
+| Writer in flight | One prepared observation may overlap a preceding CHUNK seal; budget separately from queued and pending items |
+| Pending CHUNK | Bound by preferred bytes/entry count/intake timer; includes native evidence retained even when encoded as a transport view |
+| Encode | Grouped concatenation, codec output/BAOS backing growth,64 KiB codec scratch, accumulated stored groups, metadata and final body |
+| Full validation1 then2 | Sequential, not simultaneous live results; dead allocations can remain occupied until natural GC. Both boundaries fully check all payload/closure semantics |
+| Commit/index/checkpoint | Body through footer sync; bounded journal/frontier/pages and JSON expansion, not duration-sized image retention |
+| Stop and independent readback | Pending owners cleared before terminal reopen; failed preparer must exit before a source/oracle can be reused |
+
+A ready HT source has224256 transport +442368 indices +442368 Float32 bytes =1108992
+array bytes, excluding headers, calibration/lookup objects and UI/graphics. Full prepared
+payloads retain442368 temperature +221184 native +224256 transport =887808 bytes;
+Full stored groups need only666624 bytes because the native plane is a verified view.
+This distinction is module-specific, not a generic-camera maximum.
+
+Freezing can overlap source1108992 + transport copy/owner448512 + matrix copy/encoding/
+owner1327104 + native copy/owner442368 =3326976 array bytes. JSON, oracle hashing/copies
+and allocation headers are additional. Shared owners must not be double-counted as
+live objects, but unreachable temporaries must not be assumed collected at Start.
+
+## Complete validation without retained payload copies
+
+`LmtrChunk.validate` returns only verified metadata. Its private synchronous windows
+share input or one owned decoded group; logical payloads/views do not get new arrays.
+STORED windows borrow the call's body; DEFLATE consumes a bounded body range without
+an input copy. `decode` uses exactly the same checks then returns independent public
+payload copies, including independent native/parent arrays. No borrowed buffer escapes.
+Hash, raw14, mask/+0 filler, nonfinite, statistics, ROI and feature checks remain complete.
+The encoder and append each call full validation; neither boundary is bypassed.
+The original conservative reader working-budget admission remains unchanged.
+
+For a CHUNK with stored S, decoded D and logical (including views) L bytes, the old two
+boundaries allocate2×(S+D+L) payload-array bytes; the new boundaries allocate2×D_deflate.
+Metadata parsing/object/hash overhead remains; this is allocation volume, not live heap.
+STORED encoding additionally retains its private concatenation directly, avoiding one
+copy; the public codec keeps defensive copies. No shared pool/recycling is introduced.
+
+| Largest saved Full CHUNK, one boundary | Baseline allocation p50 | Candidate allocation p50 |
+|---|---:|---:|
+| STORED |14849696 B|5097896 B|
+| DEFLATE |12784512 B|7992048 B|
+
+One identical probe runs against privately copied old/new classpaths, four warmups/eight
+samples each, capped256 MiB host heap, no forced GC. Times vary; no uniform speedup
+is claimed. All six complete profile/codec files are byte-identical. Finite samples
+cannot prove generic JSON expansion, transient allocator or source/UI live-set bounds.
+
+## Honest allocation failure and unfinished admission
+
+Injected preparation and partial-append allocation failures mark unrepresented loss
+sticky, release queued heavy references, stop intake and forbid a repair END. Existing
+synchronized prefixes remain recoverable and immutable. Catching OutOfMemoryError is
+best-effort cleanup, **not** a guarantee that an actually exhausted Android process can
+allocate diagnostics or survive. No forced GC or automatic retry is added.
+
+The first valid full-size host replay uses independent HT fixture owners, real gate,
+adapter, original-owner oracle, codecs and both checks; requested25 Hz,200 offers/codec.
+It preserves4 STORED and2 DEFLATE writer drops. Files honestly contain represented gaps;
+this is **not a passing no-drop throughput configuration**. Investigate prepared-owner
+charges before changing queue sizes. A first infrastructure run overlapped classpath
+rebuild and failed class loading; preserve it separately, then use a copied classpath.
+
+The110 MiB gate is conservative against a sample that includes garbage, and can refuse
+healthy preview. It is not a calibrated peak predictor. These improvements alone do not
+justify lowering78 MiB,32 MiB, enlarging queues, opportunistic post-GC Start, largeHeap,
+a second process, hidden preview or omitted evidence. Safe simultaneous admission remains
+pending. The previous phase separately prohibited physical validation; the resumed authorization does not waive memory safety.
+
+**Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+## Complete ownership accounting checkpoint
+
+The writer queue now charges `PreparedObservation.ownedBytes`: every retained payload,
+its descriptor and resolved stream/context/facts JSON. It no longer charges the deferred
+source's3 MiB freeze allowance after that source closure is absent from `Work`. The
+preparation charge stays3 MiB; both queues stay4 MiB. Multiple prepared owners fitting
+4 MiB are allowed, not an enlargement of that capacity. Object/header/slack costs remain
+separate. Shared JSON may be overcharged; it is never assumed free.
+
+Resolved retention/policy JSON can grow beyond input metadata. A deliberately tiny
+writer budget now truthfully emits a writer-overload gap in that case. Singleton and
+loss-prefix test fixtures negotiate the complete prepared owner rather than accidentally
+omitting that JSON. An assertion about exact queued bytes is exercised with a blocked
+backend and four complete prepared owners; overload behavior stays explicit.
+
+Pending CHUNK accounting also includes payload descriptors, context and segment closure,
+not merely binary lengths and entry JSON. Shared closure is conservatively charged more
+than once. Without this change,32 tiny payloads could retain large optional descriptors
+while the pending counter stayed small, then fail only at final metadata encoding.
+An adversarial80 KiB optional descriptor now seals whole negotiated singleton entries;
+no optional value is dropped. Preferred size remains a target; wire hard limits and
+both complete checks remain mandatory.
+
+The host final replay retains200/200 observations for each codec with zero preparation/
+writer drops. Max prepared writer queue is3577068 B (STORED) and2682807 B (DEFLATE),
+versus unchanged4194304 B capacity. Peak pending charge is about3.581 MB. These are
+accounting counters, not measured peak reachable heap. Recorded inputs/settings/context,
+Float32/native/transport evidence and native views pass independent source-oracle checks.
+No causal uniform GC/CPU improvement is inferred from sequential runs.
+
+### Oracle overhead and fixed scratch
+
+The first API35 emulator replay at `bd744fa` reached a stopped/refused admission before
+the original harness saved a detailed result. The preserved file independently recovers
+39 observations and106 represented gaps (74 preparation,32 writer), with unknown tail
+and no END. This is a failed finite replay, not a passing25 Hz gate; the precise terminal
+cause was not retained. The new harness persists refusal, terminal result and snapshot
+before assertions and does not launch another configuration after unresolved memory or
+engine failure. Prefix readback is explicitly recovery, never complete-file acceptance.
+
+The independent field oracle previously called `MessageDigest.update` once per Float32
+pixel (110592 calls/frame). It now batches original bits into one call-local4096-byte
+scratch (108 full updates/frame), retaining the original matrix copy and independence
+from recorder-produced payloads. Extra scratch is4092 bytes versus the old4-byte cell,
+not a new full-plane buffer or shared pool. Independent ByteBuffer/hash vectors cover
+empty/partial/full batches, signed zero, infinities, NaN payloads and source immutability.
+This optimizes test/oracle overhead, not native thermometry or product presentation.
+
+## Prior checkpoint conclusion and architectural recommendation
+
+There is now a defensible bound on the admitted **serialized/binary owner charges**:
+preparation queued/in flight, prepared writer queued/in flight, complete pending closure,
+entry count, metadata/record hard limits, codec/decode budget and rolling index limits.
+The two validation calls do not overlap their decoded outputs, but dead bytes may still
+occupy the heap. Loss journal reservations are independent; exhaustion remains sticky
+and cannot produce END. Sampled process memory is not added to native/PSS peaks as if
+all were simultaneous Java objects.
+
+This is **not yet a complete Java peak-live/admission proof**. Remaining gaps include:
+
+- Actual simultaneous source/controller/Compose/graphics roots versus reclaimable garbage.
+- Freeze/oracle temporary overlap and JVM/ART collection timing.
+- JSON map/string/BigDecimal expansion and index/frontier object/header overhead.
+- Encoder concatenation, BAOS growth/backing/output and native zlib lifetime, not solely
+  logical decoded lengths. A default codec may return valid bytes without preprovisioning
+  every later application allocation.
+
+The110 MiB instantaneous gate is an intentionally conservative refusal heuristic. It
+can reject garbage-heavy healthy preview, but these host/emulator observations do not
+justify replacing it with a lower arbitrary number.78 MiB +32 MiB, queues, profiles,
+source evidence and runtime guards remain unchanged. No claim that256 MiB is inherently
+insufficient follows from occupied-heap samples.
+
+| Alternative | Decision for this checkpoint |
+|---|---|
+| Remove redundant validation/codec-input arrays | Implemented; same bytes/checks, measurable allocation reduction |
+| Charge actual prepared and complete pending ownership | Implemented with bounds/overflow-loss regressions; queues unchanged |
+| Bounded oracle scratch | Implemented, exclusive call-local4 KiB; exact original bits |
+| Shared image/codec scratch pool | Deferred: requires exclusive lease/release and explicit expansion/failure caps; a pool alone adds permanent live memory |
+| Smaller preferred CHUNK | Not adopted:4 MiB remains tested baseline; could increase closure/index work and does not bound JSON/UI roots |
+| HT-specific smaller maximum observation/reservation | Not adopted: malformed/unavailable observations and transient freeze costs must remain covered; no generic module assumption |
+| Staged actual arena provisioning | Recommended next engineering step after a restricted HT allocation ledger; provisioning cannot authorize future UI allocations or favorable-GC retry |
+| largeHeap/second process/hidden preview | Not introduced; separate owner architectural review if a complete ledger still cannot fit |
+
+**Prior recommendation (follow-up below):** keep R4 admission blocked. Implement a restricted, explicit HT
+allocation ledger with a writer-owned bounded encode/decode arena and a separate metadata
+object budget; prove exclusive sequential reuse across both validations, failure cleanup
+and original-owner parity. Reassess simultaneous source/UI live roots independently.
+Only that evidence can justify a staged provisioned admission change. Do not use an
+emulator no-drop replay or lower allocation volume as a substitute for this proof.
+
+## Conditional physical gate after resumed authorization
+
+The resumed owner authorization releases the Pixel for LMThermal; online ADB alone
+is still insufficient. First finish the conservative combined
+memory model and validate the exact pushed runtime on isolated ART. Then require normal
+unlocked foreground access, attached HT-301, valid normal permissions, newly verified
+non-sensitive scene, battery/thermal/storage/system-memory checks and normal Compose.
+Do not alter security settings, force GC or retry Start for a favorable sample.
+
+Under that new authorization only: retain a matched preview baseline, evaluate/persist
+normal admission once, and stop on refusal. If admitted, one20-second Full file plus its
+pre-transform source oracle, explicit Stop/Close and independent Python full byte/mask/
+native/acquisition/context/intake/loss/immutability validation are required. Measure real
+cadence/freshness, queues, sealing and memory separately. No extended profiles follow
+without separate authorization. The earlier checkpoint created **only synthetic fixture LMTRs**; resumed results are separated below.
+
+## Final digest-allocation follow-up
+
+Exact runtime `aaaeb619` remains a preserved failed emulator checkpoint, not an accepted
+25 Hz configuration. API35 passed109/110 tests; the replay's exact persisted failure is
+`Cannot certify unjournaled delivered/admitted loss` during overload (the initiating
+reason is overwritten by terminal cleanup, so no more specific cause is certified). It stopped admission after67 accepted offers, committed
+21 observations and retained explicit preparation/writer losses. END was refused and the
+next codec was skipped. Full prefix readback is distinct from full-file success.
+
+One final bounded change replaces per-byte `String.format` for CHUNK SHA hex with direct
+nibble-to-lowercase-ASCII conversion. Each digest requires64 characters; no locale/Formatter
+object graph is needed. Hashes, leading zeroes and binary authority stay identical. The
+original format/native arithmetic is untouched. Repeated host Full validation allocation
+is about4.517 MB STORED /7.403 MB DEFLATE, versus14.850 /12.785 MB at the original baseline.
+The new cost receipt preserves both repetitions: timings vary, so no uniform CPU gain
+is inferred. All six whole files remain identical after the change. This final experiment
+changes no queue, journal, memory safety limit or profile and is not permission to rerun
+until an admission snapshot passes. Its isolated ART gate is reported separately.
+
+API26 at `aaaeb619` also passed109/110: the preparation-only test inadvertently
+overflowed its writer when two prepared metadata owners exceeded its two-input-size
+budget. It is corrected to negotiate complete prepared owners and explicitly assert
+zero writer drops. The one-slot writer/loss test setups are likewise explicit. Actual
+field capacities do not change. That run's finite replay completed97/200 STORED and
+90/200 DEFLATE with explicit writer losses, not no-drop throughput. The subsequent
+`c5a8467` CI was superseded to avoid spending another full matrix on this known test
+setup; the cancellation/history are retained rather than presented as a test pass.
+
+## Resumed engineering checkpoint
+
+The [restricted HT-301 Full allocation ledger](HT301_FULL_ALLOCATION_LEDGER.md) gives
+implementation-backed owners, overlap formulas, maximum metadata domains and remaining
+object/GC/native uncertainty. A fixed reusable4 MiB image arena would add permanently
+reachable capacity, fail negotiated larger singletons and still leave final body/JSON
+owners. A global mutable pool is therefore not introduced.
+
+`RecordingDeflate` instead owns a fresh, bounded segmented workspace for one synchronous
+writer call. Segments are at most64 KiB; total capacity is bounded by the explicit
+remaining record/local budget. It allocates no separate codec scratch or geometrically
+growing output array. Segments and the final independent output coexist only through
+copy-out, then segment references clear in `finally` and native Deflater closes. No
+source buffer, public reader result, pending owner or cross-call pool is reused.
+
+If final encoded length is E, temporary segment capacity is less than E+65536 and
+not greater than negotiated cap C. Binary workspace including the independent result
+is at most2C (also less than2E+65536). Raw concatenation and previous stored groups
+are additional. `RecordingChunk` chooses C <= validationBudget/2 and remaining record
+space; overflow is `local_resource_limit`, never truncated output, lower evidence or
+a repair END. Both complete validations are unchanged; public R3 codec/reader APIs
+remain unchanged. The shared writer helper returns owned bytes.
+
+Paired synthetic host codec allocation for1,769,472 seeded incompressible bytes falls
+from5,964,736 to3,606,616 B (p50), with exact same1,770,018 output bytes. For442,368
+bytes it falls1,491,464 to901,840 B; compressible output savings are smaller. Eight
+samples/four warmups alternate order; no GC is requested. These are total allocations,
+not a simultaneous-live bound or physical throughput. Six complete full-size fixture
+files remain byte-identical to the previous checkpoint, with independent Python source
+Float32/native/transport/view/context/clock and immutability checks.
+
+The resumed host replay retains200/200 per codec at requested25 Hz with no preparation
+or writer drops. Host/emulator timing is separate from Compose/USB acceptance. Adversarial
+checks cover incompressible expansion, exact/insufficient capacities, each segment/final
+allocation failure, cancellation-like failure, the exact16 KiB source-metadata boundary,
+near1 MiB descriptor closure rejection, existing queues/loss saturation, Stop/slow-sync
+and incomplete recovery. Unknown optional decimal precision and payloads stay exact.
+
+### Completed prior ART receipt
+
+[Run39724466944](https://github.com/LounaMaili/LMThermal/actions/runs/39724466944)
+is successful at exact `cc87d2b9dbf810c3a17a50d9590ae57c3b9eae25`:110/110 tests on each
+API26/API35, independent readbacks successful. **This is not a no-drop throughput pass.**
+API26 retained127/200 STORED and115/200 DEFLATE with73/85 writer drops. API35 retained
+87/200 STORED and77/200 DEFLATE, with113/121 writer drops plus2 preparation drops in
+DEFLATE. All four finalized with explicit gaps; the harness records `retained_failure`.
+Earlier failed/cancelled runs remain unchanged. New code requires its own ART receipt.
+
+### Admission and actual-device boundary
+
+Keep78 MiB reservation +32 MiB margin unchanged. Bounded binary output removes one
+uncertainty but does not bound concurrent source/UI roots, exact metadata-object expansion,
+native graphics/zlib, dead allocations awaiting normal GC or future allocations. No
+forced GC, favorable-snapshot retry, hidden preview, larger queue or `largeHeap` is added.
+
+Resumed read-only preflight finds an authorized, awake/unlocked Pixel8 and a live USB
+HT-301 (1514:0001); battery77%. The field process is absent. No APK is installed/launched,
+no camera is opened and no initialization/recording is attempted: current scene and
+permission/session ownership were not established, and safe memory admission remains
+unproven. This is connectivity evidence only, not a new Pixel memory or real-camera test.
+
+## Final resumed ART receipt
+
+Runtime `530a45831a748f7723b34836cc5e7b2416ecdeed` passes **115/115 on each API26/API35**
+in [run39770147729](https://github.com/LounaMaili/LMThermal/actions/runs/39770147729).
+Both exact source-SHA receipts, new codec parity/capacity/failure regressions, original
+source readbacks and paired six-case codec probes were inspected. Each API retains
+13 independent reader report files, including engine/source manifests,3 field profiles,
+6 full-size memory cases and2 finite replay files. All six complete memory-case files
+are also byte-identical to the host on each API (12 exact whole-file comparisons). No physical phone is used by CI.
+437 host JVM executions and64 Python tests, build/lint,51 pinned corpus/33 canonical-plan
+comparisons, normative/localization/module/reference and diff checks pass.
+
+The new ART replays **fail no-drop throughput**, retaining correct explicit gaps:
+
+| Emulator | STORED saved / prep drops / writer drops | DEFLATE saved / prep drops / writer drops |
+|---|---|---|
+| API26 |97 /0 /103|83 /0 /117|
+| API35 |89 /1 /110|77 /0 /123|
+
+Each requested200 offers at25 Hz; all four finalized and independently read back with
+original-owner parity for saved data and explicit loss accounting. The `retained_failure`
+verdict remains; it is not relabeled by the green instrumentation result. No causal
+performance comparison to other CI hosts/runs is claimed.
+
+Writer service is the observed bottleneck on these emulators: API26 seal-encode median
+163/218 ms (STORED/DEFLATE) plus sequential append medians147/155 ms; API35 encode195/
+247 ms plus append155/173 ms. Four ready observations arrive about every160 ms. Those
+are separate phase distributions, not a median calculated by summing medians. Individual
+DEFLATE group-call medians are about16/12 ms (API26/API35), much smaller than whole
+encode/validation/append phases. Both full checks remain mandatory; attribution within
+metadata canonicalization, validation, filesystem and scheduling is not isolated here.
+Minimum sampled Java headroom stays about369 MB on API26 and146 MB on API35; no replay
+memory guard stops. This does not diagnose physical Pixel throughput or establish its
+safe live UI admission. The next engineering gate remains the restricted root/object
+proof and then the conditional physical smoke, not larger queues or weaker validation.
+
+The final evidence-only documentation commit leaves the runtime above unchanged.
+Previous failed/cancelled runs, local worktrees and private recordings remain preserved.
+
+## Subsequent authorized physical diagnostic
+
+The [actual Pixel 8 / Android 17 / API 37 live memory window](PIXEL_LIVE_MEMORY.md) completed with normal rendering and one explicit HT session. It is a later checkpoint than the historical receipts above:528 valid frames, about25 FPS,4/20 observational Java-headroom policy failures and no recorder Start/LMTR. Read-only visible-role and host-only metadata probes do not establish safe admission;78+32 MiB and the physical recording gate remain unchanged.

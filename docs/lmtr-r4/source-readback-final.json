@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "name": "source-25hz",
+      "sha256": "e1a0a230fea25009e2c4b6f0a944b0bab33f08651b47bb7985eb19d8c4285887",
+      "observations": 3000,
+      "status": "valid",
+      "integrity_scope": "full",
+      "source_unchanged": true,
+      "original_oracle_sha256": "91b8572aa45fa2fa985159425e72f8ab2b31ae0c9edd629e1f6c4380a5ea082b",
+      "clock_and_intake_oracle_checked": true
+    }
+  ],
+  "generated_scope": "noncanonical R4 engineering outputs",
+  "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

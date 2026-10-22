@@ -2,6 +2,7 @@ package org.lmthermal.core
 
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.security.MessageDigest
 import kotlin.math.roundToInt
 
 /** Native camera invariants from docs/HARDWARE.md; the trailer is never an image. */
@@ -75,6 +76,18 @@ class Ht301Frame private constructor(private val transport: ByteArray) {
     fun imageBytes(): ByteArray = transport.copyOfRange(0, Ht301Layout.IMAGE_BYTES)
     /** Return independent non-image transport data. */
     fun trailerBytes(): ByteArray = transport.copyOfRange(Ht301Layout.IMAGE_BYTES, size)
+    /** Same SHA-256 liveness evidence without a temporary image-sized array.
+     * The digest owns only its 32-byte result; immutable transport storage never escapes.
+     */
+    fun imageDigest(): ByteArray = MessageDigest.getInstance("SHA-256").let {
+        it.update(transport, 0, Ht301Layout.IMAGE_BYTES); it.digest()
+    }
+    /** Borrow private immutable storage for the exact 20-byte calibration comparison.
+     * Do not allocate/copy the whole transport merely to compare these bytes.
+     */
+    internal fun calibrationCopiesMatch(): Boolean = (0 until Ht301Layout.CALIBRATION_BYTES).all {
+        transport[Ht301Layout.CALIBRATION + it] == transport[Ht301Layout.CALIBRATION_COPY + it]
+    }
     /** Decode complete little-endian words without stripping either high bit. */
     fun word(offset: Int): Int = (transport[offset].toInt() and 255) or
         ((transport[offset + 1].toInt() and 255) shl 8)

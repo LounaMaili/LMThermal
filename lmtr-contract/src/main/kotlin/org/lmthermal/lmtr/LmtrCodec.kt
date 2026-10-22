@@ -23,17 +23,24 @@ object LmtrCodec {
     }
 
     /** Require one completely consumed zlib stream and exact expected decoded size. */
-    fun decode(stored: ByteArray, codec: Int, decoded: Long, budget: Long): ByteArray {
+    fun decode(stored: ByteArray, codec: Int, decoded: Long, budget: Long): ByteArray =
+        decode(stored, 0, stored.size, codec, decoded, budget)
+
+    /** Decode exactly one bounded input range without copying its compressed bytes. The output
+     * remains independently owned; Inflater neither modifies nor retains input after this call.
+     */
+    internal fun decode(stored: ByteArray, offset: Int, length: Int, codec: Int, decoded: Long, budget: Long): ByteArray {
+        demand(offset >= 0 && length >= 0 && offset <= stored.size - length, "invalid_payload")
         demand(codec in 0..1, "unsupported_codec")
         demand(decoded in 1..67108864L, "resource_limit")
         demand(decoded <= budget && decoded <= Int.MAX_VALUE, "local_resource_limit")
-        if (codec == 0) { demand(stored.size.toLong() == decoded, "invalid_payload"); return stored.copyOf() }
-        demand(stored.size >= 6, "invalid_payload")
-        val cmf = stored[0].toInt() and 255; val flg = stored[1].toInt() and 255
+        if (codec == 0) { demand(length.toLong() == decoded, "invalid_payload"); return stored.copyOfRange(offset, offset + length) }
+        demand(length >= 6, "invalid_payload")
+        val cmf = stored[offset].toInt() and 255; val flg = stored[offset + 1].toInt() and 255
         demand(cmf and 15 == 8 && cmf shr 4 <= 7 && (cmf * 256 + flg) % 31 == 0 && flg and 32 == 0, "invalid_payload")
         val inflater = Inflater(false)
         try {
-            inflater.setInput(stored); val result = ByteArray(decoded.toInt()); var pos = 0
+            inflater.setInput(stored, offset, length); val result = ByteArray(decoded.toInt()); var pos = 0
             while (!inflater.finished() && pos < result.size) {
                 val n = try { inflater.inflate(result, pos, result.size - pos) } catch (_: java.util.zip.DataFormatException) { throw LmtrFailure("committed_payload_integrity") }
                 if (n == 0) { demand(!inflater.needsDictionary() && !inflater.needsInput(), "invalid_payload"); throw LmtrFailure("invalid_payload") }

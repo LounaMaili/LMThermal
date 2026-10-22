@@ -305,3 +305,18 @@ Locale signatures intentionally release on replacement; screen-off overrides eve
 picker. `CameraSessionOwner` also awaits release on fatal module ERROR/action failure and rejects
 late publications. The full release/transaction policy and evidence are in
 [ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md).
+
+## Optional recording observation source
+
+`CameraSession.observations` optionally exposes immutable module-owned acquired evidence.
+It is independent of `state`/StateFlow and presentation cadence. A source supplies session
+and clock identities, actually delivered observation ordinals, genuine receipt witnesses,
+optional current measurement and separately qualified losses. Protocol payloads remain in
+module-specific immutable implementations. Consumers must perform bounded admission only.
+The [R4 adapter](lmtr-r4/ART_INTEGRATION.md) uses explicit subscription and generation guards;
+unsupported modules need not implement it. No camera automatically begins recording.
+
+
+The separate [R4 field-test APK](lmtr-r4/FIELD_VALIDATION.md) installs the optional lifetime observer explicitly and tees authoritative module observations before presentation. The production coordinator default remains inert; recorder Start never opens or initializes a camera.
+
+`ImmutableRoiProvider` is an explicit optional computation capability, not a mutable-plane access API or a new LMTR measurement contract. Wrappers implementing only ThermalMeasurement keep the generic matrix/mask validation fallback. See [presentation ownership validation](lmtr-r4/PRESENTATION_PERFORMANCE.md).
