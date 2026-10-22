@@ -531,7 +531,9 @@
     "jvm": 426,
     "python": 64,
     "canonical_fixtures_unchanged": 51,
-    "additional_focused_recorder_cases": 45
+    "additional_focused_recorder_cases": 45,
+    "recorder_cases": 45,
+    "field_cases": 36
   },
   "failures_retained": [
     "initial baseline snapshot skipped nonexistent classpath entries; corrected without losing originals",
@@ -1156,7 +1158,7 @@
     "commit": "bd744fa32172d6a0a66b8480e635ffeb6a7a2311",
     "verdict": "failed_retained",
     "API35": "105/106; full-size replay saw stopped/refused admission; original harness failed before writing precise summary; prefix recovered independently",
-    "API26": "Artifact retained on GitHub; log download not yet inspected",
+    "API26": "106/106 tests and all independent readbacks passed; performance separately failed with57/200 STORED and50/200 DEFLATE, not a throughput pass",
     "prefix": {
       "status": "recovered",
       "verified_prefix_bytes": "26321652",
@@ -1206,14 +1208,9 @@
         "temperature_planes": "39",
         "unknown_gap_events": "0"
       }
-    }
+    },
+    "API26_heap_max_bytes": 402653184
   },
-  "pending_changes": [
-    "prepared writer queue charges all actual owned payload/descriptor/resolved JSON bytes, not deferredsource allowance",
-    "pending CHUNK charge now includes descriptors/context/segment closure",
-    "field-only source oracle uses a call-local4 KiB scratch; hash bits unchanged",
-    "finite replay persists terminal failure diagnostics before assertion and skips further configurations after unresolved memory/engine failure"
-  ],
   "host_engine_readback": {
     "status": "passed",
     "cases": [
@@ -1637,5 +1634,1157 @@
       "sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
       "whole_file_identical": true
     }
-  ]
+  ],
+  "pending_changes": [
+    "prepared writer queue charges all actual owned payload/descriptor/resolved JSON bytes, not deferredsource allowance",
+    "pending CHUNK charge now includes descriptors/context/segment closure",
+    "field-only source oracle uses a call-local4 KiB scratch; hash bits unchanged",
+    "finite replay persists terminal failure diagnostics before assertion and skips further configurations after unresolved memory/engine failure"
+  ],
+  "followup_implementation_complete": true,
+  "final_host_stress": {
+    "baseline": {
+      "elapsed_ns": "1965617396",
+      "intervals": {
+        "count": 49,
+        "max_ns": "42490823",
+        "omitted": "0",
+        "p50_ns": "39811682",
+        "p95_ns": "40796365"
+      },
+      "observations": 50
+    },
+    "cases": [
+      {
+        "admission": {
+          "count": 200,
+          "max_ns": "2507303",
+          "omitted": "0",
+          "p50_ns": "89379",
+          "p95_ns": "242888"
+        },
+        "append": {
+          "count": 50,
+          "max_ns": "52878500",
+          "omitted": "0",
+          "p50_ns": "23932103",
+          "p95_ns": "47581457"
+        },
+        "codec": 0,
+        "codec_wall": {
+          "count": 100,
+          "max_ns": "3993072",
+          "omitted": "0",
+          "p50_ns": "480",
+          "p95_ns": "1210"
+        },
+        "failure": null,
+        "finalized": true,
+        "intake_elapsed_ns": "7962245009",
+        "java_max_bytes": "268435456",
+        "memory_guard_stopped": false,
+        "minimum_headroom_bytes": "77169600",
+        "observations_offered": 200,
+        "occupied_native_rss_pss_peaks": {
+          "java_occupied_bytes": "191265856"
+        },
+        "original_input_not_mutated": true,
+        "platform_after": {},
+        "platform_before": {},
+        "platform_before_stop": {},
+        "producer_intervals": {
+          "count": 199,
+          "max_ns": "44334030",
+          "omitted": "0",
+          "p50_ns": "40093910",
+          "p95_ns": "40728425"
+        },
+        "reason": "user_stop",
+        "refused_admission": null,
+        "requested_fps": 25,
+        "schedule_lateness": {
+          "count": 200,
+          "max_ns": "5879607",
+          "omitted": "0",
+          "p50_ns": "1914327",
+          "p95_ns": "2563779"
+        },
+        "seal_encode": {
+          "count": 50,
+          "max_ns": "120682576",
+          "omitted": "0",
+          "p50_ns": "18098784",
+          "p95_ns": "42352304"
+        },
+        "snapshot": {
+          "accepted": "200",
+          "acknowledged": "200",
+          "checkpoints": "2",
+          "chunks": "50",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "3580745",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "894269",
+          "max_writer_queued_bytes": "3577068",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "stop_ns": "123856953",
+        "verdict": "completed_no_drops"
+      },
+      {
+        "admission": {
+          "count": 200,
+          "max_ns": "221719",
+          "omitted": "0",
+          "p50_ns": "53079",
+          "p95_ns": "92400"
+        },
+        "append": {
+          "count": 50,
+          "max_ns": "50619596",
+          "omitted": "0",
+          "p50_ns": "25784210",
+          "p95_ns": "35078955"
+        },
+        "codec": 1,
+        "codec_wall": {
+          "count": 100,
+          "max_ns": "13535416",
+          "omitted": "0",
+          "p50_ns": "8799478",
+          "p95_ns": "12080006"
+        },
+        "failure": null,
+        "finalized": true,
+        "intake_elapsed_ns": "7961599773",
+        "java_max_bytes": "268435456",
+        "memory_guard_stopped": false,
+        "minimum_headroom_bytes": "49037856",
+        "observations_offered": 200,
+        "occupied_native_rss_pss_peaks": {
+          "java_occupied_bytes": "219397600"
+        },
+        "original_input_not_mutated": true,
+        "platform_after": {},
+        "platform_before": {},
+        "platform_before_stop": {},
+        "producer_intervals": {
+          "count": 199,
+          "max_ns": "41772588",
+          "omitted": "0",
+          "p50_ns": "40274019",
+          "p95_ns": "40581826"
+        },
+        "reason": "user_stop",
+        "refused_admission": null,
+        "requested_fps": 25,
+        "schedule_lateness": {
+          "count": 200,
+          "max_ns": "3055420",
+          "omitted": "0",
+          "p50_ns": "1723842",
+          "p95_ns": "2282905"
+        },
+        "seal_encode": {
+          "count": 50,
+          "max_ns": "45274523",
+          "omitted": "0",
+          "p50_ns": "40930814",
+          "p95_ns": "44913256"
+        },
+        "snapshot": {
+          "accepted": "200",
+          "acknowledged": "200",
+          "checkpoints": "2",
+          "chunks": "50",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "3580740",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "894269",
+          "max_writer_queued_bytes": "1788538",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        },
+        "stop_ns": "109723363",
+        "verdict": "completed_no_drops"
+      }
+    ],
+    "forced_gc": false,
+    "sampling": "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
+    "scope": "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
+    "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+  },
+  "final_host_stress_readbacks": {
+    "status": "passed",
+    "cases": [
+      {
+        "status": "passed",
+        "source_sha256": "c3f801a496679ff94f2f58629839cc3bdd4b275d46ad97ed7fe61b33873acbd4",
+        "oracle_sha256": "937620cb7547eda37a7aa7e755c2ddfe71d14dc490d4a1ebe1a279236816aaf4",
+        "observations": 200,
+        "unavailable": 0,
+        "same_observation_views": 200,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "88473600",
+          "native_samples": "44236800",
+          "acquisition": "44851200"
+        },
+        "physical_decoded_block_bytes": "133324800",
+        "physical_stored_block_bytes": "133324800",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      },
+      {
+        "status": "passed",
+        "source_sha256": "cb85886d7efe88f577b90ec8357f290c25aea43fe454676b19b751cbf3a65d22",
+        "oracle_sha256": "f181ddc638edd0c1258d27f17a350df5cc7ed26a47dd0a77b881bdd4c842de46",
+        "observations": 200,
+        "unavailable": 0,
+        "same_observation_views": 200,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "88473600",
+          "native_samples": "44236800",
+          "acquisition": "44851200"
+        },
+        "physical_decoded_block_bytes": "133324800",
+        "physical_stored_block_bytes": "37070600",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+      }
+    ]
+  },
+  "final_host_readbacks": {
+    "status": "passed",
+    "cases": [
+      {
+        "group": "final-host-memory",
+        "case": "analysis-0",
+        "result": {
+          "status": "passed",
+          "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 0,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "2211840",
+          "physical_stored_block_bytes": "2211840",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "final-host-memory",
+        "case": "analysis-1",
+        "result": {
+          "status": "passed",
+          "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 0,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "2211840",
+          "physical_stored_block_bytes": "522651",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "final-host-memory",
+        "case": "full-0",
+        "result": {
+          "status": "passed",
+          "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 6,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "native_samples": "1327104",
+            "acquisition": "1345536",
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "3557376",
+          "physical_stored_block_bytes": "3557376",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "final-host-memory",
+        "case": "full-1",
+        "result": {
+          "status": "passed",
+          "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 6,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "native_samples": "1327104",
+            "acquisition": "1345536",
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "3557376",
+          "physical_stored_block_bytes": "1007761",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "final-host-memory",
+        "case": "native-0",
+        "result": {
+          "status": "passed",
+          "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 0,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "native_samples": "1327104",
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "3538944",
+          "physical_stored_block_bytes": "3538944",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "final-host-memory",
+        "case": "native-1",
+        "result": {
+          "status": "passed",
+          "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 0,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "native_samples": "1327104",
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "3538944",
+          "physical_stored_block_bytes": "1005483",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "final-host-stress",
+        "case": "full-0",
+        "result": {
+          "status": "passed",
+          "source_sha256": "dd8f078aadd4aa3b42be159480943e53ff78e022133cdd3724321daadbaab2c6",
+          "oracle_sha256": "c213819da6662aa6d31bbaf7a7a907ccd5faf8d10107ba4e1756afd840b9a278",
+          "observations": 200,
+          "unavailable": 0,
+          "same_observation_views": 200,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "temperature": "88473600",
+            "native_samples": "44236800",
+            "acquisition": "44851200"
+          },
+          "physical_decoded_block_bytes": "133324800",
+          "physical_stored_block_bytes": "133324800",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "final-host-stress",
+        "case": "full-1",
+        "result": {
+          "status": "passed",
+          "source_sha256": "297bee7a213076444134d74ba5fc5567c7b798366cfaacbe81669de1535c7293",
+          "oracle_sha256": "e6ee602459cd72dd9ba1a697112abb119bbe2199b342d6e403ded2bab12f8fa9",
+          "observations": 200,
+          "unavailable": 0,
+          "same_observation_views": 200,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "temperature": "88473600",
+            "native_samples": "44236800",
+            "acquisition": "44851200"
+          },
+          "physical_decoded_block_bytes": "133324800",
+          "physical_stored_block_bytes": "37070600",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "scratch-host-memory",
+        "case": "analysis-0",
+        "result": {
+          "status": "passed",
+          "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 0,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "2211840",
+          "physical_stored_block_bytes": "2211840",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "scratch-host-memory",
+        "case": "analysis-1",
+        "result": {
+          "status": "passed",
+          "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 0,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "2211840",
+          "physical_stored_block_bytes": "522651",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "scratch-host-memory",
+        "case": "full-0",
+        "result": {
+          "status": "passed",
+          "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 6,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "native_samples": "1327104",
+            "acquisition": "1345536",
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "3557376",
+          "physical_stored_block_bytes": "3557376",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "scratch-host-memory",
+        "case": "full-1",
+        "result": {
+          "status": "passed",
+          "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 6,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "native_samples": "1327104",
+            "acquisition": "1345536",
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "3557376",
+          "physical_stored_block_bytes": "1007761",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "scratch-host-memory",
+        "case": "native-0",
+        "result": {
+          "status": "passed",
+          "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 0,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "native_samples": "1327104",
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "3538944",
+          "physical_stored_block_bytes": "3538944",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      },
+      {
+        "group": "scratch-host-memory",
+        "case": "native-1",
+        "result": {
+          "status": "passed",
+          "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+          "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+          "observations": 6,
+          "unavailable": 1,
+          "same_observation_views": 0,
+          "recovery": false,
+          "integrity_scope": "full",
+          "terminal": "completed",
+          "source_unchanged": true,
+          "retained_role_bytes": {
+            "native_samples": "1327104",
+            "temperature": "2211840"
+          },
+          "physical_decoded_block_bytes": "3538944",
+          "physical_stored_block_bytes": "1005483",
+          "binary_parity": "pre_transform_original_owner_hashes",
+          "context_parity": "adapter_metadata_cross_check_only",
+          "physical_accuracy": "not_independently_validated",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        }
+      }
+    ]
+  },
+  "frozen_wire_and_corpus_preserved": true,
+  "admission_conclusion": "unchanged78MiB+32MiB; owned_byte_caps_improved_but_complete_combined_live_heap_not_proven",
+  "physical_test_executed": false,
+  "next_architecture": "restricted_HT_allocation_ledger_exclusive_writer_encode_decode_arena_and_metadata_object_budget_before_revised_staged_admission",
+  "source_sha256": {
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrChunk.kt": "ffe6ad955310c6b56a8eaaa518069acbae706f0fe0d6f3a006008615a2cb4673",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrCodec.kt": "e3abce103d558b66701a4b353505c8cc00103b61cfbd8c50de5615d536287557",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrAppendSession.kt": "572d4f785767179fa18ce3556311cb57bd6994d89ed0dda508f311f07b0f7cc9",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt": "10fa65083776245794eb816789f22d8ceb93fbe32df5bfd8104fa56a6c84be8f",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingObservation.kt": "36fa8ff15de154afdcd03e3a96eef978a8c7d8d135916ca827e43ef146508878",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt": "80499da15072f5b3dc79bec53280e01dd1a3d2dbb178ea9e8b842c5aca37265e",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/HtFieldOracle.kt": "1b3ae520280fc90eaef7297f65fef11d431234ba51b077be9ee57c23cc58b6b8"
+  },
+  "prior_runtime_checkpoint": "aaaeb61909b6d196374a39752a65a43376567db9",
+  "digest_followup": {
+    "hex-cost": {
+      "cases": [
+        {
+          "body_bytes": "2233904",
+          "body_sha256": "eb816364a3a764265089a4ae4dc57ccfcf8fc56ac103c3bf9d288889da5bb0d2",
+          "codec": 0,
+          "decoded_bytes": "2211840",
+          "logical_bytes_including_views": "2211840",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "0",
+          "old_two_boundaries_payload_array_allocation": "13271040",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "analysis",
+          "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+          "stored_bytes": "2211840",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "4370128",
+            "p50": "4369744",
+            "p95": "4369984"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "16282896",
+            "p50": "15866989",
+            "p95": "16116677"
+          }
+        },
+        {
+          "body_bytes": "544714",
+          "body_sha256": "d0a4696e1a9e857ec25a1e5aa402a447a112fd88204ecefdb4de26c87051c30b",
+          "codec": 1,
+          "decoded_bytes": "2211840",
+          "logical_bytes_including_views": "2211840",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "4423680",
+          "old_two_boundaries_payload_array_allocation": "9892662",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "analysis",
+          "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+          "stored_bytes": "522651",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "6395984",
+            "p50": "6222104",
+            "p95": "6395720"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "20276518",
+            "p50": "18224362",
+            "p95": "19205136"
+          }
+        },
+        {
+          "body_bytes": "3564346",
+          "body_sha256": "516659c697edf05af61f600d2e6a1017ca26e44d4502e70d9aac2e91b48d1d30",
+          "codec": 0,
+          "decoded_bytes": "3538944",
+          "logical_bytes_including_views": "3538944",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "0",
+          "old_two_boundaries_payload_array_allocation": "21233664",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "native",
+          "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+          "stored_bytes": "3538944",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "5069104",
+            "p50": "4943880",
+            "p95": "4944048"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "25660841",
+            "p50": "23788754",
+            "p95": "24524628"
+          }
+        },
+        {
+          "body_bytes": "1030882",
+          "body_sha256": "add565b80f23497c2a81d36f88011d7638e6dc2437deca8115d10ad8d60be04a",
+          "codec": 1,
+          "decoded_bytes": "3538944",
+          "logical_bytes_including_views": "3538944",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "7077888",
+          "old_two_boundaries_payload_array_allocation": "16166742",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "native",
+          "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+          "stored_bytes": "1005483",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "8217376",
+            "p50": "8208888",
+            "p95": "8217264"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "25639081",
+            "p50": "21126982",
+            "p95": "25293103"
+          }
+        },
+        {
+          "body_bytes": "2914362",
+          "body_sha256": "22899e118842b8a1f1da23be9a4431afc2c6a9bb338b4e15daa9e0f9e70b6196",
+          "codec": 0,
+          "decoded_bytes": "2890752",
+          "logical_bytes_including_views": "3996672",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "0",
+          "old_two_boundaries_payload_array_allocation": "19556352",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "full",
+          "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+          "stored_bytes": "2890752",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "4516960",
+            "p50": "4516728",
+            "p95": "4516904"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "36003118",
+            "p50": "35498962",
+            "p95": "35902469"
+          }
+        },
+        {
+          "body_bytes": "845804",
+          "body_sha256": "2cc239326425372c45e14673dcd521f819bbda3e7e786623349e73ac99d0c112",
+          "codec": 1,
+          "decoded_bytes": "2890752",
+          "logical_bytes_including_views": "3996672",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "5781504",
+          "old_two_boundaries_payload_array_allocation": "15419242",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "full",
+          "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+          "stored_bytes": "822197",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "7403240",
+            "p50": "7403184",
+            "p95": "7403184"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "15309893",
+            "p50": "14883276",
+            "p95": "15230754"
+          }
+        }
+      ],
+      "forced_gc": false,
+      "samples": 8,
+      "scope": "saved_fixture_validation_cost_not_Java_live_heap_or_physical_recording",
+      "warmups": 4
+    },
+    "before-hex-repeat": {
+      "cases": [
+        {
+          "body_bytes": "2233904",
+          "body_sha256": "eb816364a3a764265089a4ae4dc57ccfcf8fc56ac103c3bf9d288889da5bb0d2",
+          "codec": 0,
+          "decoded_bytes": "2211840",
+          "logical_bytes_including_views": "2211840",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "0",
+          "old_two_boundaries_payload_array_allocation": "13271040",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "analysis",
+          "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+          "stored_bytes": "2211840",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "4621864",
+            "p50": "4450744",
+            "p95": "4621720"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "15897108",
+            "p50": "15296193",
+            "p95": "15879029"
+          }
+        },
+        {
+          "body_bytes": "544714",
+          "body_sha256": "d0a4696e1a9e857ec25a1e5aa402a447a112fd88204ecefdb4de26c87051c30b",
+          "codec": 1,
+          "decoded_bytes": "2211840",
+          "logical_bytes_including_views": "2211840",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "4423680",
+          "old_two_boundaries_payload_array_allocation": "9892662",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "analysis",
+          "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+          "stored_bytes": "522651",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "6474704",
+            "p50": "6474080",
+            "p95": "6474384"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "18676590",
+            "p50": "17314569",
+            "p95": "18116453"
+          }
+        },
+        {
+          "body_bytes": "3564346",
+          "body_sha256": "516659c697edf05af61f600d2e6a1017ca26e44d4502e70d9aac2e91b48d1d30",
+          "codec": 0,
+          "decoded_bytes": "3538944",
+          "logical_bytes_including_views": "3538944",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "0",
+          "old_two_boundaries_payload_array_allocation": "21233664",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "native",
+          "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+          "stored_bytes": "3538944",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "5620184",
+            "p50": "5492760",
+            "p95": "5493680"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "33806213",
+            "p50": "32417023",
+            "p95": "32791521"
+          }
+        },
+        {
+          "body_bytes": "1030882",
+          "body_sha256": "add565b80f23497c2a81d36f88011d7638e6dc2437deca8115d10ad8d60be04a",
+          "codec": 1,
+          "decoded_bytes": "3538944",
+          "logical_bytes_including_views": "3538944",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "7077888",
+          "old_two_boundaries_payload_array_allocation": "16166742",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "native",
+          "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+          "stored_bytes": "1005483",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "8808360",
+            "p50": "8781544",
+            "p95": "8781544"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "32371254",
+            "p50": "27873345",
+            "p95": "31644339"
+          }
+        },
+        {
+          "body_bytes": "2914362",
+          "body_sha256": "22899e118842b8a1f1da23be9a4431afc2c6a9bb338b4e15daa9e0f9e70b6196",
+          "codec": 0,
+          "decoded_bytes": "2890752",
+          "logical_bytes_including_views": "3996672",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "0",
+          "old_two_boundaries_payload_array_allocation": "19556352",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "full",
+          "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+          "stored_bytes": "2890752",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "5184608",
+            "p50": "5184552",
+            "p95": "5184552"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "19121506",
+            "p50": "18908397",
+            "p95": "19059397"
+          }
+        },
+        {
+          "body_bytes": "845804",
+          "body_sha256": "2cc239326425372c45e14673dcd521f819bbda3e7e786623349e73ac99d0c112",
+          "codec": 1,
+          "decoded_bytes": "2890752",
+          "logical_bytes_including_views": "3996672",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "5781504",
+          "old_two_boundaries_payload_array_allocation": "15419242",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "full",
+          "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+          "stored_bytes": "822197",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "8078664",
+            "p50": "8078608",
+            "p95": "8078608"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "39789882",
+            "p50": "29125866",
+            "p95": "32037756"
+          }
+        }
+      ],
+      "forced_gc": false,
+      "samples": 8,
+      "scope": "saved_fixture_validation_cost_not_Java_live_heap_or_physical_recording",
+      "warmups": 4
+    },
+    "hex-repeat": {
+      "cases": [
+        {
+          "body_bytes": "2233904",
+          "body_sha256": "eb816364a3a764265089a4ae4dc57ccfcf8fc56ac103c3bf9d288889da5bb0d2",
+          "codec": 0,
+          "decoded_bytes": "2211840",
+          "logical_bytes_including_views": "2211840",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "0",
+          "old_two_boundaries_payload_array_allocation": "13271040",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "analysis",
+          "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+          "stored_bytes": "2211840",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "4199152",
+            "p50": "4199008",
+            "p95": "4199008"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "16915202",
+            "p50": "15484602",
+            "p95": "16775973"
+          }
+        },
+        {
+          "body_bytes": "544714",
+          "body_sha256": "d0a4696e1a9e857ec25a1e5aa402a447a112fd88204ecefdb4de26c87051c30b",
+          "codec": 1,
+          "decoded_bytes": "2211840",
+          "logical_bytes_including_views": "2211840",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "4423680",
+          "old_two_boundaries_payload_array_allocation": "9892662",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "analysis",
+          "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+          "stored_bytes": "522651",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "6179040",
+            "p50": "6082992",
+            "p95": "6178984"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "17575647",
+            "p50": "15654620",
+            "p95": "16663594"
+          }
+        },
+        {
+          "body_bytes": "3564346",
+          "body_sha256": "516659c697edf05af61f600d2e6a1017ca26e44d4502e70d9aac2e91b48d1d30",
+          "codec": 0,
+          "decoded_bytes": "3538944",
+          "logical_bytes_including_views": "3538944",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "0",
+          "old_two_boundaries_payload_array_allocation": "21233664",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "native",
+          "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+          "stored_bytes": "3538944",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "4943816",
+            "p50": "4943752",
+            "p95": "4943784"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "24800167",
+            "p50": "22153755",
+            "p95": "24037992"
+          }
+        },
+        {
+          "body_bytes": "1030882",
+          "body_sha256": "add565b80f23497c2a81d36f88011d7638e6dc2437deca8115d10ad8d60be04a",
+          "codec": 1,
+          "decoded_bytes": "3538944",
+          "logical_bytes_including_views": "3538944",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "7077888",
+          "old_two_boundaries_payload_array_allocation": "16166742",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "native",
+          "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+          "stored_bytes": "1005483",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "8229440",
+            "p50": "8217112",
+            "p95": "8217152"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "23756994",
+            "p50": "21997386",
+            "p95": "22533052"
+          }
+        },
+        {
+          "body_bytes": "2914362",
+          "body_sha256": "22899e118842b8a1f1da23be9a4431afc2c6a9bb338b4e15daa9e0f9e70b6196",
+          "codec": 0,
+          "decoded_bytes": "2890752",
+          "logical_bytes_including_views": "3996672",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "0",
+          "old_two_boundaries_payload_array_allocation": "19556352",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "full",
+          "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+          "stored_bytes": "2890752",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "4518616",
+            "p50": "4516808",
+            "p95": "4518560"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "13080618",
+            "p50": "12779901",
+            "p95": "12984770"
+          }
+        },
+        {
+          "body_bytes": "845804",
+          "body_sha256": "2cc239326425372c45e14673dcd521f819bbda3e7e786623349e73ac99d0c112",
+          "codec": 1,
+          "decoded_bytes": "2890752",
+          "logical_bytes_including_views": "3996672",
+          "mode": "validate",
+          "new_two_boundaries_payload_array_allocation": "5781504",
+          "old_two_boundaries_payload_array_allocation": "15419242",
+          "platform_after": {},
+          "platform_before": {},
+          "profile": "full",
+          "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+          "stored_bytes": "822197",
+          "thread_allocated_bytes": {
+            "count": 8,
+            "max": "7405544",
+            "p50": "7403088",
+            "p95": "7405392"
+          },
+          "wall_ns": {
+            "count": 8,
+            "max": "18381612",
+            "p50": "15667041",
+            "p95": "16229897"
+          }
+        }
+      ],
+      "forced_gc": false,
+      "samples": 8,
+      "scope": "saved_fixture_validation_cost_not_Java_live_heap_or_physical_recording",
+      "warmups": 4
+    },
+    "verdict": "retained_lower_allocation_bounded64_ascii_scratch_timing_variable_no_uniform_CPU_claim"
+  },
+  "intermediate_CI_aaaeb619": {
+    "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/39723201950",
+    "verdict": "failed_retained",
+    "API35": "109/110; Full replay stopped intake and refused END with Cannot certify unjournaled delivered/admitted loss during overload; initiating reason overwritten by cleanup; no next codec",
+    "API26": "awaiting downloaded artifact review"
+  },
+  "hex_followup_six_files_byte_identical": true
 }

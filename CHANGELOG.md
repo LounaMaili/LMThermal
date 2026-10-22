@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 bounded digest formatting)
+
+- Encode exact CHUNK SHA digests directly into64 lowercase ASCII characters instead of per-byte Formatter objects; preserve all hashes and original six complete file bytes. Retain both host cost repetitions and failed aaaeb619 emulator overload evidence; no admission, journal or queue limit is relaxed.
+
+
 ### Fixed (R4 complete prepared and pending ownership)
 
 - Charge writer queues for complete prepared byte/JSON owners instead of deferred-source allowances; retain4 MiB capacities and3 MiB preparation offers. Include optional descriptors/context/segment closure in pending limits; preserve negotiated whole singletons and explicit overload for resolved metadata growth.

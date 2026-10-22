@@ -196,3 +196,22 @@ pre-transform source oracle, explicit Stop/Close and independent Python full byt
 native/acquisition/context/intake/loss/immutability validation are required. Measure real
 cadence/freshness, queues, sealing and memory separately. No extended profiles follow
 without separate authorization. This session creates **only synthetic fixture LMTRs**.
+
+## Final digest-allocation follow-up
+
+Exact runtime `aaaeb619` remains a preserved failed emulator checkpoint, not an accepted
+25 Hz configuration. API35 passed109/110 tests; the replay's exact persisted failure is
+`Cannot certify unjournaled delivered/admitted loss` during overload (the initiating
+reason is overwritten by terminal cleanup, so no more specific cause is certified). It stopped admission after67 accepted offers, committed
+21 observations and retained explicit preparation/writer losses. END was refused and the
+next codec was skipped. Full prefix readback is distinct from full-file success.
+
+One final bounded change replaces per-byte `String.format` for CHUNK SHA hex with direct
+nibble-to-lowercase-ASCII conversion. Each digest requires64 characters; no locale/Formatter
+object graph is needed. Hashes, leading zeroes and binary authority stay identical. The
+original format/native arithmetic is untouched. Repeated host Full validation allocation
+is about4.517 MB STORED /7.403 MB DEFLATE, versus14.850 /12.785 MB at the original baseline.
+The new cost receipt preserves both repetitions: timings vary, so no uniform CPU gain
+is inferred. All six whole files remain identical after the change. This final experiment
+changes no queue, journal, memory safety limit or profile and is not permission to rerun
+until an admission snapshot passes. Its isolated ART gate is reported separately.

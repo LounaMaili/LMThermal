@@ -8,6 +8,16 @@ import java.security.MessageDigest
 /** A verified selected chunk owns its decoded logical bytes, never a live camera buffer. */
 data class ChunkData(val metadata: Obj, val payloads: Map<String, ByteArray>, val logicalHashes: Map<String, String>)
 
+/** A SHA-256 digest needs64 ASCII characters, not32 locale/Formatter object graphs.
+ * Direct nibble encoding preserves lowercase/leading zeroes and bounds its tiny scratch.
+ */
+private fun digestHex(bytes:ByteArray):String {
+    val alphabet="0123456789abcdef";val chars=CharArray(bytes.size*2)
+    for(index in bytes.indices){val value=bytes[index].toInt() and 255
+        chars[index*2]=alphabet[value ushr 4];chars[index*2+1]=alphabet[value and 15]}
+    return String(chars)
+}
+
 /** Synchronous private view of one input/decoded owner; no borrowed arrays escape validation.
  * Materializing readers copy each logical payload only after the same complete checks succeed.
  */
@@ -21,7 +31,7 @@ private class PayloadBytes(val owner: ByteArray, val offset: Int = 0, val size: 
     fun copy(): ByteArray = owner.copyOfRange(offset, offset + size)
     fun buffer(): ByteBuffer = ByteBuffer.wrap(owner, offset, size).slice().order(ByteOrder.LITTLE_ENDIAN)
     fun hash(): String = MessageDigest.getInstance("SHA-256").apply { update(owner, offset, size) }
-        .digest().joinToString("") { "%02x".format(it.toInt() and 255) }
+        .digest().let(::digestHex)
 }
 
 /** Complete payload integrity and numerical checks, independently of JSON shape validation. */
@@ -30,7 +40,7 @@ object LmtrChunk {
     private val widths = mapOf("u8" to 1, "i8" to 1, "u16" to 2, "i16" to 2, "u32" to 4, "i32" to 4, "f32" to 4, "u64" to 8, "i64" to 8, "f64" to 8)
 
     /** SHA-256 binds exact binary bytes, separately from canonical semantic context IDs. */
-    fun sha(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it.toInt() and 255) }
+    fun sha(bytes: ByteArray): String = digestHex(MessageDigest.getInstance("SHA-256").digest(bytes))
 
     /** Checked nonnegative addition reports a format bound rather than integer wraparound. */
     fun add(a: Long, b: Long): Long {
