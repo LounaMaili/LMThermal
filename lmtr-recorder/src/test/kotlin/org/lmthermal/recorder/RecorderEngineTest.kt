@@ -93,10 +93,12 @@ class RecorderEngineTest {
     @Test fun preparationOverloadRetainsKnownDeliveredGapAndBoundedBytes() {
         val m=SimulatedRecordingModule();val o=m.observation(0);val cap=o.ownedBytes
         val entered=CountDownLatch(1);val release=CountDownLatch(1)
-        val f=output();val e=engine(m,f,limits=RecorderLimits(preparationBytes=cap,writerBytes=cap*2,maxObservationBytes=cap,preferredChunkBytes=cap*4),hook={entered.countDown();release.await(5,TimeUnit.SECONDS)})
+        val writerCap=maxOf(cap,RecordingProfiles.select(o,RecordingProfile.FULL).ownedBytes)*2
+        val f=output();val e=engine(m,f,limits=RecorderLimits(preparationBytes=cap,writerBytes=writerCap,maxObservationBytes=cap,preferredChunkBytes=cap*4),hook={entered.countDown();release.await(5,TimeUnit.SECONDS)})
         assertEquals(Admission.ACCEPTED,e.admit(o));assertTrue(entered.await(5,TimeUnit.SECONDS))
         assertEquals(Admission.ACCEPTED,e.admit(m.observation(1)));assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(m.observation(2)))
         release.countDown();finished(e);assertEquals(2L,e.snapshot().acknowledged);assertEquals(1L,e.snapshot().preparationDrops)
+        assertEquals("This test isolates preparation, not writer overload",0L,e.snapshot().writerDrops)
         assertTrue(e.snapshot().maxPreparationQueuedBytes<=cap)
         val gaps=chunks(f).flatMap { it.metadata["entries"].arr().map { it.obj() } }.filter { it["kind"]=="gap" }
         assertEquals("2",gaps.single()["observation_first"]);assertEquals("1",gaps.single()["count"])
@@ -115,11 +117,13 @@ class RecorderEngineTest {
         val backend=object:RecorderBackend { override val destination=f
             override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record { if(type==LmtrFraming.CHUNK){entered.countDown();release.await(5,TimeUnit.SECONDS)};return base.append(type,ordinal,previous,body) }
             override fun close()=base.close() }
-        val time=AtomicLong(0);val e=engine(m,f,backend=backend,now=time::get,limits=RecorderLimits(preparationBytes=cap*20,writerBytes=cap,maxObservationBytes=cap,preferredChunkBytes=cap))
+        val writerCap=maxOf(cap,RecordingProfiles.select(m.observation(0),RecordingProfile.FULL).ownedBytes)
+        val time=AtomicLong(0);val e=engine(m,f,backend=backend,now=time::get,limits=RecorderLimits(preparationBytes=cap*20,writerBytes=writerCap,maxObservationBytes=cap,preferredChunkBytes=cap))
         e.admit(m.observation(0));until("pending"){e.snapshot().pendingBytes>0};time.set(1000000000);e.wakeTimers();assertTrue(entered.await(5,TimeUnit.SECONDS))
         for(i in 1..10)e.admit(m.observation(i.toLong()))
         until("writer loss"){e.snapshot().writerDrops>0};release.countDown();finished(e)
-        val s=e.snapshot();assertTrue(s.maxWriterQueuedBytes<=cap);assertEquals(s.accepted,s.acknowledged+s.writerDrops)
+        val s=e.snapshot();assertTrue(s.maxWriterQueuedBytes<=writerCap);assertTrue(s.acknowledged>0)
+        assertEquals(s.accepted,s.acknowledged+s.writerDrops)
     }
     @Test fun writerAccountsPreparedOwnersWithoutChargingTheDeferredSourceAgain() {
         val m=SimulatedRecordingModule();val f=output();val base=LocalRecorderBackend(f);val time=AtomicLong(0)
@@ -311,7 +315,7 @@ class RecorderEngineTest {
             }
             override fun close()=base.close()
         }
-        val e=engine(m,f,limits=RecorderLimits(preparationBytes=cap*3,writerBytes=cap,maxObservationBytes=cap,
+        val e=engine(m,f,limits=RecorderLimits(preparationBytes=cap*3,writerBytes=maxOf(cap,RecordingProfiles.select(m.observation(1),RecordingProfile.FULL).ownedBytes),maxObservationBytes=cap,
             preferredChunkBytes=cap*4,controlBytes=32768),now={0L},hook={prepEntered.countDown();check(prepRelease.await(5,TimeUnit.SECONDS))},backend=backend)
         try {
             assertTrue(headerEntered.await(5,TimeUnit.SECONDS))

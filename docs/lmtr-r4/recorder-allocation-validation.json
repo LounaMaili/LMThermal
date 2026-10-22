@@ -2784,7 +2784,12 @@
     "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/39723201950",
     "verdict": "failed_retained",
     "API35": "109/110; Full replay stopped intake and refused END with Cannot certify unjournaled delivered/admitted loss during overload; initiating reason overwritten by cleanup; no next codec",
-    "API26": "awaiting downloaded artifact review"
+    "API26": "109/110; preparation-overload test incidentally overflowed its writer due to omitted resolved metadata. Full replay completed with97/200 STORED and90/200 DEFLATE; honest writer losses103/110; not a throughput pass"
   },
-  "hex_followup_six_files_byte_identical": true
+  "hex_followup_six_files_byte_identical": true,
+  "queue_test_followup": "negotiate complete prepared byte ownership in stage-isolation fixtures; assert zero incidental writer drops; actual4MiB field queues unchanged",
+  "superseded_CI_c5a8467": {
+    "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/39724293343",
+    "reason": "cancelled to supersede known outdated queue-stage test setup; retained source/history and prior actual failure"
+  }
 }

@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 queue-stage test isolation)
+
+- Negotiate complete prepared owners in preparation-only/one-slot writer/loss-journal test capacities, including resolved retention JSON. Preserve the API26 scheduling failure and assert zero incidental writer loss in the preparation-only test; actual field queues and safety budgets are unchanged.
+
+
 ### Changed (R4 bounded digest formatting)
 
 - Encode exact CHUNK SHA digests directly into64 lowercase ASCII characters instead of per-byte Formatter objects; preserve all hashes and original six complete file bytes. Retain both host cost repetitions and failed aaaeb619 emulator overload evidence; no admission, journal or queue limit is relaxed.

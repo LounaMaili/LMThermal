@@ -215,3 +215,12 @@ The new cost receipt preserves both repetitions: timings vary, so no uniform CPU
 is inferred. All six whole files remain identical after the change. This final experiment
 changes no queue, journal, memory safety limit or profile and is not permission to rerun
 until an admission snapshot passes. Its isolated ART gate is reported separately.
+
+API26 at `aaaeb619` also passed109/110: the preparation-only test inadvertently
+overflowed its writer when two prepared metadata owners exceeded its two-input-size
+budget. It is corrected to negotiate complete prepared owners and explicitly assert
+zero writer drops. The one-slot writer/loss test setups are likewise explicit. Actual
+field capacities do not change. That run's finite replay completed97/200 STORED and
+90/200 DEFLATE with explicit writer losses, not no-drop throughput. The subsequent
+`c5a8467` CI was superseded to avoid spending another full matrix on this known test
+setup; the cancellation/history are retained rather than presented as a test pass.
