@@ -240,3 +240,5 @@ The [R4 allocation follow-up](docs/lmtr-r4/LIVE_HEAP.md) isolates fixture acquis
 [Measured R4 presentation optimizations](docs/lmtr-r4/PRESENTATION_PERFORMANCE.md) preserve source/pixel bits and retain the failed exact-selector, partial failed profile and completed corrected Compose evidence. The recorder is still experimental and physical admission remains pending.
 
 [Incremental R4 recorder allocation](docs/lmtr-r4/RECORDER_ALLOCATION.md) and the [restricted HT Full ledger](docs/lmtr-r4/HT301_FULL_ALLOCATION_LEDGER.md) distinguish bounded writer-output allocation from unresolved safe admission. Resumed conditional Pixel authorization does not certify physical recording.
+
+[Actual R4 Pixel live memory diagnostics](docs/lmtr-r4/PIXEL_LIVE_MEMORY.md) now separate successful wireless/radiometric acquisition from unresolved recording admission. No Full recording was started; the normal-preview window and host metadata allocation probe do not complete R4.

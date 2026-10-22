@@ -201,3 +201,7 @@ The separate [field harness and operator protocol](FIELD_VALIDATION.md) prepares
 ## Incremental recorder follow-up
 
 [Recorder allocation engineering](RECORDER_ALLOCATION.md) separates actual buffer lifetimes from logical admission. The previous checkpoint excluded physical device access. Resumed conditional authorization and the still-pending safe admission/physical gates are recorded there.
+
+## Subsequent authorized physical diagnostic
+
+The [actual Pixel 8 / Android 17 / API 37 live memory window](PIXEL_LIVE_MEMORY.md) completed with normal rendering and one explicit HT session. It is a later checkpoint than the historical receipts above:528 valid frames, about25 FPS,4/20 observational Java-headroom policy failures and no recorder Start/LMTR. Read-only visible-role and host-only metadata probes do not establish safe admission;78+32 MiB and the physical recording gate remain unchanged.

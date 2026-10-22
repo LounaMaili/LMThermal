@@ -4,6 +4,13 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 actual Pixel live-memory evidence)
+
+- Record one authorized Android17/Pixel8 HT-301 session, supported initialization,528 valid normal-render observations and clean single-owner release. Preserve4/20 observed110 MiB headroom policy failures; no recorder Start or physical LMTR is claimed.
+- Preserve API26 118/118 and API35 117/118 runtime results: the existing replay refuses END with unrepresented loss; its20-observation prefix is independently recovered without source modification. No test assertion is relaxed or run relabeled.
+- Add reproducible host-only metadata parse/canonicalization allocation attribution with exact bounded inputs; distinguish allocation volume and sampled role identity from simultaneous ART heap/admission proof. Preserve the correctly rejected1025-byte decimal input and API35 replay failure.
+
+
 ### Added (R4 normal-preview live owner diagnostic)
 
 - Add a bounded field-only Auto/full-ROI memory window with source/preview/GC/resource counters and three explicitly scoped visible-owner roles. Preserve normal preview, source controls,78+32 MiB admission and production UI ownership. Test identity aliasing, equal-sequence distinction and no retained history; a sampled role census is not a heap/admission proof.

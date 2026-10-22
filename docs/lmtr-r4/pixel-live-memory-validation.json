@@ -1,0 +1,1135 @@
+{
+  "scope": "actual_Pixel_HT301_no_recorder_normal_preview_memory_diagnostic",
+  "source_commit": "145ee46152e46882d7cae794f1eb1d04cfc50e87",
+  "recorder_runtime": "530a45831a748f7723b34836cc5e7b2416ecdeed",
+  "apk_sha256": "301d8bc4e5f5aa8e8796a86a802c3ba1ccd11a5a0386c94471335f194d487d4e",
+  "device": {
+    "model": "Pixel 8",
+    "android_release": "17",
+    "api": 37,
+    "adb": "already_authorized_mdns_connection_reused_no_connect_pair_or_server_restart",
+    "initial_battery_percent": 80,
+    "initial_thermal_status": 0,
+    "camera_permission": true,
+    "usb": {
+      "vendor_id": 5396,
+      "product_id": 1,
+      "product_name": "T3-317-13"
+    },
+    "unlocked": true,
+    "scene": "non_sensitive_uniform_surface_no_visible_person_or_identifying_content"
+  },
+  "initialization": {
+    "explicit_opens": 1,
+    "explicit_initializations": 1,
+    "control_transfers": [
+      {
+        "value": 32772,
+        "actual_length": 2,
+        "completed": true
+      },
+      {
+        "value": 32800,
+        "actual_length": 2,
+        "completed": true
+      },
+      {
+        "value": 32768,
+        "actual_length": 2,
+        "completed": true
+      }
+    ],
+    "time_to_ready_ms": 6274,
+    "ready_cumulative_counts": {
+      "baseline": 3,
+      "discarded": 105,
+      "shutter_frames": 75,
+      "live": 5,
+      "rejected": 85,
+      "held": 30,
+      "malformed": 5,
+      "native_malformed": 11,
+      "replaced_count": 6
+    },
+    "counts_scope": "cumulative_at_ready_not_diagnostic_window_loss_counts"
+  },
+  "normal_preview_window": {
+    "result": {
+      "complete": true,
+      "completed_samples": 20,
+      "failure": null,
+      "forced_gc": false,
+      "planned_samples": 20,
+      "recorder_created": false,
+      "render_suppressed": false
+    },
+    "measured": {
+      "elapsed_ns": "21116241140",
+      "metrics": {
+        "acquisition_thread_cpu_delta_ns": "10603547604",
+        "append_sync": {
+          "count": 0,
+          "max_ns": null,
+          "omitted": "0",
+          "p50_ns": null,
+          "p95_ns": null
+        },
+        "body_to_logical_ratio": null,
+        "checkpoint_intervals": {
+          "count": 0,
+          "max_ns": null,
+          "omitted": "0",
+          "p50_ns": null,
+          "p95_ns": null
+        },
+        "chunk_body_bytes": "0",
+        "codec_call_wall": {
+          "count": 0,
+          "max_ns": null,
+          "omitted": "0",
+          "p50_ns": null,
+          "p95_ns": null
+        },
+        "codec_decoded_bytes": "0",
+        "codec_ratio": null,
+        "codec_stored_bytes": "0",
+        "encode_validation_ns_not_codec_only": {
+          "count": 0,
+          "max_ns": null,
+          "omitted": "0",
+          "p50_ns": null,
+          "p95_ns": null
+        },
+        "gate_fps": 25.000978915227034,
+        "held": "0",
+        "intervals": {
+          "count": 527,
+          "max_ns": "50570190",
+          "omitted": "0",
+          "p50_ns": "40004272",
+          "p95_ns": "42465210"
+        },
+        "invalid": "0",
+        "known_source_losses": "0",
+        "limitations": [
+          "finite_samples_not_infinite_memory_bound",
+          "preview_collection_not_display_latency",
+          "encode_includes_hash_validation_codec_call_report_is_separate",
+          "cpu_ticks_need_os_CLK_TCK_no_guessed_scale"
+        ],
+        "logical_retained_bytes": "0",
+        "measurement_gate_wall": {
+          "count": 528,
+          "max_ns": "29258911",
+          "omitted": "0",
+          "p50_ns": "16525350",
+          "p95_ns": "20102784"
+        },
+        "observed_gate_deliveries": "528",
+        "preview_age": {
+          "count": 528,
+          "max_ns": "79765265",
+          "omitted": "0",
+          "p50_ns": "53820357",
+          "p95_ns": "69450440"
+        },
+        "preview_publication_fps": 25.04841910292196,
+        "preview_publications": "528",
+        "recorder_thread_cpu_final_ticks": {},
+        "recorder_thread_cpu_initial_ticks": {},
+        "rss_first_bytes": "367091712",
+        "rss_last_bytes": "460083200",
+        "sample_span_ns": "20054834238",
+        "sampled_memory_peaks": {
+          "java_used_bytes": "185249984",
+          "native_allocated_bytes": "52000224",
+          "pss_bytes": "408331264",
+          "rss_bytes": "475676672"
+        },
+        "samples": "20",
+        "seal_encode_plus_append": {
+          "count": 0,
+          "max_ns": null,
+          "omitted": "0",
+          "p50_ns": null,
+          "p95_ns": null
+        },
+        "source_loss_reasons": {},
+        "source_window_closed": false,
+        "unavailable": "0",
+        "unknown_source_loss_signals": "0",
+        "valid": "528"
+      },
+      "presentation": {
+        "active_sequence": "3997",
+        "events": {
+          "completed": 528,
+          "published": 528,
+          "request": 528,
+          "roi_completed": 528,
+          "started": 528
+        },
+        "observed_alive_weak_owners": 23,
+        "observed_weak_owners": 128,
+        "pending_sequence": null,
+        "reachability_scope": "sampled_HT_measurements_else_wrappers_not_entire_heap_no_forced_GC",
+        "render_wall_ns": {
+          "count": 528,
+          "max_ns": "53541788",
+          "omitted": "0",
+          "p50_ns": "30324870",
+          "p95_ns": "42355510"
+        },
+        "roi_wall_ns": {
+          "count": 528,
+          "max_ns": "20724081",
+          "omitted": "0",
+          "p50_ns": "7202962",
+          "p95_ns": "16176065"
+        },
+        "weak_owner_capacity": 128
+      }
+    },
+    "health_minimum_headroom_bytes": 86589248,
+    "health_maximum_occupied_bytes": 181846208,
+    "read_only_policy_refusals": 4,
+    "policy_threshold_bytes": 115343360,
+    "policy_not_Start_attempt": true,
+    "gc_delta": 8,
+    "allocated_counter_delta_bytes": 1456558080,
+    "freed_counter_delta_bytes": 1371103232,
+    "counter_interval_ns": 20057779266,
+    "visible_owner_counts": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      3,
+      2,
+      2,
+      2,
+      2,
+      2,
+      3,
+      2,
+      2,
+      1,
+      2,
+      3,
+      2,
+      2,
+      2
+    ],
+    "alive_weak_owner_counts": [
+      2,
+      29,
+      23,
+      49,
+      19,
+      45,
+      10,
+      36,
+      63,
+      29,
+      55,
+      26,
+      52,
+      17,
+      43,
+      13,
+      40,
+      7,
+      34,
+      60
+    ],
+    "sample_scope": "three_non_atomic_role_reads_not_global_reachable_owner_count",
+    "preview_scope": "rendering_enabled_Auto_full_ROI_viewport_scrolled_back_into_view_late_not_operator_motion_or_LCD_latency_validation"
+  },
+  "release": {
+    "opens": 1,
+    "releases": 1,
+    "active_owners": 0,
+    "elapsed_ms": 89,
+    "reason": "USER"
+  },
+  "recording_created": false,
+  "recorder_Start_attempted": false,
+  "admission_established": false,
+  "reservation_bytes": 81788928,
+  "margin_bytes": 33554432,
+  "metadata_probe": {
+    "status": "passed",
+    "scope": "host_parse_plus_canonical_encode_allocation_not_peak_live_or_ART",
+    "forced_gc": false,
+    "samples": 8,
+    "warmups": 4,
+    "heap_cap_bytes": 268435456,
+    "java_probe_sha256": "92ac79297b30ca5e755bbf32ed8ba0b7da40ea44b6790fd182e553079e48ed1b",
+    "kotlin_json_source_sha256": "5c8b2bdb8338f01e9c3ccb7716da8df4823208fc30b7e99e19eb33eb4e3c5b2b",
+    "input_sha256": {
+      "dense-items": "b104c059e4323788b5f588ec7e58ab79ccfca5de70bd821e727bef8f218972cf",
+      "many-properties": "672e3c1cc4f1940eaee3257eb7ee7b69bfdeaabb593bcab84449fb7779e5c8ca",
+      "large-strings": "3da32268ad1719f864baa81599962fb759f222ebcef3c92f1a5e4ff7daf83b4a",
+      "long-decimals": "bc8b6579391c145d1815a5ca3a0c14f3806368c7adb01443bb41c629ce37af71",
+      "maximum-depth": "fe9c00cdf28702b7ec6b71275883a0dee0933c2db2c9cf361c9e1b8fdd303c44"
+    },
+    "cases": [
+      {
+        "case": "dense-items.json",
+        "input_bytes": 131084,
+        "allocated_p50_bytes": 42699480,
+        "allocated_max_bytes": 42699552,
+        "wall_p50_ns": 13774352,
+        "maps": 1,
+        "properties": 1,
+        "lists": 1,
+        "elements": 65535,
+        "strings_including_keys": 1,
+        "utf16_units": 8,
+        "numbers": 65535,
+        "coefficient_digits": 65535
+      },
+      {
+        "case": "many-properties.json",
+        "input_bytes": 840001,
+        "allocated_p50_bytes": 15290384,
+        "allocated_max_bytes": 15290416,
+        "wall_p50_ns": 16279646,
+        "maps": 1,
+        "properties": 60000,
+        "lists": 0,
+        "elements": 0,
+        "strings_including_keys": 60000,
+        "utf16_units": 360000,
+        "numbers": 0,
+        "coefficient_digits": 0
+      },
+      {
+        "case": "large-strings.json",
+        "input_bytes": 1032395,
+        "allocated_p50_bytes": 10890752,
+        "allocated_max_bytes": 10890752,
+        "wall_p50_ns": 7840590,
+        "maps": 1,
+        "properties": 1,
+        "lists": 1,
+        "elements": 63,
+        "strings_including_keys": 64,
+        "utf16_units": 1032200,
+        "numbers": 0,
+        "coefficient_digits": 0
+      },
+      {
+        "case": "long-decimals.json",
+        "input_bytes": 922514,
+        "allocated_p50_bytes": 80152456,
+        "allocated_max_bytes": 80152504,
+        "wall_p50_ns": 55270657,
+        "maps": 1,
+        "properties": 1,
+        "lists": 1,
+        "elements": 900,
+        "strings_including_keys": 1,
+        "utf16_units": 8,
+        "numbers": 900,
+        "coefficient_digits": 920700
+      },
+      {
+        "case": "maximum-depth.json",
+        "input_bytes": 16736,
+        "allocated_p50_bytes": 189912,
+        "allocated_max_bytes": 189912,
+        "wall_p50_ns": 166909,
+        "maps": 32,
+        "properties": 32,
+        "lists": 0,
+        "elements": 0,
+        "strings_including_keys": 33,
+        "utf16_units": 16574,
+        "numbers": 0,
+        "coefficient_digits": 0
+      }
+    ],
+    "limitations": [
+      "synthetic_JSON_not_complete_CHUNK_schema",
+      "allocated_volume_not_simultaneously_live",
+      "not_generic_16x_metadata_object_size_bound",
+      "no_physical_admission_or_runtime_policy_change"
+    ]
+  },
+  "jvm": {
+    "core": {
+      "tests": 234,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-contract": {
+      "tests": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-recorder": {
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "camera-recording": {
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-field-support": {
+      "tests": 42,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "app": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "private_evidence_sha256": {
+    "private-diagnostics.tar": "1b58029e8ba4201411cbe2c2cb7c15eb4b416327403756b5b87d696b607237c7",
+    "private-session-evidence.tar": "672c9f49eafa8c821eeed41c7dedfc75800a0b7e579f4e17c07e0a4206d6fade",
+    "display-preview.png": "bfebd1c37557ea3fa4cb75e07757212420bd26c6a6a43e029c8c3d99453f2b77"
+  },
+  "failures_preserved": [
+    "initial_1025_byte_decimal_token_rejected_by_frozen_JSON_limit",
+    "API35_finite_fixture_replay_failed_separate_from_physical_window"
+  ],
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "ART": {
+    "run": 39782301329,
+    "url": "https://github.com/LounaMaili/LMThermal/actions/runs/39782301329",
+    "source": "145ee46152e46882d7cae794f1eb1d04cfc50e87",
+    "overall": "failed",
+    "artifacts": [
+      {
+        "api": 26,
+        "tests": 118,
+        "failures": 0,
+        "new_visible_owner_tests": "3_passed",
+        "verdict": "passed",
+        "readbacks": [
+          {
+            "name": "python-readback.json",
+            "recovery": null,
+            "observations": null,
+            "cases": 14,
+            "source_unchanged": null,
+            "source_sha256": null,
+            "report_sha256": "3fefbc2e53a883246afdb9776979547cd6935e0fad97539f0a3e3f90734f0e23"
+          },
+          {
+            "name": "python-source-readback.json",
+            "recovery": null,
+            "observations": null,
+            "cases": 1,
+            "source_unchanged": null,
+            "source_sha256": null,
+            "report_sha256": "3c09ccd6c678196de8bb794f68bc90509c77046b16a4ba8798db6256fdeb6e0f"
+          },
+          {
+            "name": "field-analysis.json",
+            "recovery": false,
+            "observations": 3,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "4dc2376c50e10ff0a1a63f63ba2e563683ffbb18dfaf0533fc078f360657c21b",
+            "report_sha256": "08ad863c019c4f24bb3a55d078f2e09d0c513369d34df9fda574a9cc19f83437"
+          },
+          {
+            "name": "field-full.json",
+            "recovery": false,
+            "observations": 3,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "1951160e41e80ae08f84feba0c62b11760dffe2934c0fbc61f19d323bc364408",
+            "report_sha256": "97fc688da3cab8f96db9bf12b94bfa5a8908fbbe0ba20a72f0beb07f8848f00c"
+          },
+          {
+            "name": "field-native.json",
+            "recovery": false,
+            "observations": 3,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "896c1ecb9d19a6f0518b43becb4a6d5806be945817a8373d896c8addc936f73d",
+            "report_sha256": "cc864c5c4456fdf46d6b25fd7a25190aac8414770f3fc67e5f20c1db7b1e5afc"
+          },
+          {
+            "name": "files/r4/memory-d7502ea3-6f2a-4e88-9f8b-40fa70645195/analysis-0/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+            "report_sha256": "8071d763d29193b26002b33d20ab01ab6ce660733f99a3a9f4dab543113f91de"
+          },
+          {
+            "name": "files/r4/memory-d7502ea3-6f2a-4e88-9f8b-40fa70645195/analysis-1/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+            "report_sha256": "85f935fda5869e14598ffd75dadfd4b282d211a9b8c36304fdf7963b2637a3cb"
+          },
+          {
+            "name": "files/r4/memory-d7502ea3-6f2a-4e88-9f8b-40fa70645195/full-0/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+            "report_sha256": "50ceb957405fe6e14935190cc354d045d1098c980458491d72c1ad0093559fe4"
+          },
+          {
+            "name": "files/r4/memory-d7502ea3-6f2a-4e88-9f8b-40fa70645195/full-1/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+            "report_sha256": "fc4f60b92d8be1d96f48a656892469bb301c0e7483355af0816282b1e3bc35fe"
+          },
+          {
+            "name": "files/r4/memory-d7502ea3-6f2a-4e88-9f8b-40fa70645195/native-0/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+            "report_sha256": "583277c484e5b17003ecbcfea4e8864c64a20666ba3726dadc16df0ba698d757"
+          },
+          {
+            "name": "files/r4/memory-d7502ea3-6f2a-4e88-9f8b-40fa70645195/native-1/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+            "report_sha256": "1efb3185287bce47b0067b7c4ed899195a7b56295d86c2e7314dec56f230fd23"
+          },
+          {
+            "name": "files/r4/recorder-stress-65f9e2b7-7601-4d3a-ac9d-d67c364dd91d/full-0/python-readback.json",
+            "recovery": false,
+            "observations": 97,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "8b3a95ef0e2790a7a6bdc4cc309604f054e0850c2e39f65d47d871b3b2d7d38e",
+            "report_sha256": "abeccc851095bbf09a195e79936f5c1a8829033a562d848e42ac1a5031afae39"
+          },
+          {
+            "name": "files/r4/recorder-stress-65f9e2b7-7601-4d3a-ac9d-d67c364dd91d/full-1/python-readback.json",
+            "recovery": false,
+            "observations": 85,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "300fd7b56f32013a9e65e049d50ddeecee16c60e94dc50d1b74c95492b4b286a",
+            "report_sha256": "13c2a91eec1cdbdfd43fda503ccebbf00fe06bfb86c1bdf69e515414e56123ff"
+          }
+        ],
+        "fixture_replay": {
+          "baseline": {
+            "elapsed_ns": "1965603720",
+            "intervals": {
+              "count": 49,
+              "max_ns": "43766410",
+              "omitted": "0",
+              "p50_ns": "40045240",
+              "p95_ns": "43315630"
+            },
+            "observations": 50
+          },
+          "cases": [
+            {
+              "admission": {
+                "count": 200,
+                "max_ns": "2162690",
+                "omitted": "0",
+                "p50_ns": "509050",
+                "p95_ns": "672420"
+              },
+              "append": {
+                "count": 25,
+                "max_ns": "203614770",
+                "omitted": "0",
+                "p50_ns": "148749320",
+                "p95_ns": "173859910"
+              },
+              "codec": 0,
+              "codec_wall": {
+                "count": 50,
+                "max_ns": "24090",
+                "omitted": "0",
+                "p50_ns": "14140",
+                "p95_ns": "17890"
+              },
+              "failure": null,
+              "finalized": true,
+              "intake_elapsed_ns": "7966292140",
+              "java_max_bytes": "402653184",
+              "memory_guard_stopped": false,
+              "minimum_headroom_bytes": "364379048",
+              "observations_offered": 200,
+              "occupied_native_rss_pss_peaks": {
+                "java_occupied_bytes": "38274136",
+                "native_allocated_bytes": "14678496",
+                "pss_bytes": "66530304"
+              },
+              "original_input_not_mutated": true,
+              "platform_after": {
+                "native_allocated_bytes": 14679424,
+                "pss_bytes": 61531136,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1280770696",
+                  "art.gc.bytes-freed": "1275388112",
+                  "art.gc.gc-count": "475",
+                  "art.gc.gc-count-rate-histogram": "2:1,184:1,234:1",
+                  "art.gc.gc-time": "5360"
+                }
+              },
+              "platform_before": {
+                "native_allocated_bytes": 5318032,
+                "pss_bytes": 23347200,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "833950264",
+                  "art.gc.bytes-freed": "829190296",
+                  "art.gc.gc-count": "327",
+                  "art.gc.gc-count-rate-histogram": "2:1,234:1",
+                  "art.gc.gc-time": "2538"
+                }
+              },
+              "platform_before_stop": {
+                "native_allocated_bytes": 10684840,
+                "pss_bytes": 62215168,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1272586888",
+                  "art.gc.bytes-freed": "1248490936",
+                  "art.gc.gc-count": "469",
+                  "art.gc.gc-count-rate-histogram": "2:1,184:1,234:1",
+                  "art.gc.gc-time": "5273"
+                }
+              },
+              "producer_intervals": {
+                "count": 199,
+                "max_ns": "52605230",
+                "omitted": "0",
+                "p50_ns": "40000920",
+                "p95_ns": "41981430"
+              },
+              "reason": "user_stop",
+              "refused_admission": null,
+              "requested_fps": 25,
+              "schedule_lateness": {
+                "count": 200,
+                "max_ns": "18290420",
+                "omitted": "0",
+                "p50_ns": "5560650",
+                "p95_ns": "7493440"
+              },
+              "seal_encode": {
+                "count": 25,
+                "max_ns": "217369660",
+                "omitted": "0",
+                "p50_ns": "169455710",
+                "p95_ns": "203905300"
+              },
+              "snapshot": {
+                "accepted": "200",
+                "acknowledged": "97",
+                "checkpoints": "2",
+                "chunks": "25",
+                "control_bytes": "0",
+                "error": null,
+                "max_pending_bytes": "3593724",
+                "max_preparation_in_flight_bytes": "3145728",
+                "max_preparation_queued_bytes": "3145728",
+                "max_writer_in_flight_bytes": "894263",
+                "max_writer_queued_bytes": "3577052",
+                "pending_bytes": "0",
+                "preparation_drops": "0",
+                "preparation_in_flight_bytes": "0",
+                "preparation_queued_bytes": "0",
+                "state": "finalized",
+                "writer_drops": "103",
+                "writer_in_flight_bytes": "0",
+                "writer_queued_bytes": "0"
+              },
+              "stop_ns": "717353050",
+              "verdict": "retained_failure"
+            },
+            {
+              "admission": {
+                "count": 200,
+                "max_ns": "728770",
+                "omitted": "0",
+                "p50_ns": "505990",
+                "p95_ns": "612000"
+              },
+              "append": {
+                "count": 22,
+                "max_ns": "179290410",
+                "omitted": "0",
+                "p50_ns": "145497000",
+                "p95_ns": "173673970"
+              },
+              "codec": 1,
+              "codec_wall": {
+                "count": 44,
+                "max_ns": "26103360",
+                "omitted": "0",
+                "p50_ns": "14280230",
+                "p95_ns": "21991220"
+              },
+              "failure": null,
+              "finalized": true,
+              "intake_elapsed_ns": "7966003980",
+              "java_max_bytes": "402653184",
+              "memory_guard_stopped": false,
+              "minimum_headroom_bytes": "370274976",
+              "observations_offered": 200,
+              "occupied_native_rss_pss_peaks": {
+                "java_occupied_bytes": "32378208",
+                "native_allocated_bytes": "12656096",
+                "pss_bytes": "72631296"
+              },
+              "original_input_not_mutated": true,
+              "platform_after": {
+                "native_allocated_bytes": 12657536,
+                "pss_bytes": 45347840,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:4",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1710007208",
+                  "art.gc.bytes-freed": "1705630400",
+                  "art.gc.gc-count": "635",
+                  "art.gc.gc-count-rate-histogram": "2:1,174:1,184:1,234:1",
+                  "art.gc.gc-time": "8156"
+                }
+              },
+              "platform_before": {
+                "native_allocated_bytes": 15143904,
+                "pss_bytes": 62477312,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1282118312",
+                  "art.gc.bytes-freed": "1275388112",
+                  "art.gc.gc-count": "475",
+                  "art.gc.gc-count-rate-histogram": "2:1,184:1,234:1",
+                  "art.gc.gc-time": "5360"
+                }
+              },
+              "platform_before_stop": {
+                "native_allocated_bytes": 5788648,
+                "pss_bytes": 56349696,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:4",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1702753192",
+                  "art.gc.bytes-freed": "1682013200",
+                  "art.gc.gc-count": "627",
+                  "art.gc.gc-count-rate-histogram": "2:1,174:1,184:1,234:1",
+                  "art.gc.gc-time": "8107"
+                }
+              },
+              "producer_intervals": {
+                "count": 199,
+                "max_ns": "50717350",
+                "omitted": "0",
+                "p50_ns": "39990110",
+                "p95_ns": "41712800"
+              },
+              "reason": "user_stop",
+              "refused_admission": null,
+              "requested_fps": 25,
+              "schedule_lateness": {
+                "count": 200,
+                "max_ns": "16215530",
+                "omitted": "0",
+                "p50_ns": "5469220",
+                "p95_ns": "7099700"
+              },
+              "seal_encode": {
+                "count": 22,
+                "max_ns": "266457870",
+                "omitted": "0",
+                "p50_ns": "204809670",
+                "p95_ns": "245687680"
+              },
+              "snapshot": {
+                "accepted": "200",
+                "acknowledged": "85",
+                "checkpoints": "2",
+                "chunks": "22",
+                "control_bytes": "0",
+                "error": null,
+                "max_pending_bytes": "3593724",
+                "max_preparation_in_flight_bytes": "3145728",
+                "max_preparation_queued_bytes": "3145728",
+                "max_writer_in_flight_bytes": "894263",
+                "max_writer_queued_bytes": "3577052",
+                "pending_bytes": "0",
+                "preparation_drops": "0",
+                "preparation_in_flight_bytes": "0",
+                "preparation_queued_bytes": "0",
+                "state": "finalized",
+                "writer_drops": "115",
+                "writer_in_flight_bytes": "0",
+                "writer_queued_bytes": "0"
+              },
+              "stop_ns": "681816930",
+              "verdict": "retained_failure"
+            }
+          ],
+          "forced_gc": false,
+          "sampling": "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
+          "scope": "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        },
+        "instrumentation_sha256": "1f5458b290513c6dfa115a19da9c2a665b613df76bcd88e1069b94b215f048be"
+      },
+      {
+        "api": 35,
+        "tests": 118,
+        "failures": 1,
+        "new_visible_owner_tests": "3_passed",
+        "verdict": "failed_existing_fullsize_replay",
+        "readbacks": [
+          {
+            "name": "python-readback.json",
+            "recovery": null,
+            "observations": null,
+            "cases": 14,
+            "source_unchanged": null,
+            "source_sha256": null,
+            "report_sha256": "3fefbc2e53a883246afdb9776979547cd6935e0fad97539f0a3e3f90734f0e23"
+          },
+          {
+            "name": "python-source-readback.json",
+            "recovery": null,
+            "observations": null,
+            "cases": 1,
+            "source_unchanged": null,
+            "source_sha256": null,
+            "report_sha256": "1b30f9a5abe66de837f719c7f7b2599ec8653f83cef81415b1cffea1c2b5e87d"
+          },
+          {
+            "name": "field-analysis.json",
+            "recovery": false,
+            "observations": 3,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "c071acf0ae77afa97fe24b90a5c5e8f71c23c60a57416032107659b3304442a2",
+            "report_sha256": "3e24fb321d8c4205e494cfdb5b4c2357b63bd514beb1fd085a67628ad259316b"
+          },
+          {
+            "name": "field-full.json",
+            "recovery": false,
+            "observations": 3,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "2f5f9b06226f32842b915ae1e0d2eb4f94fcbf746cc972c1ca908b4c1bc44328",
+            "report_sha256": "b4083ce3b8f93bd1d2a4b6e30c2bfe709192e93e184081c30b6a8e82f09e60df"
+          },
+          {
+            "name": "field-native.json",
+            "recovery": false,
+            "observations": 3,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "c068a0722276c4cc34ef35de2291fce21e030858b1cd163c221280a30af1ef1e",
+            "report_sha256": "68a76e9fae2761258d7e39788c3cbbf987b4913d757b7ddc75d47549697219a3"
+          },
+          {
+            "name": "files/r4/memory-1531cc92-854e-4675-983e-b1383ade6a30/analysis-0/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+            "report_sha256": "8071d763d29193b26002b33d20ab01ab6ce660733f99a3a9f4dab543113f91de"
+          },
+          {
+            "name": "files/r4/memory-1531cc92-854e-4675-983e-b1383ade6a30/analysis-1/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+            "report_sha256": "85f935fda5869e14598ffd75dadfd4b282d211a9b8c36304fdf7963b2637a3cb"
+          },
+          {
+            "name": "files/r4/memory-1531cc92-854e-4675-983e-b1383ade6a30/full-0/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+            "report_sha256": "50ceb957405fe6e14935190cc354d045d1098c980458491d72c1ad0093559fe4"
+          },
+          {
+            "name": "files/r4/memory-1531cc92-854e-4675-983e-b1383ade6a30/full-1/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+            "report_sha256": "fc4f60b92d8be1d96f48a656892469bb301c0e7483355af0816282b1e3bc35fe"
+          },
+          {
+            "name": "files/r4/memory-1531cc92-854e-4675-983e-b1383ade6a30/native-0/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+            "report_sha256": "583277c484e5b17003ecbcfea4e8864c64a20666ba3726dadc16df0ba698d757"
+          },
+          {
+            "name": "files/r4/memory-1531cc92-854e-4675-983e-b1383ade6a30/native-1/python-readback.json",
+            "recovery": false,
+            "observations": 6,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+            "report_sha256": "1efb3185287bce47b0067b7c4ed899195a7b56295d86c2e7314dec56f230fd23"
+          },
+          {
+            "name": "files/r4/recorder-stress-fb3d21ad-0e6e-449a-8213-bbb2d6146fee/full-0/python-readback.json",
+            "recovery": true,
+            "observations": 20,
+            "cases": null,
+            "source_unchanged": true,
+            "source_sha256": "c623e87091cf47d7884608817d753a8b74eba3af1e30d8e49220e228aeb816e5",
+            "report_sha256": "4f046f3b7cf217fdae50bdb975c22499e97393a6855c5f9b26b20546ca30dd82"
+          }
+        ],
+        "fixture_replay": {
+          "baseline": {
+            "elapsed_ns": "1976169615",
+            "intervals": {
+              "count": 49,
+              "max_ns": "46230488",
+              "omitted": "0",
+              "p50_ns": "40031873",
+              "p95_ns": "45466913"
+            },
+            "observations": 50
+          },
+          "cases": [
+            {
+              "admission": {
+                "count": 71,
+                "max_ns": "2790902",
+                "omitted": "0",
+                "p50_ns": "1547680",
+                "p95_ns": "2100442"
+              },
+              "append": {
+                "count": 54,
+                "max_ns": "352028209",
+                "omitted": "0",
+                "p50_ns": "30376865",
+                "p95_ns": "192306873"
+              },
+              "codec": 0,
+              "codec_wall": {
+                "count": 22,
+                "max_ns": "2073",
+                "omitted": "0",
+                "p50_ns": "1262",
+                "p95_ns": "1783"
+              },
+              "failure": "java.lang.IllegalStateException: Cannot certify unjournaled delivered/admitted loss",
+              "finalized": false,
+              "intake_elapsed_ns": "2811682503",
+              "java_max_bytes": "201326592",
+              "memory_guard_stopped": false,
+              "minimum_headroom_bytes": "147804128",
+              "observations_offered": 71,
+              "occupied_native_rss_pss_peaks": {
+                "java_occupied_bytes": "53522464",
+                "native_allocated_bytes": "27868832",
+                "pss_bytes": "94246912"
+              },
+              "original_input_not_mutated": true,
+              "platform_after": {
+                "native_allocated_bytes": 27868832,
+                "pss_bytes": 82196480,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1679870480",
+                  "art.gc.bytes-freed": "1666415088",
+                  "art.gc.gc-count": "299",
+                  "art.gc.gc-count-rate-histogram": "126:1,139:1",
+                  "art.gc.gc-time": "3636",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                }
+              },
+              "platform_before": {
+                "native_allocated_bytes": 6224544,
+                "pss_bytes": 51875840,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1165150736",
+                  "art.gc.bytes-freed": "1160092048",
+                  "art.gc.gc-count": "267",
+                  "art.gc.gc-count-rate-histogram": "126:1,139:1",
+                  "art.gc.gc-time": "2810",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                }
+              },
+              "platform_before_stop": {
+                "native_allocated_bytes": 8857760,
+                "pss_bytes": 73119744,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1599388176",
+                  "art.gc.bytes-freed": "1573255664",
+                  "art.gc.gc-count": "289",
+                  "art.gc.gc-count-rate-histogram": "126:1,139:1",
+                  "art.gc.gc-time": "3503",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                }
+              },
+              "producer_intervals": {
+                "count": 70,
+                "max_ns": "45701210",
+                "omitted": "0",
+                "p50_ns": "40367360",
+                "p95_ns": "44158770"
+              },
+              "reason": "write_or_validation_failure",
+              "refused_admission": "STOPPED",
+              "requested_fps": 25,
+              "schedule_lateness": {
+                "count": 71,
+                "max_ns": "22702462",
+                "omitted": "0",
+                "p50_ns": "12610405",
+                "p95_ns": "16056417"
+              },
+              "seal_encode": {
+                "count": 54,
+                "max_ns": "353002589",
+                "omitted": "0",
+                "p50_ns": "6378441",
+                "p95_ns": "109225820"
+              },
+              "snapshot": {
+                "accepted": "65",
+                "acknowledged": "20",
+                "checkpoints": "1",
+                "chunks": "54",
+                "control_bytes": "0",
+                "error": "IllegalStateException",
+                "max_pending_bytes": "3590041",
+                "max_preparation_in_flight_bytes": "3145728",
+                "max_preparation_queued_bytes": "3145728",
+                "max_writer_in_flight_bytes": "894262",
+                "max_writer_queued_bytes": "3577048",
+                "pending_bytes": "0",
+                "preparation_drops": "5",
+                "preparation_in_flight_bytes": "0",
+                "preparation_queued_bytes": "0",
+                "state": "failed",
+                "writer_drops": "44",
+                "writer_in_flight_bytes": "0",
+                "writer_queued_bytes": "0"
+              },
+              "stop_ns": "2068561772",
+              "verdict": "retained_failure"
+            }
+          ],
+          "forced_gc": false,
+          "sampling": "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
+          "scope": "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        },
+        "instrumentation_sha256": "9cee5665d6f6564b34fa471d3bd767131e0ae430f55511735df036bf07d8780c"
+      }
+    ],
+    "retry": "not_requested_failure_preserved",
+    "scope": "isolated_emulators_not_physical_Pixel"
+  },
+  "source_and_installed_APK_verified": {
+    "sha256": "301d8bc4e5f5aa8e8796a86a802c3ba1ccd11a5a0386c94471335f194d487d4e",
+    "matches_tested_original": true,
+    "recording_started": false
+  },
+  "python_tests": 64,
+  "build_and_lint": "passed_fresh_rerun",
+  "pinned_corpus": {
+    "status": "passed",
+    "provenance_commit": "1f1a668caf0af9c0c4d0f9ba036a88cd86cbddb0",
+    "original_check": {
+      "cases": 51,
+      "deterministic_check": true,
+      "total_bytes": 2885993
+    },
+    "manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "current_reader_conformance": "separate host/JVM/cross-runtime suites; not implied by historical regeneration"
+  },
+  "metadata_probe_no_overwrite": {
+    "existing_output_refused": true,
+    "original_report_unchanged": true,
+    "sha256": "06d17a12846989a46be62bf28cb0bf355609504842a764d656dff8d05a5d119f"
+  },
+  "local_API35_incomplete_fixture_recovery": {
+    "status": "passed",
+    "source_sha256": "c623e87091cf47d7884608817d753a8b74eba3af1e30d8e49220e228aeb816e5",
+    "oracle_sha256": "93ca154f8b62f08d34fc38145e21bd295199c3db69085fb2fd091e7a88940a04",
+    "observations": 20,
+    "unavailable": 0,
+    "same_observation_views": 20,
+    "recovery": true,
+    "integrity_scope": "full_verified_prefix",
+    "terminal": null,
+    "source_unchanged": true,
+    "retained_role_bytes": {
+      "temperature": "8847360",
+      "native_samples": "4423680",
+      "acquisition": "4485120"
+    },
+    "physical_decoded_block_bytes": "13332480",
+    "physical_stored_block_bytes": "13332480",
+    "binary_parity": "pre_transform_original_owner_hashes",
+    "context_parity": "adapter_metadata_cross_check_only",
+    "physical_accuracy": "not_independently_validated",
+    "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+  }
+}

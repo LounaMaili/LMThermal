@@ -211,3 +211,7 @@ Use unique private output directories. Copy runtime classpath entries before pro
 another build might replace JARs/classes. Do not run the emulator-only ART script against
 a physical device; GitHub-hosted camera-disabled API26/API35 jobs provide that route.
 Retain failed verdicts and original files even when an independent recovery succeeds.
+
+## Subsequent authorized physical diagnostic
+
+The [actual Pixel 8 / Android 17 / API 37 live memory window](PIXEL_LIVE_MEMORY.md) completed with normal rendering and one explicit HT session. It is a later checkpoint than the historical receipts above:528 valid frames, about25 FPS,4/20 observational Java-headroom policy failures and no recorder Start/LMTR. Read-only visible-role and host-only metadata probes do not establish safe admission;78+32 MiB and the physical recording gate remain unchanged.

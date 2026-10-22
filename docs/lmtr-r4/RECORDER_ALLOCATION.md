@@ -325,3 +325,7 @@ proof and then the conditional physical smoke, not larger queues or weaker valid
 
 The final evidence-only documentation commit leaves the runtime above unchanged.
 Previous failed/cancelled runs, local worktrees and private recordings remain preserved.
+
+## Subsequent authorized physical diagnostic
+
+The [actual Pixel 8 / Android 17 / API 37 live memory window](PIXEL_LIVE_MEMORY.md) completed with normal rendering and one explicit HT session. It is a later checkpoint than the historical receipts above:528 valid frames, about25 FPS,4/20 observational Java-headroom policy failures and no recorder Start/LMTR. Read-only visible-role and host-only metadata probes do not establish safe admission;78+32 MiB and the physical recording gate remain unchanged.
