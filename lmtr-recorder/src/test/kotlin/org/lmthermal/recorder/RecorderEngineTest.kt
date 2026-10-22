@@ -487,6 +487,45 @@ class RecorderEngineTest {
         assertEquals("writer_overload",chunks(f).flatMap {it.metadata["entries"].arr().map {e->e.obj()}}.single {it["kind"]=="gap"}["category"])
     }
 
+    @Test fun exactObservationMetadataCapPreservesOptionalPrecisionAndNextByteRefuses() {
+        val m=SimulatedRecordingModule();val original=m.observation(0)
+        val facts=original.facts.value()+mapOf("future_decimal" to java.math.BigDecimal("1.2345678901234567890123456789"),"future_padding" to "")
+        val occupied=original.stream.byteSize+original.context.byteSize+LmtrJson.encode(facts).size
+        val padding="x".repeat(16384-occupied)
+        val o=RecordingObservation(m.id,0,original.stream.value(),original.context.value(),facts+("future_padding" to padding),original.payloads)
+        assertEquals(16384,o.stream.byteSize+o.context.byteSize+o.facts.byteSize)
+        for(codec in 0..1) {
+            val f=output();val e=engine(m,f,codec=codec)
+            assertEquals(Admission.ACCEPTED,e.admit(o));finished(e)
+            val entry=chunks(f).single().metadata["entries"].arr().map {it.obj()}.single {it["kind"]=="observation"}
+            assertEquals(padding,entry["future_padding"])
+            assertEquals(java.math.BigDecimal("1.2345678901234567890123456789"),(entry["future_decimal"] as JsonNumber).decimal)
+            val oversized=RecordingObservation(m.id,0,original.stream.value(),original.context.value(),facts+("future_padding" to padding+"x"),original.payloads)
+            val rejected=engine(m,codec=codec)
+            assertEquals(Admission.REFUSED,rejected.admit(oversized));rejected.stop();assertNotNull(rejected.awaitStop(10000))
+            assertEquals(0L,rejected.snapshot().acknowledged)
+        }
+    }
+
+    @Test fun nearHardLimitOptionalDescriptorCannotBeSilentlyDroppedToCompleteChunk() {
+        val m=SimulatedRecordingModule();val original=m.observation(0)
+        val source=original.payloads.first()
+        // Individually legal descriptor, but its required CHUNK placement/closure exceeds1 MiB.
+        val base=source.descriptor.value()+("future_optional" to List(63){"x".repeat(16384)})
+        val slack=LmtrJson.MAX_JSON_BYTES-32-LmtrJson.encode(base+("tail" to "")).size
+        val descriptor=base+("tail" to "y".repeat(slack))
+        assertEquals(LmtrJson.MAX_JSON_BYTES-32,LmtrJson.encode(descriptor).size)
+        val payloads=listOf(RecordingPayload(descriptor,source.bytes()))+original.payloads.drop(1)
+        for(codec in 0..1) {
+            val f=output();val e=engine(m,f,codec=codec,limits=RecorderLimits(maxObservationBytes=2097152))
+            assertEquals(Admission.ACCEPTED,e.admit(RecordingObservation(m.id,0,original.stream.value(),original.context.value(),original.facts.value(),payloads)))
+            e.stop();assertFalse(e.awaitStop(10000)!!.finalized)
+            assertEquals(0L,e.snapshot().acknowledged)
+            val recovered=LmtrReader(f).use {it.check(full=true,recover=true)}
+            assertNull(recovered["declared_end_status"])
+        }
+    }
+
     @Test fun negotiatedObservationAbovePreferredTargetStaysWholeInSingleton() {
         val m=SimulatedRecordingModule();val f=output();val original=m.observation(0)
         // A singleton must negotiate the resolved policy/retention JSON as well as payload bytes.

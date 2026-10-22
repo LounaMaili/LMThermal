@@ -143,4 +143,4 @@ at8e928b22864c8cb3878c436f17deba069f28936f. Historical failures remain preserved
 
 ## Incremental recorder follow-up
 
-[Recorder allocation engineering](RECORDER_ALLOCATION.md) separates actual buffer lifetimes from logical admission. This session excludes physical device access; the admission and physical recording gates remain pending.
+[Recorder allocation engineering](RECORDER_ALLOCATION.md) separates actual buffer lifetimes from logical admission. The previous checkpoint excluded physical device access. Resumed conditional authorization and the still-pending safe admission/physical gates are recorded there.

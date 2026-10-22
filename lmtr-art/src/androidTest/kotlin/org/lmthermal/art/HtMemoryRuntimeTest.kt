@@ -6,6 +6,7 @@ import org.junit.Test
 import org.lmthermal.field.HtMemoryProbe
 import org.lmthermal.field.RecorderAllocationProbe
 import org.lmthermal.field.HtRecorderStressProbe
+import org.lmthermal.recorder.RecorderCodecProbe
 import java.io.File
 import java.util.UUID
 
@@ -21,6 +22,7 @@ class HtMemoryRuntimeTest {
             mapOf("runtime" to Debug.getRuntimeStats(),"native_allocated_bytes" to Debug.getNativeHeapAllocatedSize(),
                 "java_occupied_bytes" to Runtime.getRuntime().let {it.totalMemory()-it.freeMemory()})
         }
+        RecorderCodecProbe.run(File(root,"codec-workspace.json"))
     }
     @Test fun fullSizeFiniteRecorderReplayReportsCadenceAndBothCodecs() {
         val root=File(InstrumentationRegistry.getInstrumentation().targetContext.filesDir,"r4/recorder-stress-${UUID.randomUUID()}")

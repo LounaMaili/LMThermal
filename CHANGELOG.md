@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 bounded writer workspace and resumed evidence)
+
+- Replace recorder-only geometric DEFLATE output growth with capped call-local64 KiB segments and independent copy-out; retain exact file bytes, both complete validations and failure/recovery rules. Add allocation/cancellation/metadata-boundary tests and a paired codec allocation probe; keep queues and78+32 MiB admission unchanged.
+- Record the restricted HT-301 Full lifetime ledger and successful exactcc87d2b API26/API35 110/110 ART checks separately from their retained throughput failures. Preserve earlier failed/cancelled evidence and acknowledge the owner's resumed conditional Pixel authorization; no physical recording is implied.
+
+
 ### Fixed (R4 queue-stage test isolation)
 
 - Negotiate complete prepared owners in preparation-only/one-slot writer/loss-journal test capacities, including resolved retention JSON. Preserve the API26 scheduling failure and assert zero incidental writer loss in the preparation-only test; actual field queues and safety budgets are unchanged.

@@ -71,8 +71,10 @@ The shared writer owns its header, hides mutable journal/index state and becomes
 on any failed operation, including partial journal-validation failure.
 
 - Default engineering queues are 4 MiB **each**, with one separately charged in-flight
-  item per worker. Preferred decoded physical chunk size is 4 MiB, not a camera geometry
-  or universal file limit. No queue increases, crops or evidence downgrades on overload.
+  item per worker. The preferred CHUNK target is 4 MiB of conservatively charged pending
+  ownership, including descriptors/context/segment and native evidence later encoded as
+  views; decoded physical data can be smaller. It is not a camera geometry or universal
+  file limit. No queue increases, crops or evidence downgrades on overload.
 - Preparation and writer overload become ordered, known-count gaps. A reserved bounded
   journal carries losses and Stop independently of the data queues. Exhaustion stops intake;
   without enough loss evidence the engine preserves an incomplete file and cannot claim END.
@@ -103,7 +105,12 @@ on any failed operation, including partial journal-validation failure.
 ## Resources and present limitations
 
 `maxObservationBytes` must be explicitly negotiated before Start, including metadata and
-owned evidence; unknown/unbounded maxima are not an admissible configuration. Both queues must accommodate it; an observation exceeding the preferred target remains whole in an immediately sealed singleton. The local reservation estimates queued and in-flight
+owned evidence; unknown/unbounded maxima are not an admissible configuration. Both queue
+capacities must accommodate that negotiated maximum. The writer separately charges all
+resolved prepared payload/descriptor/stream/context/facts bytes; policy/retention JSON can
+grow, and insufficient writer capacity produces an explicit gap. Object/allocator overhead
+is not a measured byte counter. A complete pending entry exceeding the preferred target
+remains whole in an immediately sealed singleton. The local reservation estimates queued and in-flight
 bytes, 12× the larger of preferred chunk size and negotiated observation maximum for assembly/codec/validation scratch and 16× the control
 budget for closure/parsed-object headroom. These conservative engineering estimates **are
 not a proof of ART heap/RSS**. Canonical JSON/record/decoded hard limits are enforced by R3.
@@ -193,4 +200,4 @@ The separate [field harness and operator protocol](FIELD_VALIDATION.md) prepares
 
 ## Incremental recorder follow-up
 
-[Recorder allocation engineering](RECORDER_ALLOCATION.md) separates actual buffer lifetimes from logical admission. This session excludes physical device access; the admission and physical recording gates remain pending.
+[Recorder allocation engineering](RECORDER_ALLOCATION.md) separates actual buffer lifetimes from logical admission. The previous checkpoint excluded physical device access. Resumed conditional authorization and the still-pending safe admission/physical gates are recorded there.

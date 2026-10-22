@@ -147,4 +147,4 @@ Recorder Start is refused while a read-only health window remains active; its no
 
 ## Incremental recorder follow-up
 
-[Recorder allocation engineering](RECORDER_ALLOCATION.md) separates actual buffer lifetimes from logical admission. This session excludes physical device access; the admission and physical recording gates remain pending.
+[Recorder allocation engineering](RECORDER_ALLOCATION.md) separates actual buffer lifetimes from logical admission. The previous checkpoint excluded physical device access. Resumed conditional authorization and the still-pending safe admission/physical gates are recorded there.

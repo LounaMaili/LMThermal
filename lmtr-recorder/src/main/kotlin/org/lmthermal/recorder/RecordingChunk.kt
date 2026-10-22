@@ -61,7 +61,14 @@ internal object RecordingChunk {
             val started=if(codecMetric!=null)now() else 0L
             // This concatenation is a private writer allocation: STORED can retain it directly.
             // The public codec API still returns a defensive copy to independent consumers.
-            val encoded=if(codec==0)all else LmtrCodec.encode(all,codec)
+            // Local binary workspace cap: segments plus final output cost <=2*cap. This is
+            // independent of the decoded hard limit and does not reduce admission safeguards.
+            val encoded=if(codec==0)all else {
+                require(codec==1)
+                val cap=minOf(validationBudget/2,LmtrFraming.MAX_RECORD_BYTES-LmtrFraming.ENVELOPE_BYTES-Int.SIZE_BYTES-storedAt)
+                if(cap<=0)throw LmtrFailure("local_resource_limit")
+                RecordingDeflate.encode(all,cap.toInt())
+            }
             // Test-only observer times only the existing codec call, leaving encoded bytes unchanged.
             if(codecMetric!=null)runCatching { codecMetric.invoke(now()-started,all.size.toLong(),encoded.size.toLong()) }
             stored.add(encoded)

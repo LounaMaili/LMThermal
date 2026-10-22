@@ -358,4 +358,6 @@ The [R4 live-heap follow-up](lmtr-r4/LIVE_HEAP.md) preserves source evidence and
 
 [R4 presentation profiling](lmtr-r4/PRESENTATION_PERFORMANCE.md) retains exact Auto/ROI/color semantics, optional immutable ROI computation and single-owner display pixel transfer. Real headroom policy witnesses still fail; no production recording or safe-admission certification is implied.
 
-The [R4 allocation investigation](lmtr-r4/RECORDER_ALLOCATION.md) adds full synchronous validation without materialized payload copies; public reader ownership and both complete writer checks remain. No wire or physical-admission guarantee changes.
+The [R4 allocation investigation](lmtr-r4/RECORDER_ALLOCATION.md) adds full synchronous validation without materialized payload copies; public reader ownership and both complete writer checks remain. Writer counters now charge complete prepared byte/JSON owners; pending counters include descriptor/context/segment closure. Queue capacities and admission margins are unchanged; these counters are not ART live-heap measurements. No wire or physical-admission guarantee changes.
+
+The restricted R4 writer now uses bounded call-local DEFLATE segments and owned copy-out, avoiding geometric output growth. Both complete validations, source evidence and78+32 MiB admission remain unchanged. See the [HT-301 allocation ledger](lmtr-r4/HT301_FULL_ALLOCATION_LEDGER.md); this is not safe physical-recording certification.

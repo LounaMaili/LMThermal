@@ -1,9 +1,10 @@
 # R4 incremental recorder allocation engineering
 
-Status: complete-owner host checkpoint; final ART pending. **Physical Pixel8/HT-301 access is prohibited
-for this session (Pixel reserved for LMarchery).** No local ADB command, pairing,
-installation, configuration/file inspection or camera access is permitted. Existing
-physical results remain historical, not a new simultaneous-preview/recorder validation.
+Status: restricted HT allocation ledger and bounded writer-output follow-up; safe physical
+admission remains unproven. The previous Pixel/LMarchery isolation applied to the earlier
+checkpoint only. The owner explicitly lifted it for the resumed session, conditionally:
+normal permissions, verified scene/safety and justified admission are still required.
+The old no-device-access record is preserved; it is not a current prohibition.
 
 [Exact receipts](recorder-allocation-validation.json) retain the baseline at
 `4f88e8450068493e56eef1783a75658acb8fdd98`, before/after allocation and failed replays.
@@ -21,7 +22,7 @@ These are **admission accounting**, not preallocated arenas or a proof of a peak
 | Current acquisition, controller, render/ROI, Android graphics | Outside incremental recorder charges; previous real UI sample is not a reachable-live upper bound |
 | Deferred preparation queue |4 MiB charged; one HT offer at3 MiB retains one immutable source, not a borrowed USB lease |
 | Preparation in flight | One immutable source plus freezing copies and original-owner oracle. Independent of writer work; transient copies are not bounded by the3 MiB charge alone |
-| Prepared writer queue |4 MiB accounting; prepared observations own bytes/JSON and no source closure; the original implementation still charges3 MiB per item |
+| Prepared writer queue |4 MiB accounting; prepared observations own bytes/JSON and no source closure; the historical implementation charged3 MiB per item |
 | Writer in flight | One prepared observation may overlap a preceding CHUNK seal; budget separately from queued and pending items |
 | Pending CHUNK | Bound by preferred bytes/entry count/intake timer; includes native evidence retained even when encoded as a transport view |
 | Encode | Grouped concatenation, codec output/BAOS backing growth,64 KiB codec scratch, accumulated stored groups, metadata and final body |
@@ -86,7 +87,7 @@ The110 MiB gate is conservative against a sample that includes garbage, and can 
 healthy preview. It is not a calibrated peak predictor. These improvements alone do not
 justify lowering78 MiB,32 MiB, enlarging queues, opportunistic post-GC Start, largeHeap,
 a second process, hidden preview or omitted evidence. Safe simultaneous admission remains
-pending, and physical validation is independently prohibited for this session.
+pending. The previous phase separately prohibited physical validation; the resumed authorization does not waive memory safety.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
@@ -138,7 +139,7 @@ not a new full-plane buffer or shared pool. Independent ByteBuffer/hash vectors 
 empty/partial/full batches, signed zero, infinities, NaN payloads and source immutability.
 This optimizes test/oracle overhead, not native thermometry or product presentation.
 
-## Conservative lifetime conclusion and architectural recommendation
+## Prior checkpoint conclusion and architectural recommendation
 
 There is now a defensible bound on the admitted **serialized/binary owner charges**:
 preparation queued/in flight, prepared writer queued/in flight, complete pending closure,
@@ -174,17 +175,17 @@ insufficient follows from occupied-heap samples.
 | Staged actual arena provisioning | Recommended next engineering step after a restricted HT allocation ledger; provisioning cannot authorize future UI allocations or favorable-GC retry |
 | largeHeap/second process/hidden preview | Not introduced; separate owner architectural review if a complete ledger still cannot fit |
 
-**Recommendation:** keep R4 admission blocked. Next implement a restricted, explicit HT
+**Prior recommendation (follow-up below):** keep R4 admission blocked. Implement a restricted, explicit HT
 allocation ledger with a writer-owned bounded encode/decode arena and a separate metadata
 object budget; prove exclusive sequential reuse across both validations, failure cleanup
 and original-owner parity. Reassess simultaneous source/UI live roots independently.
 Only that evidence can justify a staged provisioned admission change. Do not use an
 emulator no-drop replay or lower allocation volume as a substitute for this proof.
 
-## Future physical gate (not authorized in this session)
+## Conditional physical gate after resumed authorization
 
-A future owner must explicitly release the Pixel from LMarchery and reauthorize physical
-LMThermal access; online ADB alone is insufficient. First finish the conservative combined
+The resumed owner authorization releases the Pixel for LMThermal; online ADB alone
+is still insufficient. First finish the conservative combined
 memory model and validate the exact pushed runtime on isolated ART. Then require normal
 unlocked foreground access, attached HT-301, valid normal permissions, newly verified
 non-sensitive scene, battery/thermal/storage/system-memory checks and normal Compose.
@@ -195,7 +196,7 @@ normal admission once, and stop on refusal. If admitted, one20-second Full file 
 pre-transform source oracle, explicit Stop/Close and independent Python full byte/mask/
 native/acquisition/context/intake/loss/immutability validation are required. Measure real
 cadence/freshness, queues, sealing and memory separately. No extended profiles follow
-without separate authorization. This session creates **only synthetic fixture LMTRs**.
+without separate authorization. The earlier checkpoint created **only synthetic fixture LMTRs**; resumed results are separated below.
 
 ## Final digest-allocation follow-up
 
@@ -224,3 +225,64 @@ field capacities do not change. That run's finite replay completed97/200 STORED 
 90/200 DEFLATE with explicit writer losses, not no-drop throughput. The subsequent
 `c5a8467` CI was superseded to avoid spending another full matrix on this known test
 setup; the cancellation/history are retained rather than presented as a test pass.
+
+## Resumed engineering checkpoint
+
+The [restricted HT-301 Full allocation ledger](HT301_FULL_ALLOCATION_LEDGER.md) gives
+implementation-backed owners, overlap formulas, maximum metadata domains and remaining
+object/GC/native uncertainty. A fixed reusable4 MiB image arena would add permanently
+reachable capacity, fail negotiated larger singletons and still leave final body/JSON
+owners. A global mutable pool is therefore not introduced.
+
+`RecordingDeflate` instead owns a fresh, bounded segmented workspace for one synchronous
+writer call. Segments are at most64 KiB; total capacity is bounded by the explicit
+remaining record/local budget. It allocates no separate codec scratch or geometrically
+growing output array. Segments and the final independent output coexist only through
+copy-out, then segment references clear in `finally` and native Deflater closes. No
+source buffer, public reader result, pending owner or cross-call pool is reused.
+
+If final encoded length is E, temporary segment capacity is less than E+65536 and
+not greater than negotiated cap C. Binary workspace including the independent result
+is at most2C (also less than2E+65536). Raw concatenation and previous stored groups
+are additional. `RecordingChunk` chooses C <= validationBudget/2 and remaining record
+space; overflow is `local_resource_limit`, never truncated output, lower evidence or
+a repair END. Both complete validations are unchanged; public R3 codec/reader APIs
+remain unchanged. The shared writer helper returns owned bytes.
+
+Paired synthetic host codec allocation for1,769,472 seeded incompressible bytes falls
+from5,964,736 to3,606,616 B (p50), with exact same1,770,018 output bytes. For442,368
+bytes it falls1,491,464 to901,840 B; compressible output savings are smaller. Eight
+samples/four warmups alternate order; no GC is requested. These are total allocations,
+not a simultaneous-live bound or physical throughput. Six complete full-size fixture
+files remain byte-identical to the previous checkpoint, with independent Python source
+Float32/native/transport/view/context/clock and immutability checks.
+
+The resumed host replay retains200/200 per codec at requested25 Hz with no preparation
+or writer drops. Host/emulator timing is separate from Compose/USB acceptance. Adversarial
+checks cover incompressible expansion, exact/insufficient capacities, each segment/final
+allocation failure, cancellation-like failure, the exact16 KiB source-metadata boundary,
+near1 MiB descriptor closure rejection, existing queues/loss saturation, Stop/slow-sync
+and incomplete recovery. Unknown optional decimal precision and payloads stay exact.
+
+### Completed prior ART receipt
+
+[Run39724466944](https://github.com/LounaMaili/LMThermal/actions/runs/39724466944)
+is successful at exact `cc87d2b9dbf810c3a17a50d9590ae57c3b9eae25`:110/110 tests on each
+API26/API35, independent readbacks successful. **This is not a no-drop throughput pass.**
+API26 retained127/200 STORED and115/200 DEFLATE with73/85 writer drops. API35 retained
+87/200 STORED and77/200 DEFLATE, with113/121 writer drops plus2 preparation drops in
+DEFLATE. All four finalized with explicit gaps; the harness records `retained_failure`.
+Earlier failed/cancelled runs remain unchanged. New code requires its own ART receipt.
+
+### Admission and actual-device boundary
+
+Keep78 MiB reservation +32 MiB margin unchanged. Bounded binary output removes one
+uncertainty but does not bound concurrent source/UI roots, exact metadata-object expansion,
+native graphics/zlib, dead allocations awaiting normal GC or future allocations. No
+forced GC, favorable-snapshot retry, hidden preview, larger queue or `largeHeap` is added.
+
+Resumed read-only preflight finds an authorized, awake/unlocked Pixel8 and a live USB
+HT-301 (1514:0001); battery77%. The field process is absent. No APK is installed/launched,
+no camera is opened and no initialization/recording is attempted: current scene and
+permission/session ownership were not established, and safe memory admission remains
+unproven. This is connectivity evidence only, not a new Pixel memory or real-camera test.

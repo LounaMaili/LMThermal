@@ -1,5 +1,5 @@
 {
-  "status": "complete_owner_accounting_host_checkpoint_ART_pending_physical_prohibited",
+  "status": "resumed_bounded_writer_output_host_verified_new_ART_pending_physical_admission_unproven",
   "baseline_commit": "4f88e8450068493e56eef1783a75658acb8fdd98",
   "physical_device_accessed": false,
   "physical_authorization": "revoked_Pixel_reserved_for_LMarchery",
@@ -2791,5 +2791,1742 @@
   "superseded_CI_c5a8467": {
     "run_url": "https://github.com/LounaMaili/LMThermal/actions/runs/39724293343",
     "reason": "cancelled to supersede known outdated queue-stage test setup; retained source/history and prior actual failure"
-  }
+  },
+  "completed_CI_cc87d2b": {
+    "run": 39724466944,
+    "url": "https://github.com/LounaMaili/LMThermal/actions/runs/39724466944",
+    "source": "cc87d2b9dbf810c3a17a50d9590ae57c3b9eae25",
+    "conclusion": "success",
+    "scope": "correctness_and_truthful_overload_not_no_drop_throughput",
+    "artifacts": [
+      {
+        "api": 26,
+        "tests": 110,
+        "instrumentation": "passed",
+        "readbacks": [
+          {
+            "name": "python-readback.json",
+            "cases": 14,
+            "sha256": "3fefbc2e53a883246afdb9776979547cd6935e0fad97539f0a3e3f90734f0e23"
+          },
+          {
+            "name": "python-source-readback.json",
+            "cases": 1,
+            "sha256": "71f5cc63c093b94a3966acf79e66cd532fafed24a066b67851185bbe68715008"
+          }
+        ],
+        "fixture_replay": {
+          "baseline": {
+            "elapsed_ns": "1967075940",
+            "intervals": {
+              "count": 49,
+              "max_ns": "43635350",
+              "omitted": "0",
+              "p50_ns": "39998400",
+              "p95_ns": "43402380"
+            },
+            "observations": 50
+          },
+          "cases": [
+            {
+              "admission": {
+                "count": 200,
+                "max_ns": "12344370",
+                "omitted": "0",
+                "p50_ns": "368020",
+                "p95_ns": "491880"
+              },
+              "append": {
+                "count": 32,
+                "max_ns": "140771150",
+                "omitted": "0",
+                "p50_ns": "114745130",
+                "p95_ns": "132174590"
+              },
+              "codec": 0,
+              "codec_wall": {
+                "count": 64,
+                "max_ns": "20910",
+                "omitted": "0",
+                "p50_ns": "10410",
+                "p95_ns": "12950"
+              },
+              "failure": null,
+              "finalized": true,
+              "intake_elapsed_ns": "7964639380",
+              "java_max_bytes": "402653184",
+              "memory_guard_stopped": false,
+              "minimum_headroom_bytes": "361077760",
+              "observations_offered": 200,
+              "occupied_native_rss_pss_peaks": {
+                "java_occupied_bytes": "41575424",
+                "native_allocated_bytes": "21493520",
+                "pss_bytes": "79140864"
+              },
+              "original_input_not_mutated": true,
+              "platform_after": {
+                "native_allocated_bytes": 15666480,
+                "pss_bytes": 79169536,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1334900232",
+                  "art.gc.bytes-freed": "1328823184",
+                  "art.gc.gc-count": "484",
+                  "art.gc.gc-count-rate-histogram": "188:1,192:1",
+                  "art.gc.gc-time": "4283"
+                }
+              },
+              "platform_before": {
+                "native_allocated_bytes": 5179896,
+                "pss_bytes": 29730816,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:1",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "832435240",
+                  "art.gc.bytes-freed": "828877240",
+                  "art.gc.gc-count": "314",
+                  "art.gc.gc-count-rate-histogram": "188:1",
+                  "art.gc.gc-time": "2018"
+                }
+              },
+              "platform_before_stop": {
+                "native_allocated_bytes": 7861424,
+                "pss_bytes": 67160064,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1324172808",
+                  "art.gc.bytes-freed": "1300567400",
+                  "art.gc.gc-count": "478",
+                  "art.gc.gc-count-rate-histogram": "188:1,192:1",
+                  "art.gc.gc-time": "4208"
+                }
+              },
+              "producer_intervals": {
+                "count": 199,
+                "max_ns": "48747610",
+                "omitted": "0",
+                "p50_ns": "39996710",
+                "p95_ns": "41421320"
+              },
+              "reason": "user_stop",
+              "refused_admission": null,
+              "requested_fps": 25,
+              "schedule_lateness": {
+                "count": 200,
+                "max_ns": "13020670",
+                "omitted": "0",
+                "p50_ns": "4284420",
+                "p95_ns": "5931180"
+              },
+              "seal_encode": {
+                "count": 32,
+                "max_ns": "163772920",
+                "omitted": "0",
+                "p50_ns": "123174710",
+                "p95_ns": "142700240"
+              },
+              "snapshot": {
+                "accepted": "200",
+                "acknowledged": "127",
+                "checkpoints": "2",
+                "chunks": "32",
+                "control_bytes": "0",
+                "error": null,
+                "max_pending_bytes": "3586428",
+                "max_preparation_in_flight_bytes": "3145728",
+                "max_preparation_queued_bytes": "3145728",
+                "max_writer_in_flight_bytes": "894263",
+                "max_writer_queued_bytes": "3577052",
+                "pending_bytes": "0",
+                "preparation_drops": "0",
+                "preparation_in_flight_bytes": "0",
+                "preparation_queued_bytes": "0",
+                "state": "finalized",
+                "writer_drops": "73",
+                "writer_in_flight_bytes": "0",
+                "writer_queued_bytes": "0"
+              },
+              "stop_ns": "607705710",
+              "verdict": "retained_failure"
+            },
+            {
+              "admission": {
+                "count": 200,
+                "max_ns": "2227930",
+                "omitted": "0",
+                "p50_ns": "351970",
+                "p95_ns": "483810"
+              },
+              "append": {
+                "count": 29,
+                "max_ns": "145632730",
+                "omitted": "0",
+                "p50_ns": "108174120",
+                "p95_ns": "124714020"
+              },
+              "codec": 1,
+              "codec_wall": {
+                "count": 58,
+                "max_ns": "21626970",
+                "omitted": "0",
+                "p50_ns": "11812090",
+                "p95_ns": "14271570"
+              },
+              "failure": null,
+              "finalized": true,
+              "intake_elapsed_ns": "7964835140",
+              "java_max_bytes": "402653184",
+              "memory_guard_stopped": false,
+              "minimum_headroom_bytes": "375542832",
+              "observations_offered": 200,
+              "occupied_native_rss_pss_peaks": {
+                "java_occupied_bytes": "27110352",
+                "native_allocated_bytes": "10533016",
+                "pss_bytes": "82708480"
+              },
+              "original_input_not_mutated": true,
+              "platform_after": {
+                "native_allocated_bytes": 9466976,
+                "pss_bytes": 58149888,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1815369488",
+                  "art.gc.bytes-freed": "1811797264",
+                  "art.gc.gc-count": "667",
+                  "art.gc.gc-count-rate-histogram": "188:1,192:1,204:1",
+                  "art.gc.gc-time": "6674"
+                }
+              },
+              "platform_before": {
+                "native_allocated_bytes": 15992080,
+                "pss_bytes": 79775744,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1336100392",
+                  "art.gc.bytes-freed": "1328823184",
+                  "art.gc.gc-count": "484",
+                  "art.gc.gc-count-rate-histogram": "188:1,192:1",
+                  "art.gc.gc-time": "4283"
+                }
+              },
+              "platform_before_stop": {
+                "native_allocated_bytes": 6765248,
+                "pss_bytes": 61500416,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1803896592",
+                  "art.gc.bytes-freed": "1782910856",
+                  "art.gc.gc-count": "659",
+                  "art.gc.gc-count-rate-histogram": "188:1,192:1,204:1",
+                  "art.gc.gc-time": "6605"
+                }
+              },
+              "producer_intervals": {
+                "count": 199,
+                "max_ns": "43540970",
+                "omitted": "0",
+                "p50_ns": "39997060",
+                "p95_ns": "41374230"
+              },
+              "reason": "user_stop",
+              "refused_admission": null,
+              "requested_fps": 25,
+              "schedule_lateness": {
+                "count": 200,
+                "max_ns": "10146780",
+                "omitted": "0",
+                "p50_ns": "4344590",
+                "p95_ns": "6084760"
+              },
+              "seal_encode": {
+                "count": 29,
+                "max_ns": "211753020",
+                "omitted": "0",
+                "p50_ns": "156751490",
+                "p95_ns": "184303310"
+              },
+              "snapshot": {
+                "accepted": "200",
+                "acknowledged": "115",
+                "checkpoints": "2",
+                "chunks": "29",
+                "control_bytes": "0",
+                "error": null,
+                "max_pending_bytes": "3590076",
+                "max_preparation_in_flight_bytes": "3145728",
+                "max_preparation_queued_bytes": "3145728",
+                "max_writer_in_flight_bytes": "894263",
+                "max_writer_queued_bytes": "3577052",
+                "pending_bytes": "0",
+                "preparation_drops": "0",
+                "preparation_in_flight_bytes": "0",
+                "preparation_queued_bytes": "0",
+                "state": "finalized",
+                "writer_drops": "85",
+                "writer_in_flight_bytes": "0",
+                "writer_queued_bytes": "0"
+              },
+              "stop_ns": "634036620",
+              "verdict": "retained_failure"
+            }
+          ],
+          "forced_gc": false,
+          "sampling": "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
+          "scope": "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        },
+        "instrumentation_sha256": "84515808d79b111d6e4962ba24d0b75d9f642f484c4050c7a019e37d74839649"
+      },
+      {
+        "api": 35,
+        "tests": 110,
+        "instrumentation": "passed",
+        "readbacks": [
+          {
+            "name": "python-readback.json",
+            "cases": 14,
+            "sha256": "3fefbc2e53a883246afdb9776979547cd6935e0fad97539f0a3e3f90734f0e23"
+          },
+          {
+            "name": "python-source-readback.json",
+            "cases": 1,
+            "sha256": "7909074bc8135d8ee885b5ab7d06f14f9ac442ac1061e104d402b088b981fd55"
+          }
+        ],
+        "fixture_replay": {
+          "baseline": {
+            "elapsed_ns": "1969028832",
+            "intervals": {
+              "count": 49,
+              "max_ns": "44188131",
+              "omitted": "0",
+              "p50_ns": "39982216",
+              "p95_ns": "41661494"
+            },
+            "observations": 50
+          },
+          "cases": [
+            {
+              "admission": {
+                "count": 200,
+                "max_ns": "7465864",
+                "omitted": "0",
+                "p50_ns": "1164582",
+                "p95_ns": "2956087"
+              },
+              "append": {
+                "count": 22,
+                "max_ns": "207535674",
+                "omitted": "0",
+                "p50_ns": "157802777",
+                "p95_ns": "167528892"
+              },
+              "codec": 0,
+              "codec_wall": {
+                "count": 44,
+                "max_ns": "3285",
+                "omitted": "0",
+                "p50_ns": "1121",
+                "p95_ns": "1392"
+              },
+              "failure": null,
+              "finalized": true,
+              "intake_elapsed_ns": "7969837169",
+              "java_max_bytes": "201326592",
+              "memory_guard_stopped": false,
+              "minimum_headroom_bytes": "148099040",
+              "observations_offered": 200,
+              "occupied_native_rss_pss_peaks": {
+                "java_occupied_bytes": "53227552",
+                "native_allocated_bytes": "17736960",
+                "pss_bytes": "97657856"
+              },
+              "original_input_not_mutated": true,
+              "platform_after": {
+                "native_allocated_bytes": 17736960,
+                "pss_bytes": 84993024,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "2601011728",
+                  "art.gc.bytes-freed": "2593069552",
+                  "art.gc.gc-count": "307",
+                  "art.gc.gc-count-rate-histogram": "71:1,76:1,159:1",
+                  "art.gc.gc-time": "4199",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                }
+              },
+              "platform_before": {
+                "native_allocated_bytes": 6215776,
+                "pss_bytes": 56537088,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "1162975760",
+                  "art.gc.bytes-freed": "1155553680",
+                  "art.gc.gc-count": "245",
+                  "art.gc.gc-count-rate-histogram": "76:1,159:1",
+                  "art.gc.gc-time": "2461",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                }
+              },
+              "platform_before_stop": {
+                "native_allocated_bytes": 10787696,
+                "pss_bytes": 80192512,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:2",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "2564614672",
+                  "art.gc.bytes-freed": "2530462192",
+                  "art.gc.gc-count": "304",
+                  "art.gc.gc-count-rate-histogram": "76:1,159:1",
+                  "art.gc.gc-time": "4148",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                }
+              },
+              "producer_intervals": {
+                "count": 199,
+                "max_ns": "49887929",
+                "omitted": "0",
+                "p50_ns": "39926553",
+                "p95_ns": "44456150"
+              },
+              "reason": "user_stop",
+              "refused_admission": null,
+              "requested_fps": 25,
+              "schedule_lateness": {
+                "count": 200,
+                "max_ns": "18690956",
+                "omitted": "0",
+                "p50_ns": "9099291",
+                "p95_ns": "13813572"
+              },
+              "seal_encode": {
+                "count": 22,
+                "max_ns": "231156555",
+                "omitted": "0",
+                "p50_ns": "199464545",
+                "p95_ns": "216686359"
+              },
+              "snapshot": {
+                "accepted": "200",
+                "acknowledged": "87",
+                "checkpoints": "2",
+                "chunks": "22",
+                "control_bytes": "0",
+                "error": null,
+                "max_pending_bytes": "3593724",
+                "max_preparation_in_flight_bytes": "3145728",
+                "max_preparation_queued_bytes": "3145728",
+                "max_writer_in_flight_bytes": "894263",
+                "max_writer_queued_bytes": "3577052",
+                "pending_bytes": "0",
+                "preparation_drops": "0",
+                "preparation_in_flight_bytes": "0",
+                "preparation_queued_bytes": "0",
+                "state": "finalized",
+                "writer_drops": "113",
+                "writer_in_flight_bytes": "0",
+                "writer_queued_bytes": "0"
+              },
+              "stop_ns": "713084826",
+              "verdict": "retained_failure"
+            },
+            {
+              "admission": {
+                "count": 200,
+                "max_ns": "13465968",
+                "omitted": "0",
+                "p50_ns": "1167957",
+                "p95_ns": "3074904"
+              },
+              "append": {
+                "count": 20,
+                "max_ns": "203375833",
+                "omitted": "0",
+                "p50_ns": "166853242",
+                "p95_ns": "202414292"
+              },
+              "codec": 1,
+              "codec_wall": {
+                "count": 40,
+                "max_ns": "36343905",
+                "omitted": "0",
+                "p50_ns": "11080780",
+                "p95_ns": "20246233"
+              },
+              "failure": null,
+              "finalized": true,
+              "intake_elapsed_ns": "7972807877",
+              "java_max_bytes": "201326592",
+              "memory_guard_stopped": false,
+              "minimum_headroom_bytes": "147517424",
+              "observations_offered": 200,
+              "occupied_native_rss_pss_peaks": {
+                "java_occupied_bytes": "53809168",
+                "native_allocated_bytes": "28694464",
+                "pss_bytes": "112931840"
+              },
+              "original_input_not_mutated": true,
+              "platform_after": {
+                "native_allocated_bytes": 28694464,
+                "pss_bytes": 74591232,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "4121373344",
+                  "art.gc.bytes-freed": "4112997008",
+                  "art.gc.gc-count": "373",
+                  "art.gc.gc-count-rate-histogram": "71:1,76:1,159:1",
+                  "art.gc.gc-time": "6076",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                }
+              },
+              "platform_before": {
+                "native_allocated_bytes": 18008832,
+                "pss_bytes": 85869568,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "2602363552",
+                  "art.gc.bytes-freed": "2593069552",
+                  "art.gc.gc-count": "307",
+                  "art.gc.gc-count-rate-histogram": "71:1,76:1,159:1",
+                  "art.gc.gc-time": "4199",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                }
+              },
+              "platform_before_stop": {
+                "native_allocated_bytes": 7957968,
+                "pss_bytes": 69811200,
+                "runtime": {
+                  "art.gc.blocking-gc-count": "0",
+                  "art.gc.blocking-gc-count-rate-histogram": "0:3",
+                  "art.gc.blocking-gc-time": "0",
+                  "art.gc.bytes-allocated": "4071393952",
+                  "art.gc.bytes-freed": "4052216464",
+                  "art.gc.gc-count": "369",
+                  "art.gc.gc-count-rate-histogram": "71:1,76:1,159:1",
+                  "art.gc.gc-time": "6033",
+                  "art.gc.objects-allocated": null,
+                  "art.gc.pre-oome-gc-count": null,
+                  "art.gc.total-time-waiting-for-gc": null
+                }
+              },
+              "producer_intervals": {
+                "count": 199,
+                "max_ns": "48703768",
+                "omitted": "0",
+                "p50_ns": "40109054",
+                "p95_ns": "45278934"
+              },
+              "reason": "user_stop",
+              "refused_admission": null,
+              "requested_fps": 25,
+              "schedule_lateness": {
+                "count": 200,
+                "max_ns": "19973142",
+                "omitted": "0",
+                "p50_ns": "10084547",
+                "p95_ns": "15169082"
+              },
+              "seal_encode": {
+                "count": 20,
+                "max_ns": "287029361",
+                "omitted": "0",
+                "p50_ns": "248435931",
+                "p95_ns": "276299453"
+              },
+              "snapshot": {
+                "accepted": "198",
+                "acknowledged": "77",
+                "checkpoints": "2",
+                "chunks": "20",
+                "control_bytes": "0",
+                "error": null,
+                "max_pending_bytes": "3595548",
+                "max_preparation_in_flight_bytes": "3145728",
+                "max_preparation_queued_bytes": "3145728",
+                "max_writer_in_flight_bytes": "894263",
+                "max_writer_queued_bytes": "3577052",
+                "pending_bytes": "0",
+                "preparation_drops": "2",
+                "preparation_in_flight_bytes": "0",
+                "preparation_queued_bytes": "0",
+                "state": "finalized",
+                "writer_drops": "121",
+                "writer_in_flight_bytes": "0",
+                "writer_queued_bytes": "0"
+              },
+              "stop_ns": "866926636",
+              "verdict": "retained_failure"
+            }
+          ],
+          "forced_gc": false,
+          "sampling": "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
+          "scope": "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
+          "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+        },
+        "instrumentation_sha256": "6b04044eaa6d1f28941cdda7a5c945cab16518310d557570aaf6ed3abcd9ead9"
+      }
+    ]
+  },
+  "resumed_bounded_writer": {
+    "baseline": "cc87d2b9dbf810c3a17a50d9590ae57c3b9eae25",
+    "scope": "restricted_HT_Full_binary_ownership_not_peak_live_or_physical_admission",
+    "new_authorization": "owner_explicitly_lifted_previous_Pixel_isolation_conditional_only",
+    "current_physical_preflight": {
+      "read_only": true,
+      "model": "Pixel 8",
+      "wireless_adb": "already_authorized",
+      "awake": true,
+      "keyguard_showing": false,
+      "battery_percent": 77,
+      "usb": {
+        "vendor_id": 5396,
+        "product_id": 1,
+        "product_name": "T3-317-13"
+      },
+      "field_process_running": false,
+      "camera_opened": false,
+      "initialization_sent": false,
+      "apk_installed_or_launched": false,
+      "new_memory_diagnostic": false,
+      "recording_attempted": false,
+      "reason": "safe_admission_unproven_and_current_scene_permissions_session_not_verified"
+    },
+    "reservation_bytes": 81788928,
+    "additional_margin_bytes": 33554432,
+    "queues_unchanged": true,
+    "preferred_chunk_unchanged": true,
+    "jvm": {
+      "core": {
+        "tests": 234,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-contract": {
+        "tests": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-recorder": {
+        "tests": 50,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "camera-recording": {
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-field-support": {
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "app": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "python_tests": 64,
+    "codec_cost": {
+      "cases": [
+        {
+          "exact_byte_parity": true,
+          "pattern": "repeated_127",
+          "segment_capacity_upper_bound_bytes": "67372",
+          "source_bytes": 224256,
+          "source_unchanged": true,
+          "stored_bytes": 1837,
+          "variants": [
+            {
+              "name": "original_growing_stream",
+              "thread_allocated_bytes": {
+                "max": "69544",
+                "p50": "69544",
+                "p95": "69544"
+              },
+              "wall_ns": {
+                "max": "303818",
+                "p50": "290978",
+                "p95": "303818"
+              }
+            },
+            {
+              "name": "bounded_segments",
+              "thread_allocated_bytes": {
+                "max": "67760",
+                "p50": "67760",
+                "p95": "67760"
+              },
+              "wall_ns": {
+                "max": "310128",
+                "p50": "294298",
+                "p95": "310128"
+              }
+            }
+          ]
+        },
+        {
+          "exact_byte_parity": true,
+          "pattern": "seeded_incompressible",
+          "segment_capacity_upper_bound_bytes": "289867",
+          "source_bytes": 224256,
+          "source_unchanged": true,
+          "stored_bytes": 224332,
+          "variants": [
+            {
+              "name": "original_growing_stream",
+              "thread_allocated_bytes": {
+                "max": "748984",
+                "p50": "748984",
+                "p95": "748984"
+              },
+              "wall_ns": {
+                "max": "3731065",
+                "p50": "3607545",
+                "p95": "3731065"
+              }
+            },
+            {
+              "name": "bounded_segments",
+              "thread_allocated_bytes": {
+                "max": "486960",
+                "p50": "486960",
+                "p95": "486960"
+              },
+              "wall_ns": {
+                "max": "3532806",
+                "p50": "3516266",
+                "p95": "3532806"
+              }
+            }
+          ]
+        },
+        {
+          "exact_byte_parity": true,
+          "pattern": "repeated_127",
+          "segment_capacity_upper_bound_bytes": "68964",
+          "source_bytes": 442368,
+          "source_unchanged": true,
+          "stored_bytes": 3429,
+          "variants": [
+            {
+              "name": "original_growing_stream",
+              "thread_allocated_bytes": {
+                "max": "72728",
+                "p50": "72728",
+                "p95": "72728"
+              },
+              "wall_ns": {
+                "max": "576746",
+                "p50": "568056",
+                "p95": "576746"
+              }
+            },
+            {
+              "name": "bounded_segments",
+              "thread_allocated_bytes": {
+                "max": "69352",
+                "p50": "69352",
+                "p95": "69352"
+              },
+              "wall_ns": {
+                "max": "609146",
+                "p50": "572466",
+                "p95": "609146"
+              }
+            }
+          ]
+        },
+        {
+          "exact_byte_parity": true,
+          "pattern": "seeded_incompressible",
+          "segment_capacity_upper_bound_bytes": "508044",
+          "source_bytes": 442368,
+          "source_unchanged": true,
+          "stored_bytes": 442509,
+          "variants": [
+            {
+              "name": "original_growing_stream",
+              "thread_allocated_bytes": {
+                "max": "1491464",
+                "p50": "1491464",
+                "p95": "1491464"
+              },
+              "wall_ns": {
+                "max": "7272141",
+                "p50": "7002873",
+                "p95": "7272141"
+              }
+            },
+            {
+              "name": "bounded_segments",
+              "thread_allocated_bytes": {
+                "max": "901840",
+                "p50": "901840",
+                "p95": "901840"
+              },
+              "wall_ns": {
+                "max": "7198822",
+                "p50": "6835164",
+                "p95": "7198822"
+              }
+            }
+          ]
+        },
+        {
+          "exact_byte_parity": true,
+          "pattern": "repeated_127",
+          "segment_capacity_upper_bound_bytes": "78666",
+          "source_bytes": 1769472,
+          "source_unchanged": true,
+          "stored_bytes": 13131,
+          "variants": [
+            {
+              "name": "original_growing_stream",
+              "thread_allocated_bytes": {
+                "max": "92136",
+                "p50": "92136",
+                "p95": "92136"
+              },
+              "wall_ns": {
+                "max": "2466843",
+                "p50": "2376514",
+                "p95": "2466843"
+              }
+            },
+            {
+              "name": "bounded_segments",
+              "thread_allocated_bytes": {
+                "max": "79056",
+                "p50": "79056",
+                "p95": "79056"
+              },
+              "wall_ns": {
+                "max": "2395854",
+                "p50": "2371074",
+                "p95": "2395854"
+              }
+            }
+          ]
+        },
+        {
+          "exact_byte_parity": true,
+          "pattern": "seeded_incompressible",
+          "segment_capacity_upper_bound_bytes": "1835553",
+          "source_bytes": 1769472,
+          "source_unchanged": true,
+          "stored_bytes": 1770018,
+          "variants": [
+            {
+              "name": "original_growing_stream",
+              "thread_allocated_bytes": {
+                "max": "5964736",
+                "p50": "5964736",
+                "p95": "5964736"
+              },
+              "wall_ns": {
+                "max": "29413341",
+                "p50": "28671967",
+                "p95": "29413341"
+              }
+            },
+            {
+              "name": "bounded_segments",
+              "thread_allocated_bytes": {
+                "max": "3606616",
+                "p50": "3606616",
+                "p95": "3606616"
+              },
+              "wall_ns": {
+                "max": "28854055",
+                "p50": "28389798",
+                "p95": "28854055"
+              }
+            }
+          ]
+        }
+      ],
+      "forced_gc": false,
+      "samples": 8,
+      "scope": "paired_synthetic_codec_not_physical_or_peak_live",
+      "warmups": 4
+    },
+    "six_original_source_readbacks": [
+      {
+        "status": "passed",
+        "source_sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "2211840",
+        "physical_stored_block_bytes": "2211840",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "case": "analysis-0",
+        "same_entire_file_as_baseline": true,
+        "chunks": [
+          {
+            "metadata_bytes": 22060,
+            "decoded": 2211840,
+            "stored": 2211840
+          }
+        ]
+      },
+      {
+        "status": "passed",
+        "source_sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "2211840",
+        "physical_stored_block_bytes": "522651",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "case": "analysis-1",
+        "same_entire_file_as_baseline": true,
+        "chunks": [
+          {
+            "metadata_bytes": 22059,
+            "decoded": 2211840,
+            "stored": 522651
+          }
+        ]
+      },
+      {
+        "status": "passed",
+        "source_sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 6,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "acquisition": "1345536",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3557376",
+        "physical_stored_block_bytes": "3557376",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "case": "full-0",
+        "same_entire_file_as_baseline": true,
+        "chunks": [
+          {
+            "metadata_bytes": 23606,
+            "decoded": 2890752,
+            "stored": 2890752
+          },
+          {
+            "metadata_bytes": 8603,
+            "decoded": 666624,
+            "stored": 666624
+          }
+        ]
+      },
+      {
+        "status": "passed",
+        "source_sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 6,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "acquisition": "1345536",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3557376",
+        "physical_stored_block_bytes": "1007761",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "case": "full-1",
+        "same_entire_file_as_baseline": true,
+        "chunks": [
+          {
+            "metadata_bytes": 23603,
+            "decoded": 2890752,
+            "stored": 822197
+          },
+          {
+            "metadata_bytes": 8602,
+            "decoded": 666624,
+            "stored": 185564
+          }
+        ]
+      },
+      {
+        "status": "passed",
+        "source_sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3538944",
+        "physical_stored_block_bytes": "3538944",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "case": "native-0",
+        "same_entire_file_as_baseline": true,
+        "chunks": [
+          {
+            "metadata_bytes": 25398,
+            "decoded": 3538944,
+            "stored": 3538944
+          }
+        ]
+      },
+      {
+        "status": "passed",
+        "source_sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+        "oracle_sha256": "f82c3193e5421a1769573b49a84365ca21b5becb1704513ce563f274ade8eb59",
+        "observations": 6,
+        "unavailable": 1,
+        "same_observation_views": 0,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "native_samples": "1327104",
+          "temperature": "2211840"
+        },
+        "physical_decoded_block_bytes": "3538944",
+        "physical_stored_block_bytes": "1005483",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "case": "native-1",
+        "same_entire_file_as_baseline": true,
+        "chunks": [
+          {
+            "metadata_bytes": 25395,
+            "decoded": 3538944,
+            "stored": 1005483
+          }
+        ]
+      }
+    ],
+    "host_fixture_stress": {
+      "baseline": {
+        "elapsed_ns": "1962435350",
+        "intervals": {
+          "count": 49,
+          "max_ns": "45275264",
+          "omitted": "0",
+          "p50_ns": "39852640",
+          "p95_ns": "40854984"
+        },
+        "observations": 50
+      },
+      "cases": [
+        {
+          "admission": {
+            "count": 200,
+            "max_ns": "2845270",
+            "omitted": "0",
+            "p50_ns": "64929",
+            "p95_ns": "167178"
+          },
+          "append": {
+            "count": 50,
+            "max_ns": "61030838",
+            "omitted": "0",
+            "p50_ns": "24743632",
+            "p95_ns": "49137688"
+          },
+          "codec": 0,
+          "codec_wall": {
+            "count": 100,
+            "max_ns": "332258",
+            "omitted": "0",
+            "p50_ns": "500",
+            "p95_ns": "1110"
+          },
+          "failure": null,
+          "finalized": true,
+          "intake_elapsed_ns": "7962309281",
+          "java_max_bytes": "268435456",
+          "memory_guard_stopped": false,
+          "minimum_headroom_bytes": "80415440",
+          "observations_offered": 200,
+          "occupied_native_rss_pss_peaks": {
+            "java_occupied_bytes": "188020016"
+          },
+          "original_input_not_mutated": true,
+          "platform_after": {},
+          "platform_before": {},
+          "platform_before_stop": {},
+          "producer_intervals": {
+            "count": 199,
+            "max_ns": "42131845",
+            "omitted": "0",
+            "p50_ns": "40270308",
+            "p95_ns": "40676635"
+          },
+          "reason": "user_stop",
+          "refused_admission": null,
+          "requested_fps": 25,
+          "schedule_lateness": {
+            "count": 200,
+            "max_ns": "4462645",
+            "omitted": "0",
+            "p50_ns": "1855275",
+            "p95_ns": "2435867"
+          },
+          "seal_encode": {
+            "count": 50,
+            "max_ns": "101369705",
+            "omitted": "0",
+            "p50_ns": "16882196",
+            "p95_ns": "32863958"
+          },
+          "snapshot": {
+            "accepted": "200",
+            "acknowledged": "200",
+            "checkpoints": "2",
+            "chunks": "50",
+            "control_bytes": "0",
+            "error": null,
+            "max_pending_bytes": "3580745",
+            "max_preparation_in_flight_bytes": "3145728",
+            "max_preparation_queued_bytes": "3145728",
+            "max_writer_in_flight_bytes": "894269",
+            "max_writer_queued_bytes": "2682801",
+            "pending_bytes": "0",
+            "preparation_drops": "0",
+            "preparation_in_flight_bytes": "0",
+            "preparation_queued_bytes": "0",
+            "state": "finalized",
+            "writer_drops": "0",
+            "writer_in_flight_bytes": "0",
+            "writer_queued_bytes": "0"
+          },
+          "stop_ns": "92387866",
+          "verdict": "completed_no_drops"
+        },
+        {
+          "admission": {
+            "count": 200,
+            "max_ns": "102250",
+            "omitted": "0",
+            "p50_ns": "49640",
+            "p95_ns": "76600"
+          },
+          "append": {
+            "count": 50,
+            "max_ns": "51609981",
+            "omitted": "0",
+            "p50_ns": "25934055",
+            "p95_ns": "42233595"
+          },
+          "codec": 1,
+          "codec_wall": {
+            "count": 100,
+            "max_ns": "16890376",
+            "omitted": "0",
+            "p50_ns": "8098905",
+            "p95_ns": "12099198"
+          },
+          "failure": null,
+          "finalized": true,
+          "intake_elapsed_ns": "7962251271",
+          "java_max_bytes": "268435456",
+          "memory_guard_stopped": false,
+          "minimum_headroom_bytes": "59900688",
+          "observations_offered": 200,
+          "occupied_native_rss_pss_peaks": {
+            "java_occupied_bytes": "208534768"
+          },
+          "original_input_not_mutated": true,
+          "platform_after": {},
+          "platform_before": {},
+          "platform_before_stop": {},
+          "producer_intervals": {
+            "count": 199,
+            "max_ns": "42347194",
+            "omitted": "0",
+            "p50_ns": "40273148",
+            "p95_ns": "40438686"
+          },
+          "reason": "user_stop",
+          "refused_admission": null,
+          "requested_fps": 25,
+          "schedule_lateness": {
+            "count": 200,
+            "max_ns": "4015182",
+            "omitted": "0",
+            "p50_ns": "1814376",
+            "p95_ns": "2272359"
+          },
+          "seal_encode": {
+            "count": 50,
+            "max_ns": "48743430",
+            "omitted": "0",
+            "p50_ns": "40558476",
+            "p95_ns": "42175875"
+          },
+          "snapshot": {
+            "accepted": "200",
+            "acknowledged": "200",
+            "checkpoints": "2",
+            "chunks": "50",
+            "control_bytes": "0",
+            "error": null,
+            "max_pending_bytes": "3580740",
+            "max_preparation_in_flight_bytes": "3145728",
+            "max_preparation_queued_bytes": "3145728",
+            "max_writer_in_flight_bytes": "894269",
+            "max_writer_queued_bytes": "1788538",
+            "pending_bytes": "0",
+            "preparation_drops": "0",
+            "preparation_in_flight_bytes": "0",
+            "preparation_queued_bytes": "0",
+            "state": "finalized",
+            "writer_drops": "0",
+            "writer_in_flight_bytes": "0",
+            "writer_queued_bytes": "0"
+          },
+          "stop_ns": "142132240",
+          "verdict": "completed_no_drops"
+        }
+      ],
+      "forced_gc": false,
+      "sampling": "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
+      "scope": "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
+      "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+    },
+    "host_stress_readbacks": [
+      {
+        "status": "passed",
+        "source_sha256": "929f1886c1ec6c9080e9d4669c932d1f01fc1df0c6b30087be31e28e641cbba1",
+        "oracle_sha256": "31aa2c0929e4f2046b7e57c555f443b45abb778558acad4cb06a7603d7699863",
+        "observations": 200,
+        "unavailable": 0,
+        "same_observation_views": 200,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "88473600",
+          "native_samples": "44236800",
+          "acquisition": "44851200"
+        },
+        "physical_decoded_block_bytes": "133324800",
+        "physical_stored_block_bytes": "133324800",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "case": "full-0"
+      },
+      {
+        "status": "passed",
+        "source_sha256": "6a1c888b4f1caae85d0c46eb6ce594dffdb7f10224929690176532979bf36ba5",
+        "oracle_sha256": "94b4a35e859df4e154d37b495e8f65c52b1aac71bcdbb68e6640075d799bc3df",
+        "observations": 200,
+        "unavailable": 0,
+        "same_observation_views": 200,
+        "recovery": false,
+        "integrity_scope": "full",
+        "terminal": "completed",
+        "source_unchanged": true,
+        "retained_role_bytes": {
+          "temperature": "88473600",
+          "native_samples": "44236800",
+          "acquisition": "44851200"
+        },
+        "physical_decoded_block_bytes": "133324800",
+        "physical_stored_block_bytes": "37070600",
+        "binary_parity": "pre_transform_original_owner_hashes",
+        "context_parity": "adapter_metadata_cross_check_only",
+        "physical_accuracy": "not_independently_validated",
+        "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+        "case": "full-1"
+      }
+    ],
+    "independent_engine_readback": {
+      "status": "passed",
+      "cases": [
+        {
+          "name": "analysis-0",
+          "sha256": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+          "observations": 2,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "native-0",
+          "sha256": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+          "observations": 2,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "full-0",
+          "sha256": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+          "observations": 2,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "analysis-1",
+          "sha256": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+          "observations": 2,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "native-1",
+          "sha256": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+          "observations": 2,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "full-1",
+          "sha256": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+          "observations": 2,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "independent-native-acquisition",
+          "sha256": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+          "observations": 2,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "temperature-only",
+          "sha256": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+          "observations": 2,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "preview-only",
+          "sha256": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+          "observations": 2,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "multistream-geometry",
+          "sha256": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+          "observations": 4,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "torn-tail",
+          "sha256": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+          "observations": 1,
+          "status": "recovered",
+          "integrity_scope": "full_verified_prefix",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "navigation-failure",
+          "sha256": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+          "observations": 1,
+          "status": "recovered",
+          "integrity_scope": "full_verified_prefix",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "unjournaled-loss",
+          "sha256": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+          "observations": 1,
+          "status": "recovered",
+          "integrity_scope": "full_verified_prefix",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        },
+        {
+          "name": "represented-source-failure",
+          "sha256": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+          "observations": 0,
+          "status": "valid",
+          "integrity_scope": "full",
+          "source_unchanged": true,
+          "original_oracle_sha256": null,
+          "clock_and_intake_oracle_checked": false
+        }
+      ],
+      "generated_scope": "noncanonical R4 engineering outputs",
+      "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+    },
+    "conformance": {
+      "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+      "base_main": "fe029363062cdf54d6cefa9d4f24265e80188091",
+      "canonical_plan_byte_comparisons": 33,
+      "codec_adversarial_cross_cases": 3,
+      "compatibility_runtime_cases": 8,
+      "compressed_byte_equality": "not required; exact logical bytes and descriptor hashes compared",
+      "corpus_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+      "independent_python_full_cases": 51,
+      "java": "openjdk version \"17.0.20.1\" 2026-08-18",
+      "json_vectors": [
+        {
+          "canonical_sha256": "eaf23ca6e4fc163864baa33d71ba53553b7fd274f8c0e11be17b3ff27d964639",
+          "id": "scalar-order",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "bd61fe3ccfcd82b057d5114175b7e884c4962354faac75c73dfcea14fb34b752",
+          "id": "exact-values",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "abf7775dd6827e7021d7d1a69e49a8919a5bceaba990e31154f56aa961d164ed",
+          "id": "escapes",
+          "status": "valid"
+        },
+        {
+          "error": "invalid_metadata",
+          "id": "duplicate",
+          "status": "error"
+        },
+        {
+          "error": "invalid_metadata",
+          "id": "surrogate",
+          "status": "error"
+        },
+        {
+          "error": "invalid_metadata",
+          "id": "bom",
+          "status": "error"
+        },
+        {
+          "error": "invalid_metadata",
+          "id": "utf8",
+          "status": "error"
+        },
+        {
+          "error": "invalid_metadata",
+          "id": "nonfinite",
+          "status": "error"
+        },
+        {
+          "canonical_sha256": "d64d9e5daed4fe4e3b3ac72b5bf77b5320a1d2e82f4fed72b0475fe5144858c0",
+          "id": "number-9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "43c8e92bd5552bd45030718eb9366d6d6500623793c248666d77dca01ba337c0",
+          "id": "number-1e-7",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "2d6412ab0155bb89d63b73dbf83334b26b39d03e8c832cc253c6a6caceba9733",
+          "id": "number-1e-6",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "8a532d80ed64868e7d2786e6a6339b465fe0f03db6399590aa520d054875ce8c",
+          "id": "number-1e-5",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "b052bd3ccbe7980595ac047049b16d202b5598c1e9e1a2495df84105950ebf26",
+          "id": "number-1e19",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "356acd219b8c369fc389513fb5c3f9fc2977fff3c432bab9df5b1e3a2800b072",
+          "id": "number-1e20",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "bb6eae31d900fd1a83c636fb07ab8932ace171d259044e3fab794510e3a444c4",
+          "id": "number-1e21",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "3cf8dedbb75dfe2ad5fec86341f320e70a56c7c190ad210a157fe26db8e8e336",
+          "id": "number-1e-4096",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "cd0935dc449323de116c6ab0848d2d890626c110d19b49b8308280c28ba31373",
+          "id": "number-1e4096",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "5bff452c5ed93f2e87a23984db5a15050c6477335fdec955b70063bb2d692bf1",
+          "id": "number-0e5120",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "5bff452c5ed93f2e87a23984db5a15050c6477335fdec955b70063bb2d692bf1",
+          "id": "number-0e-5120",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "5bff452c5ed93f2e87a23984db5a15050c6477335fdec955b70063bb2d692bf1",
+          "id": "number--0e5120",
+          "status": "valid"
+        },
+        {
+          "error": "resource_limit",
+          "id": "refused-number-20",
+          "status": "error"
+        },
+        {
+          "error": "resource_limit",
+          "id": "refused-number-21",
+          "status": "error"
+        },
+        {
+          "error": "resource_limit",
+          "id": "refused-number-22",
+          "status": "error"
+        },
+        {
+          "error": "resource_limit",
+          "id": "refused-number-23",
+          "status": "error"
+        },
+        {
+          "error": "resource_limit",
+          "id": "refused-number-24",
+          "status": "error"
+        },
+        {
+          "error": "resource_limit",
+          "id": "refused-number-25",
+          "status": "error"
+        },
+        {
+          "error": "resource_limit",
+          "id": "refused-number-26",
+          "status": "error"
+        },
+        {
+          "error": "resource_limit",
+          "id": "refused-number-27",
+          "status": "error"
+        },
+        {
+          "error": "resource_limit",
+          "id": "refused-number-28",
+          "status": "error"
+        },
+        {
+          "canonical_sha256": "49381e97a34f6741d843c48a3ddc51d22eb4b8131ee7692f8c690a3a15c5d5c2",
+          "id": "token-1024",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "8a7b729fa9d02bc14909992852d4bbcaa33afd390a1cd546d62a152f3d5a024d",
+          "id": "string-16383",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "6d957e52378b87327c1d994156d347ec091fc0191b08c7c4b9f562f5df380c56",
+          "id": "string-16384",
+          "status": "valid"
+        },
+        {
+          "error": "resource_limit",
+          "id": "string-16385",
+          "status": "error"
+        },
+        {
+          "canonical_sha256": "7917b0f76973f56a00c154b6dc905283c4222d4d324d1de290c678148bbf9673",
+          "id": "depth-31",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "a75992ed9d5aa9c979d72fa57169e5f0658731149df9801231bb0b05a3b263d3",
+          "id": "depth-32",
+          "status": "valid"
+        },
+        {
+          "error": "resource_limit",
+          "id": "depth-33",
+          "status": "error"
+        },
+        {
+          "canonical_sha256": "38f06d8266bd95628224829bed46e64422d0d1ddd6b4de188fb6e3f30d8a5cb5",
+          "id": "elements-65534",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "8594b21b96c77e582406233c032143c038972eb5b7a1b6e70ecfd563fda54e96",
+          "id": "elements-65535",
+          "status": "valid"
+        },
+        {
+          "error": "resource_limit",
+          "id": "elements-65536",
+          "status": "error"
+        },
+        {
+          "canonical_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "id": "json-bytes-1048575",
+          "status": "valid"
+        },
+        {
+          "canonical_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "id": "json-bytes-1048576",
+          "status": "valid"
+        },
+        {
+          "error": "resource_limit",
+          "id": "json-bytes-1048577",
+          "status": "error"
+        },
+        {
+          "error": "resource_limit",
+          "id": "canonical-expansion-budget",
+          "status": "error"
+        }
+      ],
+      "jvm_heap_cap_bytes": 268435456,
+      "kotlin_to_python_full_positive_cases": 33,
+      "navigation_recovery_cross_cases": 2,
+      "normative_commit": "8c343cd6cf1ca11eff4f3bbaa5c2b10dfbbf645f",
+      "pending": [
+        "real native Windows",
+        "ART runtime",
+        "asynchronous recorder timers/backend durability",
+        "arbitrary damaged framing range discovery/external index cache"
+      ],
+      "platform": "Linux",
+      "python": "3.14.8",
+      "python_to_kotlin_full_cases": 51,
+      "read_only_scan_cross_cases": 4,
+      "source_immutability": "all corpus sources and Kotlin-produced files unchanged by read/recovery",
+      "status": "passed",
+      "time_stream_seek_cross_cases": 44
+    },
+    "failures_preserved": [
+      "initial_sandbox_Gradle_wildcard_IP",
+      "shared_test_internal_visibility_compile_failure"
+    ],
+    "runtime_sources_sha256": {
+      "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingDeflate.kt": "b17c5133d1826f92d0a3eec5793c3140fc917453e0ae97d241dec82dea4e88c3",
+      "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt": "ea7e04bec1183d09d3d08f632ef906ff772a628fd9b421253d64d878a9c21e9a"
+    },
+    "ART": "pending_for_new_code",
+    "absolute_accuracy": "not_independently_validated"
+  },
+  "authorization_history_note": "Top-level physical_authorization/physical_device_accessed describe the earlier isolated checkpoint; resumed_bounded_writer.current_physical_preflight records the explicitly reauthorized session separately."
 }

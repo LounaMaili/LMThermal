@@ -1,10 +1,14 @@
 # R4 isolated physical-field preparation
 
-**Current session override (2026-10-22): physical Pixel8/HT-301 access is prohibited; Pixel8 is reserved for LMarchery.**
-Do not run local ADB, inspect/control/install on the phone or access the camera.
-The historical procedure below is for a future separately authorized session only.
+**Resumed session authorization (2026-10-22):** the owner explicitly released the Pixel8
+from the earlier LMarchery isolation. That earlier prohibition remains historical.
+Current authorization allows bounded diagnostics and at most one20-second Full smoke
+only after justified memory admission and normal device/scene/safety prerequisites.
+No extended profile or physical fault campaign is authorized. See the
+[restricted allocation ledger](HT301_FULL_ALLOCATION_LEDGER.md) and
+[resumed allocation evidence](RECORDER_ALLOCATION.md#resumed-engineering-checkpoint).
 
-**Phase A: prepared; earlier conditional authorization is historical and revoked for this session.**
+**Phase A: prepared; safe simultaneous admission and physical recording remain pending.**
 Real Pixel 8 / HT-301 results must still be recorded separately from host/ART evidence.
 [PR #16](https://github.com/LounaMaili/LMThermal/pull/16) remains draft and
 [R4 #9](https://github.com/LounaMaili/LMThermal/issues/9) remains open. The accepted
