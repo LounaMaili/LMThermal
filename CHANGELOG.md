@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (R4 API35 workflow context, local static correction)
+
+- Scope the identical run/attempt result path independently to preflight, collector and always-upload steps, where runner context is permitted; preserve emulator/workload/recorder inputs and failure-independent upload resolution.
+- Preserve rejected run 43052055058 at ec528c5 as C with zero jobs and no ART execution. Document context-by-location checks and unavailable Actionlint/ShellCheck; no new runtime validation, commit or publication is claimed.
+
 ### Added (R4 targeted API35 preparation, not executed)
 
 - Prepare a separate exact-branch push workflow and one-method emulator-only collector, preserving the historical R4 workflow and reviewed engine/workload unchanged. Keep failed/partial artifacts, source/APK/environment receipts and independent Python readback separate from instrumentation status.

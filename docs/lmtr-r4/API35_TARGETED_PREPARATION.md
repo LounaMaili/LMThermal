@@ -1,100 +1,106 @@
 # R4 targeted API35 replay preparation
 
-**LOCAL PREPARATION ONLY.** No branch creation, commit, push, Actions run, emulator,
-ADB operation, APK build/install, instrumentation or new recording was performed.
-The first-failure engine patch remains a separate reviewed input. This preparation
-does not change the engine, workload tests, historical workflow/script, wire, source
-qualification, queues, memory margins or assertions. See the [static preparation
-receipt](api35-targeted-preparation.json), not a runtime validation certificate.
+**LOCAL WORKFLOW CORRECTION ONLY — NOT COMMITTED OR EXECUTED.** The first
+publication at `ec528c5609b4ae31e75aec3c8d6b9fbc967cfb0d` produced
+[run 43052055058, attempt 1](https://github.com/LounaMaili/LMThermal/actions/runs/43052055058).
+It remains outcome C: GitHub rejected `runner.temp` in job-level env before creating
+any job. No APK build, emulator, instrumentation, codec output or Python readback
+occurred. This correction is CI preparation, not new recorder validation.
 
-## Trigger strategy and future authorization
+The [initial static receipt](api35-targeted-preparation.json) remains historical and
+unchanged. Its source hashes describe the initial preparation, including the rejected
+workflow; YAML/AST checks did not validate GitHub context availability. The new
+[context-validation receipt](api35-workflow-context-validation.json) applies only to
+this local correction. Original C metadata, report and checksum manifest are preserved
+privately without modification. The reviewed engine patch, scripts, workload, wire,
+queues, margins, assertions and historical R4 workflow remain unchanged.
 
-The new `.github/workflows/lmtr-r4-api35-targeted.yml` listens only for `push` to
-`codex/r4-api35-first-failure-replay`, also checked by repository/ref/event job guards.
+## Result path and expression scopes
+
+`runner` is unavailable in `jobs.<job_id>.env`, but is permitted in step `env` and
+step `with`. Each of the preflight, collector and upload steps now independently sets:
+
+```yaml
+env:
+  LMTR_API35_REPORTS: ${{ runner.temp }}/lmtr-r4-api35-${{ github.run_id }}-${{ github.run_attempt }}
+```
+
+These three identical values do not use a preflight output or GITHUB_ENV side effect.
+The upload retains `if: always()` and resolves its own step env even if preflight or
+instrumentation fails. Its `with.path` uses that step's `env.LMTR_API35_REPORTS`.
+The root remains outside the checkout on the specified Ubuntu hosted runner, with a
+unique run/attempt suffix. The collector still receives its new `replay` subdirectory.
+No output path is introduced into the checkout or inherited from a previous run.
+
+Every current expression is checked at its exact workflow key against GitHub's
+[context-availability table](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability):
+workflow concurrency uses `github`; the job guard uses `github`; the three step env
+values use `runner`/`github`; checkout ref and artifact name use `github`; upload path
+uses step `env`; the upload guard uses `always()`. The receipt lists exact locations.
+Actionlint and ShellCheck are unavailable on PATH and were not installed. Local checks
+cover YAML, this finite expression/context inventory, shell syntax, unchanged action
+pins and workload, independent path resolution and preservation of historical evidence.
+They do not constitute a GitHub parser, action runtime, upload or ART execution result.
+
+## Trigger history and next publication authorization
+
+The separate workflow listens only for `push` to
+`codex/r4-api35-first-failure-replay`, also checked by repository/ref/event guards.
 It has no matrix, dispatch event, privileged token, pull_request_target or main change.
-Actions are pinned to the same full commits as the historical R4 workflow; checkout
-uses the exact event SHA with persisted credentials disabled and contents:read only.
+The historical R4 push filter selects only `feat/lmtr-r4-recorder-foundation`; Windows
+selects its R3 branch. Neither selects this diagnostic branch. Actions remain pinned
+to the same full commits, with exact-event-SHA checkout and contents:read only.
+GitHub's [push](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push)
+and [dispatch](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch)
+rules still apply. The original first-publication procedure is retained in
+[the immutable ec528c5 document](https://github.com/LounaMaili/LMThermal/blob/ec528c5609b4ae31e75aec3c8d6b9fbc967cfb0d/docs/lmtr-r4/API35_TARGETED_PREPARATION.md);
+its branch-creation commands must not be repeated.
 
-GitHub documents that push workflows can run before being merged into the default
-branch, whereas a new workflow_dispatch file must exist there to trigger normally:
-[push semantics](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push),
-[dispatch semantics](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch).
-The historical R4 push filter selects only `feat/lmtr-r4-recorder-foundation` and the
-Windows workflow only its R3 branch. Neither selects the proposed diagnostic branch.
-Repository Actions policy, runner availability and branch protection may still prevent
-execution; that is a reported external boundary, not permission to bypass controls.
-
-**Do not push the current R4 branch.** The following is a proposed later sequence,
-not authorization or a command executed during preparation:
-
-1. Review the engine patch and preparation patch independently, including the source
-   checksum list and this fresh-process/cadence acceptance boundary.
-2. Explicitly authorize branch creation, a reviewed commit, and exactly one push/run.
-3. In this same existing worktree, create `codex/r4-api35-first-failure-replay` from
-   its unchanged base `fc5fae1fb5ae3783efbd3300dae4cdd40c6e1ff1`, carrying the reviewed
-   local changes. Do not reset, recreate worktrees, merge main or touch R2.
-4. Stage only the reviewed engine/preparation file allowlist, not `.local-tools` or raw
-   evidence. One atomic diagnostic commit is sufficient; the two review patches remain
-   separate. Verify `git show --stat HEAD`, no unexpected paths and a clean tree.
-5. Push only `HEAD:refs/heads/codex/r4-api35-first-failure-replay`. The push itself
-   starts the single API35 job; do not dispatch or rerun it a second time.
-6. Record that commit and the Actions run/attempt, download the uniquely named artifact
-   and retain original ZIP/log hashes privately before its 30-day expiration. No merge,
-   issue closure, production recorder, hardware access or favorable retry is included.
-
-Every later push/rerun could start a new experiment and needs its own authorization.
-
-After that authorization only, the exact local publication commands are:
+After separate review and authorization only, use a normal child commit on the existing
+branch, in this diagnostic worktree. Do not amend ec528c5, reset, rebase, recreate a
+branch/worktree, force-push or push the original R4 branch. The proposed commands below
+have NOT been executed:
 
 ```bash
-# Start in this reviewed worktree; abort on any unexpected path, hash or base.
-test "$(git rev-parse HEAD)" = fc5fae1fb5ae3783efbd3300dae4cdd40c6e1ff1
+test "$(git branch --show-current)" = codex/r4-api35-first-failure-replay
+test "$(git rev-parse HEAD)" = ec528c5609b4ae31e75aec3c8d6b9fbc967cfb0d
 sha256sum --check docs/lmtr-r4/api35-targeted-reviewed-sources.sha256
 git diff --check
-git switch -c codex/r4-api35-first-failure-replay
-git add -- CHANGELOG.md docs/SPECIFICATION.md docs/lmtr-r4/README.md \
-  docs/lmtr-r4/FIRST_FAILURE.md docs/lmtr-r4/first-failure-validation.json \
-  lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt \
-  lmtr-field-support/src/test/kotlin/org/lmthermal/field/FieldFailureDiagnosticTest.kt \
-  lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt \
-  lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderFirstFailure.kt \
-  lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/RecorderEngineTest.kt \
-  .github/workflows/lmtr-r4-api35-targeted.yml \
-  tools/validate_lmtr_r4_api35.py tools/analyze_lmtr_r4_api35.py \
-  docs/lmtr-r4/api35-targeted-reviewed-sources.sha256 \
+git add -- .github/workflows/lmtr-r4-api35-targeted.yml CHANGELOG.md \
   docs/lmtr-r4/API35_TARGETED_PREPARATION.md \
-  docs/lmtr-r4/api35-targeted-preparation.json
+  docs/lmtr-r4/api35-workflow-context-validation.json
 git diff --cached --check
 git diff --cached --stat
-git status --short
-# Inspect the exact 16-path allowlist above before committing.
-git commit -m "test: Isolate the R4 API35 first-failure diagnostic replay"
+# Review this exact four-path allowlist before creating the authorized child commit.
+git commit -m "ci: Scope API35 diagnostic result paths to steps"
+test "$(git rev-parse HEAD^)" = ec528c5609b4ae31e75aec3c8d6b9fbc967cfb0d
 git show --stat --oneline HEAD
 test -z "$(git status --porcelain)"
-git rev-parse HEAD
 git push origin HEAD:refs/heads/codex/r4-api35-first-failure-replay
 ```
 
-These are separate commands with review gates, not a shell script to run unchecked.
-Do not reuse an existing diagnostic branch silently; if its name already exists,
-stop and review its provenance instead of resetting it. Record the printed commit,
-then identify the one push run by that exact `headSha`, branch, workflow and event.
-No subsequent dispatch is needed. A nonzero result still requires artifact/log
-retrieval, not a retry. Download to a new private directory with the run ID and
-attempt in its name; retain original ZIP SHA-256 and GitHub metadata. Then verify
-the downloaded `replay/SHA256SUMS` and invoke the offline analyzer into another new
-directory, preserving the original CI assessment:
+The eventual push itself starts a new run; no dispatch or rerun is needed. Remote Git
+must use the authorized host context, preserving normal SSH configuration and host-key
+checks. A later failed launch/run must also be preserved without a favorable retry.
+Neither the failed C run nor its original commit/evidence is replaced by a new result.
+No new commit, push, branch change, GitHub request to launch a run or device access
+is authorized by this preparation. Repository policy or runner availability may still
+prevent execution; do not bypass those boundaries.
+
+After a separately authorized run, download available evidence to a new private
+run/attempt directory. Retain original ZIP bytes, available GitHub digests/metadata and
+logs before expiration, including negative inventories or download errors. Verify the
+collected manifest before offline analysis into a new directory:
 
 ```bash
-# Values below designate the newly downloaded evidence, not an old result tree.
 (cd "$LMTR_DOWNLOADED_REPLAY" && sha256sum --check SHA256SUMS)
 PYTHONDONTWRITEBYTECODE=1 python3 tools/analyze_lmtr_r4_api35.py \
   "$LMTR_DOWNLOADED_REPLAY" "$LMTR_NEW_OFFLINE_ASSESSMENT"
 ```
 
-The collector already performs this independent Python readback on the hosted
-runner. This later invocation verifies the preserved evidence again; it never
-writes into the original extracted recording or invents skipped codec results.
+The prepared collector also requests independent Python readback on the hosted runner.
+Neither this later invocation nor a successful readback may replace raw instrumentation
+failure, modify extracted source files or fabricate output for unexecuted codecs.
 
 ## Exact environment and selector
 
@@ -223,9 +229,10 @@ failure. New scripts are statically reviewed only: no ART compatibility, runtime
 CLI/parser/ADB integration, collection timeout behavior or classifier execution is
 claimed validated yet.
 
-The next authorization needs to cover the reviewed diagnostic branch/commit/push and
-its single automatic hosted run, bounded emulator-only package cleanup, downloading
-and privately preserving all evidence even if red, plus offline independent readback.
+The next authorization needs to cover a reviewed child commit on the existing
+diagnostic branch, one ordinary push and its single new automatic hosted run, bounded
+emulator-only package cleanup, downloading and privately preserving all evidence even
+if red, plus offline independent readback.
 It does not cover the physical Pixel/HT-301, main, historical workflow changes, retries,
 R5/R6 or removal/relaxation of assertions. Cadence acceptance remains an explicit review.
 

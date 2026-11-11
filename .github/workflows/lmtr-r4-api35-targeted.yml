@@ -18,7 +18,6 @@ jobs:
     env:
       GRADLE_OPTS: '-Dorg.gradle.jvmargs=-Xmx1536m -Dorg.gradle.workers.max=2 -Dkotlin.daemon.jvm.options=-Xmx768m'
       PYTHONDONTWRITEBYTECODE: '1'
-      LMTR_API35_REPORTS: ${{ runner.temp }}/lmtr-r4-api35-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -26,6 +25,9 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
       - name: Preserve exact source before emulator preparation
+        # runner context is valid at step scope; use the same independent value in all three steps.
+        env:
+          LMTR_API35_REPORTS: ${{ runner.temp }}/lmtr-r4-api35-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           umask 077
           mkdir -m 700 "$LMTR_API35_REPORTS"
@@ -52,6 +54,8 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Only the finite replay on a camera-disabled API35 emulator
+        env:
+          LMTR_API35_REPORTS: ${{ runner.temp }}/lmtr-r4-api35-${{ github.run_id }}-${{ github.run_attempt }}
         timeout-minutes: 70
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2
         with:
@@ -62,6 +66,8 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot -camera-back none -camera-front none
           script: python3 tools/validate_lmtr_r4_api35.py "$LMTR_API35_REPORTS/replay"
       - name: Retain available evidence even on preparation or runtime failure
+        env:
+          LMTR_API35_REPORTS: ${{ runner.temp }}/lmtr-r4-api35-${{ github.run_id }}-${{ github.run_attempt }}
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

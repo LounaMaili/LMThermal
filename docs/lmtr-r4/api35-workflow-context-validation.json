@@ -1,0 +1,236 @@
+{
+  "status": "local_static_workflow_correction_only",
+  "base_commit": "ec528c5609b4ae31e75aec3c8d6b9fbc967cfb0d",
+  "branch": "codex/r4-api35-first-failure-replay",
+  "historical_C": {
+    "run_id": 43052055058,
+    "attempt": 1,
+    "jobs": 0,
+    "ART_tests": 0,
+    "classification_unchanged": "C",
+    "preserved_files_verified": 45,
+    "preservation_manifest_sha256": "234b001612c9f8158d06a5b72b1d41ee94ce675f4138ff532a3148d721dc2b92"
+  },
+  "scope": "Only move identical result-path env to the three consuming steps; unchanged recorder/scripts/test load/runtime settings.",
+  "workflow_sha256": "e922ee3e6b1b3ce67193119878c19f2ab71e874d5b48c91555a8322f2a4a079c",
+  "related_document_sha256": {
+    "CHANGELOG.md": "61ac0d6f5e1afec9dcfd096ef4afbb0e0b0404ef5f6a457ec2411bee089f1afa",
+    "docs/lmtr-r4/API35_TARGETED_PREPARATION.md": "59ddd1977bf2306b1097fa1f58ed861e965cc68532c83e80041a62383a4cf717"
+  },
+  "reference": "https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability",
+  "context_inventory": [
+    {
+      "path": "concurrency.group",
+      "line": 10,
+      "reference_key": "concurrency",
+      "expressions": [
+        "github.ref"
+      ],
+      "contexts": [
+        "github"
+      ],
+      "functions": [],
+      "forbidden_contexts": [],
+      "unreviewed_functions": []
+    },
+    {
+      "path": "jobs.targeted-api35.if",
+      "line": 14,
+      "reference_key": "jobs.<job_id>.if",
+      "expressions": [
+        "github.repository == 'LounaMaili/LMThermal' && github.event_name == 'push' && github.ref == 'refs/heads/codex/r4-api35-first-failure-replay'"
+      ],
+      "contexts": [
+        "github"
+      ],
+      "functions": [],
+      "forbidden_contexts": [],
+      "unreviewed_functions": []
+    },
+    {
+      "path": "jobs.targeted-api35.steps.0.with.ref",
+      "line": 24,
+      "reference_key": "jobs.<job_id>.steps.with",
+      "expressions": [
+        "github.sha"
+      ],
+      "contexts": [
+        "github"
+      ],
+      "functions": [],
+      "forbidden_contexts": [],
+      "unreviewed_functions": []
+    },
+    {
+      "path": "jobs.targeted-api35.steps.1.env.LMTR_API35_REPORTS",
+      "line": 30,
+      "reference_key": "jobs.<job_id>.steps.env",
+      "expressions": [
+        "runner.temp",
+        "github.run_id",
+        "github.run_attempt"
+      ],
+      "contexts": [
+        "github",
+        "runner"
+      ],
+      "functions": [],
+      "forbidden_contexts": [],
+      "unreviewed_functions": []
+    },
+    {
+      "path": "jobs.targeted-api35.steps.4.env.LMTR_API35_REPORTS",
+      "line": 58,
+      "reference_key": "jobs.<job_id>.steps.env",
+      "expressions": [
+        "runner.temp",
+        "github.run_id",
+        "github.run_attempt"
+      ],
+      "contexts": [
+        "github",
+        "runner"
+      ],
+      "functions": [],
+      "forbidden_contexts": [],
+      "unreviewed_functions": []
+    },
+    {
+      "path": "jobs.targeted-api35.steps.5.env.LMTR_API35_REPORTS",
+      "line": 70,
+      "reference_key": "jobs.<job_id>.steps.env",
+      "expressions": [
+        "runner.temp",
+        "github.run_id",
+        "github.run_attempt"
+      ],
+      "contexts": [
+        "github",
+        "runner"
+      ],
+      "functions": [],
+      "forbidden_contexts": [],
+      "unreviewed_functions": []
+    },
+    {
+      "path": "jobs.targeted-api35.steps.5.if",
+      "line": 71,
+      "reference_key": "jobs.<job_id>.steps.if",
+      "expressions": [
+        "always()"
+      ],
+      "contexts": [],
+      "functions": [
+        "always"
+      ],
+      "forbidden_contexts": [],
+      "unreviewed_functions": []
+    },
+    {
+      "path": "jobs.targeted-api35.steps.5.with.name",
+      "line": 74,
+      "reference_key": "jobs.<job_id>.steps.with",
+      "expressions": [
+        "github.run_id",
+        "github.run_attempt"
+      ],
+      "contexts": [
+        "github"
+      ],
+      "functions": [],
+      "forbidden_contexts": [],
+      "unreviewed_functions": []
+    },
+    {
+      "path": "jobs.targeted-api35.steps.5.with.path",
+      "line": 75,
+      "reference_key": "jobs.<job_id>.steps.with",
+      "expressions": [
+        "env.LMTR_API35_REPORTS"
+      ],
+      "contexts": [
+        "env"
+      ],
+      "functions": [],
+      "forbidden_contexts": [],
+      "unreviewed_functions": []
+    }
+  ],
+  "expression_locations_reviewed": 9,
+  "semantic_regression": {
+    "rejected_ec528c5_expression_detected": true,
+    "current_context_errors": 0,
+    "normalized_functional_workflow_matches_base": true
+  },
+  "path_models": [
+    {
+      "run_id": "100",
+      "attempt": "1",
+      "all_three_paths_equal": true,
+      "outside_representative_hosted_checkout": true,
+      "path": "/home/runner/work/_temp/lmtr-r4-api35-100-1"
+    },
+    {
+      "run_id": "100",
+      "attempt": "2",
+      "all_three_paths_equal": true,
+      "outside_representative_hosted_checkout": true,
+      "path": "/home/runner/work/_temp/lmtr-r4-api35-100-2"
+    },
+    {
+      "run_id": "101",
+      "attempt": "1",
+      "all_three_paths_equal": true,
+      "outside_representative_hosted_checkout": true,
+      "path": "/home/runner/work/_temp/lmtr-r4-api35-101-1"
+    }
+  ],
+  "collection": {
+    "three_step_values_identical": true,
+    "upload_has_own_step_env": true,
+    "depends_on_preflight_outputs": false,
+    "always_upload_retained": true,
+    "missing_files_remain_explicit_upload_error": true
+  },
+  "checks": {
+    "YAML": "passed_existing_PyYAML",
+    "shell_blocks_bash_n": 7,
+    "Python_scripts_AST_and_compile_only": "passed_not_executed",
+    "reviewed_source_pins": 13,
+    "action_SHAs_unchanged": [
+      "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+      "reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d",
+      "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    ],
+    "git_diff_check": "passed",
+    "original_R4_status_and_files": "unchanged",
+    "other_tracked_files": "all_unchanged",
+    "linters": {
+      "actionlint": {
+        "available": false,
+        "version": null,
+        "result": "not_run_not_installed"
+      },
+      "shellcheck": {
+        "available": false,
+        "version": null,
+        "result": "not_run_not_installed"
+      }
+    }
+  },
+  "checker_sha256": "988a49fc07257bac92700e3583f389e65e5e8c3eb1cf72154b528c7848075ad4",
+  "runtime_executed": false,
+  "new_commit": null,
+  "push": false,
+  "Actions_launch": false,
+  "emulator_or_ADB_or_physical_device": false,
+  "limits": [
+    "This finite context inventory check is not a general GitHub expression parser or actionlint.",
+    "Path models are static substitutions, not measured GitHub runtime results.",
+    "Runner loss, workflow rejection, cancellation, disk exhaustion or unavailable upload can still prevent collection.",
+    "No collector/ART/throughput/thermometry validation is established by this correction."
+  ],
+  "next_step": "Separate owner authorization for one ordinary child commit/push/run on this existing branch; no amend/reset/force push.",
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}
