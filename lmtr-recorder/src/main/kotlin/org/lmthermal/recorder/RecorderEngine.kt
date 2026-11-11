@@ -49,8 +49,10 @@ data class RecorderSnapshot(val state:String,val accepted:Long,val acknowledged:
     val preparationInFlightBytes:Long,val writerInFlightBytes:Long,val pendingBytes:Long,
     val controlBytes:Long,val maxPreparationQueuedBytes:Long,val maxWriterQueuedBytes:Long,
     val chunks:Long,val checkpoints:Long,val error:String?,val maxPreparationInFlightBytes:Long,
-    val maxWriterInFlightBytes:Long,val maxPendingBytes:Long)
-data class RecorderResult(val finalized:Boolean,val status:String,val reason:String,val report:Obj?,val failure:String?)
+    val maxWriterInFlightBytes:Long,val maxPendingBytes:Long,
+    val firstFailure:RecorderFirstFailure?=null,val unrepresentedLoss:Boolean=false)
+data class RecorderResult(val finalized:Boolean,val status:String,val reason:String,val report:Obj?,val failure:String?,
+    val firstFailure:RecorderFirstFailure?=null)
 
 /** Isolated two-stage recorder. Admission transfers only pre-owned module observations.
  * The short intake lock serializes real monotonic witnesses, sequence checks and Stop's cutoff;
@@ -93,6 +95,10 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     // Sticky evidence failure: later exceptions may change the diagnostic reason, never
     // restore permission to certify END after a delivered/admitted item lost its journal.
     private var unrepresentedLoss=false
+    // Preallocate the only diagnostic slot before either worker can fail. It is published once,
+    // under lock, and never cleared by queue release, a later terminal reason, or cleanup.
+    private val failureSlot=RecorderFirstFailure()
+    private var firstFailure:RecorderFirstFailure?=null
     private var allocationFailed=false
     private var stopped=false;private var prepDone=false;private var lastWitness=origin
     private var terminationWitness:Long?=null
@@ -128,7 +134,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     /** Existing owned-byte admission stays source compatible; no data is regenerated. */
     fun admit(observation:RecordingObservation):Admission {
         if(observation.stream.byteSize+observation.context.byteSize+observation.facts.byteSize>MAX_OBSERVATION_METADATA_BYTES)
-            return synchronized(lock){terminateLocked("failed","admission_refused","oversize_metadata");Admission.REFUSED}
+            return synchronized(lock){terminateLocked("failed","admission_refused","oversize_metadata",RecorderFailureStage.ADMISSION,RecorderFailureCode.OVERSIZE_METADATA,streamId=observation.streamId,sequence=observation.sequence);Admission.REFUSED}
         return admit(RecordingOffer(observation.streamId,observation.sequence,observation.stream,observation.ownedBytes){observation})
     }
     /** Bounded source admission retains an immutable owner, not an acquisition/UI buffer lease. */
@@ -136,17 +142,17 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         if(stopped)return@synchronized Admission.STOPPED
         val witness=now();require(witness>=lastWitness && witness>=origin) { "Intake clock regressed" };lastWitness=witness
         if(offer.streamId !in streams || offer.chargedBytes>limits.maxObservationBytes || offer.stream.byteSize>MAX_OBSERVATION_METADATA_BYTES) {
-            terminateLocked("failed","admission_refused","unsupported_or_oversize_observation");return@synchronized Admission.REFUSED
+            terminateLocked("failed","admission_refused","unsupported_or_oversize_observation",RecorderFailureStage.ADMISSION,RecorderFailureCode.UNSUPPORTED_OR_OVERSIZE_OBSERVATION,streamId=offer.streamId,sequence=offer.sequence);return@synchronized Admission.REFUSED
         }
         val session=offer.stream.value()["session_id"].text()
         val next=if(intakeSessions[offer.streamId]==session)nextSequence[offer.streamId] else null
         intakeSessions[offer.streamId]=session
         if(next!=null && offer.sequence!=next) {
-            terminateLocked("failed","admission_refused","source_sequence_requires_explicit_gap");return@synchronized Admission.REFUSED
+            terminateLocked("failed","admission_refused","source_sequence_requires_explicit_gap",RecorderFailureStage.ADMISSION,RecorderFailureCode.SOURCE_SEQUENCE_REQUIRES_EXPLICIT_GAP,streamId=offer.streamId,sequence=offer.sequence);return@synchronized Admission.REFUSED
         }
         nextSequence[offer.streamId]=Math.addExact(offer.sequence,1)
         if(prepQueued+offer.chargedBytes>limits.preparationBytes) {
-            if(!reserveControlLocked())return@synchronized Admission.REFUSED
+            if(!reserveControlLocked(RecorderFailureStage.PREPARATION_LOSS_RESERVE,offer.streamId,offer.sequence))return@synchronized Admission.REFUSED
             intake.add(Intake(lightOffer(offer.streamId,offer.sequence,offer.stream),witness,"preparation_overload"));prepDrops++;lock.notifyAll()
             return@synchronized Admission.PREPARATION_OVERLOAD
         }
@@ -169,7 +175,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             intakeSessions[loss.streamId]=session
             nextSequence[loss.streamId]=Math.addExact(last!!,1)
         }
-        if(!reserveControlLocked())return@synchronized Admission.REFUSED
+        if(!reserveControlLocked(RecorderFailureStage.SOURCE_LOSS_RESERVE,loss.streamId,first?:-1L))return@synchronized Admission.REFUSED
         intake.add(Intake(lightOffer(loss.streamId,first?:0,loss.stream),witness,"source_loss",loss.facts));lock.notifyAll();Admission.ACCEPTED
     }
     /** First normal termination wins. Resource failures can upgrade it, never reopen intake. */
@@ -183,7 +189,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     }
     /** Memory-pressure callback stops admission; no queue growth or implicit crop/downgrade. */
     fun memoryPressure():CompletableFuture<RecorderResult> = synchronized(lock) {
-        terminateLocked("failed","memory_pressure","memory_pressure");completion
+        terminateLocked("failed","memory_pressure","memory_pressure",RecorderFailureStage.MEMORY,RecorderFailureCode.MEMORY_PRESSURE);completion
     }
     /** Bounded caller wait. Timeout is not a successful finalization and does not repair a blocked sync. */
     fun awaitStop(timeoutMs:Long):RecorderResult? = try { completion.get(timeoutMs,TimeUnit.MILLISECONDS) }
@@ -195,18 +201,40 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     fun wakeTimers() = synchronized(lock) { lock.notifyAll() }
     fun snapshot():RecorderSnapshot = synchronized(lock) {
         RecorderSnapshot(state,accepted,acknowledged,prepDrops,writerDrops,prepQueued,writerQueued,prepFlight,writerFlight,
-            pendingBytes,controlUsed,maxPrep,maxWriter,chunks,checkpoints,failure,maxPrepFlight,maxWriterFlight,maxPending)
+            pendingBytes,controlUsed,maxPrep,maxWriter,chunks,checkpoints,failure,maxPrepFlight,maxWriterFlight,maxPending,firstFailure,unrepresentedLoss)
     }
-    private fun terminateLocked(nextStatus:String,nextReason:String,error:String?) {
+    /** No witness/payload allocation or additional diagnostic clock read in the capture body. */
+    private fun recordFailureLocked(stage:RecorderFailureStage,code:RecorderFailureCode,
+        kind:RecorderExceptionKind=RecorderExceptionKind.NONE,streamId:String?=null,sequence:Long=-1,
+        ordinal:Long=-1,type:Int=-1,detailCode:String?=null) {
+        if(firstFailure!=null)return
+        failureSlot.capture(stage,code,kind,streamId,sequence,ordinal,type,lastWitness,accepted,acknowledged,
+            prepDrops,writerDrops,controlUsed,prepQueued,writerQueued,prepFlight,writerFlight,pendingBytes,unrepresentedLoss,detailCode)
+        firstFailure=failureSlot
+    }
+    /** Classify only fixed categories: never retain exception text, class names or object graphs. */
+    private fun exceptionKind(error:Exception):RecorderExceptionKind = when(error) {
+        is LmtrFailure -> RecorderExceptionKind.CONTRACT
+        is java.io.IOException -> RecorderExceptionKind.IO
+        is InterruptedException -> RecorderExceptionKind.INTERRUPTED
+        is IllegalArgumentException -> RecorderExceptionKind.ARGUMENT
+        is IllegalStateException -> RecorderExceptionKind.STATE
+        else -> RecorderExceptionKind.OTHER
+    }
+    private fun terminateLocked(nextStatus:String,nextReason:String,error:String?,
+        stage:RecorderFailureStage=RecorderFailureStage.SOURCE,code:RecorderFailureCode=RecorderFailureCode.SOURCE_FAILURE,
+        kind:RecorderExceptionKind=RecorderExceptionKind.NONE,streamId:String?=null,sequence:Long=-1,detailCode:String?=null) {
         if(state in listOf("finalized","failed","finalizing"))return
+        if(nextStatus=="failed")recordFailureLocked(stage,code,kind,streamId,sequence,
+            detailCode=detailCode ?: if(stage==RecorderFailureStage.SOURCE)nextReason else null)
         if(!stopped || nextStatus=="failed") { status=nextStatus;reason=nextReason;if(error!=null)failure=error }
         if(terminationWitness==null)terminationWitness=maxOf(lastWitness,now())
         stopped=true;state="draining";lock.notifyAll()
     }
-    private fun reserveControlLocked():Boolean {
+    private fun reserveControlLocked(stage:RecorderFailureStage,streamId:String?,sequence:Long):Boolean {
         if(controlUsed+controlCharge>limits.controlBytes) {
             unrepresentedLoss=true
-            terminateLocked("failed","loss_journal_exhausted","loss_journal_exhausted");return false
+            terminateLocked("failed","loss_journal_exhausted","loss_journal_exhausted",stage,RecorderFailureCode.LOSS_JOURNAL_EXHAUSTED,streamId=streamId,sequence=sequence);return false
         }
         controlUsed+=controlCharge;return true
     }
@@ -214,6 +242,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     /** Preparation owns one item outside its bounded queue; writer overload becomes ordered loss evidence. */
     private fun prepareLoop() {
         var unresolvedIntake=false
+        var currentStreamId:String?=null;var currentSequence=-1L
         try {
             while(true) {
                 val item=synchronized(lock) {
@@ -221,7 +250,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     if(intake.isEmpty())return@synchronized null
                     intake.removeFirst().also { if(it.drop==null){prepQueued-=it.offer.chargedBytes;prepFlight=it.offer.chargedBytes;maxPrepFlight=maxOf(maxPrepFlight,prepFlight)} }
                 } ?: break
-                unresolvedIntake=true
+                unresolvedIntake=true;currentStreamId=item.offer.streamId;currentSequence=item.offer.sequence
                 prepareHook()
                 var prepared:PreparedObservation?=null;var drop=item.drop
                 try { if(drop==null) {
@@ -229,10 +258,17 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     require(original.stream.byteSize+original.context.byteSize+original.facts.byteSize<=MAX_OBSERVATION_METADATA_BYTES)
                     prepared=RecordingProfiles.select(original,profile)
                 } }
-                catch(_:Exception) { drop="source_loss";synchronized(lock){reserveControlLocked();terminateLocked("failed","invalid_module_evidence","invalid_module_evidence");failureCode="source_failure"} }
+                catch(error:Exception) { drop="source_loss";synchronized(lock){
+                    // The source failure precedes its loss-reservation attempt. Preserve it even
+                    // if that reservation fails and a generic outer catch follows.
+                    recordFailureLocked(RecorderFailureStage.PREPARATION,RecorderFailureCode.INVALID_MODULE_EVIDENCE,
+                        exceptionKind(error),currentStreamId,currentSequence,detailCode=(error as? LmtrFailure)?.code)
+                    reserveControlLocked(RecorderFailureStage.PREPARATION_LOSS_RESERVE,currentStreamId,currentSequence)
+                    terminateLocked("failed","invalid_module_evidence","invalid_module_evidence");failureCode="source_failure"
+                } }
                 synchronized(lock) {
                     if(prepared!=null && writerQueued+prepared.ownedBytes>limits.writerBytes) {
-                        if(!reserveControlLocked()) { prepFlight=0;throw IllegalStateException("loss_journal_exhausted") }
+                        if(!reserveControlLocked(RecorderFailureStage.WRITER_LOSS_RESERVE,currentStreamId,currentSequence)) { prepFlight=0;throw IllegalStateException("loss_journal_exhausted") }
                         prepared=null;drop="writer_overload";writerDrops++
                     }
                     if(state=="failed"){prepFlight=0;return}
@@ -242,15 +278,15 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     // Keep its byte capacity unchanged; count the actual prepared ownership.
                     val charge=prepared?.ownedBytes ?: 0L
                     writer.add(Work(prepared,item.offer.streamId,item.offer.sequence,item.witness,stream,drop,charge,item.loss))
-                    writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;unresolvedIntake=false;lock.notifyAll()
+                    writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;unresolvedIntake=false;currentStreamId=null;currentSequence=-1;lock.notifyAll()
                 }
             }
         } catch(_:OutOfMemoryError) {
             // A failed allocation may have abandoned a delivered owner before any loss record.
             // Drop heavy queued references, poison END permission and preserve only the committed prefix.
-            allocationFailure()
-        } catch(_:InterruptedException) { synchronized(lock){unrepresentedLoss=unrepresentedLoss || unresolvedIntake || intake.isNotEmpty();terminateLocked("failed","preparation_interrupted","preparation_interrupted")} }
-        catch(_:Exception) { synchronized(lock){unrepresentedLoss=unrepresentedLoss || unresolvedIntake || intake.isNotEmpty();terminateLocked("failed","preparation_failed","preparation_failed")} }
+            allocationFailure(RecorderFailureStage.PREPARATION,currentStreamId,currentSequence)
+        } catch(_:InterruptedException) { synchronized(lock){unrepresentedLoss=unrepresentedLoss || unresolvedIntake || intake.isNotEmpty();terminateLocked("failed","preparation_interrupted","preparation_interrupted",RecorderFailureStage.PREPARATION,RecorderFailureCode.PREPARATION_INTERRUPTED,RecorderExceptionKind.INTERRUPTED,currentStreamId,currentSequence)} }
+        catch(error:Exception) { synchronized(lock){unrepresentedLoss=unrepresentedLoss || unresolvedIntake || intake.isNotEmpty();terminateLocked("failed","preparation_failed","preparation_failed",RecorderFailureStage.PREPARATION,RecorderFailureCode.PREPARATION_FAILED,exceptionKind(error),currentStreamId,currentSequence,detailCode=(error as? LmtrFailure)?.code)} }
         finally { synchronized(lock){prepFlight=0;prepDone=true;lock.notifyAll()} }
     }
 
@@ -258,15 +294,21 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
      * payload allocation, repair END or exception formatting is attempted here. A truly exhausted
      * runtime may still kill the process; previously synchronized records remain recovery evidence.
      */
-    private fun allocationFailure() = synchronized(lock) {
+    private fun allocationFailure(stage:RecorderFailureStage,streamId:String?=null,sequence:Long=-1,ordinal:Long=-1,type:Int=-1) = synchronized(lock) {
         allocationFailed=true;unrepresentedLoss=true;stopped=true;status="failed"
         reason="allocation_failed";failure="allocation_failed";state="failed"
+        recordFailureLocked(stage,RecorderFailureCode.ALLOCATION_FAILED,RecorderExceptionKind.ALLOCATION,streamId,sequence,ordinal,type)
         intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()
     }
 
     /** One file/index owner. No footer acknowledgment is counted before its sync returns. */
     private fun writeLoop() {
         var backendCloseAttempted=false
+        // Writer-owned scalar context only. No extra synchronization or diagnostic clock on
+        // successful frames; backend append covers body/footer/sync as one public boundary.
+        var stage=RecorderFailureStage.WRITER_STARTUP
+        var currentStreamId:String?=null;var currentSequence=-1L
+        var recordOrdinal=-1L;var recordType=-1
         var append: LmtrAppendSession?=null
         var active:Obj?=null;var nextEntry=0L;var lastTime=0L
         var firstPendingWitness:Long?=null;var firstUncoveredAck:Long?=null
@@ -275,20 +317,27 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         fun event(kind:String,time:Long,extra:Obj=emptyMap()):Obj = mapOf("kind" to kind,"entry_id" to (nextEntry++).toString(),
             "timeline_ns" to time.toString(),"segment_id" to active!!["id"])+extra
         fun checkpoint() {
-            if(append!!.uncheckpointedChunks>0) { append!!.checkpoint();firstUncoveredAck=null }
+            if(append!!.uncheckpointedChunks>0) { stage=RecorderFailureStage.CHECKPOINT;append!!.checkpoint();firstUncoveredAck=null }
         }
         fun seal() {
             if(pending.isEmpty())return
+            // A seal can concern older pending entries while a new Work triggers the boundary.
+            // Never attribute its failure to that triggering observation or to the last frame.
+            val callerStage=stage;val callerStream=currentStreamId;val callerSequence=currentSequence
+            currentStreamId=null;currentSequence=-1
             val started=if(sealMetric!=null)now() else 0L
             val decoded=pending.sumOf { it.payloads.sumOf { payload -> payload.size.toLong() } }
+            stage=RecorderFailureStage.CHUNK_ENCODE
             val body=RecordingChunk.encode(header,pending,codec,limits.memoryBudgetBytes,codecMetric,now)
             val encoded=if(sealMetric!=null)now() else 0L
+            stage=RecorderFailureStage.CHUNK_VALIDATION_AND_APPEND
             append!!.appendChunk(body)
             // Optional bounded test observer; never let diagnostics poison an acknowledged commit.
             if(sealMetric!=null)runCatching { sealMetric?.invoke(encoded-started,now()-encoded,decoded,body.size.toLong()) }
             synchronized(lock) { pendingBytes=0 }
             pending.clear();firstPendingWitness=null
             if(append!!.uncheckpointedChunks==0)firstUncoveredAck=null
+            stage=callerStage;currentStreamId=callerStream;currentSequence=callerSequence
         }
         fun add(entry:Obj,context:Obj?=null,payloads:List<RecordingPayload> = emptyList(),witness:Long) {
             // Count complete pending closure, not only image payload bytes. Optional descriptors
@@ -313,7 +362,11 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             add(event("segment_start",lastTime),witness=witness)
         }
         try {
-            append=LmtrAppendSession(header,LmtrRecordSink(backend::append),onChunkAcknowledged={ summary ->
+            append=LmtrAppendSession(header,LmtrRecordSink { type,ordinal,previous,body ->
+                val callerStage=stage;stage=RecorderFailureStage.BACKEND_APPEND;recordOrdinal=ordinal;recordType=type
+                val record=backend.append(type,ordinal,previous,body)
+                stage=callerStage;recordOrdinal=-1;recordType=-1;record
+            },onChunkAcknowledged={ summary ->
                 val ack=now()
                 synchronized(lock) { acknowledged=summary["observations"].d();chunks=summary["chunks"].d() }
                 if(firstUncoveredAck==null)firstUncoveredAck=ack
@@ -324,6 +377,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     if(writer.isEmpty())null else writer.removeFirst().also { writerQueued-=it.charge;writerFlight=it.charge;maxWriterFlight=maxOf(maxWriterFlight,writerFlight) }
                 }
                 if(work!=null) {
+                    stage=RecorderFailureStage.WRITER_ASSEMBLY;currentStreamId=work.streamId;currentSequence=work.sequence
                     val current=streams.getValue(work.streamId)
                     if(!current.same(work.stream)) {
                         if(active!=null) { add(event("segment_end",timeline(work.witness),mapOf("reason" to "source_configuration_changed")),witness=work.witness);seal();active=null }
@@ -343,35 +397,47 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                             "observation_sequence" to o.sequence.toString(),"context_id" to context["id"])),context,o.payloads,work.witness)
                     }
                     synchronized(lock){writerFlight=0}
+                    currentStreamId=null;currentSequence=-1
                 }
                 val tick=now()
                 if(firstPendingWitness!=null && tick-firstPendingWitness!!>=SEAL_INTERVAL_NS)seal()
                 if(firstUncoveredAck!=null && tick-firstUncoveredAck!!>=CHECKPOINT_INTERVAL_NS)checkpoint()
                 if(synchronized(lock){stopped && prepDone && writer.isEmpty()})break
             }
-            synchronized(lock) { check(!unrepresentedLoss) { "Cannot certify unjournaled delivered/admitted loss" } }
+            synchronized(lock) {
+                if(unrepresentedLoss)recordFailureLocked(RecorderFailureStage.END_GUARD,RecorderFailureCode.UNREPRESENTED_LOSS)
+                check(!unrepresentedLoss) { "Cannot certify unjournaled delivered/admitted loss" }
+            }
+            stage=RecorderFailureStage.FINALIZATION
             val cutoff=synchronized(lock){terminationWitness!!}
             if(active!=null)add(event("segment_end",timeline(cutoff),mapOf("reason" to reason)),witness=cutoff)
             seal()
             val terminal=synchronized(lock){state="finalizing";status to reason}
+            stage=RecorderFailureStage.FINALIZATION
             append.finish(terminal.first,terminal.second,mapOf("status" to "unknown","clock_source" to "host_utc","reason" to "not_recorded"),
                 if(terminal.first=="failed")mapOf("code" to failureCode,"message" to (failure?:terminal.second)) else null)
+            stage=RecorderFailureStage.BACKEND_CLOSE
             backendCloseAttempted=true;backend.close()
+            stage=RecorderFailureStage.READBACK
             val report=LmtrReader(backend.destination).use { it.check(full=false) }
             synchronized(lock){state="finalized"}
-            completion.complete(RecorderResult(true,terminal.first,terminal.second,report,null))
+            completion.complete(RecorderResult(true,terminal.first,terminal.second,report,null,firstFailure))
         } catch(_:OutOfMemoryError) {
-            allocationFailure()
+            allocationFailure(stage,currentStreamId,currentSequence,recordOrdinal,recordType)
             if(!backendCloseAttempted)try { backendCloseAttempted=true;backend.close() }
                 catch(_:Exception) { } catch(_:OutOfMemoryError) { }
             synchronized(lock){state="failed"}
-            completion.complete(RecorderResult(false,"failed","allocation_failed",null,"allocation_failed"))
+            completion.complete(RecorderResult(false,"failed","allocation_failed",null,"allocation_failed",firstFailure))
         } catch(error:Exception) {
+            // Capture before cleanup: a secondary backend.close failure must not become the
+            // first diagnostic. The terminal result intentionally retains its existing meaning.
+            synchronized(lock){recordFailureLocked(stage,RecorderFailureCode.WRITE_OR_VALIDATION_FAILURE,
+                exceptionKind(error),currentStreamId,currentSequence,recordOrdinal,recordType,(error as? LmtrFailure)?.code)}
             // Any uncertain body/footer/sync/close halts append. Never fabricate a repair END.
             if(!backendCloseAttempted)try { backendCloseAttempted=true;backend.close() } catch(_:Exception) { }
             synchronized(lock){stopped=true;state="failed";failure=if(allocationFailed)"allocation_failed" else error.javaClass.simpleName;intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()}
-            completion.complete(if(allocationFailed)RecorderResult(false,"failed","allocation_failed",null,"allocation_failed")
-                else RecorderResult(false,"failed","write_or_validation_failure",null,error.toString()))
+            completion.complete(if(allocationFailed)RecorderResult(false,"failed","allocation_failed",null,"allocation_failed",firstFailure)
+                else RecorderResult(false,"failed","write_or_validation_failure",null,error.toString(),firstFailure))
         } finally { pending.clear();synchronized(lock){writerFlight=0;pendingBytes=0} }
     }
 }

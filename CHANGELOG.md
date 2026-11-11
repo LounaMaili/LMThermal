@@ -4,6 +4,16 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 targeted API35 preparation, not executed)
+
+- Prepare a separate exact-branch push workflow and one-method emulator-only collector, preserving the historical R4 workflow and reviewed engine/workload unchanged. Keep failed/partial artifacts, source/APK/environment receipts and independent Python readback separate from instrumentation status.
+- Prepare strict A/B/C assessment with explicit owner review for the existing qualitative cadence criterion; no tolerance, runtime success, commit/push or ART execution is claimed. Add [static-only preparation evidence and a future publication/run authorization procedure](docs/lmtr-r4/API35_TARGETED_PREPARATION.md).
+
+### Fixed (R4 first-failure diagnostic, local review)
+
+- Preserve one preallocated, bounded first-failure witness across preparation, loss-reserve, writer, allocation and cleanup paths; expose it separately from terminal reasons and current sticky loss in local R4 diagnostics. Keep both complete validations, durable acknowledgments, END refusal and78+32 MiB admission unchanged.
+- Add deterministic failure/Stop/cleanup regressions and bounded JSON checks. Correct only the writer-overload test's owner negotiation: observation10 previously exceeded its observation0 allowance and was silently refused. Preserve the original API35 failure; no new ART or physical test is claimed.
+
 ### Added (R4 actual Pixel live-memory evidence)
 
 - Record one authorized Android17/Pixel8 HT-301 session, supported initialization,528 valid normal-render observations and clean single-owner release. Preserve4/20 observed110 MiB headroom policy failures; no recorder Start or physical LMTR is claimed.

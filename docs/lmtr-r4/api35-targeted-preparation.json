@@ -1,0 +1,110 @@
+{
+  "status": "local_static_preparation_only",
+  "date": "2026-11-11",
+  "base_commit": "fc5fae1fb5ae3783efbd3300dae4cdd40c6e1ff1",
+  "current_branch": "feat/lmtr-r4-recorder-foundation",
+  "runtime_executed": {
+    "Gradle_build": false,
+    "JVM_tests": false,
+    "Python_readback": false,
+    "collector_or_analyzer": false,
+    "emulator": false,
+    "ART": false,
+    "ADB": false,
+    "physical_device": false,
+    "GitHub_Actions": false
+  },
+  "publication_performed": {
+    "branch_creation": false,
+    "commit": false,
+    "push": false,
+    "merge": false
+  },
+  "future_trigger": {
+    "event": "push",
+    "branch": "codex/r4-api35-first-failure-replay",
+    "requires_separate_authorization": true,
+    "dispatch_required": false,
+    "jobs": 1,
+    "API": 35,
+    "ABI": "x86_64",
+    "target": "google_apis",
+    "camera": "disabled"
+  },
+  "method": "org.lmthermal.art.HtMemoryRuntimeTest#fullSizeFiniteRecorderReplayReportsCadenceAndBothCodecs",
+  "unchanged_workload": {
+    "baseline_observations": 50,
+    "offers_per_codec": 200,
+    "codec_order": [
+      "STORED",
+      "DEFLATE"
+    ],
+    "queue_bytes_each": 4194304,
+    "logical_reservation_bytes": 81788928,
+    "existing_heap_guard_bytes": 33554432,
+    "physical_110MiB_admission_not_validated": true
+  },
+  "checks": {
+    "tools/validate_lmtr_r4_api35.py": "AST and compile-only passed; not executed",
+    "tools/analyze_lmtr_r4_api35.py": "AST and compile-only passed; not executed",
+    "workflow": "YAML + exact event/job/action/selector/permission structure passed",
+    "shell_blocks_checked_with_bash_n": 7,
+    "actionlint": "not installed; no full Actions semantic lint claimed",
+    "shellcheck": "not installed; no ShellCheck result claimed",
+    "stage_B_and_historical_preservation": "16 exact file hashes + exact prior changelog content passed",
+    "stage_B_patch_unchanged": "23bf41ece95e3c9db5a82ff7912d08e15d3141e024e2bfc130e4ef80e9e06541",
+    "reviewed_source_pins": 13,
+    "test_selector_and_APK_tasks": "static selector, packaging-only tasks, emulator-qualified commands passed",
+    "git_diff_check": "passed",
+    "relative_document_links": "passed"
+  },
+  "prepared_file_sha256": {
+    ".github/workflows/lmtr-r4-api35-targeted.yml": "6f13a73ce3cb05e3749c986ea216e2fb9e3ba42f113fafc70c4b6e5c941021cc",
+    "tools/validate_lmtr_r4_api35.py": "a1fa733759491e88b8049ed412fb338dccbb6542700305c84f099527d0f72f6b",
+    "tools/analyze_lmtr_r4_api35.py": "513b51f87bc9bffc80b9e74192e702f590c95345735bd4cb4ba7b0cfd09fa0c7",
+    "docs/lmtr-r4/api35-targeted-reviewed-sources.sha256": "2dbe6185e8216013ac51fe3882dedd035e078cea1e8c82dc93f30bb0482892af",
+    "docs/lmtr-r4/API35_TARGETED_PREPARATION.md": "6d3612ca4ca53b09be13ed98be94df0f29be6f254cf8a5430f6bd364824d3e6d"
+  },
+  "reviewed_source_paths": [
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderFirstFailure.kt",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/RecorderEngineTest.kt",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/FieldFailureDiagnosticTest.kt",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/HtRecorderStressProbe.kt",
+    "lmtr-art/src/androidTest/kotlin/org/lmthermal/art/HtMemoryRuntimeTest.kt",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldSafety.kt",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrAppendSession.kt",
+    "core/src/test/resources/fixtures/radiometric-room-settled.raw",
+    "lmtr-contract/src/test/resources/lmtr/manifest.json",
+    "docs/LMTR_WIRE_V1.md"
+  ],
+  "cadence": {
+    "automatic_A": false,
+    "new_numeric_tolerance": false,
+    "otherwise_clean_run": "C with eligible_for_A_after_cadence_review true",
+    "later_review_bound_to": [
+      "source_sha",
+      "run_id",
+      "run_attempt",
+      "archive_sha256"
+    ]
+  },
+  "limits": [
+    "Static validation is not runtime/ART/collector/parser/ADB integration conformance.",
+    "Fresh-process isolated method does not recreate old full-suite heap/order/GC state.",
+    "Runner/system-image revisions and dependency availability can differ; collect exact available identity.",
+    "JUnit OK/finalized alone cannot establish success; retained failure is never relabeled.",
+    "No atomic-snapshot or physical-power-loss guarantee; runner loss/full disk/cancellation/upload failure may limit evidence.",
+    "No new codec readback is required for unexecuted cases; missing chronology remains unknown."
+  ],
+  "next_authorization": [
+    "reviewed diagnostic branch and commit",
+    "one exact-branch push and automatic hosted run",
+    "isolated emulator-only package cutoff after measurement",
+    "private original artifact/log preservation",
+    "independent offline Python readback; explicit cadence review remains separate"
+  ],
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

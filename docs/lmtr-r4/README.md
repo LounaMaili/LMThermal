@@ -124,6 +124,14 @@ sampled memory peaks, baseline subtraction and backend-specific limitations rema
 No R4 physical-camera throughput/freshness, ART/RSS plateau, indefinite cadence or
 storage durability has been measured; finite emulator runtime is documented below. Full-grid copies are safe but need real device cost measurements.
 
+## First-failure diagnostic (local review)
+
+The [first-failure guide](FIRST_FAILURE.md) separates a bounded single-assignment
+`RecorderSnapshot`/`RecorderResult.firstFailure` witness from existing terminal reasons
+and the current sticky `unrepresentedLoss`. Local field JSON exposes these diagnostics;
+they do not alter LMTR bytes, capacity/admission or END permission. The historical API35
+replay is still failed and has not been rerun for this change.
+
 ## Validation
 
 Run without Android SDK/camera:

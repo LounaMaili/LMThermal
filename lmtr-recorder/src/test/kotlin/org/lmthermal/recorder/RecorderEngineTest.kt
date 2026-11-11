@@ -25,6 +25,147 @@ class RecorderEngineTest {
         val header=LmtrJson.parse(records.first().body)
         records.filter { it.type==LmtrFraming.CHUNK }.map { LmtrChunk.decode(it.body,header) }
     }
+    @Test fun firstSourceFailureSurvivesConcurrentStopSecondaryPreparationAndCleanup() {
+        val m=SimulatedRecordingModule();val entered=CountDownLatch(1);val release=CountDownLatch(1)
+        val e=engine(m,now={0L},hook={entered.countDown();check(release.await(5,TimeUnit.SECONDS));throw IOException("secondary worker failure")})
+        try {
+            e.admit(m.observation(0));assertTrue(entered.await(5,TimeUnit.SECONDS))
+            e.failSource("initial_source_error");val first=e.snapshot().firstFailure!!
+            assertEquals(RecorderFailureStage.SOURCE,first.stage);assertEquals(RecorderFailureCode.SOURCE_FAILURE,first.code)
+            assertEquals("initial_source_error",first.detailCode)
+            assertEquals(1L,first.accepted);assertEquals(0L,first.acknowledged);assertEquals(0L,first.lastIntakeWitnessNs)
+            val race=Thread {e.stop("source_detached",true);e.failSource("secondary_source_error")}.apply {start()}
+            val stopped=e.stop();release.countDown();race.join(5000);assertFalse(race.isAlive)
+            val result=e.awaitStop(10000)!!;until("workers released"){e.workersTerminated()}
+            assertFalse(result.finalized);assertEquals("write_or_validation_failure",result.reason)
+            assertTrue(result.failure!!.contains("Cannot certify unjournaled"))
+            assertSame(first,result.firstFailure);assertSame(first,e.snapshot().firstFailure)
+            assertEquals(1L,first.accepted);assertEquals(0L,first.acknowledged)
+            repeat(3){assertSame(stopped,e.stop());e.failSource("late_error");e.memoryPressure()}
+            assertSame(first,e.snapshot().firstFailure)
+        } finally {release.countDown();e.stop()}
+    }
+    @Test fun invalidPreparationIsRecordedBeforeItsLossReservationFails() {
+        val m=SimulatedRecordingModule();val cap=m.observation(0).ownedBytes;val f=output();val base=LocalRecorderBackend(f)
+        val headerEntered=CountDownLatch(1);val headerRelease=CountDownLatch(1)
+        val prepEntered=CountDownLatch(1);val prepRelease=CountDownLatch(1)
+        val backend=object:RecorderBackend {
+            override val destination=f
+            override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record {
+                if(type==LmtrFraming.HEADER){headerEntered.countDown();check(headerRelease.await(5,TimeUnit.SECONDS))}
+                return base.append(type,ordinal,previous,body)
+            }
+            override fun close()=base.close()
+        }
+        val e=engine(m,f,backend=backend,now={0L},limits=RecorderLimits(preparationBytes=cap,
+            writerBytes=cap*3,maxObservationBytes=cap,controlBytes=32768),hook={prepEntered.countDown();check(prepRelease.await(5,TimeUnit.SECONDS))})
+        try {
+            assertTrue(headerEntered.await(5,TimeUnit.SECONDS))
+            e.admit(RecordingOffer(m.id,0,FrozenJson(m.stream),cap){throw IllegalArgumentException("initial bad evidence")})
+            assertTrue(prepEntered.await(5,TimeUnit.SECONDS));e.admit(m.observation(1))
+            assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(m.observation(2)))
+            prepRelease.countDown();until("reservation exhausted"){e.snapshot().unrepresentedLoss}
+            val first=e.snapshot().firstFailure!!
+            assertEquals(RecorderFailureStage.PREPARATION,first.stage);assertEquals(RecorderFailureCode.INVALID_MODULE_EVIDENCE,first.code)
+            assertEquals(RecorderExceptionKind.ARGUMENT,first.exceptionKind);assertEquals(0L,first.observationSequence)
+            assertEquals(m.id,first.streamId);assertEquals(32768L,first.controlBytes);assertFalse(first.unrepresentedLoss)
+            headerRelease.countDown();val result=e.awaitStop(10000)!!
+            assertFalse(result.finalized);assertSame(first,result.firstFailure);assertTrue(e.snapshot().unrepresentedLoss)
+        } finally {prepRelease.countDown();headerRelease.countDown();e.stop()}
+    }
+    @Test fun writerOverloadReserveExhaustionRetainsItsStageBeforeGenericPreparationFailure() {
+        val m=SimulatedRecordingModule();val o=m.observation(0);val cap=o.ownedBytes
+        val prepared=RecordingProfiles.select(o,RecordingProfile.FULL).ownedBytes
+        val f=output();val base=LocalRecorderBackend(f);val entered=CountDownLatch(1);val release=CountDownLatch(1)
+        val backend=object:RecorderBackend {
+            override val destination=f
+            override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record {
+                if(type==LmtrFraming.HEADER){entered.countDown();check(release.await(5,TimeUnit.SECONDS))}
+                return base.append(type,ordinal,previous,body)
+            }
+            override fun close()=base.close()
+        }
+        val e=engine(m,f,backend=backend,now={0L},limits=RecorderLimits(preparationBytes=cap*3,
+            writerBytes=maxOf(cap,prepared),maxObservationBytes=cap,controlBytes=32768))
+        try {
+            assertTrue(entered.await(5,TimeUnit.SECONDS));e.admit(o)
+            until("first queued writer owner"){e.snapshot().writerQueuedBytes==prepared}
+            e.admit(m.observation(1));until("represented writer gap"){e.snapshot().writerDrops==1L}
+            assertNull("Represented overload is a gap, not a terminal failure",e.snapshot().firstFailure)
+            e.admit(m.observation(2));until("preparation exit"){e.snapshot().error=="preparation_failed"}
+            val first=e.snapshot().firstFailure!!
+            assertEquals(RecorderFailureStage.WRITER_LOSS_RESERVE,first.stage);assertEquals(RecorderFailureCode.LOSS_JOURNAL_EXHAUSTED,first.code)
+            assertEquals(2L,first.observationSequence);assertEquals(3L,first.accepted);assertEquals(1L,first.writerDrops)
+            assertEquals(32768L,first.controlBytes);assertTrue(first.unrepresentedLoss)
+            release.countDown();val result=e.awaitStop(10000)!!
+            assertFalse(result.finalized);assertSame(first,result.firstFailure);assertSame(first,e.snapshot().firstFailure)
+        } finally {release.countDown();e.stop()}
+    }
+    @Test fun laterAllocationFailureCannotReplaceAnEarlierSourceWitness() {
+        val m=SimulatedRecordingModule();val f=output();val base=LocalRecorderBackend(f)
+        val entered=CountDownLatch(1);val release=CountDownLatch(1)
+        val backend=object:RecorderBackend {
+            override val destination=f
+            override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record {
+                entered.countDown();check(release.await(5,TimeUnit.SECONDS));throw OutOfMemoryError("injected")
+            }
+            override fun close()=base.close()
+        }
+        val e=engine(m,f,backend=backend,now={0L})
+        try {
+            assertTrue(entered.await(5,TimeUnit.SECONDS));e.failSource("initial_source_error")
+            val first=e.snapshot().firstFailure!!;release.countDown();val result=e.awaitStop(10000)!!
+            assertEquals("allocation_failed",result.reason);assertFalse(result.finalized)
+            assertSame(first,result.firstFailure);assertEquals(RecorderFailureCode.SOURCE_FAILURE,first.code)
+            assertTrue(e.snapshot().unrepresentedLoss)
+        } finally {release.countDown();e.stop()}
+    }
+    @Test fun appendAndReportedSyncFailuresAreRecordedBeforeSecondaryCloseFailure() {
+        for(mode in listOf("before_write","torn_body","reported_sync_failure")) {
+            val m=SimulatedRecordingModule();val f=output();val base=LocalRecorderBackend(f);var closes=0
+            val backend=object:RecorderBackend {
+                override val destination=f
+                override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record {
+                    if(type==LmtrFraming.CHUNK) {
+                        if(mode=="torn_body")java.io.RandomAccessFile(f,"rw").use {it.seek(it.length());it.write(byteArrayOf(1,2,3));it.fd.sync()}
+                        // This backend reports a sync failure after a complete record. Real sync here
+                        // succeeded: this checks uncertain acknowledgment, not power-loss durability.
+                        if(mode=="reported_sync_failure")base.append(type,ordinal,previous,body)
+                        throw IOException("initial $mode")
+                    }
+                    return base.append(type,ordinal,previous,body)
+                }
+                override fun close(){closes++;base.close();throw IllegalStateException("secondary close failure")}
+            }
+            val e=engine(m,f,backend=backend,now={0L});e.admit(m.observation(0));e.stop()
+            val result=e.awaitStop(10000)!!;val first=result.firstFailure!!
+            assertFalse(result.finalized);assertEquals(RecorderFailureStage.BACKEND_APPEND,first.stage)
+            assertEquals(RecorderExceptionKind.IO,first.exceptionKind);assertEquals(LmtrFraming.CHUNK,first.recordType)
+            assertEquals(1L,first.recordOrdinal);assertEquals(0L,first.acknowledged);assertEquals(0L,e.snapshot().acknowledged)
+            assertEquals(1,closes);assertSame(first,e.snapshot().firstFailure)
+            val bytes=f.readBytes();val recovery=LmtrReader(f).use {it.check(full=true,recover=true)}
+            assertNull(recovery["declared_end_status"]);assertArrayEquals(bytes,f.readBytes())
+        }
+    }
+    @Test fun refusedOversizeIdentityDoesNotRetainUnboundedDiagnosticText() {
+        val m=SimulatedRecordingModule();val e=engine(m,now={0L})
+        assertEquals(Admission.REFUSED,e.admit(SimulatedRecordingModule("x".repeat(16384)).observation(0)))
+        val result=e.awaitStop(10000)!!;val first=result.firstFailure!!
+        assertEquals(RecorderFailureStage.ADMISSION,first.stage)
+        assertEquals(RecorderFailureCode.OVERSIZE_METADATA,first.code);assertNull(first.streamId)
+        assertEquals(0L,first.accepted);assertSame(first,e.snapshot().firstFailure)
+    }
+    @Test fun sourceReasonProseCannotBecomeRetainedDiagnosticMessage() {
+        val m=SimulatedRecordingModule();val e=engine(m,now={0L})
+        e.failSource("short exception-like prose: private details")
+        val result=e.awaitStop(10000)!!;assertNull(result.firstFailure!!.detailCode)
+        assertEquals(RecorderFailureCode.SOURCE_FAILURE,result.firstFailure!!.code)
+    }
+    @Test fun successfulTerminationCannotGainAFailureFromLatePublicCallbacks() {
+        val m=SimulatedRecordingModule();val e=engine(m,now={0L});e.admit(m.observation(0));val result=finished(e)
+        assertNull(result.firstFailure);e.failSource("late_source_error");e.memoryPressure();e.stop()
+        assertNull(e.snapshot().firstFailure);assertFalse(e.snapshot().unrepresentedLoss)
+    }
     @Test fun allProfilesPreserveExactTemperatureAndInterpretationContext() {
         for(profile in listOf(RecordingProfile.ANALYSIS,RecordingProfile.NATIVE,RecordingProfile.FULL))for(codec in 0..1) {
             val m=SimulatedRecordingModule();val file=output();val e=engine(m,file,profile,codec)
@@ -98,7 +239,7 @@ class RecorderEngineTest {
         assertEquals(Admission.ACCEPTED,e.admit(o));assertTrue(entered.await(5,TimeUnit.SECONDS))
         assertEquals(Admission.ACCEPTED,e.admit(m.observation(1)));assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(m.observation(2)))
         release.countDown();finished(e);assertEquals(2L,e.snapshot().acknowledged);assertEquals(1L,e.snapshot().preparationDrops)
-        assertEquals("This test isolates preparation, not writer overload",0L,e.snapshot().writerDrops)
+        assertEquals("This test isolates preparation, not writer overload",0L,e.snapshot().writerDrops);assertNull(e.snapshot().firstFailure)
         assertTrue(e.snapshot().maxPreparationQueuedBytes<=cap)
         val gaps=chunks(f).flatMap { it.metadata["entries"].arr().map { it.obj() } }.filter { it["kind"]=="gap" }
         assertEquals("2",gaps.single()["observation_first"]);assertEquals("1",gaps.single()["count"])
@@ -112,18 +253,22 @@ class RecorderEngineTest {
         assertEquals(0L,e.snapshot().acknowledged);assertNull(e.awaitStop(20));release.countDown();finished(e)
     }
     @Test fun writerOverloadIsExplicitAndDoesNotIncreaseWriterQueue() {
-        val m=SimulatedRecordingModule();val cap=m.observation(0).ownedBytes
+        val m=SimulatedRecordingModule()
+        // Observation 10 has longer sequence/receipt JSON than 0. Negotiate every offered owner,
+        // otherwise this overload test silently includes an unrelated admission-refused failure.
+        val offered=(0L..10L).map {m.observation(it)};val cap=offered.maxOf {it.ownedBytes}
         val f=output();val base=LocalRecorderBackend(f);val entered=CountDownLatch(1);val release=CountDownLatch(1)
         val backend=object:RecorderBackend { override val destination=f
             override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray):Record { if(type==LmtrFraming.CHUNK){entered.countDown();release.await(5,TimeUnit.SECONDS)};return base.append(type,ordinal,previous,body) }
             override fun close()=base.close() }
-        val writerCap=maxOf(cap,RecordingProfiles.select(m.observation(0),RecordingProfile.FULL).ownedBytes)
+        val writerCap=maxOf(cap,offered.maxOf {RecordingProfiles.select(it,RecordingProfile.FULL).ownedBytes})
         val time=AtomicLong(0);val e=engine(m,f,backend=backend,now=time::get,limits=RecorderLimits(preparationBytes=cap*20,writerBytes=writerCap,maxObservationBytes=cap,preferredChunkBytes=cap))
         e.admit(m.observation(0));until("pending"){e.snapshot().pendingBytes>0};time.set(1000000000);e.wakeTimers();assertTrue(entered.await(5,TimeUnit.SECONDS))
-        for(i in 1..10)e.admit(m.observation(i.toLong()))
+        for(o in offered.drop(1))assertEquals(Admission.ACCEPTED,e.admit(o))
         until("writer loss"){e.snapshot().writerDrops>0};release.countDown();finished(e)
         val s=e.snapshot();assertTrue(s.maxWriterQueuedBytes<=writerCap);assertTrue(s.acknowledged>0)
         assertEquals(s.accepted,s.acknowledged+s.writerDrops)
+        assertNull("${s.firstFailure?.stage}/${s.firstFailure?.code}, observation=${s.firstFailure?.observationSequence}",s.firstFailure)
     }
     @Test fun writerAccountsPreparedOwnersWithoutChargingTheDeferredSourceAgain() {
         val m=SimulatedRecordingModule();val f=output();val base=LocalRecorderBackend(f);val time=AtomicLong(0)
@@ -154,7 +299,7 @@ class RecorderEngineTest {
 
     @Test fun sourceDetachFinalizesInterruptedWithNoInventedLostCount() {
         val m=SimulatedRecordingModule();val e=engine(m);e.admit(m.observation(0));e.stop("source_detached",true)
-        val r=e.awaitStop(10000)!!;assertTrue(r.toString(),r.finalized);assertEquals("interrupted",r.status);assertEquals(0L,e.snapshot().preparationDrops)
+        val r=e.awaitStop(10000)!!;assertTrue(r.toString(),r.finalized);assertEquals("interrupted",r.status);assertEquals(0L,e.snapshot().preparationDrops);assertNull(r.firstFailure)
     }
     @Test fun resourceAdmissionAndMemoryPressureRefuseInsteadOfDowngrading() {
         assertThrows(IllegalArgumentException::class.java){RecorderLimits(maxObservationBytes=1048576,memoryBudgetBytes=1)}
@@ -182,6 +327,9 @@ class RecorderEngineTest {
         time.set(1000000000);e.wakeTimers();until("first ack"){e.snapshot().acknowledged==1L}
         e.admit(m.observation(1));val result=e.awaitStop(10000)!!
         assertFalse(result.finalized);assertEquals("allocation_failed",result.reason)
+        assertEquals(RecorderFailureCode.ALLOCATION_FAILED,result.firstFailure!!.code)
+        assertEquals(RecorderExceptionKind.ALLOCATION,result.firstFailure!!.exceptionKind)
+        assertSame(result.firstFailure,e.snapshot().firstFailure)
         until("workers release"){e.workersTerminated()}
         assertEquals(Admission.STOPPED,e.admit(m.observation(2)))
         assertEquals(0L,e.snapshot().preparationQueuedBytes);assertEquals(0L,e.snapshot().writerQueuedBytes)
@@ -232,6 +380,9 @@ class RecorderEngineTest {
         time.set(1000000000);e.wakeTimers();until("first ack"){e.snapshot().acknowledged==1L}
         e.admit(m.observation(1));e.stop();val result=e.awaitStop(10000)!!
         assertFalse(result.finalized);assertEquals("allocation_failed",result.reason)
+        assertEquals(RecorderFailureCode.ALLOCATION_FAILED,result.firstFailure!!.code)
+        assertEquals(RecorderExceptionKind.ALLOCATION,result.firstFailure!!.exceptionKind)
+        assertSame(result.firstFailure,e.snapshot().firstFailure)
         until("workers release"){e.workersTerminated()};assertEquals(1L,e.snapshot().acknowledged)
         val before=f.readBytes();val report=LmtrReader(f).use {it.check(full=true,recover=true)}
         assertEquals("recovered",report["status"]);assertEquals("full_verified_prefix",report["integrity_scope"])
@@ -242,7 +393,9 @@ class RecorderEngineTest {
         val m=SimulatedRecordingModule();val f=output();val base=LocalRecorderBackend(f)
         val b=object:RecorderBackend { override val destination=f;override fun append(type:Int,ordinal:Long,previous:Long,body:ByteArray)=base.append(type,ordinal,previous,body)
             override fun close(){base.close();throw IOException("close failure")} }
-        val e=engine(m,f,backend=b);e.admit(m.observation(0));e.stop();assertFalse(e.awaitStop(10000)!!.finalized)
+        val e=engine(m,f,backend=b);e.admit(m.observation(0));e.stop();val result=e.awaitStop(10000)!!
+        assertFalse(result.finalized);assertEquals(RecorderFailureStage.BACKEND_CLOSE,result.firstFailure!!.stage)
+        assertEquals(RecorderExceptionKind.IO,result.firstFailure!!.exceptionKind);assertSame(result.firstFailure,e.snapshot().firstFailure)
     }
     @Test fun sequenceGapsAreNotFabricatedFromCounters() {
         val m=SimulatedRecordingModule();val e=engine(m);e.admit(m.observation(0));assertEquals(Admission.REFUSED,e.admit(m.observation(2)))
@@ -288,7 +441,10 @@ class RecorderEngineTest {
             hook={entered.countDown();release.await(5,TimeUnit.SECONDS)})
         e.admit(m.observation(0));assertTrue(entered.await(5,TimeUnit.SECONDS));e.admit(m.observation(1))
         assertEquals(Admission.PREPARATION_OVERLOAD,e.admit(m.observation(2)))
-        assertEquals(Admission.REFUSED,e.admit(m.observation(3)));release.countDown();assertFalse(e.awaitStop(10000)!!.finalized)
+        assertEquals(Admission.REFUSED,e.admit(m.observation(3)))
+        val first=e.snapshot().firstFailure!!;assertEquals(RecorderFailureStage.PREPARATION_LOSS_RESERVE,first.stage)
+        assertEquals(3L,first.observationSequence);assertTrue(first.unrepresentedLoss)
+        release.countDown();val result=e.awaitStop(10000)!!;assertFalse(result.finalized);assertSame(first,result.firstFailure)
     }
     @Test fun laterPreparationFailureCannotClearUnjournaledLossEvidence() {
         val m=SimulatedRecordingModule();val cap=m.observation(0).ownedBytes
@@ -367,6 +523,9 @@ class RecorderEngineTest {
         assertEquals("1",full["summary"].obj()["gap_events"])
         assertEquals("1",full["summary"].obj()["known_missing_observations"])
         assertEquals("failed",full["declared_end_status"])
+        assertEquals(RecorderFailureCode.INVALID_MODULE_EVIDENCE,result.firstFailure!!.code)
+        assertEquals(RecorderFailureStage.PREPARATION,result.firstFailure!!.stage)
+        assertFalse(e.snapshot().unrepresentedLoss);assertSame(result.firstFailure,e.snapshot().firstFailure)
     }
     @Test fun unexpectedPreparationExitDuringStopCannotHideAbandonedAdmission() {
         val m=SimulatedRecordingModule();val entered=CountDownLatch(1);val release=CountDownLatch(1)
@@ -387,6 +546,9 @@ class RecorderEngineTest {
         worker.interrupt();val result=e.awaitStop(10000)!!
         assertTrue(result.toString(),result.finalized);assertEquals("failed",result.status)
         assertEquals(0L,e.snapshot().accepted);assertEquals(0L,e.snapshot().acknowledged)
+        assertEquals(RecorderFailureCode.PREPARATION_INTERRUPTED,result.firstFailure!!.code)
+        assertEquals(RecorderExceptionKind.INTERRUPTED,result.firstFailure!!.exceptionKind)
+        assertFalse(e.snapshot().unrepresentedLoss)
         val full=LmtrReader(f).use { it.check(full=true) }
         assertEquals("failed",full["declared_end_status"]);assertEquals("0",full["summary"].obj()["observations"])
     }
@@ -394,7 +556,15 @@ class RecorderEngineTest {
         val m=SimulatedRecordingModule();val o=m.observation(0,masked=true)
         val bad=o.payloads.map { if(it.role=="validity")RecordingPayload(it.descriptor.value(),ByteArray(it.size){2}) else it }
         val invalid=RecordingObservation(m.id,0,m.stream,o.context.value(),o.facts.value(),bad)
-        val e=engine(m);e.admit(invalid);e.stop();assertFalse(e.awaitStop(10000)!!.finalized);assertEquals(0L,e.snapshot().acknowledged)
+        // A tiny preferred target forces sealing while the observation Work is still active.
+        // The diagnostic must not infer that this Work identifies every payload in a CHUNK.
+        val e=engine(m,limits=RecorderLimits(maxObservationBytes=1048576,preferredChunkBytes=1))
+        e.admit(invalid);e.stop();val result=e.awaitStop(10000)!!
+        assertFalse(result.finalized);assertEquals(0L,e.snapshot().acknowledged)
+        assertEquals(RecorderFailureStage.CHUNK_ENCODE,result.firstFailure!!.stage)
+        assertEquals(RecorderExceptionKind.CONTRACT,result.firstFailure!!.exceptionKind)
+        assertEquals("invalid_payload",result.firstFailure!!.detailCode)
+        assertNull(result.firstFailure!!.streamId);assertEquals(-1L,result.firstFailure!!.observationSequence)
     }
     @Test fun declaredRequiredEvidenceNeedsExplicitAbsenceReason() {
         val m=SimulatedRecordingModule();val o=m.observation(0)

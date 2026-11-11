@@ -81,7 +81,23 @@ fun fieldSnapshot(snapshot:RecorderSnapshot):Obj=mapOf(
     "max_preparation_queued_bytes" to snapshot.maxPreparationQueuedBytes.toString(),"max_writer_queued_bytes" to snapshot.maxWriterQueuedBytes.toString(),
     "max_preparation_in_flight_bytes" to snapshot.maxPreparationInFlightBytes.toString(),"max_writer_in_flight_bytes" to snapshot.maxWriterInFlightBytes.toString(),
     "max_pending_bytes" to snapshot.maxPendingBytes.toString(),"chunks" to snapshot.chunks.toString(),"checkpoints" to snapshot.checkpoints.toString(),
-    "error" to snapshot.error)
+    "error" to snapshot.error,"unrepresented_loss" to snapshot.unrepresentedLoss,
+    "first_failure" to snapshot.firstFailure?.let(::fieldFirstFailure))
+
+/** Local diagnostic only, never LMTR wire metadata. Sentinel identities stay explicitly unknown. */
+fun fieldFirstFailure(first:RecorderFirstFailure):Obj=mapOf(
+    "stage" to first.stage.name.lowercase(java.util.Locale.ROOT),
+    "code" to first.code.name.lowercase(java.util.Locale.ROOT),
+    "exception_kind" to first.exceptionKind.name.lowercase(java.util.Locale.ROOT),
+    "detail_code" to first.detailCode,"stream_id" to first.streamId,"observation_sequence" to first.observationSequence.takeIf {it>=0}?.toString(),
+    "record_ordinal" to first.recordOrdinal.takeIf {it>=0}?.toString(),"record_type" to first.recordType.takeIf {it>=0},
+    "last_intake_witness_ns" to first.lastIntakeWitnessNs.toString(),
+    "accepted" to first.accepted.toString(),"acknowledged" to first.acknowledged.toString(),
+    "preparation_drops" to first.preparationDrops.toString(),"writer_drops" to first.writerDrops.toString(),
+    "control_bytes" to first.controlBytes.toString(),"preparation_queued_bytes" to first.preparationQueuedBytes.toString(),
+    "writer_queued_bytes" to first.writerQueuedBytes.toString(),"preparation_in_flight_bytes" to first.preparationInFlightBytes.toString(),
+    "writer_in_flight_bytes" to first.writerInFlightBytes.toString(),"pending_bytes" to first.pendingBytes.toString(),
+    "unrepresented_loss" to first.unrepresentedLoss)
 
 /** Executable camera-free estimate from the same preflight used on Android; no storage/device probe. */
 object FieldPreflightCli {

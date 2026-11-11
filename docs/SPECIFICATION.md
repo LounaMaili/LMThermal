@@ -363,3 +363,8 @@ The [R4 allocation investigation](lmtr-r4/RECORDER_ALLOCATION.md) adds full sync
 The restricted R4 writer now uses bounded call-local DEFLATE segments and owned copy-out, avoiding geometric output growth. Both complete validations, source evidence and78+32 MiB admission remain unchanged. See the [HT-301 allocation ledger](lmtr-r4/HT301_FULL_ALLOCATION_LEDGER.md); this is not safe physical-recording certification.
 
 The field-only [normal-preview memory/visible-owner diagnostic](lmtr-r4/PIXEL_LIVE_MEMORY.md) records bounded resource observations without Connect/init/recording side effects from the sampling action. Its sampled roles are not a full UI/source heap census; production ownership and admission semantics remain unchanged.
+
+The isolated [R4 first-failure diagnostic](lmtr-r4/FIRST_FAILURE.md) adds a bounded,
+single-assignment witness to recorder results/snapshots and local field reports.
+It distinguishes the first observed error, current sticky loss and terminal reason;
+it changes no LMTR v1 field, safety condition or product recording interface.

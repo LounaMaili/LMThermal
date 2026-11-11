@@ -1,0 +1,147 @@
+{
+  "status": "local_host_validation_passed_pending_owner_diff_review",
+  "base_commit": "fc5fae1fb5ae3783efbd3300dae4cdd40c6e1ff1",
+  "branch": "feat/lmtr-r4-recorder-foundation",
+  "new_commit": null,
+  "published": false,
+  "instrumented_android_executed": false,
+  "physical_device_access": false,
+  "historical_API35_replay": "still_failed_original_first_cause_unknown_not_rerun",
+  "scope": "Bounded single-assignment first-failure diagnostic only; not a fix of the original runtime loss.",
+  "jvm_tests": {
+    "lmtr-contract": {
+      "tests": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-recorder": {
+      "tests": 58,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "camera-recording": {
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-field-support": {
+      "tests": 44,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "core": {
+      "tests": 234,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "app": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "unique_jvm_tests_passed": 450,
+  "python_reader_tests_passed": 64,
+  "new_tests": {
+    "recorder": 8,
+    "field_diagnostics": 2
+  },
+  "android_app": {
+    "assembleDebug": "passed",
+    "lintDebug": "passed",
+    "testDebugUnitTest": "21_passed_no_device"
+  },
+  "r3": {
+    "jvm_reader_corpus_cases": 51,
+    "python_reader_corpus_cases": 51,
+    "canonical_plan_byte_comparisons": 33,
+    "mixed_corruption_cross_runtime_cases": 29,
+    "cancellation_runtime_pairs": 3,
+    "manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "fixtures_modified": false
+  },
+  "r4_binary_parity": {
+    "deterministic_engine_files": 14,
+    "full_size_profile_codec_files": 6,
+    "result": "all_identical",
+    "independent_python_readback": "all_passed",
+    "full_size_reference": "Previously preserved fixed-identity host-memory six-file set, source checkpoint530a458; checksum manifest verified before comparison.",
+    "new_outputs": "noncanonical saved-fixture engineering data only; not physical recording"
+  },
+  "invariants": {
+    "frozen_and_production_files": 131,
+    "changed": [],
+    "recorder_limits_and_local_backend_prefix_unchanged": true,
+    "field_policy_prefix_unchanged": true,
+    "both_complete_validations_unchanged": true,
+    "margin_policy_unchanged": true
+  },
+  "witness": {
+    "preallocated": true,
+    "assignment": "once_under_existing_engine_lock",
+    "same_object_in_snapshot_and_result": true,
+    "retained_throwable_stack_or_payload": false,
+    "stream_id_max_characters": 64,
+    "detail_code_max_characters": 64,
+    "detail_code_syntax": "lowercase_ASCII_letters_digits_underscore",
+    "new_diagnostic_clock_reads": false,
+    "sequence_record_sentinels": "-1_exposed_as_null_in_field_JSON",
+    "host_capture_bytecode_explicit_allocation_instructions": 0,
+    "allocation_proof_scope": "Capture-body bytecode only; startup slot/vocabulary/context allocate. No ART heap cost/survival or scheduling proof."
+  },
+  "retained_intermediate_failures": [
+    {
+      "log": "baseline-host.txt",
+      "boundary": "Gradle could not obtain local wildcard IP inside sandbox; same offline host tasks subsequently ran with authorized local-socket access."
+    },
+    {
+      "log": "host-tests-1.txt",
+      "boundary": "New no-first-failure assertion exposed existing writer-overload test admission refusal."
+    },
+    {
+      "log": "writer-test-negotiation-failure.xml",
+      "boundary": "Deterministic ADMISSION/UNSUPPORTED_OR_OVERSIZE_OBSERVATION at observation10. Test negotiation now covers all offered owners and asserts all admissions; product limits unchanged."
+    },
+    {
+      "log": "r4-readbacks.txt",
+      "boundary": "Session comparison wrapper expected13 cases; actual source manifest has14. Both independent readers passed and all14 hashes already matched. Continued on existing outputs using manifest case inventory; no failing engine case removed."
+    }
+  ],
+  "local_evidence_directory": ".local-tools/validation/r4-first-failure-20261111/",
+  "code_and_test_sha256": {
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt": "e495dfd4e44ba1a2d5b353fd2360092ec2a5c92a98f3bde92bf648f18731803e",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderFirstFailure.kt": "57d1e6418dedf72e42e1c0ebcfb95e4a2a0e045f14fb29a7afc9002003a2afbc",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt": "fdfd2ea2832f52137b250a412a4143fb941daab2161a1a8e3943de153845d684",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/RecorderEngineTest.kt": "f4a40db937ec5651362e51e5a9ca9bc28baa3391c25690602344ed5e6b0ceb12",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/FieldFailureDiagnosticTest.kt": "ba52904c5295622fd8756a0664eb8653a360a3408d99f99da41d985a05b52c98"
+  },
+  "commands": [
+    "./gradlew --offline -p tools/lmtr-r3-host :lmtr-contract:test :lmtr-recorder:test :camera-recording:test :lmtr-field-support:test :core:test :lmtr-contract:writeRuntimeClasspath :lmtr-contract:writeTestRuntimeClasspath :lmtr-recorder:writeTestRuntimeClasspath :lmtr-field-support:writeTestRuntimeClasspath",
+    "./gradlew --offline -p tools/lmtr-r3-host :lmtr-recorder:test :lmtr-field-support:test :lmtr-recorder:writeTestRuntimeClasspath :lmtr-field-support:writeTestRuntimeClasspath",
+    "./gradlew --offline :app:testDebugUnitTest :app:assembleDebug :app:lintDebug",
+    "python3 -W error -m unittest discover -s tools/lmtr_v1/tests -t . -v",
+    "python3 tools/check_lmtr_conformance.py --report REPORT",
+    "python3 tools/check_lmtr_hardening.py --report REPORT",
+    "python3 tools/check_lmtr_cancellation.py --report REPORT",
+    "java -Xmx256m -cp RECORDER_TEST_CLASSPATH org.lmthermal.recorder.RecordingInteropProbe NEW_DIRECTORY",
+    "python3 tools/check_lmtr_r4.py --existing NEW_DIRECTORY --report REPORT",
+    "java -Xmx256m -cp FIELD_TEST_CLASSPATH org.lmthermal.field.HtMemoryProbe NEW_DIRECTORY",
+    "python3 tools/check_lmtr_r4_field.py PROFILE_CODEC_DIRECTORY --report REPORT",
+    "git diff --check"
+  ],
+  "remaining_uncertainty": [
+    "First event on the preserved API35 run cannot be recovered retrospectively from the new diagnostic.",
+    "First lock-observed failure does not prove cross-thread physical causality.",
+    "Backend append includes body/footer/sync; diagnostic cannot locate an internal filesystem sub-operation.",
+    "Injected allocation/IO faults do not certify exhausted ART survival or physical power-loss durability.",
+    "New ART runtime behavior, exact heap overhead, physical admission and throughput remain unvalidated."
+  ],
+  "next_instrumented_step": "Only after new authorization: pinned API35 emulator, existing fullSizeFiniteRecorderReplayReportsCadenceAndBothCodecs filter, unchanged bounds/guards/assertions and skip-after-failure; retain first witness, current loss, terminal reason, original bytes/oracle and Python recovery.",
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}
