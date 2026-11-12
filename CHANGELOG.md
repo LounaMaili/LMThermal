@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Controlled R4 campaign — 2026-11-12)
+- Added an isolated predeclared fine-metrics OFF/ON/ON/OFF hosted emulator comparison, fresh target processes and complete per-arm collection, with no physical device access, retry, queue/budget/wire or workload change.
+
+
 ### Added (R4 writer ART preparation, local only)
 
 - Review the unchanged 13-file instrumentation snapshot, account for aggregate object/lifetime overhead and explain the 450-versus-442 JVM scope difference.
