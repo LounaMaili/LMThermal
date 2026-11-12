@@ -75,7 +75,11 @@ part of this phase. Historical evidence is not relabeled as product-UI validatio
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
-Host checkpoint: 234 core JVM tests and 26 app local/Robolectric tests pass (260 total,
+Host checkpoint: 234 core JVM tests and 27 app local/Robolectric tests pass (261 total,
 no failures/skips), plus 10 localization-check self-tests and 120-key en/fr parity.
 Debug application, instrumentation APK and lint compile/pass. The small display-buffer
 transfer is independently tested here; no recorder prototype is imported.
+
+The full-image shortcut, like a drag, passes its captured source key and geometry to
+the existing ROI admission guard. A camera-free regression rejects a superseded device
+or geometry and accepts a matching current source; no source replacement changes protocol.

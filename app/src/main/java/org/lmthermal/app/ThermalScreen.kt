@@ -83,7 +83,7 @@ fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter,
                             presenter.roi.setMode(InspectionMode.POINT);presenter.select(NativePixel(it.width/2,it.height/2))
                         } }) { Text(stringResource(R.string.app_workspace_literal_center)) }
                         OutlinedButton(enabled=canInspect,onClick={ source.geometry?.let {
-                            presenter.roi.setMode(InspectionMode.ROI);presenter.roi.select(NativeRect(0,0,it.width,it.height))
+                            presenter.roi.setMode(InspectionMode.ROI);selectRoi(NativeRect(0,0,it.width,it.height))
                         } }) { Text(stringResource(R.string.app_workspace_full_roi)) }
                     }
                     WorkspaceSection.CAPTURE -> {
