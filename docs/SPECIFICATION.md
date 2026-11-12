@@ -376,3 +376,13 @@ fixed-vocabulary timing through an independent clock; it does not affect wire ev
 source coordinates, profiles, queue/memory policy or acknowledgment boundaries.
 See [scope nesting, bounded aggregation and local-only validation](lmtr-r4/WRITER_INSTRUMENTATION.md).
 No production recording UI or R5/R6 behavior is introduced.
+
+### Recording software campaign checkpoint (2026-11-12)
+
+The [R4 campaign](lmtr-r4/AUTONOMOUS_CAMPAIGN.md) tests bounded diagnostics and targeted
+validation-allocation candidates without changing accepted LMTR v1, memory110MiB,
+queues, source clocks or physical admission. See [measured outcomes](lmtr-r4/campaign-results.json)
+and [R6 prerequisites](lmtr-r4/R6_INTEGRATION_GATES.md). The sibling Desktop
+[R5 draft](https://github.com/LounaMaili/LMThermal-Desktop/pull/4) provides camera-free
+read-only timeline/ROI/palette analysis; real Android LMTR interoperability remains
+pending. No product recording activation, camera/thermometry change or merge follows.

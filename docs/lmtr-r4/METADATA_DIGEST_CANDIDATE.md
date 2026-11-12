@@ -55,3 +55,17 @@ process/host pressure remain hypotheses until directly observed. No control budg
 one-second deadline is altered to avoid that outcome.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+## Final ART result: B, not throughput acceptance
+
+Run[43245977603](https://github.com/LounaMaili/LMThermal/actions/runs/43245977603)
+tested dd05976 against a78fa70 in the fixed four arms. STORED retained13/13/11/13
+measurements; every arm captured `writer_loss_reserve / loss_journal_exhausted` with
+control1048576 bytes, sticky unrepresented loss, incomplete prefix and absent END.
+JUnit failed and DEFLATE did not start. Fine diagnostics are limited by interrupted
+finalization; observer/clock exception counters remain zero. The corrected tested-source
+identity matches each checkout receipt separately from the event SHA.
+
+No ART throughput improvement is demonstrated. Keep the narrow allocation changes as
+reviewed draft candidates only; do not use the host result to certify capacity, runtime
+performance, physical safety or production recording. All five hosted runs are consumed.

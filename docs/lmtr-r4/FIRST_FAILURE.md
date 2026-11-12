@@ -125,3 +125,19 @@ After owner review and separate publication/runtime authorization:
 No admission-policy, camera, thermometry, format or R5/R6 work follows automatically.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+## Controlled campaign follow-up (2026-11-12)
+
+Run43242970885 reproduced reserve-exhaustion failure in four predefined fresh-process
+reference/candidate arms. The witness was `WRITER_LOSS_RESERVE / LOSS_JOURNAL_EXHAUSTED`,
+control1048576 bytes, sticky unrepresented loss, before the terminal END-guard exception.
+The immutable witness retained11/12 acknowledgments at capture while the eventual
+verified incomplete prefix contained16/17 observations after draining. These are
+separate moments, not contradictory counters. END remained absent and DEFLATE was
+not started. All four independent prefix readbacks match the source oracle.
+
+This establishes the observed mechanism in the new run, not retroactive certainty
+about the initial event of historical39782301329. The earlier passing isolated trials
+remain distinct. See [campaign results](campaign-results.json), the
+[metadata candidate](METADATA_DIGEST_CANDIDATE.md) and [memory boundary](CAMPAIGN_MEMORY.md).
+No safety assertion, capacity or completion definition was relaxed.

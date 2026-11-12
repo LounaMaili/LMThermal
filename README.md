@@ -169,7 +169,7 @@ def get_temp_evn(a, env_term, b):
 The [Accepted LMTR v1 wire contract](docs/LMTR_WIRE_V1.md) records explicit owner
 acceptance of `r1b-review-2`, D1–D10 and historical conversion approach B on
 2026-10-13. Wire rules are frozen; finite R3 conformance is integrated, while end-user recording remains unreleased. Scoped R2 evidence/history is preserved;
-R1b was integrated through PR #13 and #6 is closed. The isolated [R3 implementation](docs/lmtr-r3/README.md) now provides pure JVM and independent Python contract tools plus synthetic canonical files; #8 is closed after PR #14 integration at `8eb4ace`. The [current R3 hardening matrix](docs/lmtr-r3/HARDENING_REVIEW.md) separates contract/platform gates from optional recovery and R4/R6 duties. The isolated [R4 camera-free foundation](docs/lmtr-r4/README.md) and [test-only ART route](docs/lmtr-r4/ART_INTEGRATION.md) now implement authoritative acquisition callbacks, deferred adapters, guarded lifecycle integration and a bounded asynchronous engine; #9 remains open for physical integration/live acceptance. ART runtime receipts are scoped in the linked integration guide. No recording UI or R5/R6 implementation is included. Accepted LMTX still v1 remains unchanged. The
+R1b was integrated through PR #13 and #6 is closed. The isolated [R3 implementation](docs/lmtr-r3/README.md) now provides pure JVM and independent Python contract tools plus synthetic canonical files; #8 is closed after PR #14 integration at `8eb4ace`. The [current R3 hardening matrix](docs/lmtr-r3/HARDENING_REVIEW.md) separates contract/platform gates from optional recovery and R4/R6 duties. The isolated [R4 camera-free foundation](docs/lmtr-r4/README.md) and [test-only ART route](docs/lmtr-r4/ART_INTEGRATION.md) now implement authoritative acquisition callbacks, deferred adapters, guarded lifecycle integration and a bounded asynchronous engine; #9 remains open for physical integration/live acceptance. ART runtime receipts are scoped in the linked integration guide. No Android recording UI or R6 implementation is activated. A sibling [R5 Desktop draft](https://github.com/LounaMaili/LMThermal-Desktop/pull/4) now provides camera-free LMTR analysis; real Android interoperability remains pending. Accepted LMTX still v1 remains unchanged. The
 [decision history](docs/LMTR_R1B_OWNER_DECISIONS.md), [architecture](docs/COMMON_RECORDING_DESIGN.md)
 and [R1–R7 roadmap](docs/RECORDING_IMPLEMENTATION_PLAN.md) retain review/provenance.
 
@@ -242,3 +242,9 @@ The [R4 allocation follow-up](docs/lmtr-r4/LIVE_HEAP.md) isolates fixture acquis
 [Incremental R4 recorder allocation](docs/lmtr-r4/RECORDER_ALLOCATION.md) and the [restricted HT Full ledger](docs/lmtr-r4/HT301_FULL_ALLOCATION_LEDGER.md) distinguish bounded writer-output allocation from unresolved safe admission. Resumed conditional Pixel authorization does not certify physical recording.
 
 [Actual R4 Pixel live memory diagnostics](docs/lmtr-r4/PIXEL_LIVE_MEMORY.md) now separate successful wireless/radiometric acquisition from unresolved recording admission. No Full recording was started; the normal-preview window and host metadata allocation probe do not complete R4.
+
+The [controlled software campaign](docs/lmtr-r4/campaign-results.json) preserves five
+hosted runs, including control-reserve exhaustion and correctly refused finalization.
+Host allocation improvements and Linux/Windows Desktop fixture results do not establish
+Full25Hz ART throughput or safe physical admission. See [memory limits](docs/lmtr-r4/CAMPAIGN_MEMORY.md)
+and [R6 gates](docs/lmtr-r4/R6_INTEGRATION_GATES.md). No Pixel/HT-301 access occurred.
