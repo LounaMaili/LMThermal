@@ -221,3 +221,18 @@ The separate [field harness and operator protocol](FIELD_VALIDATION.md) prepares
 ## Subsequent authorized physical diagnostic
 
 The [actual Pixel 8 / Android 17 / API 37 live memory window](PIXEL_LIVE_MEMORY.md) completed with normal rendering and one explicit HT session. It is a later checkpoint than the historical receipts above:528 valid frames, about25 FPS,4/20 observational Java-headroom policy failures and no recorder Start/LMTR. Read-only visible-role and host-only metadata probes do not establish safe admission;78+32 MiB and the physical recording gate remain unchanged.
+
+## Autonomous software campaign (2026-11-12)
+
+The isolated [OFF/ON campaign](AUTONOMOUS_CAMPAIGN.md) and subsequent limited
+[pattern](SCHEMA_PATTERN_CANDIDATE.md) / [metadata digest](METADATA_DIGEST_CANDIDATE.md)
+candidates preserve all historical branches and the frozen contract. Current
+[aggregate evidence](campaign-results.json) distinguishes represented overload from
+control-reserve exhaustion/forbidden END. The [allocation update](CAMPAIGN_MEMORY.md)
+does not lower78+32MiB or certify physical admission. [R6 gates](R6_INTEGRATION_GATES.md)
+remain architecture only.
+
+Desktop [draft R5 PR4](https://github.com/LounaMaili/LMThermal-Desktop/pull/4) adds a
+strict camera-free indexed reader and offline analysis window. Linux/Windows corpus
+and synthetic ART interoperability do not complete the real Android R4→R5 gate.
+R4 #9, R5 Desktop #2 and PR16 remain open/unmerged; no physical access is authorized.

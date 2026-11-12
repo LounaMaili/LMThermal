@@ -17,6 +17,30 @@ object LmtrSchema {
         LmtrJson.parse(bytes)["\$defs"].obj()
     }
 
+    /** Compile only the finite pinned registry's patterns, never source metadata.
+     * Each validation still performs every match independently. Keeping immutable Regex
+     * objects avoids thousands of short-lived Pattern graphs per CHUNK on ART/JVM;
+     * matchers remain call-local, so concurrent validators share no mutable state.
+     * This cache cannot grow with recording duration or unknown optional JSON.
+     */
+    private val patterns: Map<String, Regex> by lazy {
+        val compiled = linkedMapOf<String, Regex>()
+        fun collect(value: Any?) {
+            when (value) {
+                is Map<*, *> -> {
+                    value["pattern"]?.let { pattern ->
+                        val text = pattern.text()
+                        if (text !in compiled) compiled[text] = Regex(text)
+                    }
+                    value.values.forEach(::collect)
+                }
+                is List<*> -> value.forEach(::collect)
+            }
+        }
+        collect(definitions)
+        compiled.toMap()
+    }
+
     /** Validate a pinned local shape and expose only stable contract error classes. */
     fun validate(kind: String, value: Any?) = lmtrMetadataErrors {
         validateUnchecked(kind, value)
@@ -113,7 +137,7 @@ object LmtrSchema {
                 val count = value.codePointCount(0, value.length)
                 s["minLength"]?.let { demand(count >= it.i(), "metadata_limit") }
                 s["maxLength"]?.let { demand(count <= it.i(), "metadata_limit") }
-                s["pattern"]?.let { demand(Regex(it.text()).matches(value), "metadata_pattern") }
+                s["pattern"]?.let { demand(patterns.getValue(it.text()).matches(value), "metadata_pattern") }
             }
             is JsonNumber, is Int, is Long -> {
                 s["minimum"]?.let { demand(number(value) >= number(it), "metadata_limit") }

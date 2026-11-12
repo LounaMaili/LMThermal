@@ -4,6 +4,27 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Documented (R4/R5 autonomous campaign results — 2026-11-12)
+- Preserve all five hosted runs: balanced fine metrics show no systematic saved-count penalty; both subsequent candidate comparisons reproduce control-reserve exhaustion, incomplete verified prefixes and correct END refusal. No ART throughput improvement or Full25Hz acceptance is claimed; DEFLATE did not run after those failures.
+- Record447 JVM executions,64 independent Python tests,12 CI-helper tests, two APK builds/lint with zero errors/four existing warnings, and20 exact binary comparisons per candidate. Keep a historical regeneration-check failure separate: its manifest embeds Python3.14.8, while this host is3.15.2; all51 original hashes remain unchanged.
+- Publish source-identity qualifications, conditional78+32MiB ownership analysis, R5 Linux/Windows and synthetic interoperability references, and R6 activation gates. Historical evidence/worktrees/main/PR16 remain unchanged; no physical access or issue closure.
+
+
+### Changed (R4 metadata digest candidate and R6 gates — 2026-11-12)
+- Replace per-byte Formatter hexadecimal rendering of canonical metadata SHA-256 with the existing exact bounded nibble encoder; keep both complete validations independent. Add four independent precision/Unicode/leading-zero hash vectors and a separately measured host result.
+- Preserve four new fatal-mode outcomes from run43242970885: full control reserve at WRITER_LOSS_RESERVE, sticky unrepresented loss and correctly refused END. Distinguish event SHA from tested checkout identity in paired diagnostics; original evidence stays unchanged.
+- Prepare the fifth and final predefined ART comparison and document R6 lifecycle/storage/status gates without activating production recording. Pixel/HT-301 remain prohibited.
+
+
+### Changed (R4 fixed-schema pattern candidate — 2026-11-12)
+- Precompile only the seven pinned registry regexes; keep every independent validation/match and all wire, queue, memory, ACK and loss invariants. Added parallel valid/invalid matcher regressions and deterministic gap-only CHUNK tests for both codecs.
+- Retain an unfavorable host timing result alongside14.6% lower per-thread allocations; prepare an order-balanced reference/candidate/candidate/reference ART comparison without retries or changed workloads. No physical-device access or production recording UI.
+
+
+### Added (Controlled R4 campaign — 2026-11-12)
+- Added an isolated predeclared fine-metrics OFF/ON/ON/OFF hosted emulator comparison, fresh target processes and complete per-arm collection, with no physical device access, retry, queue/budget/wire or workload change.
+
+
 ### Added (R4 writer ART preparation, local only)
 
 - Review the unchanged 13-file instrumentation snapshot, account for aggregate object/lifetime overhead and explain the 450-versus-442 JVM scope difference.

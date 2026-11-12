@@ -1,7 +1,6 @@
 package org.lmthermal.lmtr
 
 import java.math.BigDecimal
-import java.security.MessageDigest
 
 /** Contract error classes are stable; detailed rule identifiers remain in the message. */
 internal inline fun <T> lmtrMetadataErrors(body: () -> T): T = try { body() } catch (failure: LmtrFailure) {
@@ -31,7 +30,7 @@ object LmtrMetadata {
     private const val WARNING = "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
 
     /** Bind complete retained semantic JSON to a SHA-256 ID without dropping unknown fields. */
-    fun hash(value: Any?): String = MessageDigest.getInstance("SHA-256").digest(LmtrJson.encode(value)).joinToString("") { "%02x".format(it.toInt() and 255) }
+    fun hash(value: Any?): String = LmtrChunk.sha(LmtrJson.encode(value))
     /** Apply byte/structural limits and declared-shape rules before record negotiation. */
     fun local(kind: String, obj: Obj) = lmtrMetadataErrors {
         val bytes = LmtrJson.encode(obj)
