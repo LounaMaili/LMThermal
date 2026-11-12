@@ -1,0 +1,14 @@
+{
+  "campaign": "metadata-hex-encoding-01",
+  "reference": "a78fa70e300713b337c33eba2629fd4b217ea6c1",
+  "arms": [
+    "reference-on",
+    "candidate-on",
+    "candidate-on",
+    "reference-on"
+  ],
+  "per_arm": "unchanged selected method, 50 baseline, 200 Full offers per codec; stop-on-unresolved-failure unchanged",
+  "retries": 0,
+  "expected_global_run_number": 5,
+  "maximum_global_runs": 5
+}

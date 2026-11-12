@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 metadata digest candidate and R6 gates — 2026-11-12)
+- Replace per-byte Formatter hexadecimal rendering of canonical metadata SHA-256 with the existing exact bounded nibble encoder; keep both complete validations independent. Add four independent precision/Unicode/leading-zero hash vectors and a separately measured host result.
+- Preserve four new fatal-mode outcomes from run43242970885: full control reserve at WRITER_LOSS_RESERVE, sticky unrepresented loss and correctly refused END. Distinguish event SHA from tested checkout identity in paired diagnostics; original evidence stays unchanged.
+- Prepare the fifth and final predefined ART comparison and document R6 lifecycle/storage/status gates without activating production recording. Pixel/HT-301 remain prohibited.
+
+
 ### Changed (R4 fixed-schema pattern candidate — 2026-11-12)
 - Precompile only the seven pinned registry regexes; keep every independent validation/match and all wire, queue, memory, ACK and loss invariants. Added parallel valid/invalid matcher regressions and deterministic gap-only CHUNK tests for both codecs.
 - Retain an unfavorable host timing result alongside14.6% lower per-thread allocations; prepare an order-balanced reference/candidate/candidate/reference ART comparison without retries or changed workloads. No physical-device access or production recording UI.

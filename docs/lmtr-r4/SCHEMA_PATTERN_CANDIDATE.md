@@ -60,8 +60,8 @@ Nested phases are not added; coarse and fine clocks are not blindly subtracted.
 
 ## Host verification before publication
 
-445 JVM test executions pass (74 contract,67 recorder,20 adapter,50 field,234 core;
-the gap-only test is also compiled by the field test source set), plus64
+446 JVM test executions pass (74 contract,67 recorder,21 adapter,50 field,234 core;
+the gap-only test is also compiled by both adapter and field test source sets), plus64
 independent Python conformance and9 CI report/orchestration tests. Both targeted APKs
 build. Fourteen actual-engine fault/race/profile files and six full-size fixture
 profile/codec files are byte-identical to the clean reference checkout. The canonical

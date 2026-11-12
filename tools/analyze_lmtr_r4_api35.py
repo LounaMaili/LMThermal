@@ -206,6 +206,24 @@ def inspect_case(path, output, result, stress):
     return row
 
 
+def tested_source_sha(directory, context, issues):
+    """Bind the tested checkout independently of the workflow event commit.
+
+    A paired reference build legitimately has a different HEAD. Preserve the event
+    SHA as a separate report field; an inconsistent/missing checkout receipt is C.
+    """
+    expected = context.get('expected_source_sha', context.get('GITHUB_SHA'))
+    try:
+        actual = (directory / 'source-sha.txt').read_text().strip()
+    except OSError:
+        actual = None
+    if (not isinstance(expected, str) or not re.fullmatch('[0-9a-f]{40}', expected)
+            or actual != expected):
+        issues.append('tested_source_identity_mismatch_or_missing')
+        return None
+    return actual
+
+
 def assess(directory, output, cadence_review=None):
     """Keep instrumentation, collection, integrity and qualitative cadence decisions separate."""
     output.mkdir(mode=0o700, exist_ok=False)
@@ -216,6 +234,7 @@ def assess(directory, output, cadence_review=None):
         report = {'outcome': 'C', 'reasons': issues, 'cases': []}
         save(output / 'assessment.json', report)
         return report
+    source_sha = tested_source_sha(directory, context, issues)
     issues.extend(collection.get('errors', []))
     if not collection.get('qualified_emulator') or not collection.get('archive_ready'):
         issues.append('environment_or_archive_not_qualified')
@@ -282,7 +301,7 @@ def assess(directory, output, cadence_review=None):
                'basis': 'Existing qualitative matched-baseline comparability; no numeric tolerance is defined for this replay.'}
     if cadence_review is not None:
         review = read_json(cadence_review, issues)
-        identity = {'source_sha': context.get('GITHUB_SHA'), 'run_id': context.get('GITHUB_RUN_ID'),
+        identity = {'source_sha': source_sha, 'run_id': context.get('GITHUB_RUN_ID'),
                     'run_attempt': context.get('GITHUB_RUN_ATTEMPT'), 'archive_sha256': collection.get('archive_sha256')}
         if (review is None or review.get('identity') != identity
                 or review.get('decision') != 'comparable_to_measured_baseline'
@@ -301,8 +320,9 @@ def assess(directory, output, cadence_review=None):
     report = {'outcome': outcome, 'reasons': issues, 'eligible_for_A_after_cadence_review': eligible,
               'instrumentation': {'raw_exit': instruction, 'exclusive_method_attested': exclusive,
                                   'junit_passed': junit_passed},
-              'identity': {'source_sha': context.get('GITHUB_SHA'), 'run_id': context.get('GITHUB_RUN_ID'),
+              'identity': {'source_sha': source_sha, 'run_id': context.get('GITHUB_RUN_ID'),
                            'run_attempt': context.get('GITHUB_RUN_ATTEMPT'), 'archive_sha256': collection.get('archive_sha256')},
+              'workflow_event_sha': context.get('GITHUB_SHA'),
               'baseline': baselines, 'cases': cases, 'cadence_review': cadence,
               'not_executed_codecs': sorted({0, 1} - {row['codec'] for row in cases}),
               'scope': 'One fresh-process synthetic ART method; not the old full-suite heap/order context, physical admission or calibration.'}
