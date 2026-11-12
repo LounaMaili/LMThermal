@@ -134,3 +134,11 @@ requires Pixel released from LMarchery and separate owner authorization, legitim
 wireless/USB permissions, non-sensitive scene and battery/thermal/storage/memory checks.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+
+## Phase 2 host follow-up
+
+[Deterministic backlog investigation](BACKLOG_DYNAMICS.md) now demonstrates the
+aged-work/gap-only seal mechanism with independent complete/prefix readback. This
+adds no ART result and does not retrospectively attribute the historical failures.
+The five-run campaign and all original evidence remain unchanged.

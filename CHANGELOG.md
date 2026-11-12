@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Deterministic R4 backlog investigation — 2026-11-12)
+
+- Demonstrated with unchanged engine/queues/deadlines and controlled software clocks that aged work can amplify four CHUNKs into fifty, including32 gap-only CHUNKs, while retaining exact chronology/payloads and both full validations.
+- Added bounded synthetic backend/first-failure/ACK/control-reserve tests and independent Python readback for eight complete/incomplete cases. Exactly32 pending losses can finalize; a33rd unrepresented loss or final gap append failure correctly prevents END.
+- Documented remaining ART causality/memory limits, isolated allocation-candidate recommendations and unimplemented architectural options/future diagnostics. No new hosted CI, device access, production optimization, wire or78+32MiB policy change.
+
 ### Documented (R4/R5 autonomous campaign results — 2026-11-12)
 - Preserve all five hosted runs: balanced fine metrics show no systematic saved-count penalty; both subsequent candidate comparisons reproduce control-reserve exhaustion, incomplete verified prefixes and correct END refusal. No ART throughput improvement or Full25Hz acceptance is claimed; DEFLATE did not run after those failures.
 - Record447 JVM executions,64 independent Python tests,12 CI-helper tests, two APK builds/lint with zero errors/four existing warnings, and20 exact binary comparisons per candidate. Keep a historical regeneration-check failure separate: its manifest embeds Python3.14.8, while this host is3.15.2; all51 original hashes remain unchanged.
