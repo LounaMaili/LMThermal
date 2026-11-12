@@ -23,3 +23,13 @@ dependencies {
 }
 android.sourceSets.getByName("androidTest").java.srcDir("../lmtr-field-support/src/test/kotlin")
 dependencies { androidTestImplementation(project(":lmtr-field-support")) }
+
+// Match the JVM test friendship only in the opt-in diagnostic APK compilation.
+// No production visibility or test assertion changes; keep every test source packaged.
+if (providers.gradleProperty("lmtrWriterTimingOnly").orNull == "true") {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        if (name == "compileDebugAndroidTestKotlin") {
+            friendPaths.from(project(":lmtr-recorder").tasks.named("jar"))
+        }
+    }
+}

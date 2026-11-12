@@ -4,6 +4,16 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (R4 writer ART preparation, local only)
+
+- Review the unchanged 13-file instrumentation snapshot, account for aggregate object/lifetime overhead and explain the 450-versus-442 JVM scope difference.
+- Prepare an independent one-method API35 workflow with step-scoped paths, failure-independent evidence sealing, explicit fine-metrics mode and separate offline quality/readback results. Correct test-only lambda invocation and opt-in Android-test friendship without dropping tests or changing recorder policy; no ART, publication or performance acceptance.
+
+### Added (R4 writer instrumentation, local review only)
+
+- Add default-disabled scalar writer timing with independent diagnostic clocks, separate build/first-validation/encode/append scopes, typed backend totals and entry/checkpoint/finalization/close/readback scopes. Preserve complete validations, durable acknowledgment, losses, limits and LMTR bytes.
+- Extend bounded field aggregates with exact checked sums, all-call extrema and invalid/interrupted/omitted counts; preallocate fixed phase/type/status tables and retain historical metric keys. Add deterministic failure, parity and full-size fixture checks plus a documented future ART protocol; no optimization, throughput claim or new ART/device execution.
+
 ### Fixed (R4 API35 workflow context, local static correction)
 
 - Scope the identical run/attempt result path independently to preflight, collector and always-upload steps, where runner context is permitted; preserve emulator/workload/recorder inputs and failure-independent upload resolution.

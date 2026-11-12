@@ -17,8 +17,11 @@ import java.util.concurrent.atomic.AtomicLong
  */
 object HtMemoryProbe {
     private const val DOMAIN="11111111-1111-4111-8111-111111111111"
-    @JvmStatic fun main(args:Array<String>) { run(File(args[0])) }
-    fun run(root:File,platformSample:()->Obj={emptyMap()}) {
+    @JvmStatic fun main(args:Array<String>) {
+        require(args.size == 1 || (args.size == 2 && args[1] == "--writer-metrics"))
+        run(File(args[0]),instrumentWriter=args.size == 2)
+    }
+    fun run(root:File,platformSample:()->Obj={emptyMap()},instrumentWriter:Boolean=false) {
         check(root.mkdirs())
         val input=javaClass.getResourceAsStream("/fixtures/radiometric-room-settled.raw")!!.readBytes()
         val reports=mutableListOf<Obj>()
@@ -29,6 +32,8 @@ object HtMemoryProbe {
             val clock=AtomicLong(0)
             val header=FieldClock(clock::get,DOMAIN).header()+mapOf("recording_id" to "33333333-3333-4333-8333-333333333333")
             val limits=FieldPreflight(profile,20,null,codec).limits
+            // Optional test-only phase tables allocate before any measured source/worker load.
+            val writerMetrics=if(instrumentWriter)FieldWriterMetrics() else null
             val peaks=mutableMapOf<String,Long>();var samples=0
             fun sample() {
                 val runtime=Runtime.getRuntime()
@@ -44,7 +49,7 @@ object HtMemoryProbe {
             val adapter=FieldOracleAdapter(original,HtFieldOracle::capture,{r->oracle.write(LmtrJson.encode(r).toString(Charsets.UTF_8));oracle.newLine()},clock::get)
             val engine=RecorderEngine(header,listOf(original.stream.value()),profile,limits,
                 LocalRecorderBackend(File(directory,"capture.lmtr")),codec,now=clock::get,
-                codecMetric={_,_,_->sample()},sealMetric={_,_,_,_->sample()})
+                codecMetric={_,_,_->sample()},sealMetric={_,_,_,_->sample()},instrumentation=writerMetrics?.instrumentation)
             var maxSource=0L
             try {
                 repeat(6) {index->
@@ -64,6 +69,7 @@ object HtMemoryProbe {
                 val snapshot=engine.snapshot();check(snapshot.acknowledged==6L && snapshot.preparationDrops==0L && snapshot.writerDrops==0L)
                 check(snapshot.maxPreparationQueuedBytes<=limits.preparationBytes && snapshot.maxWriterQueuedBytes<=limits.writerBytes)
                 sample()
+                if(writerMetrics!=null)File(directory,"writer-metrics.json").writeBytes(LmtrJson.encode(writerMetrics.report()))
                 reports.add(mapOf("profile" to profile.wire,"codec" to codec,"observations" to 6,
                     "source_owner_array_bytes" to maxSource.toString(),"reserved_bytes" to limits.reservedBytes.toString(),
                     "snapshot" to fieldSnapshot(snapshot),"sampled_peaks" to synchronized(peaks){peaks.mapValues {it.value.toString()}},

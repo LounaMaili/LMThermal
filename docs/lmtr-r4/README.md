@@ -132,6 +132,14 @@ and the current sticky `unrepresentedLoss`. Local field JSON exposes these diagn
 they do not alter LMTR bytes, capacity/admission or END permission. The historical API35
 replay is still failed and has not been rerun for this change.
 
+## Writer instrumentation (local review)
+
+The [bounded writer instrumentation](WRITER_INSTRUMENTATION.md) separates assembly,
+first validation and typed backend totals without changing contract or recorder policy.
+Its local receipt and future ART protocol do not claim new runtime/throughput acceptance.
+The [final review and isolated API35 preparation](WRITER_API35_PREPARATION.md) documents
+packaging corrections, memory lifetime and a future controlled ON/OFF comparison.
+
 ## Validation
 
 Run without Android SDK/camera:

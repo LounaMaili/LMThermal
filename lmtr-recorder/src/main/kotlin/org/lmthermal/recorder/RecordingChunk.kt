@@ -13,8 +13,43 @@ internal data class PendingEntry(val entry: Obj,val segment: Obj,val context: Ob
  * Statistics are caches computed from original Float32 bits, never a new temperature algorithm.
  */
 internal object RecordingChunk {
-    fun encode(header: Obj, entries: List<PendingEntry>, codec: Int,validationBudget:Long,
-        codecMetric:((Long,Long,Long)->Unit)?=null,now:()->Long=System::nanoTime): ByteArray {
+    fun encode(header: Obj, entries: List<PendingEntry>, codec: Int, validationBudget: Long,
+        codecMetric: ((Long, Long, Long) -> Unit)? = null, now: () -> Long = System::nanoTime,
+        instrumentation: RecorderInstrumentation? = null): ByteArray {
+        if (instrumentation == null) {
+            val body = assemble(header, entries, codec, validationBudget, codecMetric, now)
+            LmtrChunk.validate(body, header, validationBudget)
+            return body
+        }
+        val started = instrumentation.begin()
+        var completed = false; var bodyBytes = -1L; var observations = 0L; var gaps = 0L
+        try {
+            // Scalar counts concern this exact bounded pending list, not a later parsed body.
+            var i = 0
+            while (i < entries.size) {
+                when (entries[i++].entry["kind"]) { "observation" -> observations++; "gap" -> gaps++ }
+            }
+            val buildStart = instrumentation.begin(); var built = false
+            val body = try {
+                assemble(header, entries, codec, validationBudget, codecMetric, now).also {
+                    bodyBytes = it.size.toLong(); built = true
+                }
+            } finally {
+                instrumentation.end(RecorderPhase.CHUNK_BUILD, buildStart, built, LmtrFraming.CHUNK, bodyBytes, observations, gaps)
+            }
+            instrumentation.measure(RecorderPhase.CHUNK_FIRST_VALIDATION, LmtrFraming.CHUNK, bodyBytes, observations, gaps) {
+                LmtrChunk.validate(body, header, validationBudget)
+            }
+            completed = true
+            return body
+        } finally {
+            instrumentation.end(RecorderPhase.CHUNK_ENCODE_TOTAL, started, completed, LmtrFraming.CHUNK, bodyBytes, observations, gaps)
+        }
+    }
+
+    /** Original assembly path, unchanged bytes/checks; the complete validation follows in encode. */
+    private fun assemble(header: Obj, entries: List<PendingEntry>, codec: Int, validationBudget: Long,
+        codecMetric: ((Long, Long, Long) -> Unit)?, now: () -> Long): ByteArray {
         require(entries.isNotEmpty() && entries.size<=32)
         val blocks=mutableListOf<Obj>();val stored=mutableListOf<ByteArray>();var storedAt=0L
         // Retain references to immutable owners, not a second entire CHUNK of payload copies.
@@ -91,7 +126,6 @@ internal object RecordingChunk {
         require(size<=LmtrFraming.MAX_RECORD_BYTES-112L)
         val body=ByteArray(size.toInt());ByteBuffer.wrap(body).order(ByteOrder.LITTLE_ENDIAN).putInt(json.size).put(json)
         var at=4+json.size;for(bytes in stored){bytes.copyInto(body,at);at+=bytes.size}
-        LmtrChunk.validate(body,header,validationBudget) // Full checks before any promised footer.
         return body
     }
 }

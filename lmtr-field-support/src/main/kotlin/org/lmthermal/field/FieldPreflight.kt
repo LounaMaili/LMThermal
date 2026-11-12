@@ -60,15 +60,104 @@ class FieldClock(private val read:()->Long,val domainId:String=UUID.randomUUID()
         "privacy" to mapOf("sensitive_metadata" to "omitted","scene_content" to true,"consented_namespaces" to emptyList<Any>()))
 }
 
-/** Fixed maximum sample capacity: finite protocol does not grow an unbounded metrics list. */
-class FieldDistribution(private val maximum:Int=8192) {
-    private val values=LongArray(maximum);private var size=0;private var omitted=0L
-    @Synchronized fun add(value:Long) { require(value>=0);if(size<maximum)values[size++]=value else omitted++ }
-    @Synchronized fun report():Obj {
-        val sorted=values.copyOf(size).sortedArray()
-        fun at(fraction:Double)=if(size==0)null else sorted[((size-1)*fraction).toInt()].toString()
-        return mapOf("count" to size,"omitted" to omitted.toString(),"p50_ns" to at(.5),"p95_ns" to at(.95),"max_ns" to at(1.0))
+/** Nonnegative checked scalar. A null exported sum is explicit overflow, never a wrapped value. */
+private class FieldTotal {
+    var value = 0L; private set
+    var overflow = false; private set
+    fun add(amount: Long) {
+        require(amount >= 0)
+        if (amount > Long.MAX_VALUE - value) { overflow = true; value = Long.MAX_VALUE }
+        else value += amount
     }
+    fun exact(): String? = if (overflow) null else value.toString()
+}
+
+/** Fixed first-N sample buffer; totals/extrema cover ALL valid calls, including omitted samples.
+ * Quantiles cover only retained samples (floor((n-1)*q)), not an estimated full population.
+ * Invalid durations are counted without entering totals. Interrupted calls are explicitly counted.
+ * Arrays allocate at setup; report sorting/JSON allocate only when the caller requests a report.
+ */
+class FieldDistribution(private val maximum: Int = 8192) {
+    private val values = LongArray(maximum.also { require(it in 0..8192) })
+    private var size = 0
+    private val observed = FieldTotal(); private val valid = FieldTotal(); private val omitted = FieldTotal()
+    private val invalid = FieldTotal(); private val interrupted = FieldTotal(); private val sum = FieldTotal()
+    private var minimum = Long.MAX_VALUE; private var maximumValue = Long.MIN_VALUE
+
+    /** Clock/operation failures must not throw back into the recorder's append path. */
+    @Synchronized fun add(value: Long, completed: Boolean = true) {
+        observed.add(1)
+        if (!completed) interrupted.add(1)
+        if (value < 0) { invalid.add(1); return }
+        valid.add(1); sum.add(value)
+        minimum = minOf(minimum, value); maximumValue = maxOf(maximumValue, value)
+        if (size < maximum) values[size++] = value else omitted.add(1)
+    }
+
+    /** Preserve historical count/quantile keys; new exact totals never masquerade as sampled sums. */
+    @Synchronized fun report(unit: String = "ns"): Obj {
+        require(unit in listOf("ns", "bytes", "entries"))
+        val sorted = values.copyOf(size).sortedArray()
+        fun at(fraction: Double) = if (size == 0) null else sorted[((size - 1) * fraction).toInt()].toString()
+        return mapOf("count" to size, "capacity" to maximum, "observed_count" to observed.exact(),
+            "valid_count" to valid.exact(), "omitted" to omitted.exact(), "invalid" to invalid.exact(),
+            "interrupted" to interrupted.exact(), "sum_$unit" to if (valid.value == 0L) null else sum.exact(), "sum_overflow" to sum.overflow,
+            "counter_overflow" to listOf(observed, valid, omitted, invalid, interrupted).any { it.overflow },
+            "min_$unit" to if (valid.value == 0L) null else minimum.toString(),
+            "max_all_$unit" to if (valid.value == 0L) null else maximumValue.toString(),
+            "p50_$unit" to at(.5), "p95_$unit" to at(.95), "max_$unit" to at(1.0))
+    }
+}
+
+/** Fixed phase/type/status cells, allocated before the measured load; never retain an event/body.
+ * One writer calls record. Each distribution synchronizes only its own scalar/sample update;
+ * there is no interaction with the recorder intake lock, queue wakeups or admission policy.
+ * Reports are intended after worker termination; separate cells are not an atomic live snapshot.
+ */
+class FieldWriterMetrics(private val capacity: Int = 512) : RecorderMetricObserver {
+    private class Status(capacity: Int) {
+        val duration = FieldDistribution(capacity)
+        val bytes = FieldDistribution(capacity)
+        val observations = FieldDistribution(capacity)
+        val gaps = FieldDistribution(capacity)
+        fun report(): Obj = mapOf("duration" to duration.report(), "body_bytes" to bytes.report("bytes"),
+            "observation_entries" to observations.report("entries"), "gap_entries" to gaps.report("entries"))
+    }
+    private class Cell(capacity: Int) {
+        val completed = Status(capacity); val interrupted = Status(capacity)
+    }
+    private val phases = RecorderPhase.entries.toTypedArray()
+    // Backend cells 1..5 are HEADER/CHUNK/INDEX/CHECKPOINT/END; all other types share cell 0.
+    private val backend = Array(6) { Cell(capacity) }
+    private val other = Array(phases.size) { Cell(capacity) }
+    val instrumentation = RecorderInstrumentation(this)
+
+    /** Metadata is attributed by the producer of each scalar; -1 stays unknown, never parsed here. */
+    override fun record(phase: RecorderPhase, elapsedNs: Long, completed: Boolean, recordType: Int,
+        bodyBytes: Long, observations: Long, gapEntries: Long) {
+        val cell = if (phase == RecorderPhase.BACKEND_APPEND) backend[if (recordType in 1..5) recordType else 0]
+            else other[phase.ordinal]
+        val status = if (completed) cell.completed else cell.interrupted
+        status.duration.add(elapsedNs, completed)
+        if (bodyBytes >= 0) status.bytes.add(bodyBytes, completed)
+        if (observations >= 0) status.observations.add(observations, completed)
+        if (gapEntries >= 0) status.gaps.add(gapEntries, completed)
+    }
+
+    /** Fixed vocabulary makes unknown future record types bounded rather than dynamic map keys. */
+    fun report(): Obj = mapOf("version" to 1, "sample_capacity_per_distribution" to capacity,
+        "sample_policy" to "first_N_valid_calls_totals_and_extrema_cover_all_valid_calls",
+        "backend_scope" to "whole_injected_backend_append_not_disk_or_fsync_only",
+        "phase_cells" to phases.filter { it != RecorderPhase.BACKEND_APPEND }.map { phase ->
+            mapOf("phase" to phase.name, "completed" to other[phase.ordinal].completed.report(),
+                "interrupted" to other[phase.ordinal].interrupted.report()) },
+        "backend_cells" to listOf("OTHER", "HEADER", "CHUNK", "INDEX", "CHECKPOINT", "END").mapIndexed { i, name ->
+            mapOf("record_type" to name, "completed" to backend[i].completed.report(),
+                "interrupted" to backend[i].interrupted.report()) },
+        "clock_exceptions" to instrumentation.failures().first.toString(),
+        "observer_exceptions" to instrumentation.failures().second.toString(),
+        "failure_counter_saturated" to (instrumentation.failures().first == Long.MAX_VALUE ||
+            instrumentation.failures().second == Long.MAX_VALUE))
 }
 
 /** Stable machine-readable snapshot, separate from private exception messages and OS process memory. */

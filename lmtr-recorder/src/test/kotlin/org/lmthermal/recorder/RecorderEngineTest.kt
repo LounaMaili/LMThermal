@@ -708,3 +708,181 @@ class RecorderEngineTest {
     }
 
 }
+
+/** Fixed identities and an independent fake diagnostic clock isolate bytes from timing overhead.
+ * Kept in the engine-owned test file: field tests share only public fixture helpers and exclude
+ * this file, while these tests deliberately exercise recorder-internal validation boundaries.
+ */
+class RecorderInstrumentationTest {
+    private data class Event(val phase: RecorderPhase, val ns: Long, val complete: Boolean,
+        val type: Int, val bytes: Long, val observations: Long, val gaps: Long)
+    private fun metrics(events: MutableList<Event>, clock: RecorderMetricClock = RecorderMetricClock(AtomicLong()::incrementAndGet)) =
+        RecorderInstrumentation({ p, n, c, t, b, o, g -> events.add(Event(p,n,c,t,b,o,g)) }, clock)
+
+    /** A one-observation finite file has deterministic source/timeline IDs and no race-dependent drop. */
+    private fun record(codec: Int, instrumentation: RecorderInstrumentation?, fail: Boolean = false): Pair<ByteArray, RecorderResult> {
+        val module = SimulatedRecordingModule()
+        val file = Files.createTempDirectory("r4-metrics-").resolve("capture.lmtr").toFile()
+        val local = LocalRecorderBackend(file)
+        val backend = object : RecorderBackend {
+            override val destination: File = file
+            override fun append(type: Int, ordinal: Long, previous: Long, body: ByteArray): Record {
+                if (fail && type == LmtrFraming.CHUNK) throw IOException("injected append failure")
+                return local.append(type, ordinal, previous, body)
+            }
+            override fun close() = local.close()
+        }
+        val engine = RecorderEngine(SimulatedRecordingModule.header(listOf(module),codec,true),
+            listOf(module.stream),RecordingProfile.FULL,RecorderLimits(maxObservationBytes=1048576),
+            backend,codec,now={0L},instrumentation=instrumentation)
+        assertEquals(Admission.ACCEPTED,engine.admit(module.observation(0,view=true,masked=true)))
+        engine.stop()
+        val result = engine.awaitStop(10000) ?: error("bounded Stop timed out")
+        val until = System.nanoTime()+5_000_000_000L
+        while (!engine.workersTerminated()) { check(System.nanoTime()<until); Thread.yield() }
+        if (!fail) {
+            assertTrue(result.toString(),result.finalized)
+            assertNull(result.firstFailure)
+            LmtrReader(file).use { it.check(full=true) }
+        } else {
+            assertFalse(result.finalized)
+            assertEquals(RecorderFailureStage.BACKEND_APPEND,result.firstFailure!!.stage)
+            assertEquals(0L,engine.snapshot().acknowledged)
+            assertNull(LmtrReader(file).use { it.check(full=true,recover=true) }["declared_end_status"])
+        }
+        return file.readBytes() to result
+    }
+
+    @Test fun bothCodecsRetainExactFileBytesWithFineMetricsAndIndependentClock() {
+        for (codec in 0..1) {
+            val events = mutableListOf<Event>()
+            val baseline = record(codec,null)
+            val observed = record(codec,metrics(events))
+            assertArrayEquals(baseline.first,observed.first)
+            assertEquals(1,events.count { it.phase==RecorderPhase.CHUNK_FIRST_VALIDATION })
+            assertEquals(1,events.count { it.phase==RecorderPhase.CHUNK_BUILD })
+            assertTrue(events.all { it.complete && it.ns>=0 })
+            val encode = events.single { it.phase==RecorderPhase.CHUNK_ENCODE_TOTAL }
+            assertTrue(encode.ns > events.single { it.phase==RecorderPhase.CHUNK_FIRST_VALIDATION }.ns)
+            assertEquals(1L,encode.observations); assertEquals(0L,encode.gaps)
+            val types = events.filter { it.phase==RecorderPhase.BACKEND_APPEND }.map { it.type }.toSet()
+            assertEquals(setOf(1,2,3,4,5),types)
+            assertTrue(events.filter { it.phase==RecorderPhase.BACKEND_APPEND }.all { it.bytes>0 && it.observations == -1L })
+        }
+    }
+
+    @Test fun throwingObserversIncludingAllocationErrorCannotPoisonDurableFiles() {
+        for (codec in 0..1) {
+            val baseline = record(codec,null).first
+            for (allocation in listOf(false,true)) {
+                val instrumentation = RecorderInstrumentation({ _,_,_,_,_,_,_ ->
+                    if(allocation) throw OutOfMemoryError("injected observer only") else error("observer only")
+                })
+                assertArrayEquals(baseline,record(codec,instrumentation).first)
+                assertTrue(instrumentation.failures().second>0)
+            }
+        }
+    }
+
+    @Test fun invalidOrThrowingDiagnosticClockDoesNotReplaceRecorderClockOrOutcome() {
+        val baseline = record(0,null).first
+        val events = mutableListOf<Event>()
+        val bad = metrics(events,RecorderMetricClock { throw IllegalStateException("clock only") })
+        assertArrayEquals(baseline,record(0,bad).first)
+        assertTrue(events.all { it.complete && it.ns == -1L })
+        assertTrue(bad.failures().first>0)
+    }
+
+    @Test fun failedAppendIsInterruptedWithoutAcknowledgmentOrRepairEnd() {
+        val events = mutableListOf<Event>()
+        val reference = record(0,null,fail=true)
+        val candidate = record(0,metrics(events),fail=true)
+        assertArrayEquals(reference.first,candidate.first)
+        assertEquals(reference.second.reason,candidate.second.reason)
+        assertFalse(events.single { it.phase==RecorderPhase.APPEND_CHUNK }.complete)
+        assertFalse(events.single { it.phase==RecorderPhase.BACKEND_APPEND && it.type==2 }.complete)
+        assertTrue(events.single { it.phase==RecorderPhase.CHUNK_FIRST_VALIDATION }.complete)
+        assertTrue(events.none { it.phase==RecorderPhase.BACKEND_APPEND && it.type==5 })
+    }
+
+    @Test fun failedAssemblyAndFailedFirstValidationRetainDistinctInterruptedScopes() {
+        val module = SimulatedRecordingModule()
+        val header = SimulatedRecordingModule.header(listOf(module),0,false)
+        for (empty in listOf(true,false)) {
+            val events = mutableListOf<Event>()
+            val entries = if(empty) emptyList() else listOf(PendingEntry(mapOf("kind" to "gap"),mapOf("id" to "invalid")))
+            try { RecordingChunk.encode(header,entries,0,134217728,instrumentation=metrics(events)); fail("invalid input accepted") }
+            catch (_: IllegalArgumentException) { }
+            catch (_: LmtrFailure) { }
+            assertFalse(events.single { it.phase==RecorderPhase.CHUNK_ENCODE_TOTAL }.complete)
+            assertEquals(!empty,events.single { it.phase==RecorderPhase.CHUNK_BUILD }.complete)
+            if(empty) assertTrue(events.none { it.phase==RecorderPhase.CHUNK_FIRST_VALIDATION })
+            else assertFalse(events.single { it.phase==RecorderPhase.CHUNK_FIRST_VALIDATION }.complete)
+        }
+    }
+
+    @Test fun separateClockScopesHaveExactDurationsAndRejectRegressionOrOverflow() {
+        for ((start,end,expected) in listOf(Triple(-5L,7L,12L),Triple(20L,19L,-1L),
+            Triple(Long.MIN_VALUE+1,Long.MAX_VALUE,-1L),Triple(0L,Long.MAX_VALUE,Long.MAX_VALUE))) {
+            var n=0;val events=mutableListOf<Event>()
+            val instrument=metrics(events,RecorderMetricClock { if(n++==0)start else end })
+            assertEquals("result",instrument.measure(RecorderPhase.CHECKPOINT) { "result" })
+            assertEquals(expected,events.single().ns)
+        }
+    }
+    @Test fun instrumentationCannotCertifyEndAfterLossReserveExhaustion() {
+        val m=SimulatedRecordingModule();val cap=m.observation(0).ownedBytes
+        val file=Files.createTempDirectory("r4-metrics-loss-").resolve("capture.lmtr").toFile()
+        val entered=CountDownLatch(1);val release=CountDownLatch(1);val events=mutableListOf<Event>()
+        val engine=RecorderEngine(SimulatedRecordingModule.header(listOf(m),0,false),listOf(m.stream),
+            RecordingProfile.FULL,RecorderLimits(preparationBytes=cap,writerBytes=cap,
+                maxObservationBytes=cap,preferredChunkBytes=cap*4,controlBytes=32768),LocalRecorderBackend(file),
+            now={0L},prepareHook={entered.countDown();check(release.await(5,TimeUnit.SECONDS))},instrumentation=metrics(events))
+        try {
+            assertEquals(Admission.ACCEPTED,engine.admit(m.observation(0)))
+            assertTrue(entered.await(5,TimeUnit.SECONDS))
+            assertEquals(Admission.ACCEPTED,engine.admit(m.observation(1)))
+            assertEquals(Admission.PREPARATION_OVERLOAD,engine.admit(m.observation(2)))
+            assertEquals(Admission.REFUSED,engine.admit(m.observation(3)))
+            val first=engine.snapshot().firstFailure!!
+            assertEquals(RecorderFailureStage.PREPARATION_LOSS_RESERVE,first.stage)
+            release.countDown()
+            val result=engine.awaitStop(10000)!!
+            assertFalse(result.finalized);assertSame(first,result.firstFailure)
+            assertTrue(engine.snapshot().unrepresentedLoss)
+            assertTrue(events.none { it.phase==RecorderPhase.BACKEND_APPEND && it.type==LmtrFraming.END })
+            assertNull(LmtrReader(file).use { it.check(full=true,recover=true) }["declared_end_status"])
+        } finally { release.countDown();engine.stop() }
+    }
+
+    @Test fun idleSealAndPeriodicCheckpointKeepTheirWitnessesWithInstrumentation() {
+        val m=SimulatedRecordingModule();val events=mutableListOf<Event>();val clock=AtomicLong()
+        val file=Files.createTempDirectory("r4-metrics-timer-").resolve("capture.lmtr").toFile()
+        val engine=RecorderEngine(SimulatedRecordingModule.header(listOf(m),0,false),listOf(m.stream),
+            RecordingProfile.FULL,RecorderLimits(maxObservationBytes=1048576),LocalRecorderBackend(file),
+            now=clock::get,instrumentation=metrics(events))
+        fun waitFor(condition:()->Boolean) {
+            val deadline=System.nanoTime()+5_000_000_000L
+            while(!condition()){check(System.nanoTime()<deadline);Thread.sleep(2)}
+        }
+        try {
+            assertEquals(Admission.ACCEPTED,engine.admit(m.observation(0)))
+            waitFor { engine.snapshot().pendingBytes>0 }
+            clock.set(1_000_000_000);engine.wakeTimers()
+            waitFor { engine.snapshot().acknowledged==1L }
+            clock.set(6_000_000_000);engine.wakeTimers()
+            waitFor { engine.snapshot().checkpoints==1L }
+            engine.stop();assertTrue(engine.awaitStop(10000)!!.finalized)
+            waitFor { engine.workersTerminated() }
+            assertEquals(1,events.count { it.phase==RecorderPhase.CHECKPOINT && it.complete })
+            assertEquals(2,events.count { it.phase==RecorderPhase.BACKEND_APPEND && it.type==LmtrFraming.CHECKPOINT })
+            // Idle already sealed the observation; Stop must still commit a separate segment_end.
+            val validations=events.filter { it.phase==RecorderPhase.CHUNK_FIRST_VALIDATION }
+            assertEquals(2,validations.size)
+            assertEquals(listOf(1L,0L),validations.map { it.observations })
+            assertTrue(validations.all { it.complete && it.gaps==0L })
+            LmtrReader(file).use { it.check(full=true) }
+        } finally {engine.stop()}
+    }
+
+}

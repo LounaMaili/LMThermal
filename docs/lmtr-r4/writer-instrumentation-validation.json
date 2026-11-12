@@ -1,0 +1,175 @@
+{
+  "status": "local_host_checks_passed_pending_owner_diff_review",
+  "base_commit": "dbfab7ee031275ba5251b00262f7aa9cfc3aa2c3",
+  "local_branch": "codex/r4-writer-instrumentation",
+  "new_commit": null,
+  "published": false,
+  "ART_executed": false,
+  "device_access": false,
+  "new_cadence_campaign": false,
+  "scope": "Bounded diagnostic instrumentation only; no performance optimization or new throughput acceptance.",
+  "jvm_tests": {
+    "lmtr-contract": {
+      "tests": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-recorder": {
+      "tests": 66,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-field-support": {
+      "tests": 49,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "camera-recording": {
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "core": {
+      "tests": 234,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "total_jvm_tests": 442,
+  "new_tests": {
+    "recorder": 8,
+    "field_aggregates": 5
+  },
+  "python_reader_tests": {
+    "tests": 64,
+    "failures": 0,
+    "log": "python-tests.log"
+  },
+  "build_and_lint": {
+    "offline": true,
+    "jdk": "17.0.20.1",
+    "targeted_assemblies": [
+      "lmtr-recorder",
+      "lmtr-field-support",
+      "lmtr-field",
+      "app"
+    ],
+    "android_lint": [
+      "lmtr-field:lintDebug",
+      "app:lintDebug"
+    ],
+    "result": "passed",
+    "log": "final-build-lint.log",
+    "pure_jvm_lint": "No separate lint task configured; Kotlin compilation and unit/check coverage used."
+  },
+  "binary_regression": {
+    "canonical_corpus_cases_per_reader": 51,
+    "canonical_plan_byte_comparisons": 33,
+    "canonical_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "mixed_corruption_cases": 29,
+    "cancellation_pairs": 3,
+    "deterministic_engine_files_identical_to_preserved_reference": 14,
+    "full_size_profile_codec_files_identical_off_on_and_preserved_reference": 6,
+    "full_size_observations_per_case": 6,
+    "full_size_metric_counts_verified": true,
+    "python_full_size_readbacks": "passed for off/on and final on outputs",
+    "temporary_outputs": "noncanonical, synthetic existing-fixture regression only; no physical recording"
+  },
+  "aggregation": {
+    "fixed_phases": 10,
+    "backend_cells": 6,
+    "statuses_per_cell": 2,
+    "distributions_per_status": 4,
+    "fine_sample_capacity": 512,
+    "fine_sample_array_bytes": 524288,
+    "other_overhead": "Object/scalar headers and existing coarse buffers additional; no ART heap measurement claimed.",
+    "sample_policy": "first_N_valid_calls",
+    "totals_and_extrema": "all valid calls, including samples omitted from quantiles",
+    "empty_or_overflow_sum": null,
+    "invalid_time_sentinel": -1,
+    "interrupted": "operation threw; independent of timing validity",
+    "clock": "separate System.nanoTime diagnostic clock; not recorder/source clock"
+  },
+  "invariants": {
+    "protected_tracked_files_verified": 244,
+    "reference_patch_files_verified": 4,
+    "recorder_limits_and_backend_prefix_unchanged": true,
+    "recorder_timer_constants_unchanged": true,
+    "field_policy_and_clock_prefix_unchanged": true,
+    "contract_and_51_corpus_fixtures_unchanged": true,
+    "LmtrAppendSession_unchanged": true,
+    "both_complete_chunk_validations_retained": true,
+    "compression_framing_unchanged": true,
+    "ack_after_sync_unchanged": true,
+    "no_END_after_unrepresented_loss": true,
+    "logical_reservation_and_margin_MiB": [
+      78,
+      32
+    ],
+    "queue_capacities_unchanged": true,
+    "USB_thermometry_presentation_unchanged": true
+  },
+  "source_sha256": {
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt": "bf6326eae72abd75d8c5e935c23087e85b0178b29cbbd15f0139a047b41da780",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/HtMemoryProbe.kt": "515ce05a4677c0f55baa961033376f723278d20e3bc961afdf0e1a8298454292",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/HtRecorderStressProbe.kt": "677dc4d0d9fa7cc074fae408332cacf1d2ece76bccce6b9b0febf0bb0c92bc2f",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt": "ea7733eb482a4e978bf3ff33e22a80cc51ccde1eb140850e4a9c65415bafa764",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt": "07fba238402bb2ee11b7cfc80ec5525573a12570b93283a2a5ab362cb8ab9b0e",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/RecorderEngineTest.kt": "74a29b775ec06f6e03ef4d54880086cb4587a19f18993d3bfe9a3d4c69ce01e1",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/WriterMetricsTest.kt": "4ba3f86abd8148962f56d66fed2492524136ca654aca0073eaf3d276e73a0b0a",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderInstrumentation.kt": "99502f14c171d56e8029741e6552243b6993f0ebbed6e666e496f44e6a377a19"
+  },
+  "commands": [
+    "./gradlew --offline -p tools/lmtr-r3-host :lmtr-contract:test :lmtr-recorder:test :lmtr-field-support:test :camera-recording:test :core:test :lmtr-contract:writeRuntimeClasspath :lmtr-contract:writeTestRuntimeClasspath :lmtr-recorder:writeTestRuntimeClasspath :lmtr-field-support:writeTestRuntimeClasspath",
+    "./gradlew --offline :lmtr-recorder:assemble :lmtr-field-support:assemble :lmtr-field:assembleDebug :lmtr-field:lintDebug :app:assembleDebug :app:lintDebug",
+    "python3 -W error -m unittest discover -s tools/lmtr_v1/tests -t . -v",
+    "java -Xmx256m -cp FIELD_TEST_CLASSPATH org.lmthermal.field.HtMemoryProbe NEW_DIRECTORY [--writer-metrics]",
+    "java -Xmx256m -cp RECORDER_TEST_CLASSPATH org.lmthermal.recorder.RecordingInteropProbe NEW_DIRECTORY",
+    "python3 tools/check_lmtr_r4.py --existing NEW_ENGINE_DIRECTORY --report NEW_REPORT",
+    "python3 tools/check_lmtr_r4_field.py NEW_PROFILE_CODEC_DIRECTORY --report NEW_REPORT",
+    "python3 tools/check_lmtr_conformance.py --java PRIVATE_STDERR_LOGGING_WRAPPER --report NEW_REPORT",
+    "python3 tools/check_lmtr_hardening.py --report NEW_REPORT",
+    "python3 tools/check_lmtr_cancellation.py --report NEW_REPORT",
+    "git diff --check"
+  ],
+  "retained_intermediate_failures": [
+    {
+      "boundary": "Default Gradle cache read-only, then wrong default cache missing Kotlin plugin offline; reused documented dedicated cache without installing dependencies.",
+      "evidence": "r4-writer-metrics-initial-build.log; initial sandbox lock error also recorded in session output"
+    },
+    {
+      "boundary": "New internal recorder tests were initially picked up by the field shared-source set. Tests moved into its existing excluded engine test file; no build configuration or production visibility was relaxed.",
+      "evidence": "r4-writer-metrics-build-2.log"
+    },
+    {
+      "boundary": "New idle metric test expected one CHUNK, omitting the separate final segment_end after idle seal. Corrected expected two validations and exact observation counts [1,0]; recorder unchanged.",
+      "evidence": "initial-idle-scope-failure.xml; host-tests-final.log"
+    },
+    {
+      "boundary": "Initial conformance/hardening wrappers saw invalid JSON on subprocess stdout. Raw offending prefix was not retained; no exact cause asserted. Unchanged checks passed with VM diagnostic logging routed to stderr. No parser or assertion modified.",
+      "evidence": "r3-conformance.log; r3-hardening.log; r3-conformance-final.json; r3-hardening-2.json"
+    }
+  ],
+  "local_evidence_directory": ".local-tools/validation/writer-instrumentation-20261111/",
+  "remaining_limits": [
+    "No new ART, physical device, throughput, heap peak or sync-only cost measurement.",
+    "Synchronous clocks and observer locks may perturb scheduling, deadlines, GC and drop distribution.",
+    "Wall timers overlap and failed durations must not be mixed with successful work.",
+    "Fixed samples are first-N; quantiles are incomplete if omitted>0.",
+    "Backend includes hashes/navigation/writes/sync; append minus backend is not isolated second validation.",
+    "VM/process death can prevent finally/reporting; a blocked observer is not made bounded by exception isolation.",
+    "A separate future experiment is needed for the historical fatal API35 suite and gap-only CHUNK amplification."
+  ],
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "historical_analyzer_regression": {
+    "run": 43056135998,
+    "outcome": "B",
+    "scope": "Offline reassessment of original preserved evidence with unchanged analyzer; no new replay.",
+    "result": "same represented writer overload retained; no acceptance criteria changed"
+  }
+}

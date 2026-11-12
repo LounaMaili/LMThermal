@@ -67,7 +67,8 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     private val limits:RecorderLimits, private val backend:RecorderBackend, private val codec:Int=0,
     private val now:()->Long=System::nanoTime, private val prepareHook:()->Unit={},
     private val sealMetric:((encodeNs:Long,appendNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null,
-    private val codecMetric:((wallNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null) {
+    private val codecMetric:((wallNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null,
+    private val instrumentation: RecorderInstrumentation? = null) {
     companion object {
         // Accepted wire §14 distinguishes intake sealing from post-footer checkpoint timing.
         private const val SEAL_INTERVAL_NS=1000000000L
@@ -301,11 +302,18 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()
     }
 
+    /** Inline optional wall timing uses a separate clock; no metric callback owns a source witness. */
+    private inline fun <T> measured(phase: RecorderPhase, recordType: Int = -1, bodyBytes: Long = -1,
+        observations: Long = -1, gapEntries: Long = -1, operation: () -> T): T {
+        val metrics = instrumentation ?: return operation()
+        return metrics.measure(phase, recordType, bodyBytes, observations, gapEntries, operation)
+    }
+
     /** One file/index owner. No footer acknowledgment is counted before its sync returns. */
     private fun writeLoop() {
         var backendCloseAttempted=false
-        // Writer-owned scalar context only. No extra synchronization or diagnostic clock on
-        // successful frames; backend append covers body/footer/sync as one public boundary.
+        // Writer-owned scalar failure context. Optional metrics are separate from these witnesses;
+        // backend append still covers body/footer/sync as one undivided public boundary.
         var stage=RecorderFailureStage.WRITER_STARTUP
         var currentStreamId:String?=null;var currentSequence=-1L
         var recordOrdinal=-1L;var recordType=-1
@@ -317,7 +325,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         fun event(kind:String,time:Long,extra:Obj=emptyMap()):Obj = mapOf("kind" to kind,"entry_id" to (nextEntry++).toString(),
             "timeline_ns" to time.toString(),"segment_id" to active!!["id"])+extra
         fun checkpoint() {
-            if(append!!.uncheckpointedChunks>0) { stage=RecorderFailureStage.CHECKPOINT;append!!.checkpoint();firstUncoveredAck=null }
+            if(append!!.uncheckpointedChunks>0) { stage=RecorderFailureStage.CHECKPOINT;measured(RecorderPhase.CHECKPOINT) { append!!.checkpoint() };firstUncoveredAck=null }
         }
         fun seal() {
             if(pending.isEmpty())return
@@ -328,10 +336,20 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             val started=if(sealMetric!=null)now() else 0L
             val decoded=pending.sumOf { it.payloads.sumOf { payload -> payload.size.toLong() } }
             stage=RecorderFailureStage.CHUNK_ENCODE
-            val body=RecordingChunk.encode(header,pending,codec,limits.memoryBudgetBytes,codecMetric,now)
+            val body=RecordingChunk.encode(header,pending,codec,limits.memoryBudgetBytes,codecMetric,now,instrumentation)
             val encoded=if(sealMetric!=null)now() else 0L
             stage=RecorderFailureStage.CHUNK_VALIDATION_AND_APPEND
-            append!!.appendChunk(body)
+            var observationEntries = -1L; var gapEntries = -1L
+            if (instrumentation != null) {
+                observationEntries = 0; gapEntries = 0
+                var i = 0
+                while (i < pending.size) when (pending[i++].entry["kind"]) {
+                    "observation" -> observationEntries++; "gap" -> gapEntries++
+                }
+            }
+            measured(RecorderPhase.APPEND_CHUNK, LmtrFraming.CHUNK, body.size.toLong(), observationEntries, gapEntries) {
+                append!!.appendChunk(body)
+            }
             // Optional bounded test observer; never let diagnostics poison an acknowledged commit.
             if(sealMetric!=null)runCatching { sealMetric?.invoke(encoded-started,now()-encoded,decoded,body.size.toLong()) }
             synchronized(lock) { pendingBytes=0 }
@@ -364,7 +382,9 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         try {
             append=LmtrAppendSession(header,LmtrRecordSink { type,ordinal,previous,body ->
                 val callerStage=stage;stage=RecorderFailureStage.BACKEND_APPEND;recordOrdinal=ordinal;recordType=type
-                val record=backend.append(type,ordinal,previous,body)
+                val record=measured(RecorderPhase.BACKEND_APPEND, type, body.size.toLong()) {
+                    backend.append(type,ordinal,previous,body)
+                }
                 stage=callerStage;recordOrdinal=-1;recordType=-1;record
             },onChunkAcknowledged={ summary ->
                 val ack=now()
@@ -377,27 +397,30 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     if(writer.isEmpty())null else writer.removeFirst().also { writerQueued-=it.charge;writerFlight=it.charge;maxWriterFlight=maxOf(maxWriterFlight,writerFlight) }
                 }
                 if(work!=null) {
-                    stage=RecorderFailureStage.WRITER_ASSEMBLY;currentStreamId=work.streamId;currentSequence=work.sequence
-                    val current=streams.getValue(work.streamId)
-                    if(!current.same(work.stream)) {
-                        if(active!=null) { add(event("segment_end",timeline(work.witness),mapOf("reason" to "source_configuration_changed")),witness=work.witness);seal();active=null }
-                        streams[work.streamId]=work.stream
+                    measured(RecorderPhase.ENTRY_PROCESSING, observations=if(work.drop==null)1 else 0,
+                        gapEntries=if(work.drop!=null)1 else 0) {
+                        stage=RecorderFailureStage.WRITER_ASSEMBLY;currentStreamId=work.streamId;currentSequence=work.sequence
+                        val current=streams.getValue(work.streamId)
+                        if(!current.same(work.stream)) {
+                            if(active!=null) { add(event("segment_end",timeline(work.witness),mapOf("reason" to "source_configuration_changed")),witness=work.witness);seal();active=null }
+                            streams[work.streamId]=work.stream
+                        }
+                        if(active==null)start(work.witness,if(nextEntry==0L)"recording_start" else "source_configuration_changed")
+                        if(work.drop!=null) {
+                            add(event("gap",timeline(work.witness),(work.loss?.value() ?: mapOf("stream_id" to work.streamId,"category" to work.drop,"reason" to work.drop,
+                                "count" to "1","observation_first" to work.sequence.toString(),"observation_last" to work.sequence.toString(),
+                                "device_first" to null,"device_last" to null,"scheduled" to null,
+                                "evidence" to mapOf("basis" to "host_observation","before" to null,"after" to null)))+("stream_id" to work.streamId)),witness=work.witness)
+                            synchronized(lock){controlUsed=maxOf(0,controlUsed-controlCharge)}
+                        } else {
+                            val o=work.observation!!;val contextValue=o.context.value()
+                            val context=mapOf("id" to LmtrChunk.sha(LmtrJson.encode(contextValue)),"value" to contextValue)
+                            add(event("observation",timeline(work.witness),o.facts.value()+mapOf("stream_id" to o.streamId,
+                                "observation_sequence" to o.sequence.toString(),"context_id" to context["id"])),context,o.payloads,work.witness)
+                        }
+                        synchronized(lock){writerFlight=0}
+                        currentStreamId=null;currentSequence=-1
                     }
-                    if(active==null)start(work.witness,if(nextEntry==0L)"recording_start" else "source_configuration_changed")
-                    if(work.drop!=null) {
-                        add(event("gap",timeline(work.witness),(work.loss?.value() ?: mapOf("stream_id" to work.streamId,"category" to work.drop,"reason" to work.drop,
-                            "count" to "1","observation_first" to work.sequence.toString(),"observation_last" to work.sequence.toString(),
-                            "device_first" to null,"device_last" to null,"scheduled" to null,
-                            "evidence" to mapOf("basis" to "host_observation","before" to null,"after" to null)))+("stream_id" to work.streamId)),witness=work.witness)
-                        synchronized(lock){controlUsed=maxOf(0,controlUsed-controlCharge)}
-                    } else {
-                        val o=work.observation!!;val contextValue=o.context.value()
-                        val context=mapOf("id" to LmtrChunk.sha(LmtrJson.encode(contextValue)),"value" to contextValue)
-                        add(event("observation",timeline(work.witness),o.facts.value()+mapOf("stream_id" to o.streamId,
-                            "observation_sequence" to o.sequence.toString(),"context_id" to context["id"])),context,o.payloads,work.witness)
-                    }
-                    synchronized(lock){writerFlight=0}
-                    currentStreamId=null;currentSequence=-1
                 }
                 val tick=now()
                 if(firstPendingWitness!=null && tick-firstPendingWitness!!>=SEAL_INTERVAL_NS)seal()
@@ -408,23 +431,26 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                 if(unrepresentedLoss)recordFailureLocked(RecorderFailureStage.END_GUARD,RecorderFailureCode.UNREPRESENTED_LOSS)
                 check(!unrepresentedLoss) { "Cannot certify unjournaled delivered/admitted loss" }
             }
-            stage=RecorderFailureStage.FINALIZATION
-            val cutoff=synchronized(lock){terminationWitness!!}
-            if(active!=null)add(event("segment_end",timeline(cutoff),mapOf("reason" to reason)),witness=cutoff)
-            seal()
-            val terminal=synchronized(lock){state="finalizing";status to reason}
-            stage=RecorderFailureStage.FINALIZATION
-            append.finish(terminal.first,terminal.second,mapOf("status" to "unknown","clock_source" to "host_utc","reason" to "not_recorded"),
-                if(terminal.first=="failed")mapOf("code" to failureCode,"message" to (failure?:terminal.second)) else null)
+            val terminal = measured(RecorderPhase.FINALIZATION) {
+                stage=RecorderFailureStage.FINALIZATION
+                val cutoff=synchronized(lock){terminationWitness!!}
+                if(active!=null)add(event("segment_end",timeline(cutoff),mapOf("reason" to reason)),witness=cutoff)
+                seal()
+                val terminal=synchronized(lock){state="finalizing";status to reason}
+                stage=RecorderFailureStage.FINALIZATION
+                append.finish(terminal.first,terminal.second,mapOf("status" to "unknown","clock_source" to "host_utc","reason" to "not_recorded"),
+                    if(terminal.first=="failed")mapOf("code" to failureCode,"message" to (failure?:terminal.second)) else null)
+                terminal
+            }
             stage=RecorderFailureStage.BACKEND_CLOSE
-            backendCloseAttempted=true;backend.close()
+            backendCloseAttempted=true;measured(RecorderPhase.BACKEND_CLOSE) { backend.close() }
             stage=RecorderFailureStage.READBACK
-            val report=LmtrReader(backend.destination).use { it.check(full=false) }
+            val report=measured(RecorderPhase.READBACK) { LmtrReader(backend.destination).use { it.check(full=false) } }
             synchronized(lock){state="finalized"}
             completion.complete(RecorderResult(true,terminal.first,terminal.second,report,null,firstFailure))
         } catch(_:OutOfMemoryError) {
             allocationFailure(stage,currentStreamId,currentSequence,recordOrdinal,recordType)
-            if(!backendCloseAttempted)try { backendCloseAttempted=true;backend.close() }
+            if(!backendCloseAttempted)try { backendCloseAttempted=true;measured(RecorderPhase.BACKEND_CLOSE) { backend.close() } }
                 catch(_:Exception) { } catch(_:OutOfMemoryError) { }
             synchronized(lock){state="failed"}
             completion.complete(RecorderResult(false,"failed","allocation_failed",null,"allocation_failed",firstFailure))
@@ -434,7 +460,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             synchronized(lock){recordFailureLocked(stage,RecorderFailureCode.WRITE_OR_VALIDATION_FAILURE,
                 exceptionKind(error),currentStreamId,currentSequence,recordOrdinal,recordType,(error as? LmtrFailure)?.code)}
             // Any uncertain body/footer/sync/close halts append. Never fabricate a repair END.
-            if(!backendCloseAttempted)try { backendCloseAttempted=true;backend.close() } catch(_:Exception) { }
+            if(!backendCloseAttempted)try { backendCloseAttempted=true;measured(RecorderPhase.BACKEND_CLOSE) { backend.close() } } catch(_:Exception) { }
             synchronized(lock){stopped=true;state="failed";failure=if(allocationFailed)"allocation_failed" else error.javaClass.simpleName;intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()}
             completion.complete(if(allocationFailed)RecorderResult(false,"failed","allocation_failed",null,"allocation_failed",firstFailure)
                 else RecorderResult(false,"failed","write_or_validation_failure",null,error.toString(),firstFailure))

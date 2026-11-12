@@ -368,3 +368,11 @@ The isolated [R4 first-failure diagnostic](lmtr-r4/FIRST_FAILURE.md) adds a boun
 single-assignment witness to recorder results/snapshots and local field reports.
 It distinguishes the first observed error, current sticky loss and terminal reason;
 it changes no LMTR v1 field, safety condition or product recording interface.
+
+### R4 optional diagnostic writer timing
+
+The isolated recorder's default-disabled `RecorderInstrumentation` reports scalar,
+fixed-vocabulary timing through an independent clock; it does not affect wire events,
+source coordinates, profiles, queue/memory policy or acknowledgment boundaries.
+See [scope nesting, bounded aggregation and local-only validation](lmtr-r4/WRITER_INSTRUMENTATION.md).
+No production recording UI or R5/R6 behavior is introduced.

@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
  */
 object HtRecorderStressProbe {
     @JvmStatic fun main(args:Array<String>) = run(File(args[0]))
-    fun run(root:File,now:()->Long=System::nanoTime,platform:()->Obj={emptyMap()}) {
+    fun run(root:File,now:()->Long=System::nanoTime,instrumentWriter:Boolean=true,platform:()->Obj={emptyMap()}) {
         check(root.mkdirs())
         val input=javaClass.getResourceAsStream("/fixtures/radiometric-room-settled.raw")!!.readBytes()
         val identity=CameraSourceIdentity(Ht301ModuleProfile.metadata.copy(sourceOrigin="simulated"),
@@ -36,6 +36,7 @@ object HtRecorderStressProbe {
         fun persist() = File(root,"stress.json").writeBytes(LmtrJson.encode(mapOf("baseline" to baseline,"cases" to reports,
             "scope" to "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
             "sampling" to "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
+            "writer_metrics_mode" to if(instrumentWriter)"on" else "off",
             "forced_gc" to false,"warning" to NativeEquivalentThermometry.WARNING)))
         for(codec in 0..1) {
             val directory=File(root,"full-$codec");check(directory.mkdir())
@@ -43,9 +44,13 @@ object HtRecorderStressProbe {
             val oracle=File(directory,"oracle.jsonl").bufferedWriter()
             val adapter=FieldOracleAdapter(original,HtFieldOracle::capture,{row->oracle.write(String(LmtrJson.encode(row)));oracle.newLine()},now)
             val codecTimes=FieldDistribution();val encodeTimes=FieldDistribution();val appendTimes=FieldDistribution()
+            // Preallocate the fixed phase/type/status tables before engine workers or measured offers.
+            // Separate diagnostic clocks never advance FieldClock/intake or alter the 40 ms schedule.
+            val writerMetrics=if(instrumentWriter)FieldWriterMetrics() else null
             val engine=RecorderEngine(clock.header(),listOf(original.stream.value()),RecordingProfile.FULL,
                 FieldPreflight(RecordingProfile.FULL,20,null,codec).limits,LocalRecorderBackend(File(directory,"capture.lmtr")),
-                codec,now=now,codecMetric={ns,_,_->codecTimes.add(ns)},sealMetric={encode,append,_,_->encodeTimes.add(encode);appendTimes.add(append)})
+                codec,now=now,codecMetric={ns,_,_->codecTimes.add(ns)},sealMetric={encode,append,_,_->encodeTimes.add(encode);appendTimes.add(append)},
+                instrumentation=writerMetrics?.instrumentation)
             val intervals=FieldDistribution();val lateness=FieldDistribution();val admission=FieldDistribution()
             val peaks=mutableMapOf<String,Long>();var minimumHeadroom=Long.MAX_VALUE;var count=0;var stoppedForMemory=false;var refused:String?=null
             val before=platform();val start=now();var last=start;var lastPlatform=start
@@ -73,7 +78,8 @@ object HtRecorderStressProbe {
                 // instrumentation Check failed. An incomplete file is a recovery candidate, never success.
                 File(directory,"run-result.json").writeBytes(LmtrJson.encode(mapOf("finalized" to result.finalized,
                     "status" to result.status,"reason" to result.reason,"failure" to result.failure,
-                    "refused_admission" to refused,"snapshot" to fieldSnapshot(engine.snapshot()))))
+                    "refused_admission" to refused,"writer_metrics_mode" to if(instrumentWriter)"on" else "off",
+                    "snapshot" to fieldSnapshot(engine.snapshot()))))
                 val exitDeadline=now()+5000000000L;while(!engine.workersTerminated()){check(now()<exitDeadline);Thread.sleep(5)}
                 val snapshot=engine.snapshot();sample(true)
                 check(snapshot.maxPreparationQueuedBytes<=4194304 && snapshot.maxWriterQueuedBytes<=4194304)
@@ -88,6 +94,8 @@ object HtRecorderStressProbe {
                     "minimum_headroom_bytes" to minimumHeadroom.toString(),"java_max_bytes" to Runtime.getRuntime().maxMemory().toString(),
                     "occupied_native_rss_pss_peaks" to peaks.mapValues {it.value.toString()},
                     "platform_before" to before,"platform_before_stop" to beforeStop,"platform_after" to platform(),
+                    "writer_metrics_mode" to if(instrumentWriter)"on" else "off",
+                    "writer_metrics" to writerMetrics?.report(),
                     "snapshot" to fieldSnapshot(snapshot),"memory_guard_stopped" to stoppedForMemory,
                     "original_input_not_mutated" to input.contentEquals(javaClass.getResourceAsStream("/fixtures/radiometric-room-settled.raw")!!.readBytes())))
                 persist()

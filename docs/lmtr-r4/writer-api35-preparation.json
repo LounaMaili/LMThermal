@@ -1,0 +1,254 @@
+{
+  "status": "local_review_and_CI_preparation_only_pending_owner_authorization",
+  "base_commit": "dbfab7ee031275ba5251b00262f7aa9cfc3aa2c3",
+  "local_branch": "codex/r4-writer-api35-preparation",
+  "commit": null,
+  "pushed": false,
+  "ART_runs": 0,
+  "emulator_or_ADB_access": false,
+  "physical_access": false,
+  "original_13_snapshot_preserved": true,
+  "original_snapshot_branch": "codex/r4-writer-instrumentation",
+  "production_recorder_and_aggregate_code_identical_to_13_snapshot": true,
+  "new_performance_optimization": false,
+  "contract_queues_memory_ack_unchanged": true,
+  "compilation_findings": [
+    {
+      "issue": "Trailing lambda bound to new Boolean parameter of HtMemoryProbe.run",
+      "correction": "Name platformSample at the Android test call site; helper/body/assertions unchanged."
+    },
+    {
+      "issue": "Android shared test sources lack recorder Kotlin internal friendship",
+      "correction": "Opt-in diagnostic compile profile adds actual recorder JAR to compileDebugAndroidTestKotlin.friendPaths; all test sources retained.",
+      "limit": "Default historical compile profile for this unmerged snapshot is not claimed fixed."
+    }
+  ],
+  "test_scope_correspondence": [
+    {
+      "module": "lmtr-contract",
+      "previous": 73,
+      "instrumentation": 73,
+      "scope_note": "same_module_scope"
+    },
+    {
+      "module": "lmtr-recorder",
+      "previous": 58,
+      "instrumentation": 66,
+      "scope_note": "same_module_scope"
+    },
+    {
+      "module": "camera-recording",
+      "previous": 20,
+      "instrumentation": 20,
+      "scope_note": "same_module_scope"
+    },
+    {
+      "module": "lmtr-field-support",
+      "previous": 44,
+      "instrumentation": 49,
+      "scope_note": "same_module_scope"
+    },
+    {
+      "module": "core",
+      "previous": 234,
+      "instrumentation": 234,
+      "scope_note": "same_module_scope"
+    },
+    {
+      "module": "app",
+      "previous": 21,
+      "instrumentation": null,
+      "scope_note": "not_run_in_instrumentation_campaign"
+    }
+  ],
+  "count_equation": "450 + 8 recorder + 5 field aggregate - 21 app not run = 442",
+  "current_local_checks": {
+    "JVM": {
+      "lmtr-recorder": {
+        "tests": 66,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-field-support": {
+        "tests": 49,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "new_CI_Python_tests": 6,
+    "existing_host_full_size_fine_reports_checked": 6,
+    "APK_assembly": "target and Android-test APKs passed with lmtrWriterTimingOnly=true; no installation/execution",
+    "Android_lint": {
+      "status": "passed",
+      "errors": 0,
+      "warnings": 3
+    },
+    "syntax_and_contexts": "passed",
+    "actionlint": {
+      "available": false,
+      "version": null,
+      "installed": false
+    },
+    "shellcheck": {
+      "available": false,
+      "version": null,
+      "installed": false
+    },
+    "diff_check": "passed"
+  },
+  "host_footprint": {
+    "scope": "host_HotSpot_reachable_shallow_graph_not_ART_heap_or_peak",
+    "total_bytes": 554648,
+    "objects": 1080,
+    "compressed_oops": "true",
+    "alignment": "8",
+    "classes": {
+      "[J": {
+        "count": 128,
+        "bytes": 526336
+      },
+      "[Lorg.lmthermal.field.FieldWriterMetrics$Cell;": {
+        "count": 2,
+        "bytes": 96
+      },
+      "[Lorg.lmthermal.recorder.RecorderPhase;": {
+        "count": 1,
+        "bytes": 56
+      },
+      "java.util.concurrent.atomic.AtomicLong": {
+        "count": 2,
+        "bytes": 48
+      },
+      "org.lmthermal.field.FieldDistribution": {
+        "count": 128,
+        "bytes": 8192
+      },
+      "org.lmthermal.field.FieldTotal": {
+        "count": 768,
+        "bytes": 18432
+      },
+      "org.lmthermal.field.FieldWriterMetrics": {
+        "count": 1,
+        "bytes": 32
+      },
+      "org.lmthermal.field.FieldWriterMetrics$Cell": {
+        "count": 16,
+        "bytes": 384
+      },
+      "org.lmthermal.field.FieldWriterMetrics$Status": {
+        "count": 32,
+        "bytes": 1024
+      },
+      "org.lmthermal.recorder.RecorderInstrumentation": {
+        "count": 1,
+        "bytes": 32
+      },
+      "org.lmthermal.recorder.RecorderInstrumentation$1": {
+        "count": 1,
+        "bytes": 16
+      }
+    }
+  },
+  "footprint_limit": "Host shallow graph, excludes globals/class metadata; not ART live heap, allocation volume, RSS or peak.",
+  "lifetime_limits": [
+    "One engine retains its metric graph through Stop/reporting.",
+    "Conservatively allow two graphs overlapping across the two codecs; no forced GC.",
+    "Reports retain scalar JSON graphs, not original sample arrays or payloads.",
+    "Reporting allocates additional temporary maps/strings/sort arrays.",
+    "Runtime bytes-allocated/GC deltas start after fine-table preallocation and platform_after precedes fine JSON generation."
+  ],
+  "workflow": {
+    "path": ".github/workflows/lmtr-r4-writer-api35.yml",
+    "push_branch": "codex/r4-writer-api35-preparation",
+    "jobs": 1,
+    "mode": "on",
+    "runner": "ubuntu-24.04",
+    "API": 35,
+    "ABI": "x86_64",
+    "target": "google_apis",
+    "cameras": "none",
+    "test": "org.lmthermal.art.HtMemoryRuntimeTest#fullSizeFiniteRecorderReplayReportsCadenceAndBothCodecs",
+    "baseline": 50,
+    "observations_per_codec": 200,
+    "period_ns": 40000000,
+    "matrix": false,
+    "permissions": {
+      "contents": "read"
+    },
+    "result_roots_identical_step_scoped_count": 4,
+    "always_host_seal_and_upload": true,
+    "reviewed_source_count": 32
+  },
+  "comparison": {
+    "first_ON_run": "packaging/runtime/metric usefulness only, not paired overhead",
+    "OFF": "same APK, new checked coarse metrics still enabled, fine observer/tables absent and report null",
+    "controlled_pairing": "separately approve fixed OFF->ON and ON->OFF blocks; four fresh-process invocations, archive before disposable package reset; no favorable repeats",
+    "historical_reference": "43056135998 retained as unpaired historical context"
+  },
+  "collection_limits": [
+    "No finally/report can be promised after process/VM death.",
+    "Missing fine evidence and LMTR readback outcomes are separate axes.",
+    "Backend duration remains whole backend, not fsync-only.",
+    "Artifact ZIP byte identity requires original ZIP SHA256 versus GitHub digest, not extracted-file equivalence."
+  ],
+  "retained_negative_logs": [
+    "art-packaging-before.log",
+    "art-packaging-after.log",
+    "art-packaging-after-2.log",
+    "art-packaging-friend.log"
+  ],
+  "new_source_sha256": {
+    ".github/workflows/lmtr-r4-writer-api35.yml": "d1d82831b446ff2f8d522438c4ed89155d1ebf5016ea090d4e129b7d15a67c47",
+    "CHANGELOG.md": "36fe081c65dd1f9513c92cf78bc7c99a98a2f0793d5d8e2cf809bda8534bddcf",
+    "core/src/test/resources/fixtures/radiometric-room-settled.raw": "fde6a4b803b68fcea07ab7b428f4769d22e896f01055969f43102bdc9270f5d6",
+    "docs/LMTR_WIRE_V1.md": "b5b867ff9e5fae707fa07a4a2ebe1854d4716f993a4017a90140f2b934e539d0",
+    "docs/SPECIFICATION.md": "b524d622836bc16dd2b25519a3b131f5cef99bb6b7eef96a976d4823c1b5426b",
+    "docs/lmtr-r4/README.md": "68550d4faa206496f7aff04140c3531e47ae333051b6508dabb074ef95aee0eb",
+    "docs/lmtr-r4/WRITER_API35_PREPARATION.md": "c955003660d786a6d0917bb520ba5dacf7c970f9794356cf08ed55153b73bcc7",
+    "docs/lmtr-r4/WRITER_INSTRUMENTATION.md": "cb1199f4da48e6c10a0f64555d4898a5a865063f71630f43f5b19ad51cc6c216",
+    "docs/lmtr-r4/writer-instrumentation-validation.json": "428a91a525d4f0c107eef7f204d3c02a4ec773e30a9a9fc73113f9c7e45bb37f",
+    "lmtr-art/build.gradle.kts": "9120b1917b1ca0c4a086c29c0439ded4f450bae80ddfa2df11ed2c969d183311",
+    "lmtr-art/src/androidTest/kotlin/org/lmthermal/art/HtMemoryRuntimeTest.kt": "15475a6a57f4abe0df1976fad7d16318659f2f7ded31a9c953baf22def6a3814",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrAppendSession.kt": "572d4f785767179fa18ce3556311cb57bd6994d89ed0dda508f311f07b0f7cc9",
+    "lmtr-contract/src/test/resources/lmtr/manifest.json": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "lmtr-field-support/build.gradle.kts": "9fefb18ab8ac70b0ef76a21bc19f2965a30c4b7b3a051f318bf25386e1213fd8",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt": "bf6326eae72abd75d8c5e935c23087e85b0178b29cbbd15f0139a047b41da780",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldSafety.kt": "3da688e296b70f468252c5d3ab29cb48d521394e4447bb2b38199d0bac47dd5f",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/FieldFailureDiagnosticTest.kt": "ba52904c5295622fd8756a0664eb8653a360a3408d99f99da41d985a05b52c98",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/HtMemoryProbe.kt": "515ce05a4677c0f55baa961033376f723278d20e3bc961afdf0e1a8298454292",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/HtRecorderStressProbe.kt": "5b2c3bea584f294aa18f445cd3076e6c921e5769a069b5fd3058ab8f4e42d232",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/WriterMetricsTest.kt": "4ba3f86abd8148962f56d66fed2492524136ca654aca0073eaf3d276e73a0b0a",
+    "lmtr-recorder/build.gradle.kts": "e433657f0b2015b0592decdac090f88aaf4a7d29e7550e9bed3427a00ad48532",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt": "ea7733eb482a4e978bf3ff33e22a80cc51ccde1eb140850e4a9c65415bafa764",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderFirstFailure.kt": "57d1e6418dedf72e42e1c0ebcfb95e4a2a0e045f14fb29a7afc9002003a2afbc",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderInstrumentation.kt": "99502f14c171d56e8029741e6552243b6993f0ebbed6e666e496f44e6a377a19",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt": "07fba238402bb2ee11b7cfc80ec5525573a12570b93283a2a5ab362cb8ab9b0e",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/RecorderEngineTest.kt": "74a29b775ec06f6e03ef4d54880086cb4587a19f18993d3bfe9a3d4c69ce01e1",
+    "tools/analyze_lmtr_r4_api35.py": "513b51f87bc9bffc80b9e74192e702f590c95345735bd4cb4ba7b0cfd09fa0c7",
+    "tools/check_lmtr_r4_field.py": "c37309ba55b49af81690069b6316a729d0b19ed84d987e30e9411fb027730642",
+    "tools/check_lmtr_r4_writer_reports.py": "8dc3d455b1c742a10b56b533a3ce75584ebc6113073d757da5a8a124c6a15b35",
+    "tools/ci_tests/test_r4_writer_reports.py": "fe22988ca357ccfaee010e0cb4acf955d725b8f8b7117dbb08090de9a2e1213b",
+    "tools/lmtr-r4-art/settings.gradle.kts": "8da4af0a960aaf1ec6728e4ee421112eec9682e11a11f5ee11a968a1fbf77953",
+    "tools/validate_lmtr_r4_writer_api35.py": "8d6aadd464b4bb74ca6d61d77ee83b6072044909c287ebd73402617ca2b7f2de"
+  },
+  "local_evidence_directory": ".local-tools/validation/writer-api35-preparation-20261112/",
+  "next_authorization": "Reviewed normal commit/push of new diagnostic branch, one ON targeted run and private evidence preservation/readback only; no paired repeats, optimization, physical devices, merge or R5/R6.",
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "review_anomalies": [
+    {
+      "severity": "compile_blocker_in_original_13_snapshot",
+      "finding": "Android trailing lambda and missing internal test friendship",
+      "prepared_route": "fixed in isolated diagnostic profile; default historical profile not claimed fixed"
+    },
+    {
+      "severity": "measurement_limit",
+      "finding": "Fine preallocation precedes GC deltas; report generation can affect next codec; exact ART object layout/peak unknown"
+    },
+    {
+      "severity": "comparison_limit",
+      "finding": "OFF disables only fine metrics; updated common coarse aggregation remains enabled in both arms"
+    }
+  ]
+}
