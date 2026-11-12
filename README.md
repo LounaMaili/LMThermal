@@ -20,7 +20,16 @@ LMThermal is a native Android application with integrated camera modules; its fi
 validated real camera is the **Infiray HT-301 / T3-317-13**.
 It also preserves the authoritative protocol and thermometry research.
 [LMThermal-Desktop](https://github.com/LounaMaili/LMThermal-Desktop) is the executable
-Python/PyQt reference, diagnostic tool and fixture generator, not the final product.
+Linux/Windows companion product, Python/PyQt reference, diagnostic tool and fixture generator.
+
+## Product workspace (development branch)
+
+The Compose viewer keeps the thermal viewport visible while **Live**, **Measurements**,
+**Captures**, **Settings** and **Diagnostics** switch independent scrollable controls.
+Portrait and landscape reserve image space independent of changing ROI text. Camera
+opening and initialization remain explicit. Only still LMTX export is available;
+common LMTR recording is not enabled. English/French labels and accessible literal-center/
+full-image ROI actions are included. See [UX audit, changes and evidence](docs/ANDROID_PRODUCT_WORKSPACE.md).
 
 ## Android milestone
 

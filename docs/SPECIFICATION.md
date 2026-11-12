@@ -337,3 +337,10 @@ without returning successful partial measurements. See the
 [hardening/API and platform boundary](lmtr-r3/HARDENING_REVIEW.md). The frozen
 LMTR v1 specification and production Android/legacy Desktop semantics are unchanged;
 native Windows validation remains an external R3 gate.
+
+## Android product workspace
+
+The development workspace separates persistent image space from scrollable Live, Measurements,
+Captures, Settings and Diagnostics panels. Native coordinates, module/readiness gates and
+immutable capture semantics remain unchanged. See [workspace design and host evidence](ANDROID_PRODUCT_WORKSPACE.md).
+No production common LMTR recording is enabled.

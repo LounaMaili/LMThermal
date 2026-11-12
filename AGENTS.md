@@ -6,7 +6,7 @@ This repository is the **primary product repository for the LMThermal Android ap
 
 It also contains the source-of-truth documentation for the camera protocol, reverse-engineered hardware behavior, thermometry research, and application specification. Those validated facts must be preserved when implementing the Android product.
 
-The sibling repository `LMThermal-Desktop` is the executable desktop reference/diagnostic implementation. It is used to validate behavior, generate fixtures, compare results, and provide a readable reference implementation. It is **not** the final product target.
+The sibling repository `LMThermal-Desktop` is the Linux/Windows companion product as well as an executable reference and diagnostic implementation. It validates behavior, generates fixtures and provides parity oracles. Android remains the mobile product; product UI work must preserve those scientific and format guarantees.
 
 When both repositories are available:
 
@@ -345,13 +345,13 @@ When `LMThermal-Desktop` is available as a sibling repository:
 - keep Git histories independent;
 - commit changes separately in each repository;
 - do not duplicate large documentation blocks when a reference is sufficient;
-- do not add new Desktop-only features unless they are needed to validate or support the Android product.
+- coordinate companion Desktop product work in its own repository and focused branches; keep shared scientific contracts authoritative here.
 
 ## Scope discipline
 
 The mobile application has priority.
 
-Avoid unrelated Desktop UX work and unrelated reverse-engineering refactors while implementing Android functionality.
+Keep Android and companion Desktop UX changes focused and separately committed. Avoid unrelated reverse-engineering refactors.
 
 For substantial Android work, use focused branches, for example:
 

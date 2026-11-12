@@ -68,7 +68,8 @@ pseudolocalization also generates en-XA/ar-XB for testing. No manual LocaleConfi
 Robolectric 4.16.1/JUnit are local-test-only dependencies for actual AppCompat auto-storage
 and resource configuration on simulated API 26/32. They download their Android runtimes
 to the development cache and never ship in the app. Run `:app:testDebugUnitTest`.
-Compose UI test/JUnit and Espresso 3.7.0 are instrumentation-only; the latter uses the
+Compose UI test/JUnit is also used by local Robolectric layout tests; its host Activity
+is debug-only. Espresso 3.7.0 remains instrumentation-only and uses the
 supported input service instead of older reflection that fails on the Pixel's Android OS.
 Existing numerical/core fixtures and parity assertions are unchanged.
 

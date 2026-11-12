@@ -115,7 +115,7 @@ class CelsiusPresenter(context: Context, private val camera: StateFlow<CameraSes
                     withContext(Dispatchers.Default) {
                         val colors = CelsiusRenderer.render(measurement, settings)
                         ensureActive()
-                        val bitmap = Bitmap.createBitmap(colors.argb(), measurement.geometry.width, measurement.geometry.height, Bitmap.Config.ARGB_8888)
+                        val bitmap = Bitmap.createBitmap(colors.takeArgb(), measurement.geometry.width, measurement.geometry.height, Bitmap.Config.ARGB_8888)
                         val legend = Bitmap.createBitmap(colors.legend(), 256, 1, Bitmap.Config.ARGB_8888)
                         CelsiusPresentationSnapshot(measurement, bitmap, legend, colors.range, colors.palette,
                             (SystemClock.elapsedRealtimeNanos() - start) / 1e6)

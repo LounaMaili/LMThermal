@@ -185,3 +185,10 @@ The real export controls are exercised in English/French/expanded/RTL pseudoloca
 in portrait and landscape using a synthetic source, without USB writes. An immutable
 prepared capture survives app-language Activity recreation; the camera still releases
 and requires explicit reopen. See [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md).
+
+## Product section navigation
+
+The development workspace separates persistent image space from scrollable Live, Measurements,
+Captures, Settings and Diagnostics panels. Native coordinates, module/readiness gates and
+immutable capture semantics remain unchanged. See [workspace design and host evidence](ANDROID_PRODUCT_WORKSPACE.md).
+No production common LMTR recording is enabled.

@@ -114,4 +114,14 @@
     <string name="export_write_error">Échec de l’enregistrement. Aucun fichier incomplet n’est partagé.</string>
     <string name="export_partial_remaining">Le fournisseur ne peut pas supprimer le document partiel. Supprimez-le manuellement.</string>
     <string name="export_privacy">La capture contient la scène et les données natives/de calibration disponibles. Aucune localisation ni identité réseau ou numéro de série n’est ajouté.</string>
+    <string name="app_workspace_live">Direct</string>
+    <string name="app_workspace_measure">Mesures</string>
+    <string name="app_workspace_capture">Captures</string>
+    <string name="app_workspace_settings">Réglages</string>
+    <string name="app_workspace_diagnostics">Diagnostics</string>
+    <string name="app_workspace_aiming_hint">L’ouverture fournit un aperçu pour viser. Initialisez explicitement le mode radiométrique pour mesurer.</string>
+    <string name="app_workspace_literal_center">Inspecter le centre géométrique</string>
+    <string name="app_workspace_full_roi">Sélectionner toute l’image comme ROI</string>
+    <string name="app_workspace_recording_pending">L’enregistrement LMTR n’est pas encore disponible. Le débit, l’admission mémoire et l’intégration produit restent à valider.</string>
+    <string name="app_workspace_local_data">Les captures restent sur cet appareil jusqu’au choix d’une destination ou du partage. Aucun compte, envoi cloud ou rapport de crash automatique. Vérifiez la scène avant de partager.</string>
 </resources>

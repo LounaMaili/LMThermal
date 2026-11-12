@@ -4,6 +4,15 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Android product workspace — 2026-11-12)
+- Separate Live, Measurements, Captures, Settings and Diagnostics controls around a pinned thermal viewport in portrait/landscape; retain explicit Connect/Initialize, module gates, immutable capture export and native measurement coordinates. Add localized literal-center/full-image ROI alternatives to gestures; LMTR production recording remains unavailable.
+- Add camera-free Compose/Robolectric viewport regressions including French and 200% font scale. Compile updated device layout recipes without claiming a new ART/Pixel validation.
+
+### Fixed (Presentation ownership and release privacy — 2026-11-12)
+- Transfer the completed display-only ARGB buffer once into Bitmap construction instead of an extra full-frame IntArray copy; keep public defensive copies, exact palette/range behavior, source matrices and publication generations. Memoize Compose bitmap wrappers and use lifecycle-aware UI collection.
+- Stop release numerical evidence before JSON serialization/logcat output; retain debug diagnostics and test disabled logging. Source acquisition and thermometry are unchanged; no physical performance improvement is claimed.
+
+
 ### Added (R3 native Windows CI validation — 2026-10-13)
 
 - Added a branch-restricted, exact-SHA Windows GitHub Actions protocol with JDK17, Python3.13, bounded resources, read-only token permissions and persistent success/failure artifacts. It executes the existing independent suites and native NTFS sparse/full-integrity gate without camera or Android dependencies.

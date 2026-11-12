@@ -113,4 +113,14 @@
     <string name="export_write_error">Capture could not be saved. No incomplete file is shared.</string>
     <string name="export_partial_remaining">The provider could not delete the partial document. Remove it manually.</string>
     <string name="export_privacy">Capture includes scene imagery and available native/calibration evidence. No location, serial or network identity is added.</string>
+    <string name="app_workspace_live">Live</string>
+    <string name="app_workspace_measure">Measurements</string>
+    <string name="app_workspace_capture">Captures</string>
+    <string name="app_workspace_settings">Settings</string>
+    <string name="app_workspace_diagnostics">Diagnostics</string>
+    <string name="app_workspace_aiming_hint">Opening the camera provides an aiming preview. Initialize radiometric mode explicitly when you need measurements.</string>
+    <string name="app_workspace_literal_center">Inspect literal image center</string>
+    <string name="app_workspace_full_roi">Select full image ROI</string>
+    <string name="app_workspace_recording_pending">LMTR recording is not available yet. Recorder throughput, memory admission and production integration remain under validation.</string>
+    <string name="app_workspace_local_data">Captures stay on this device until you choose an export destination or Share. No account, cloud upload or automatic crash reporting is included. Review scene content before sharing.</string>
 </resources>

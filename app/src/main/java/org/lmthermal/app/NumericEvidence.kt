@@ -9,17 +9,20 @@ import java.io.File
  * Reset/record are serialized by the owning camera or presentation worker. Debug-only
  * persistence covers lifecycle events, deliberate diagnostics and initialized measurements.
  */
-internal class NumericEvidence(context: Context, name: String, private val tag: String) {
+internal class NumericEvidence(context: Context, name: String, private val tag: String,
+    private val diagnosticsEnabled: Boolean = BuildConfig.DEBUG) {
     private val file = File(context.filesDir, name)
     private var enabled = false
     private var count = 0
     /** Replace the previous deliberate experiment, avoiding an unbounded acquisition log. */
     fun reset() {
-        enabled = BuildConfig.DEBUG; count = 0
+        enabled = diagnosticsEnabled; count = 0
         if (enabled) file.writeText("")
     }
     /** Bound even unexpected repeated events; logcat remains supplemental evidence. */
     fun record(event: Map<String, Any?>) {
+        // Release builds must not serialize or expose experimental numeric evidence in logcat.
+        if (!diagnosticsEnabled) return
         val json = JSONObject(event).toString()
         Log.i(tag, json)
         if (enabled && count++ < MAX_EVENTS) file.appendText(json + "\n")

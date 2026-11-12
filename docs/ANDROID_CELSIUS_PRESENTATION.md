@@ -245,3 +245,10 @@ coordinates are unchanged. The System/French/English selector uses Android app l
 Locale recreation releases the camera and requires explicit reopen, so no old rendered
 Celsius is carried into a new locale session. Wrapping action rows accommodate longer labels.
 See ANDROID_LOCALIZATION.md and its camera-free synthetic layout/number tests.
+
+## Product workspace allocation update
+
+The development workspace separates persistent image space from scrollable Live, Measurements,
+Captures, Settings and Diagnostics panels. Native coordinates, module/readiness gates and
+immutable capture semantics remain unchanged. See [workspace design and host evidence](ANDROID_PRODUCT_WORKSPACE.md).
+No production common LMTR recording is enabled.

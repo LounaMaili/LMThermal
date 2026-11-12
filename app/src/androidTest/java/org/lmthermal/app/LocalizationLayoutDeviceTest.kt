@@ -120,7 +120,7 @@ class LocalizationLayoutDeviceTest {
                         // The real ROI mode/gesture path uses native cells in every locale and viewport.
                         compose.onNode(hasText(labels.getValue(R.string.measurement_mode_roi)) and hasClickAction()).performScrollTo().performClick()
                         val image = compose.onNodeWithTag("thermal-image")
-                        if (orientationName == "portrait") image.performScrollTo()
+                        if (orientationName == "portrait") image.assertIsDisplayed()
                         val viewport = image.fetchSemanticsNode().boundsInRoot
                         val controlsBeforeDrag = compose.onNode(hasText(labels.getValue(R.string.measurement_mode_roi)) and hasClickAction())
                             .fetchSemanticsNode().boundsInRoot
@@ -155,6 +155,7 @@ class LocalizationLayoutDeviceTest {
                         }
                         roiScreenshot.recycle()
                         // A transient must remove numbers/legend without changing the inspection layout.
+                        compose.onNodeWithTag("workspace-tab-measure").performScrollTo().performClick()
                         val currentSource = module.openedState.value
                         module.openedState.value = currentSource.copy(measurement = null)
                         withTimeout(5000) { while (presenter!!.state.value.measurement != null ||
@@ -166,18 +167,23 @@ class LocalizationLayoutDeviceTest {
                         module.openedState.value = currentSource
                         withTimeout(5000) { while (presenter!!.state.value.measurement == null ||
                             presenter!!.roi.state.value.statistics != roiStatistics) delay(10) }
+                        compose.onNodeWithTag("workspace-tab-capture").performScrollTo().performClick()
                         compose.onNodeWithText(labels.getValue(R.string.export_save)).performScrollTo().assertIsEnabled().performClick()
                         withTimeout(10000) { while (exporter!!.state.value.phase != ExportPhase.READY) delay(10) }
                         compose.waitForIdle()
                         compose.onNodeWithText(labels.getValue(R.string.export_destination)).performScrollTo().assertIsEnabled()
                         compose.onNodeWithText(labels.getValue(R.string.export_share)).assertIsNotEnabled()
                         compose.onNodeWithText(labels.getValue(R.string.export_cancel)).performClick()
-                        if (orientationName == "portrait") image.performScrollTo()
+                        if (orientationName == "portrait") image.assertIsDisplayed()
                         // Localized controls can wrap/scroll; assert visibility after bringing each into view.
+                        compose.onNodeWithTag("workspace-tab-live").performScrollTo().performClick()
                         for (id in listOf(R.string.camera_connect, R.string.camera_close,
-                            R.string.camera_ht301_initialize_radiometric, R.string.camera_diagnostics)) {
+                            R.string.camera_ht301_initialize_radiometric)) {
                             compose.onNodeWithText(labels.getValue(id)).performScrollTo().assertIsDisplayed()
                         }
+                        compose.onNodeWithTag("workspace-tab-diagnostics").performScrollTo().performClick()
+                        compose.onNodeWithTag("workspace-panel").assertIsDisplayed()
+                        compose.onNodeWithTag("workspace-tab-measure").performScrollTo().performClick()
                         compose.onNodeWithText(labels.getValue(R.string.measurement_locked)).performScrollTo().performClick()
                         lateinit var rangeLabel: String
                         scenario.onActivity { rangeLabel = it.getString(R.string.measurement_set_range, 25.0, 45.0) }

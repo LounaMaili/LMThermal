@@ -6,9 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -28,6 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.lmthermal.camera.*
 import org.lmthermal.core.CelsiusPalette
 import org.lmthermal.core.CelsiusPresentationSettings
@@ -43,13 +42,13 @@ import org.lmthermal.core.RoiStatistics
 @Composable
 fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter, connect: () -> Unit,
     exporter: CaptureExporter? = null, chooseDestination: () -> Unit = {}, share: () -> Unit = {}) {
-    val source by camera.state.collectAsState()
-    val rendered by presenter.state.collectAsState()
-    val settings by presenter.settings.collectAsState()
-    val pixel by presenter.pixel.collectAsState()
-    val roiSelection by presenter.roi.selection.collectAsState()
-    val roiFrame by presenter.roi.state.collectAsState()
-    val mode by presenter.roi.mode.collectAsState()
+    val source by camera.state.collectAsStateWithLifecycle()
+    val rendered by presenter.state.collectAsStateWithLifecycle()
+    val settings by presenter.settings.collectAsStateWithLifecycle()
+    val pixel by presenter.pixel.collectAsStateWithLifecycle()
+    val roiSelection by presenter.roi.selection.collectAsStateWithLifecycle()
+    val roiFrame by presenter.roi.state.collectAsStateWithLifecycle()
+    val mode by presenter.roi.mode.collectAsStateWithLifecycle()
     val ui = camera.uiFor(source.module?.id)
     val measurement = rendered.measurement?.takeIf {
         source.measurement != null && it.geometry == source.geometry && it.provenance.moduleId == source.module?.id
@@ -59,36 +58,44 @@ fun ThermalScreen(camera: AndroidCameraCoordinator, presenter: CelsiusPresenter,
         roiSelection.source?.deviceKey == source.device?.key }
     val roiStatistics = roiFrame.statistics?.takeIf { measurement != null &&
         roiFrame.measurement === measurement && roiFrame.selection == roiSelection && roi != null }
-    val roiPanelVisible = roi != null || (mode == InspectionMode.ROI && source.capabilities?.touchInspection == true &&
-        source.capabilities?.temperatureMeasurement == true)
     val selectRoi: (NativeRect) -> Unit = { presenter.roi.select(it, roiSourceKey(source), source.geometry) }
     MaterialTheme {
         Surface(Modifier.fillMaxSize()) {
-            BoxWithConstraints(Modifier.safeDrawingPadding().padding(12.dp)) {
-                if (maxWidth > maxHeight) {
-                    Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Column(Modifier.weight(2f).fillMaxHeight()) {
-                            ThermalImage(source, rendered, measurement, pixel, presenter::select, mode, roi,
-                                selectRoi, Modifier.weight(1f).fillMaxWidth())
-                            CelsiusLegend(if (measurement != null) rendered else null, roiPanelVisible)
-                            Readings(measurement, pixel, ui, mode == InspectionMode.POINT && source.capabilities?.touchInspection == true)
-                            RoiReadings(roi, roiStatistics, roiPanelVisible)
-                        }
-                        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            ScreenControls(source, settings, camera, presenter, connect, ui, exporter, chooseDestination, share)
-                        }
+            WorkspaceLayout(stringResource(R.string.app_title_status,cameraStatusText(source,ui)),stage={
+                Column(Modifier.fillMaxSize()) {
+                    ThermalImage(source,rendered,measurement,pixel,presenter::select,mode,roi,
+                        selectRoi,Modifier.weight(1f).fillMaxWidth())
+                    CelsiusLegend(if(measurement!=null)rendered else null,reserveSpace=true)
+                }
+            }) { section ->
+                when(section) {
+                    WorkspaceSection.LIVE -> {
+                        SessionControls(source,camera,connect,ui)
+                        Text(stringResource(R.string.app_workspace_aiming_hint),style=MaterialTheme.typography.bodyMedium)
+                        ui.accuracyWarning?.let { Text(stringResource(it),style=MaterialTheme.typography.bodySmall) }
                     }
-                } else {
-                    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text(stringResource(R.string.app_title_status, cameraStatusText(source, ui)), style = MaterialTheme.typography.titleLarge)
-                        val imageModifier = source.geometry?.let { Modifier.fillMaxWidth().aspectRatio(it.width.toFloat() / it.height) }
-                            ?: Modifier.fillMaxWidth().height(220.dp)
-                        ThermalImage(source, rendered, measurement, pixel, presenter::select, mode, roi, selectRoi, imageModifier)
-                        CelsiusLegend(if (measurement != null) rendered else null, roiPanelVisible)
-                        Readings(measurement, pixel, ui, mode == InspectionMode.POINT && source.capabilities?.touchInspection == true)
-                        RoiReadings(roi, roiStatistics, roiPanelVisible)
-                        ScreenControls(source, settings, camera, presenter, connect, ui, exporter, chooseDestination, share)
+                    WorkspaceSection.MEASURE -> {
+                        MeasurementControls(source,settings,presenter,ui)
+                        Readings(measurement,pixel,ui,mode==InspectionMode.POINT && source.capabilities?.touchInspection==true)
+                        RoiReadings(roi,roiStatistics,true)
+                        val canInspect=CameraUiPolicy.canInspect(source) && measurement!=null
+                        OutlinedButton(enabled=canInspect,onClick={ source.geometry?.let {
+                            presenter.roi.setMode(InspectionMode.POINT);presenter.select(NativePixel(it.width/2,it.height/2))
+                        } }) { Text(stringResource(R.string.app_workspace_literal_center)) }
+                        OutlinedButton(enabled=canInspect,onClick={ source.geometry?.let {
+                            presenter.roi.setMode(InspectionMode.ROI);presenter.roi.select(NativeRect(0,0,it.width,it.height))
+                        } }) { Text(stringResource(R.string.app_workspace_full_roi)) }
                     }
+                    WorkspaceSection.CAPTURE -> {
+                        exporter?.let { CaptureControls(it,source,{camera.state.value},presenter,chooseDestination,share) }
+                        HorizontalDivider()
+                        Text(stringResource(R.string.app_workspace_recording_pending),style=MaterialTheme.typography.bodyMedium)
+                    }
+                    WorkspaceSection.SETTINGS -> {
+                        LanguageSelector()
+                        Text(stringResource(R.string.app_workspace_local_data),style=MaterialTheme.typography.bodyMedium)
+                    }
+                    WorkspaceSection.DIAGNOSTICS -> DiagnosticsControls(source,camera,ui)
                 }
             }
         }
@@ -129,7 +136,8 @@ private fun ThermalImage(source: CameraSessionState<Bitmap>, rendered: CelsiusPr
             }
         }
     }) {
-        if (bitmap != null) Image(bitmap.asImageBitmap(), stringResource(R.string.camera_native_image_description),
+        val imageBitmap=remember(bitmap){bitmap?.asImageBitmap()}
+        if (imageBitmap != null) Image(imageBitmap, stringResource(R.string.camera_native_image_description),
             Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
         else Text(stringResource(if (source.measurement != null && rendered.error == null)
             R.string.measurement_rendering else R.string.measurement_unavailable))
@@ -194,7 +202,7 @@ private fun CelsiusLegend(rendered: CelsiusPresentationSnapshot?, reserveSpace: 
     val labelHeight = with(LocalDensity.current) { MaterialTheme.typography.labelMedium.lineHeight.toDp() } * 2
     val content: @Composable () -> Unit = {
         if (rendered?.range != null && rendered.legend != null) {
-            Image(rendered.legend.asImageBitmap(), stringResource(R.string.measurement_celsius_scale_description),
+            Image(remember(rendered.legend){rendered.legend.asImageBitmap()}, stringResource(R.string.measurement_celsius_scale_description),
                 Modifier.fillMaxWidth().height(12.dp), contentScale = ContentScale.FillBounds)
             Row(Modifier.fillMaxWidth().then(if (reserveSpace) Modifier.height(tickHeight) else Modifier),
                 horizontalArrangement = Arrangement.SpaceBetween) {
@@ -230,20 +238,32 @@ private fun Readings(measurement: ThermalMeasurement?, pixel: NativePixel?, ui: 
         it.low.celsius, it.low.pixel.x, it.low.pixel.y)) }
 }
 
-/** Capabilities control visibility, while supported actions control enablement. Module diagnostics are optional extensions. */
+/** Everyday connection actions stay explicit; a preview or tab selection sends no controls. */
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-private fun ScreenControls(source: CameraSessionState<Bitmap>, settings: CelsiusPresentationSettings,
-    camera: AndroidCameraCoordinator, presenter: CelsiusPresenter, connect: () -> Unit, ui: CameraUiBindings,
-    exporter: CaptureExporter?, chooseDestination: () -> Unit, share: () -> Unit) {
+private fun SessionControls(source:CameraSessionState<Bitmap>,camera:AndroidCameraCoordinator,
+    connect:()->Unit,ui:CameraUiBindings) {
+    Text(stringResource(ui.modelLabel))
+    source.error?.let { Text(stringResource(cameraErrorResource(it.code)),color=MaterialTheme.colorScheme.error) }
+    FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+        Button(onClick=connect,enabled=CameraUiPolicy.canPerform(source,CameraAction.CONNECT)) { Text(stringResource(R.string.camera_connect)) }
+        OutlinedButton(onClick=camera::close,enabled=CameraUiPolicy.canPerform(source,CameraAction.CLOSE)) { Text(stringResource(R.string.camera_close)) }
+    }
+    if(CameraUiPolicy.showInitialize(source)) Button(onClick={camera.perform(CameraAction.INITIALIZE_MEASUREMENT)},
+        enabled=CameraUiPolicy.canPerform(source,CameraAction.INITIALIZE_MEASUREMENT)) { Text(stringResource(ui.initializeLabel)) }
+}
+
+/** Palette/range and inspection actions retain the existing measurement authority and policy guards. */
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun MeasurementControls(source:CameraSessionState<Bitmap>,settings:CelsiusPresentationSettings,
+    presenter:CelsiusPresenter,ui:CameraUiBindings) {
     var palettesOpen by remember { mutableStateOf(false) }
     var rangeOpen by remember { mutableStateOf(false) }
-    var diagnosticsOpen by remember { mutableStateOf(false) }
-    exporter?.let { CaptureControls(it, source, { camera.state.value }, presenter, chooseDestination, share) }
     if (CameraUiPolicy.showTemperatureControls(source)) {
         if (source.capabilities?.touchInspection == true) {
-            val mode by presenter.roi.mode.collectAsState()
-            val selection by presenter.roi.selection.collectAsState()
+            val mode by presenter.roi.mode.collectAsStateWithLifecycle()
+            val selection by presenter.roi.selection.collectAsStateWithLifecycle()
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(selected = mode == InspectionMode.POINT, onClick = { presenter.roi.setMode(InspectionMode.POINT) },
                     label = { Text(stringResource(R.string.measurement_mode_point)) })
@@ -269,29 +289,23 @@ private fun ScreenControls(source: CameraSessionState<Bitmap>, settings: Celsius
         OutlinedButton(onClick = { rangeOpen = true }) { Text(stringResource(R.string.measurement_set_range, settings.locked.lower, settings.locked.upper)) }
         ui.accuracyWarning?.let { Text(stringResource(it), style = MaterialTheme.typography.bodySmall) }
     }
-    HorizontalDivider()
-    Text(stringResource(ui.modelLabel)); Text(cameraStatusText(source, ui))
-    source.error?.let { Text(stringResource(cameraErrorResource(it.code))) }
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Button(onClick = connect, enabled = CameraUiPolicy.canPerform(source, CameraAction.CONNECT)) { Text(stringResource(R.string.camera_connect)) }
-        OutlinedButton(onClick = camera::close, enabled = CameraUiPolicy.canPerform(source, CameraAction.CLOSE)) { Text(stringResource(R.string.camera_close)) }
+
+    if(!CameraUiPolicy.showTemperatureControls(source)) Text(stringResource(R.string.measurement_unavailable))
+    if(rangeOpen && CameraUiPolicy.showTemperatureControls(source)) RangeDialog(settings.locked,{rangeOpen=false}) {
+        presenter.setLocked(it);rangeOpen=false
     }
-    if (CameraUiPolicy.showInitialize(source)) Button(onClick = { camera.perform(CameraAction.INITIALIZE_MEASUREMENT) },
-        enabled = CameraUiPolicy.canPerform(source, CameraAction.INITIALIZE_MEASUREMENT)) { Text(stringResource(ui.initializeLabel)) }
-    Text(stringResource(R.string.camera_callback_fps, source.statistics.callbackFps), style = MaterialTheme.typography.labelMedium)
-    LanguageSelector()
-    TextButton(onClick = { diagnosticsOpen = !diagnosticsOpen }) { Text(stringResource(
-        if (diagnosticsOpen) R.string.camera_hide_diagnostics else R.string.camera_diagnostics)) }
-    if (diagnosticsOpen) {
-        source.module?.let { module -> source.geometry?.let { geometry -> Text(stringResource(R.string.camera_module_metadata,
-            module.id.value, module.modelId, geometry.width, geometry.height)) } }
-        Text(stringResource(R.string.camera_diagnostic_counts, source.statistics.received, source.statistics.replaced, source.statistics.malformed))
-        val diagnostics by camera.diagnostics.collectAsState()
-        diagnostics?.invoke()
-    }
-    if (rangeOpen && CameraUiPolicy.showTemperatureControls(source)) RangeDialog(settings.locked, { rangeOpen = false }) {
-        presenter.setLocked(it); rangeOpen = false
-    }
+}
+
+/** Advanced module diagnostics are separate from everyday controls and still governed by the module. */
+@Composable
+private fun DiagnosticsControls(source:CameraSessionState<Bitmap>,camera:AndroidCameraCoordinator,ui:CameraUiBindings) {
+    Text(cameraStatusText(source,ui))
+    source.module?.let { module -> source.geometry?.let { geometry -> Text(stringResource(R.string.camera_module_metadata,
+        module.id.value,module.modelId,geometry.width,geometry.height)) } }
+    Text(stringResource(R.string.camera_callback_fps,source.statistics.callbackFps))
+    Text(stringResource(R.string.camera_diagnostic_counts,source.statistics.received,source.statistics.replaced,source.statistics.malformed))
+    val diagnostics by camera.diagnostics.collectAsStateWithLifecycle()
+    diagnostics?.invoke()
 }
 
 /** Invalid text leaves the current range untouched. Resources supply messages, not core exception text. */
@@ -323,7 +337,7 @@ private fun RangeDialog(initial: CelsiusRange, dismiss: () -> Unit, apply: (Cels
 @OptIn(ExperimentalLayoutApi::class)
 private fun CaptureControls(exporter: CaptureExporter, source: CameraSessionState<Bitmap>, currentSource: () -> CameraSessionState<Bitmap>, presenter: CelsiusPresenter,
     chooseDestination: () -> Unit, share: () -> Unit) {
-    val state by exporter.state.collectAsState()
+    val state by exporter.state.collectAsStateWithLifecycle()
     val canCapture = org.lmthermal.exchange.CaptureFreeze.canCapture(source)
     val busy = state.phase in setOf(ExportPhase.PREPARING, ExportPhase.READY, ExportPhase.WRITING)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
