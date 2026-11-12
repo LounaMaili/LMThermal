@@ -68,7 +68,10 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     private val now:()->Long=System::nanoTime, private val prepareHook:()->Unit={},
     private val sealMetric:((encodeNs:Long,appendNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null,
     private val codecMetric:((wallNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null,
-    private val instrumentation: RecorderInstrumentation? = null) {
+    private val instrumentation: RecorderInstrumentation? = null,
+    // Isolated phase3 experiment; default OFF preserves every reference decision/byte.
+    private val experimentalLossRuns:Boolean = false,
+    private val flowObserver:RecorderFlowObserver? = null) {
     companion object {
         // Accepted wire §14 distinguishes intake sealing from post-footer checkpoint timing.
         private const val SEAL_INTERVAL_NS=1000000000L
@@ -78,12 +81,26 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         private const val CONTROL_ENTRY_BYTES=32768L
         private const val MAX_OBSERVATION_METADATA_BYTES=16384
     }
+    private var flowFailures=0L
+    /** Optional diagnostic exceptions never replace a recorder failure or affect ACK/END. */
+    private fun flow(kind:RecorderFlowKind,witness:Long=Long.MIN_VALUE,pendingWitness:Long=Long.MIN_VALUE,
+        observations:Long=-1,gaps:Long=-1,delta:Long=0,sequence:Long=-1,runCount:Long=-1) {
+        val observer=flowObserver ?: return
+        synchronized(lock) {
+            try { observer.record(kind,intake.peekFirst()?.witness ?: Long.MIN_VALUE,
+                writer.peekFirst()?.witness ?: Long.MIN_VALUE,pendingWitness,witness,controlUsed,acknowledged,
+                prepQueued,writerQueued,pendingBytes,observations,gaps,delta,sequence,runCount) }
+            catch(_:Throwable) {if(flowFailures<Long.MAX_VALUE)flowFailures++}
+        }
+    }
+    /** Long.MAX_VALUE means at least that many errors; no overflow/wrap or exactness claim. */
+    fun flowDiagnosticFailures():Long=synchronized(lock){flowFailures}
     private val header=FrozenJson(header).value()
     private val origin=this.header["timeline"].obj()["origin_monotonic_ns"].d()
     private val lock=Object()
     private data class Intake(val offer:RecordingOffer,val witness:Long,val drop:String?=null,val loss:FrozenJson?=null)
     private data class Work(val observation:PreparedObservation?,val streamId:String,val sequence:Long,val witness:Long,
-        val stream:FrozenJson,val drop:String?,val charge:Long,val loss:FrozenJson?=null)
+        val stream:FrozenJson,val drop:String?,val charge:Long,val loss:FrozenJson?=null,val lossRun:OverloadLossRun?=null)
     private val intake=ArrayDeque<Intake>();private val writer=ArrayDeque<Work>()
     private val streams=mutableMapOf<String,FrozenJson>()
     private val nextSequence=mutableMapOf<String,Long>()
@@ -158,7 +175,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             return@synchronized Admission.PREPARATION_OVERLOAD
         }
         intake.add(Intake(offer,witness));prepQueued+=offer.chargedBytes;accepted++
-        maxPrep=maxOf(maxPrep,prepQueued);lock.notifyAll();Admission.ACCEPTED
+        maxPrep=maxOf(maxPrep,prepQueued);flow(RecorderFlowKind.ADMIT,witness,sequence=offer.sequence);lock.notifyAll();Admission.ACCEPTED
     }
     /** Loss entries release the heavy owner immediately; their materializer is never called. */
     private fun lightOffer(id:String,sequence:Long,stream:FrozenJson)=RecordingOffer(id,sequence,stream,1){error("Loss must not materialize source data")}
@@ -181,6 +198,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     }
     /** First normal termination wins. Resource failures can upgrade it, never reopen intake. */
     fun stop(reason:String="user_stop", interrupted:Boolean=false):CompletableFuture<RecorderResult> = synchronized(lock) {
+        flow(RecorderFlowKind.STOP)
         if(!stopped)terminateLocked(if(interrupted)"interrupted" else "completed",reason,null)
         completion
     }
@@ -212,6 +230,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         failureSlot.capture(stage,code,kind,streamId,sequence,ordinal,type,lastWitness,accepted,acknowledged,
             prepDrops,writerDrops,controlUsed,prepQueued,writerQueued,prepFlight,writerFlight,pendingBytes,unrepresentedLoss,detailCode)
         firstFailure=failureSlot
+        flow(RecorderFlowKind.FIRST_FAILURE,sequence=sequence)
     }
     /** Classify only fixed categories: never retain exception text, class names or object graphs. */
     private fun exceptionKind(error:Exception):RecorderExceptionKind = when(error) {
@@ -237,7 +256,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             unrepresentedLoss=true
             terminateLocked("failed","loss_journal_exhausted","loss_journal_exhausted",stage,RecorderFailureCode.LOSS_JOURNAL_EXHAUSTED,streamId=streamId,sequence=sequence);return false
         }
-        controlUsed+=controlCharge;return true
+        controlUsed+=controlCharge;flow(RecorderFlowKind.RESERVE,delta=controlCharge,sequence=sequence);return true
     }
 
     /** Preparation owns one item outside its bounded queue; writer overload becomes ordered loss evidence. */
@@ -251,6 +270,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     if(intake.isEmpty())return@synchronized null
                     intake.removeFirst().also { if(it.drop==null){prepQueued-=it.offer.chargedBytes;prepFlight=it.offer.chargedBytes;maxPrepFlight=maxOf(maxPrepFlight,prepFlight)} }
                 } ?: break
+                flow(RecorderFlowKind.PREPARATION_TAKE,item.witness,sequence=item.offer.sequence)
                 unresolvedIntake=true;currentStreamId=item.offer.streamId;currentSequence=item.offer.sequence
                 prepareHook()
                 var prepared:PreparedObservation?=null;var drop=item.drop
@@ -278,7 +298,15 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     // The writer owns the resolved byte/JSON owners, never the deferred HT source.
                     // Keep its byte capacity unchanged; count the actual prepared ownership.
                     val charge=prepared?.ownedBytes ?: 0L
-                    writer.add(Work(prepared,item.offer.streamId,item.offer.sequence,item.witness,stream,drop,charge,item.loss))
+                    // Every overload was already reserved independently above. Extend only the
+                    // locked QUEUED tail: a dequeued/in-flight run can no longer change.
+                    val eligible=experimentalLossRuns && OverloadLossRun.eligible(drop,item.loss)
+                    val merged=eligible && writer.peekLast()?.lossRun?.extend(item.offer.streamId,stream,drop,
+                        item.offer.sequence,item.witness,item.loss)==true
+                    if(!merged) {
+                        val run=if(eligible)OverloadLossRun(item.offer.streamId,stream,drop!!,item.offer.sequence,item.witness) else null
+                        writer.add(Work(prepared,item.offer.streamId,item.offer.sequence,item.witness,stream,drop,charge,item.loss,run))
+                    }
                     writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;unresolvedIntake=false;currentStreamId=null;currentSequence=-1;lock.notifyAll()
                 }
             }
@@ -336,11 +364,13 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             val started=if(sealMetric!=null)now() else 0L
             val decoded=pending.sumOf { it.payloads.sumOf { payload -> payload.size.toLong() } }
             stage=RecorderFailureStage.CHUNK_ENCODE
+            flow(RecorderFlowKind.SEAL_BEGIN,pendingWitness=firstPendingWitness ?: Long.MIN_VALUE)
             val body=RecordingChunk.encode(header,pending,codec,limits.memoryBudgetBytes,codecMetric,now,instrumentation)
+            flow(RecorderFlowKind.ENCODE_VALIDATED,pendingWitness=firstPendingWitness ?: Long.MIN_VALUE)
             val encoded=if(sealMetric!=null)now() else 0L
             stage=RecorderFailureStage.CHUNK_VALIDATION_AND_APPEND
             var observationEntries = -1L; var gapEntries = -1L
-            if (instrumentation != null) {
+            if (instrumentation != null || flowObserver != null) {
                 observationEntries = 0; gapEntries = 0
                 var i = 0
                 while (i < pending.size) when (pending[i++].entry["kind"]) {
@@ -348,12 +378,14 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                 }
             }
             measured(RecorderPhase.APPEND_CHUNK, LmtrFraming.CHUNK, body.size.toLong(), observationEntries, gapEntries) {
+                flow(RecorderFlowKind.APPEND_BEGIN,pendingWitness=firstPendingWitness ?: Long.MIN_VALUE,observations=observationEntries,gaps=gapEntries)
                 append!!.appendChunk(body)
             }
             // Optional bounded test observer; never let diagnostics poison an acknowledged commit.
             if(sealMetric!=null)runCatching { sealMetric?.invoke(encoded-started,now()-encoded,decoded,body.size.toLong()) }
             synchronized(lock) { pendingBytes=0 }
             pending.clear();firstPendingWitness=null
+            flow(RecorderFlowKind.SEAL_END)
             if(append!!.uncheckpointedChunks==0)firstUncoveredAck=null
             stage=callerStage;currentStreamId=callerStream;currentSequence=callerSequence
         }
@@ -371,6 +403,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             pending.add(PendingEntry(entry,active!!,context,payloads))
             if(firstPendingWitness==null)firstPendingWitness=witness
             synchronized(lock){pendingBytes+=bytes;maxPending=maxOf(maxPending,pendingBytes)}
+            flow(RecorderFlowKind.PENDING_ADD,witness,pendingWitness=firstPendingWitness!!)
             if(pendingBytes>=limits.preferredChunkBytes)seal()
         }
         fun start(witness:Long,why:String) {
@@ -383,12 +416,15 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             append=LmtrAppendSession(header,LmtrRecordSink { type,ordinal,previous,body ->
                 val callerStage=stage;stage=RecorderFailureStage.BACKEND_APPEND;recordOrdinal=ordinal;recordType=type
                 val record=measured(RecorderPhase.BACKEND_APPEND, type, body.size.toLong()) {
-                    backend.append(type,ordinal,previous,body)
+                    flow(RecorderFlowKind.BACKEND_BEGIN,pendingWitness=firstPendingWitness ?: Long.MIN_VALUE)
+                    val appended=backend.append(type,ordinal,previous,body)
+                    flow(RecorderFlowKind.BACKEND_DURABLE_RETURN,pendingWitness=firstPendingWitness ?: Long.MIN_VALUE)
+                    appended
                 }
                 stage=callerStage;recordOrdinal=-1;recordType=-1;record
             },onChunkAcknowledged={ summary ->
                 val ack=now()
-                synchronized(lock) { acknowledged=summary["observations"].d();chunks=summary["chunks"].d() }
+                synchronized(lock) { acknowledged=summary["observations"].d();chunks=summary["chunks"].d();flow(RecorderFlowKind.ACK,pendingWitness=firstPendingWitness ?: Long.MIN_VALUE) }
                 if(firstUncoveredAck==null)firstUncoveredAck=ack
             },onCheckpointAcknowledged={ synchronized(lock){checkpoints++};firstUncoveredAck=null },validationBudget=limits.memoryBudgetBytes)
             while(true) {
@@ -397,6 +433,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     if(writer.isEmpty())null else writer.removeFirst().also { writerQueued-=it.charge;writerFlight=it.charge;maxWriterFlight=maxOf(maxWriterFlight,writerFlight) }
                 }
                 if(work!=null) {
+                    flow(RecorderFlowKind.WRITER_TAKE,work.witness,sequence=work.sequence,runCount=(work.lossRun?.count ?: 1).toLong())
                     measured(RecorderPhase.ENTRY_PROCESSING, observations=if(work.drop==null)1 else 0,
                         gapEntries=if(work.drop!=null)1 else 0) {
                         stage=RecorderFailureStage.WRITER_ASSEMBLY;currentStreamId=work.streamId;currentSequence=work.sequence
@@ -407,11 +444,16 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                         }
                         if(active==null)start(work.witness,if(nextEntry==0L)"recording_start" else "source_configuration_changed")
                         if(work.drop!=null) {
-                            add(event("gap",timeline(work.witness),(work.loss?.value() ?: mapOf("stream_id" to work.streamId,"category" to work.drop,"reason" to work.drop,
+                            add(event("gap",timeline(work.witness),(work.loss?.value() ?: work.lossRun?.facts() ?: mapOf("stream_id" to work.streamId,"category" to work.drop,"reason" to work.drop,
                                 "count" to "1","observation_first" to work.sequence.toString(),"observation_last" to work.sequence.toString(),
                                 "device_first" to null,"device_last" to null,"scheduled" to null,
                                 "evidence" to mapOf("basis" to "host_observation","before" to null,"after" to null)))+("stream_id" to work.streamId)),witness=work.witness)
-                            synchronized(lock){controlUsed=maxOf(0,controlUsed-controlCharge)}
+                            synchronized(lock){
+                                val released=controlCharge*(work.lossRun?.count ?: 1)
+                                controlUsed=maxOf(0,controlUsed-released)
+                                flow(RecorderFlowKind.RELEASE,work.witness,pendingWitness=firstPendingWitness ?: Long.MIN_VALUE,
+                                    delta=-released,sequence=work.sequence,runCount=(work.lossRun?.count ?: 1).toLong())
+                            }
                         } else {
                             val o=work.observation!!;val contextValue=o.context.value()
                             val context=mapOf("id" to LmtrChunk.sha(LmtrJson.encode(contextValue)),"value" to contextValue)

@@ -16,7 +16,9 @@ import java.util.concurrent.TimeUnit
  */
 object HtRecorderStressProbe {
     @JvmStatic fun main(args:Array<String>) = run(File(args[0]))
-    fun run(root:File,now:()->Long=System::nanoTime,instrumentWriter:Boolean=true,platform:()->Obj={emptyMap()}) {
+    fun run(root:File,now:()->Long=System::nanoTime,instrumentWriter:Boolean=true,traceWriterFlow:Boolean=false,experimentalLossRuns:Boolean=false,
+        diagnosticClock:RecorderMetricClock=RecorderMetricClock(System::nanoTime),
+        diagnosticClockDomain:String="System.nanoTime",platform:()->Obj={emptyMap()}) {
         check(root.mkdirs())
         val input=javaClass.getResourceAsStream("/fixtures/radiometric-room-settled.raw")!!.readBytes()
         val identity=CameraSourceIdentity(Ht301ModuleProfile.metadata.copy(sourceOrigin="simulated"),
@@ -37,6 +39,7 @@ object HtRecorderStressProbe {
             "scope" to "finite_saved_HT_fixture_replay_no_Compose_USB_or_physical_admission",
             "sampling" to "occupied heap each observation; native/RSS/PSS at ~500ms; natural GC only; peaks may be missed",
             "writer_metrics_mode" to if(instrumentWriter)"on" else "off",
+            "flow_trace_enabled" to traceWriterFlow,"experimental_loss_runs" to experimentalLossRuns,
             "forced_gc" to false,"warning" to NativeEquivalentThermometry.WARNING)))
         for(codec in 0..1) {
             val directory=File(root,"full-$codec");check(directory.mkdir())
@@ -47,10 +50,13 @@ object HtRecorderStressProbe {
             // Preallocate the fixed phase/type/status tables before engine workers or measured offers.
             // Separate diagnostic clocks never advance FieldClock/intake or alter the 40 ms schedule.
             val writerMetrics=if(instrumentWriter)FieldWriterMetrics() else null
+            // A separately supplied clock must share the intake domain for age comparisons.
+            // Never reuse a scripted policy callback: diagnostic reads must not advance it.
+            val flowTrace=if(traceWriterFlow)RecorderFlowTrace(2048,diagnosticClock) else null
             val engine=RecorderEngine(clock.header(),listOf(original.stream.value()),RecordingProfile.FULL,
                 FieldPreflight(RecordingProfile.FULL,20,null,codec).limits,LocalRecorderBackend(File(directory,"capture.lmtr")),
                 codec,now=now,codecMetric={ns,_,_->codecTimes.add(ns)},sealMetric={encode,append,_,_->encodeTimes.add(encode);appendTimes.add(append)},
-                instrumentation=writerMetrics?.instrumentation)
+                instrumentation=writerMetrics?.instrumentation,experimentalLossRuns=experimentalLossRuns,flowObserver=flowTrace)
             val intervals=FieldDistribution();val lateness=FieldDistribution();val admission=FieldDistribution()
             val peaks=mutableMapOf<String,Long>();var minimumHeadroom=Long.MAX_VALUE;var count=0;var stoppedForMemory=false;var refused:String?=null
             val before=platform();val start=now();var last=start;var lastPlatform=start
@@ -79,9 +85,13 @@ object HtRecorderStressProbe {
                 File(directory,"run-result.json").writeBytes(LmtrJson.encode(mapOf("finalized" to result.finalized,
                     "status" to result.status,"reason" to result.reason,"failure" to result.failure,
                     "refused_admission" to refused,"writer_metrics_mode" to if(instrumentWriter)"on" else "off",
+            "flow_trace_enabled" to traceWriterFlow,"experimental_loss_runs" to experimentalLossRuns,
                     "snapshot" to fieldSnapshot(engine.snapshot()))))
                 val exitDeadline=now()+5000000000L;while(!engine.workersTerminated()){check(now()<exitDeadline);Thread.sleep(5)}
                 val snapshot=engine.snapshot();sample(true)
+                if(flowTrace!=null)File(directory,"writer-flow.json").writeBytes(LmtrJson.encode(
+                    flowTrace.report()+mapOf("observer_failures" to engine.flowDiagnosticFailures().toString(),
+                    "loss_runs" to experimentalLossRuns,"clock_domain" to diagnosticClockDomain)))
                 check(snapshot.maxPreparationQueuedBytes<=4194304 && snapshot.maxWriterQueuedBytes<=4194304)
                 File(directory,"preflight.json").writeBytes(LmtrJson.encode(FieldPreflight(RecordingProfile.FULL,20,null,codec).report()+mapOf("physical" to false)))
                 val verdict=if(result.finalized && refused==null && !stoppedForMemory && count==200 && snapshot.acknowledged==200L && snapshot.preparationDrops==0L && snapshot.writerDrops==0L)"completed_no_drops" else "retained_failure"
@@ -95,6 +105,7 @@ object HtRecorderStressProbe {
                     "occupied_native_rss_pss_peaks" to peaks.mapValues {it.value.toString()},
                     "platform_before" to before,"platform_before_stop" to beforeStop,"platform_after" to platform(),
                     "writer_metrics_mode" to if(instrumentWriter)"on" else "off",
+            "flow_trace_enabled" to traceWriterFlow,"experimental_loss_runs" to experimentalLossRuns,
                     "writer_metrics" to writerMetrics?.report(),
                     "snapshot" to fieldSnapshot(snapshot),"memory_guard_stopped" to stoppedForMemory,
                     "original_input_not_mutated" to input.contentEquals(javaClass.getResourceAsStream("/fixtures/radiometric-room-settled.raw")!!.readBytes())))

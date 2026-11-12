@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Isolated R4 loss-run prototype and ART preparation — 2026-11-12)
+
+- Prototype bounded compatible queued overload ranges with every original witness retained as optional experimental evidence; keep one reservation per loss,32/33 saturation behavior, deadlines, both full validations, durable ACK and78+32MiB policy unchanged. Default OFF; no integration into existing PRs.
+- Add deterministic source/session/category/qualification, concurrent Stop, append-before/after-sync, recovery, observer-failure, saturation and byte-parity checks; independent Python verifies all sequence/payload/witness facts. Aged cases reduce50 to19 CHUNKs per codec on the controlled host, not demonstrated ART throughput.
+- Prepare fixed-size flow diagnostics and explicit camera-free ART test arguments/build/lint. Document unavailable individual sync timestamps, added diagnostic memory, grouped-commit failure exposure, architecture alternatives and exact future Windows/ART gates. No new Actions, device access, merge or production activation.
+
 ### Added (Deterministic R4 backlog investigation — 2026-11-12)
 
 - Demonstrated with unchanged engine/queues/deadlines and controlled software clocks that aged work can amplify four CHUNKs into fifty, including32 gap-only CHUNKs, while retaining exact chronology/payloads and both full validations.

@@ -248,3 +248,8 @@ hosted runs, including control-reserve exhaustion and correctly refused finaliza
 Host allocation improvements and Linux/Windows Desktop fixture results do not establish
 Full25Hz ART throughput or safe physical admission. See [memory limits](docs/lmtr-r4/CAMPAIGN_MEMORY.md)
 and [R6 gates](docs/lmtr-r4/R6_INTEGRATION_GATES.md). No Pixel/HT-301 access occurred.
+
+
+The isolated [phase3 loss-run experiment](docs/lmtr-r4/PHASE3_RESULTS.md) and
+[future ART protocol](docs/lmtr-r4/PHASE3_ART_PLAN.md) preserve current reservations
+and defaults. They are review candidates, not production recording activation.

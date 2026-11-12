@@ -29,7 +29,17 @@ class HtMemoryRuntimeTest {
         // Only the fine observer/tables differ. Common coarse metrics and all workload/guards stay on.
         val mode = InstrumentationRegistry.getArguments().getString("lmtrWriterMetrics") ?: "on"
         require(mode == "on" || mode == "off") { "Unsupported fine-metrics mode" }
-        HtRecorderStressProbe.run(root,android.os.SystemClock::elapsedRealtimeNanos,instrumentWriter=mode == "on") {
+        // These explicit opt-in switches do not select extra tests or initialize a camera.
+        fun enabled(key:String):Boolean {
+            val value=InstrumentationRegistry.getArguments().getString(key) ?: "off"
+            require(value=="on" || value=="off") { "Unsupported $key" };return value=="on"
+        }
+        val trace=enabled("lmtrWriterFlowTrace");val runs=enabled("lmtrExperimentalLossRuns")
+        require(!runs || trace) { "Experimental runs require comparable flow diagnostics" }
+        HtRecorderStressProbe.run(root,android.os.SystemClock::elapsedRealtimeNanos,instrumentWriter=mode == "on",
+            traceWriterFlow=trace,experimentalLossRuns=runs,
+            diagnosticClock=org.lmthermal.recorder.RecorderMetricClock(android.os.SystemClock::elapsedRealtimeNanos),
+            diagnosticClockDomain="android.elapsedRealtimeNanos") {
             val info=Debug.MemoryInfo();Debug.getMemoryInfo(info)
             mapOf("runtime" to Debug.getRuntimeStats(),"native_allocated_bytes" to Debug.getNativeHeapAllocatedSize(),
                 "pss_bytes" to info.totalPss*1024L)

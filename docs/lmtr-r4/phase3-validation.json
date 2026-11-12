@@ -1,0 +1,498 @@
+{
+  "status": "passed",
+  "scope": "controlled host prototype; no ART or physical validation",
+  "cases": [
+    {
+      "group": "reference",
+      "case": "aged-0",
+      "source_sha256": "36b60a5e07ae36665904e53a89c5c76af308ae4be1a628605e1b09daa7da6675",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 50,
+      "finalized": true,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": null,
+      "source_unchanged": true
+    },
+    {
+      "group": "reference",
+      "case": "aged-1",
+      "source_sha256": "548eca2e391dee84e080baa34f0fff8211330407e98f7ea0b2e0502f3e48bed3",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 50,
+      "finalized": true,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": null,
+      "source_unchanged": true
+    },
+    {
+      "group": "reference",
+      "case": "fresh-0",
+      "source_sha256": "a63d17437e781bffada29c16883d01318dedcc572275a54b9db0dcebae356b20",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 4,
+      "finalized": true,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": null,
+      "source_unchanged": true
+    },
+    {
+      "group": "reference",
+      "case": "fresh-1",
+      "source_sha256": "e5a43ca106172563658cf9be49504f739aa60c7bdd14b9e7d9263362fbc83a3c",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 4,
+      "finalized": true,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": null,
+      "source_unchanged": true
+    },
+    {
+      "group": "reference",
+      "case": "gap-sync-failure-0",
+      "source_sha256": "c13de261b31ba89d20df15ec517cc9e18d0473a0f01b0e73a485e60542c7facb",
+      "observations": 17,
+      "missing": 31,
+      "chunks": 48,
+      "finalized": false,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": {
+        "code": "WRITE_OR_VALIDATION_FAILURE",
+        "control_bytes": "0",
+        "stage": "BACKEND_APPEND"
+      },
+      "source_unchanged": true
+    },
+    {
+      "group": "reference",
+      "case": "gap-sync-failure-1",
+      "source_sha256": "6b20799c3e3f5cf3fae5d5794d1fcb0ac1b16e1b9a7cc969aee30b01f684e7de",
+      "observations": 17,
+      "missing": 31,
+      "chunks": 48,
+      "finalized": false,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": {
+        "code": "WRITE_OR_VALIDATION_FAILURE",
+        "control_bytes": "0",
+        "stage": "BACKEND_APPEND"
+      },
+      "source_unchanged": true
+    },
+    {
+      "group": "reference",
+      "case": "overflow-0",
+      "source_sha256": "ace322d66308a24c656eacc791bfcd1f4a71d184538debfa0b95db0cca8c1d4b",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 49,
+      "finalized": false,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": {
+        "code": "LOSS_JOURNAL_EXHAUSTED",
+        "control_bytes": "1048576",
+        "stage": "WRITER_LOSS_RESERVE"
+      },
+      "source_unchanged": true
+    },
+    {
+      "group": "reference",
+      "case": "overflow-1",
+      "source_sha256": "16d3dc1a4fa3d588ac0a1a6f919c46afcd80ac02867aa3d98c6c2c2c48963810",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 49,
+      "finalized": false,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": {
+        "code": "LOSS_JOURNAL_EXHAUSTED",
+        "control_bytes": "1048576",
+        "stage": "WRITER_LOSS_RESERVE"
+      },
+      "source_unchanged": true
+    },
+    {
+      "group": "prototype",
+      "case": "aged-0",
+      "source_sha256": "faa15bce4bd6ff1a90971ab4f8be3b742040563849b1c529f8e9e0032de3a68f",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 19,
+      "finalized": true,
+      "retained_run_witnesses": 32,
+      "journal_peak_bytes": 1048576,
+      "first_failure": null,
+      "source_unchanged": true
+    },
+    {
+      "group": "prototype",
+      "case": "aged-1",
+      "source_sha256": "305a5af896b6597a6560799036e94aed79d0ed4de2582554c6588745116b2407",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 19,
+      "finalized": true,
+      "retained_run_witnesses": 32,
+      "journal_peak_bytes": 1048576,
+      "first_failure": null,
+      "source_unchanged": true
+    },
+    {
+      "group": "prototype",
+      "case": "fresh-0",
+      "source_sha256": "b53849412bb615c73819314d20b3dafe85cdd1da36b1188f3e572d4595542c38",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 3,
+      "finalized": true,
+      "retained_run_witnesses": 32,
+      "journal_peak_bytes": 1048576,
+      "first_failure": null,
+      "source_unchanged": true
+    },
+    {
+      "group": "prototype",
+      "case": "fresh-1",
+      "source_sha256": "09f59940260ac7d69164f957176aefbe0de3be38f9618d99f1b732ca688555fe",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 3,
+      "finalized": true,
+      "retained_run_witnesses": 32,
+      "journal_peak_bytes": 1048576,
+      "first_failure": null,
+      "source_unchanged": true
+    },
+    {
+      "group": "prototype",
+      "case": "gap-sync-failure-0",
+      "source_sha256": "17ad9665fa0bfacdd759f8cfbeceebd19e7133710511fb3d6b309d3d654d9721",
+      "observations": 17,
+      "missing": 0,
+      "chunks": 17,
+      "finalized": false,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": {
+        "code": "WRITE_OR_VALIDATION_FAILURE",
+        "control_bytes": "0",
+        "stage": "BACKEND_APPEND"
+      },
+      "source_unchanged": true
+    },
+    {
+      "group": "prototype",
+      "case": "gap-sync-failure-1",
+      "source_sha256": "45c8a145cd376b7fd6c0cded9d90331185ef2e1fcb2fbe4d056d53714eed1476",
+      "observations": 17,
+      "missing": 0,
+      "chunks": 17,
+      "finalized": false,
+      "retained_run_witnesses": 0,
+      "journal_peak_bytes": 1048576,
+      "first_failure": {
+        "code": "WRITE_OR_VALIDATION_FAILURE",
+        "control_bytes": "0",
+        "stage": "BACKEND_APPEND"
+      },
+      "source_unchanged": true
+    },
+    {
+      "group": "prototype",
+      "case": "overflow-0",
+      "source_sha256": "745872f57ab1dcd86a1e6d254da21b68292ef5e6f78bd78145352ce3456d3822",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 18,
+      "finalized": false,
+      "retained_run_witnesses": 32,
+      "journal_peak_bytes": 1048576,
+      "first_failure": {
+        "code": "LOSS_JOURNAL_EXHAUSTED",
+        "control_bytes": "1048576",
+        "stage": "WRITER_LOSS_RESERVE"
+      },
+      "source_unchanged": true
+    },
+    {
+      "group": "prototype",
+      "case": "overflow-1",
+      "source_sha256": "85c1558860cac35be407a2cea320b30555e5a63cdb1c665a6c346e0e95387f5a",
+      "observations": 17,
+      "missing": 32,
+      "chunks": 18,
+      "finalized": false,
+      "retained_run_witnesses": 32,
+      "journal_peak_bytes": 1048576,
+      "first_failure": {
+        "code": "LOSS_JOURNAL_EXHAUSTED",
+        "control_bytes": "1048576",
+        "stage": "WRITER_LOSS_RESERVE"
+      },
+      "source_unchanged": true
+    }
+  ],
+  "ack_boundaries": [
+    {
+      "case": "0-false",
+      "source_sha256": "955c4415343581916f92df53815d98a0105fb04c85b3dddb6044f05c2f8706f9",
+      "live_acknowledged": 0,
+      "forensic_observations": 0,
+      "unknown_tail": true,
+      "source_unchanged": true
+    },
+    {
+      "case": "0-true",
+      "source_sha256": "8151be879b8616bdae6cf08cf7d8a3409681dbc6908256fe92f84089ee2340c1",
+      "live_acknowledged": 0,
+      "forensic_observations": 1,
+      "unknown_tail": true,
+      "source_unchanged": true
+    },
+    {
+      "case": "1-false",
+      "source_sha256": "0f93338f8e98a8f5055d1c94809798d826df22e7c9e6298c38567bbb9d1d2e2c",
+      "live_acknowledged": 0,
+      "forensic_observations": 0,
+      "unknown_tail": true,
+      "source_unchanged": true
+    },
+    {
+      "case": "1-true",
+      "source_sha256": "4ff92abef96c6e2a31f89ce1000abb7dd57d65b52681035b35da034176c88833",
+      "live_acknowledged": 0,
+      "forensic_observations": 1,
+      "unknown_tail": true,
+      "source_unchanged": true
+    }
+  ],
+  "qualified_source_gaps": {
+    "events": 6,
+    "known_missing": 5,
+    "unknown_count_events": 1,
+    "source_sha256": "3a926f006de6308f273b48659f8047c038920cac90ba7cd029b4347a141255a0"
+  },
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "source_base": "facf86f121d68f796dff7a4e6957c8069d8dd546",
+  "default_reference_binary_parity": {
+    "status": "passed",
+    "cases": [
+      {
+        "case": "aged-0",
+        "reference": "36b60a5e07ae36665904e53a89c5c76af308ae4be1a628605e1b09daa7da6675",
+        "current": "36b60a5e07ae36665904e53a89c5c76af308ae4be1a628605e1b09daa7da6675",
+        "equal": true
+      },
+      {
+        "case": "aged-1",
+        "reference": "548eca2e391dee84e080baa34f0fff8211330407e98f7ea0b2e0502f3e48bed3",
+        "current": "548eca2e391dee84e080baa34f0fff8211330407e98f7ea0b2e0502f3e48bed3",
+        "equal": true
+      },
+      {
+        "case": "fresh-0",
+        "reference": "a63d17437e781bffada29c16883d01318dedcc572275a54b9db0dcebae356b20",
+        "current": "a63d17437e781bffada29c16883d01318dedcc572275a54b9db0dcebae356b20",
+        "equal": true
+      },
+      {
+        "case": "fresh-1",
+        "reference": "e5a43ca106172563658cf9be49504f739aa60c7bdd14b9e7d9263362fbc83a3c",
+        "current": "e5a43ca106172563658cf9be49504f739aa60c7bdd14b9e7d9263362fbc83a3c",
+        "equal": true
+      },
+      {
+        "case": "gap-sync-failure-0",
+        "reference": "c13de261b31ba89d20df15ec517cc9e18d0473a0f01b0e73a485e60542c7facb",
+        "current": "c13de261b31ba89d20df15ec517cc9e18d0473a0f01b0e73a485e60542c7facb",
+        "equal": true
+      },
+      {
+        "case": "gap-sync-failure-1",
+        "reference": "6b20799c3e3f5cf3fae5d5794d1fcb0ac1b16e1b9a7cc969aee30b01f684e7de",
+        "current": "6b20799c3e3f5cf3fae5d5794d1fcb0ac1b16e1b9a7cc969aee30b01f684e7de",
+        "equal": true
+      },
+      {
+        "case": "overflow-0",
+        "reference": "ace322d66308a24c656eacc791bfcd1f4a71d184538debfa0b95db0cca8c1d4b",
+        "current": "ace322d66308a24c656eacc791bfcd1f4a71d184538debfa0b95db0cca8c1d4b",
+        "equal": true
+      },
+      {
+        "case": "overflow-1",
+        "reference": "16d3dc1a4fa3d588ac0a1a6f919c46afcd80ac02867aa3d98c6c2c2c48963810",
+        "current": "16d3dc1a4fa3d588ac0a1a6f919c46afcd80ac02867aa3d98c6c2c2c48963810",
+        "equal": true
+      },
+      {
+        "case": "interop/analysis-0",
+        "reference": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+        "current": "2862a5d95479a2c9f7af03200f6852219e95573a4e106c332617a1317a4eee8b",
+        "equal": true
+      },
+      {
+        "case": "interop/analysis-1",
+        "reference": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+        "current": "8133e0a319d5b5eab13b87b8b43d075bd4fee35156387e731a412dc6b239fca4",
+        "equal": true
+      },
+      {
+        "case": "interop/full-0",
+        "reference": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+        "current": "d8002bba93d07fcfc15cd6cc9820ab8f04c14c06f1924584193c1db0c35e8760",
+        "equal": true
+      },
+      {
+        "case": "interop/full-1",
+        "reference": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+        "current": "b106ecec51e15607229862759e235a3d249ffd1fea79153272840c8bbdcee3e6",
+        "equal": true
+      },
+      {
+        "case": "interop/independent-native-acquisition",
+        "reference": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+        "current": "b3ab1db661eb3e625fdac049645db66e5b90700197bf610944a11641586142d8",
+        "equal": true
+      },
+      {
+        "case": "interop/multistream-geometry",
+        "reference": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+        "current": "ab85bc78e0482a5b6334e649520f59f0f4d9d17804bf74c8dd0f4e939a1e90b7",
+        "equal": true
+      },
+      {
+        "case": "interop/native-0",
+        "reference": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+        "current": "aa3f19f20c4a8701c442d3259649c7123b82ff9b90be2c202e018afa85884feb",
+        "equal": true
+      },
+      {
+        "case": "interop/native-1",
+        "reference": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+        "current": "5b1721e94f264067506e5b72a6516a2e3d9fe65393351969da94980a909e20a0",
+        "equal": true
+      },
+      {
+        "case": "interop/navigation-failure",
+        "reference": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+        "current": "2bd8327213ba63d5bd14a76e00ddc8c79b8aa27503f38b9a0350bfa9cee8f1f7",
+        "equal": true
+      },
+      {
+        "case": "interop/preview-only",
+        "reference": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+        "current": "ac5605e0699d707f10be55221ff0f8dd5c697ccb16e6fbf415b8b7d326a0117a",
+        "equal": true
+      },
+      {
+        "case": "interop/represented-source-failure",
+        "reference": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+        "current": "cd35da5d84f7d42671e4899a23c465abd9427d26c05772f66d40e70ceb77fa35",
+        "equal": true
+      },
+      {
+        "case": "interop/temperature-only",
+        "reference": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+        "current": "749d72fb034661aa907fdab4b183a648c548d3b83fbaaa0bd394b926a1e0d182",
+        "equal": true
+      },
+      {
+        "case": "interop/torn-tail",
+        "reference": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+        "current": "fc8dc352a688cebc82412e3e698011168f78b2b3c4b6a15c55cf8fc85ba93c1f",
+        "equal": true
+      },
+      {
+        "case": "interop/unjournaled-loss",
+        "reference": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+        "current": "f5ded502c15786c7ae4e5792d86848ca62cb0537e50948149839c164f2bcd1c9",
+        "equal": true
+      }
+    ]
+  },
+  "test_executions": {
+    "lmtr-contract": {
+      "tests": 75,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-recorder": {
+      "tests": 80,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "camera-recording": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lmtr-field-support": {
+      "tests": 60,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "core": {
+      "tests": 234,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "source_sha256": {
+    "camera-recording/build.gradle.kts": "e732d6dc82a2021eaebe1df81593cf788da93795d1a195d2e295fe79acdaebf0",
+    "lmtr-art/src/androidTest/kotlin/org/lmthermal/art/HtMemoryRuntimeTest.kt": "4df57f451e1c1877175729162b5a0764fcb03cd699c4553410e956ed1a7f6320",
+    "lmtr-field-support/build.gradle.kts": "9fde231175ee791f30ffff6e6f3f1f1d9425318aba1a3088ef852fd3fcfd2e71",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/HtRecorderStressProbe.kt": "eb41403e47c5387f3e518f9c309bafce2bb5e1bc20569991ce574610cc73f6c7",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt": "d22582ec938ab71eada587107ed1adbfe5d72238dea293e063e4325f4fe256c7",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/RecorderBacklogProbe.kt": "6b9fd6b3693efc70d06a8cffef4ecef5d76ba9c82370252de553008d3ac45db4",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/OverloadLossRun.kt": "90542c22a6b99912f12b63205b0e42c964650c4abf2f09f91431c5bafd1ed169",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderFlowDiagnostics.kt": "a6b9bc1eae86731bd0f548c35678f717c27b3e8dd2c788b8c8b26dab43dc9037",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/AckBoundaryProbe.kt": "006faeda8cefea8fb371c828950b3b996e75ec067e874f36807f6225f438259a",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/OverloadLossRunTest.kt": "4084bd9c82a918ae73a23cca32a3304a566e01f9cfcba51993d961388d67d75c",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/QualifiedLossProbe.kt": "ee4d7ea2327cb21c5cc9f7a423899ed71693ba5d3ed62b2c53a67a08553bcc67",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/RecorderFlowTraceTest.kt": "4b8df81d6f4133413e01912860d1a81b05b9cc48022df1beb2a13f3a7e6e5414",
+    "tools/check_lmtr_r4_loss_runs.py": "8a31eb7d8e8311de04c5390e4b85073883b3b4f7b08c2339b3738539f8b6a093"
+  },
+  "prepared_apks": {
+    "lmtr-art-debug.apk": {
+      "bytes": 1876851,
+      "sha256": "6a72ca28e8f7bfc8cfe1b75d93a99f2b847877178f6f18db3e82bbb9907419fa"
+    },
+    "lmtr-art-debug-androidTest.apk": {
+      "bytes": 2566049,
+      "sha256": "1cfc9fb76efae84c92f0bcf12910c52c1499bf7d72cded513e4a725a1a233a2d"
+    }
+  },
+  "apk_build": "passed_offline_project_local_sdk",
+  "lint": {
+    "errors": 0,
+    "warnings": [
+      "DataExtractionRules",
+      "MissingApplicationIcon"
+    ]
+  },
+  "python_reference_tests": 64,
+  "engine_readback_cases": 14,
+  "art_executed": false,
+  "new_actions_runs": 0,
+  "device_access": false,
+  "queues_or_memory_policy_changed": false,
+  "frozen_wire_schema_corpus_changed": false,
+  "default_experiment_enabled": false
+}

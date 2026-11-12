@@ -386,3 +386,12 @@ and [R6 prerequisites](lmtr-r4/R6_INTEGRATION_GATES.md). The sibling Desktop
 [R5 draft](https://github.com/LounaMaili/LMThermal-Desktop/pull/4) provides camera-free
 read-only timeline/ROI/palette analysis; real Android LMTR interoperability remains
 pending. No product recording activation, camera/thermometry change or merge follows.
+
+
+### Isolated phase3 recorder experiment
+
+The [loss-run design](lmtr-r4/LOSS_RUNS_DESIGN.md) adds default-OFF experimental
+queued-overload coalescing and optional bounded flow diagnostics on a separate branch.
+Every original per-loss reservation and witness remains; no frozen v1, queue, memory,
+validation or durable-ACK change. [Results](lmtr-r4/PHASE3_RESULTS.md) and
+[ART preparation](lmtr-r4/PHASE3_ART_PLAN.md) do not activate any product feature.

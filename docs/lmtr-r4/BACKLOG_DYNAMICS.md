@@ -160,3 +160,10 @@ END bypass or memory-policy change is proposed as a workaround.
    authorization; neither host tests nor ART can certify the Pixel/HT-301 gate.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.
+
+
+## Phase3 isolated follow-up
+
+[Prototype results](PHASE3_RESULTS.md) and [design](LOSS_RUNS_DESIGN.md) investigate
+narrow bounded loss runs; the reference engine/history above remains preserved.
+[ART preparation](PHASE3_ART_PLAN.md) is not an executed campaign.

@@ -70,10 +70,11 @@ object RecorderBacklogProbe {
     /** Prime a durable prefix, block the second CHUNK, reserve exactly32 losses,
      * then compare fresh/aged witnesses or attempt the unrepresentable33rd loss.
      */
-    fun runCase(directory:File,codec:Int,aged:Boolean,overflow:Boolean=false,failLastGap:Boolean=false):Obj {
+    fun runCase(directory:File,codec:Int,aged:Boolean,overflow:Boolean=false,failLastGap:Boolean=false,coalescing:Boolean=false,flowTrace:RecorderFlowTrace?=null,concurrentStop:Boolean=false,withTrace:Boolean=false,observer:RecorderFlowObserver?=null):Obj {
         check(directory.mkdirs())
         val module=SimulatedRecordingModule(width=256,height=128)
         val clock=AtomicLong(0)
+        val actualTrace=flowTrace ?: if(withTrace)RecorderFlowTrace(2048,RecorderMetricClock(clock::get)) else null
         val file=File(directory,"capture.lmtr")
         val backend=DelayedBackend(clock,file)
         val firstPass=AtomicLong();val secondPass=AtomicLong()
@@ -84,10 +85,14 @@ object RecorderBacklogProbe {
         val limits=RecorderLimits(maxObservationBytes=3145728)
         check(limits.reservedBytes==78L*1048576 && limits.controlBytes==CONTROL)
         val recorder=RecorderEngine(SimulatedRecordingModule.header(listOf(module),codec),listOf(module.stream),
-            RecordingProfile.FULL,limits,backend,codec,now=clock::get,instrumentation=instrumentation)
+            RecordingProfile.FULL,limits,backend,codec,now=clock::get,instrumentation=instrumentation,experimentalLossRuns=coalescing,flowObserver=observer ?: actualTrace)
         backend.engine.set(recorder)
         val originals=mutableMapOf<Long,PreparedObservation>()
+        val intakeWitnesses=mutableMapOf<Long,Long>()
         fun offer(sequence:Long):Admission {
+            // Vary original loss witnesses without advancing the clock by a sealing interval.
+            if(coalescing && sequence>=2)clock.incrementAndGet()
+            intakeWitnesses[sequence]=clock.get()
             val value=module.observation(sequence)
             originals[sequence]=RecordingProfiles.select(value,RecordingProfile.FULL)
             return recorder.admit(value)
@@ -130,7 +135,12 @@ object RecorderBacklogProbe {
                 assertEquals(CONTROL,first.controlBytes);assertEquals(lastSequence,first.observationSequence)
             }
             if(failLastGap)backend.failLastGapSequence=lastSequence
-            recorder.stop()
+            if(concurrentStop) {
+                val stoppers=(0 until 4).map { Thread { repeat(25){recorder.stop()} }.also { it.start() } }
+                stoppers.forEach { it.join(5000);check(!it.isAlive) }
+                assertEquals(Admission.STOPPED,recorder.admit(module.observation(lastSequence+1)))
+                assertNull("Stop cannot acknowledge a blocked backend",recorder.awaitStop(10))
+            } else recorder.stop()
             if(aged)clock.addAndGet(2*SECOND)
             backend.release.countDown()
             val result=recorder.awaitStop(30000) ?: error("Stop timed out")
@@ -139,7 +149,7 @@ object RecorderBacklogProbe {
             assertEquals(0L,snapshot.controlBytes)
             assertEquals(0L,snapshot.preparationQueuedBytes);assertEquals(0L,snapshot.writerQueuedBytes)
             assertEquals(0L,snapshot.preparationInFlightBytes);assertEquals(0L,snapshot.writerInFlightBytes)
-            assertEquals(firstPass.get(),secondPass.get())
+            assertEquals("first failure=${result.firstFailure?.detailCode}, terminal=${result.failure}",firstPass.get(),secondPass.get())
             assertEquals(backend.chunkAttempts.toLong(),firstPass.get())
             assertEquals(0L,instrumentation.failures().first);assertEquals(0L,instrumentation.failures().second)
             assertEquals(!(overflow || failLastGap),result.finalized)
@@ -153,7 +163,7 @@ object RecorderBacklogProbe {
             assertEquals(if(result.finalized)"full" else "full_verified_prefix",report["integrity_scope"])
             val summary=report["summary"].obj()
             assertEquals(snapshot.acknowledged,summary["observations"].d())
-            assertEquals(expectedLosses-(if(failLastGap)1 else 0),summary["known_missing_observations"].d())
+            assertEquals(expectedLosses-(if(failLastGap) { if(coalescing)expectedLosses else 1 } else 0),summary["known_missing_observations"].d())
             if(!result.finalized)assertEquals(true,report["unknown_tail"])
             val expected=mutableListOf<Obj>()
             val gapSequences=mutableListOf<Long>()
@@ -169,7 +179,15 @@ object RecorderBacklogProbe {
                         for(e in chunk.metadata["entries"].arr().map { it.obj() }) {
                             assertEquals(nextEntry++,e["entry_id"].d())
                             assertTrue(e["timeline_ns"].d()>=previousTimeline);previousTimeline=e["timeline_ns"].d()
-                            if(e["kind"]=="gap")gapSequences.add(e["observation_first"].d())
+                            if(e["kind"]=="gap") {
+                                val first=e["observation_first"].d();val last=e["observation_last"].d()
+                                gapSequences.addAll(first..last)
+                                if(coalescing && last>first) {
+                                    val evidence=e["extensions"].obj()["org.lmthermal.diagnostic.loss-witnesses"].obj()["data"].obj()
+                                    assertEquals((first..last).map { intakeWitnesses.getValue(it).toString() },evidence["intake_monotonic_ns"].arr())
+                                    assertEquals(intakeWitnesses.getValue(first),e["timeline_ns"].d())
+                                }
+                            }
                             if(e["kind"]=="observation") {
                                 val sequence=e["observation_sequence"].d();val source=originals.getValue(sequence)
                                 val roles=source.payloads.associate { p ->
@@ -196,7 +214,9 @@ object RecorderBacklogProbe {
                 "chunks" to summary["chunks"],"first_validation_calls" to firstPass.get().toString(),
                 "second_validation_calls" to secondPass.get().toString(),"trace" to backend.rows,
                 "file_sha256" to beforeHash,"kotlin_report" to report,"original_payloads" to expected,
-                "scope" to "controlled synthetic software clock; not measured ART throughput or physical recording")
+                "coalescing" to coalescing,"flow_trace" to actualTrace?.report(),
+                "flow_observer_failures" to recorder.flowDiagnosticFailures().toString(),
+                "offered_intake_witnesses" to intakeWitnesses.mapKeys { it.key.toString() }.mapValues { it.value.toString() },"scope" to "controlled synthetic software clock; not measured ART throughput or physical recording")
             File(directory,"probe.json").writeBytes(LmtrJson.encode(summaryRow))
             return summaryRow
         } finally {backend.release.countDown();recorder.stop();recorder.awaitStop(30000)}
