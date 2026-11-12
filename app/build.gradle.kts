@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -5,12 +7,13 @@ plugins {
 }
 android {
     namespace = "org.lmthermal.app"
-    compileSdk = 35
+    compileSdk = 36
+    buildToolsVersion = "36.0.0"
     ndkVersion = "28.0.13004108"
     defaultConfig {
         applicationId = "org.lmthermal.app"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionCode = 1
         versionName = "0.1.0-foundation"
@@ -18,6 +21,21 @@ android {
         resourceConfigurations += listOf("en", "fr")
         ndk { abiFilters += "arm64-v8a" }
         externalNativeBuild { cmake { cppFlags += "-std=c++17" } }
+    }
+    // No key is generated or defaulted to debug. Release remains unsigned without this opt-in file.
+    providers.environmentVariable("LMTHERMAL_SIGNING_PROPERTIES").orNull?.let { path ->
+        val settings = Properties().apply { file(path).inputStream().use { load(it) } }
+        val required = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
+        require(required.all { !settings.getProperty(it).isNullOrBlank() }) { "Incomplete release signing properties" }
+        val keyStore = file(settings.getProperty("storeFile"))
+        require(keyStore.isFile) { "Release keystore is unavailable" }
+        val releaseSigning = signingConfigs.create("ownerRelease") {
+            storeFile = keyStore
+            storePassword = settings.getProperty("storePassword")
+            keyAlias = settings.getProperty("keyAlias")
+            keyPassword = settings.getProperty("keyPassword")
+        }
+        buildTypes.getByName("release").signingConfig = releaseSigning
     }
     // Test APK only: sanitized goldens never ship in the product APK.
     sourceSets.getByName("androidTest").assets.srcDir("../core/src/test/resources")

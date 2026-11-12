@@ -344,3 +344,9 @@ The development workspace separates persistent image space from scrollable Live,
 Captures, Settings and Diagnostics panels. Native coordinates, module/readiness gates and
 immutable capture semantics remain unchanged. See [workspace design and host evidence](ANDROID_PRODUCT_WORKSPACE.md).
 No production common LMTR recording is enabled.
+
+## Isolated distribution preparation
+
+See [Play preparation](PLAY_PREPARATION.md) for the API 36/unsigned bundle branch,
+static native packaging checks and remaining privacy, signing and runtime gates.
+No store release or common LMTR recorder is enabled.

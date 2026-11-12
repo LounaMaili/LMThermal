@@ -31,6 +31,15 @@ opening and initialization remain explicit. Only still LMTX export is available;
 common LMTR recording is not enabled. English/French labels and accessible literal-center/
 full-image ROI actions are included. See [UX audit, changes and evidence](docs/ANDROID_PRODUCT_WORKSPACE.md).
 
+See also [the cross-product checkpoint and remaining gates](docs/PHASE4_PRODUCT_STATUS.md).
+
+## Google Play preparation
+
+The isolated Play-preparation branch targets API 36 and can build unsigned release AAB/APK
+artifacts. See [technical readiness and owner gates](docs/PLAY_PREPARATION.md). Signing,
+policy/branding, native runtime qualification and submission remain pending; no Play release
+is implied.
+
 ## Android milestone
 
 The first mobile foundation is a small Kotlin/Compose application in this repository:

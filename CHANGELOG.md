@@ -4,6 +4,12 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Isolated Google Play preparation — 2026-11-12)
+- Target/compile API 36 with build tools 36.0.0, retain min 26/arm64-only/native modules, and prepare unsigned AAB/APK builds with optional external owner-provisioned signing properties. No key generation, store account access or submission.
+- Add a technical adaptive icon and pre-31 backup exclusions without changing capture/USB behavior.
+- Add host ELF64/ZIP 16 KiB alignment checks and refusal tests, current official Play requirements, draft privacy content and explicit licensing/signing/device/behavior-change gates. Static inspection is not ART, physical or Play-delivery certification.
+
+
 ### Added (Android product workspace — 2026-11-12)
 - Separate Live, Measurements, Captures, Settings and Diagnostics controls around a pinned thermal viewport in portrait/landscape; retain explicit Connect/Initialize, module gates, immutable capture export and native measurement coordinates. Add localized literal-center/full-image ROI alternatives to gestures; LMTR production recording remains unavailable.
 - Add camera-free Compose/Robolectric viewport regressions including French and 200% font scale. Compile updated device layout recipes without claiming a new ART/Pixel validation.

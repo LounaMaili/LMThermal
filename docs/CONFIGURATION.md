@@ -2,8 +2,8 @@
 
 Install JDK 17 and Android SDK packages:
 
-- `platforms;android-35`
-- `build-tools;35.0.0`
+- `platforms;android-36`
+- `build-tools;36.0.0`
 - `ndk;28.0.13004108`
 - `cmake;3.22.1`
 
@@ -94,3 +94,12 @@ This does not open USB or initialize radiometry. Configuration recreation uses t
 ViewModel; locale changes and ordinary background stops release as defined in
 [ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md). `CameraEntryDeviceTest` verifies
 repeat entry on the Pixel without opening the camera.
+
+## Isolated Play preparation
+
+The Play-preparation branch compiles/targets API 36 with build tools 36.0.0.
+Run `:app:bundleRelease :app:assembleRelease` for unsigned technical artifacts.
+`LMTHERMAL_SIGNING_PROPERTIES` may later name a private properties file containing
+`storeFile`, `storePassword`, `keyAlias`, `keyPassword`; all are required together.
+No key is created or debug-signing fallback selected. Do not set this variable for
+unsigned preparation or commit its file/values. See [release readiness](PLAY_PREPARATION.md).

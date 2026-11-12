@@ -8,3 +8,12 @@ local.properties
 
 # Kotlin incremental compiler state, not source.
 .kotlin/
+
+# Owner-provisioned release secrets are never part of source.
+*.keystore
+*.jks
+*signing*.properties
+
+# Host-side release inspection tools generate local Python bytecode.
+__pycache__/
+*.pyc
