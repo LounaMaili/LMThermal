@@ -1,0 +1,14 @@
+{
+  "campaign": "fixed-schema-pattern-cache-01",
+  "reference": "27f09249bd3867b20ddd83eafd81ec121ee09d4f",
+  "arms": [
+    "reference-on",
+    "candidate-on",
+    "candidate-on",
+    "reference-on"
+  ],
+  "per_arm": "same one selected ART method; 50 baseline + 200 Full observations per codec",
+  "retries": 0,
+  "expected_global_run_number": 4,
+  "maximum_global_runs": 5
+}

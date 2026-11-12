@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 fixed-schema pattern candidate — 2026-11-12)
+- Precompile only the seven pinned registry regexes; keep every independent validation/match and all wire, queue, memory, ACK and loss invariants. Added parallel valid/invalid matcher regressions and deterministic gap-only CHUNK tests for both codecs.
+- Retain an unfavorable host timing result alongside14.6% lower per-thread allocations; prepare an order-balanced reference/candidate/candidate/reference ART comparison without retries or changed workloads. No physical-device access or production recording UI.
+
+
 ### Added (Controlled R4 campaign — 2026-11-12)
 - Added an isolated predeclared fine-metrics OFF/ON/ON/OFF hosted emulator comparison, fresh target processes and complete per-arm collection, with no physical device access, retry, queue/budget/wire or workload change.
 
