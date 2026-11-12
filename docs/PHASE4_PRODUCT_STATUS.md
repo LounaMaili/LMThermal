@@ -18,8 +18,8 @@ The previous campaign was preserved, not assumed integrated:
 
 | Branch | Work | Evidence / limit |
 | --- | --- | --- |
-| LMThermal `codex/android-product-workspace` | Fixed image stage, Live/Measure/Capture/Settings/Diagnostics; en/fr; existing module/export/readiness APIs | 234 core + 26 local app tests; APK/instrumentation compilation; debug lint; no ART |
-| LMThermal `codex/android-play-preparation` | Child of workspace; API 36, unsigned AAB/APK, optional external signing config, icon/backup rules, static ELF/ZIP audit | Same 260 host tests; release lint/build; four aligned libraries; no runtime/Play submission |
+| LMThermal `codex/android-product-workspace` | Fixed image stage, Live/Measure/Capture/Settings/Diagnostics; en/fr; existing module/export/readiness APIs | 234 core + 27 local app tests; APK/instrumentation compilation; debug lint; no ART |
+| LMThermal `codex/android-play-preparation` | Child of workspace; API 36, unsigned AAB/APK, optional external signing config, icon/backup rules, static ELF/ZIP audit | Same 261 host tests; release lint/build; four aligned libraries; no runtime/Play submission |
 | Desktop `codex/desktop-product-workspace` | Owned Home/document tabs, explicit live Connect, legacy/LMTX/LMTR engines, local logs, cooperative Close | 242 Linux offscreen tests; no working native display/operator or Windows validation |
 | Desktop `codex/desktop-packaging-preview` | Child of workspace; PyInstaller portable directory, private tarball, pinned headless Qt6 environment, Windows templates and Codex guide | 242 tests and 102 source/frozen canonical comparisons; build-host-only prototype |
 

@@ -99,15 +99,15 @@ No Google account, Console form or final policy is created here.
 
 ## Host qualification receipt
 
-The API 36 branch passes 234 core JVM and 26 app local/Robolectric tests, debug and
+The API 36 branch passes 234 core JVM and 27 app local/Robolectric tests, debug and
 instrumentation APK compilation, unsigned release APK/AAB compilation and release lint
 (zero errors). Ten localization checker self-tests and 120 en/fr keys pass, camera module
 boundaries pass, and two ELF refusal tests pass. No ART/physical test is included.
 
-The final unsigned AAB is 7,900,320 bytes, SHA-256
-`32c5f2c9cfaca6d24bbf6ebb9ed278167c67517cdccf1342cedc1c3ecc8d5fa4`.
+The final unsigned AAB is 7,900,760 bytes, SHA-256
+`e7f577209e10d653384ba25aa4a71dc605cb108f82887c0cf6a4b1d4d3dc1ae8`.
 The unsigned APK is 8,092,146 bytes, SHA-256
-`3301165bf3ff501347fda3fabf30b1046e747f7a255e991ce49397118527b450`.
+`f823beebcbca5f74220c24c9f355d5f7acabec7f41bcbe1392c53b8aea07547f`.
 All four packaged arm64 libraries have ELF LOAD alignment 16,384 bytes; APK stored
 libraries also pass the 16 KiB ZIP check and Android zipalign. The AAB's BundleConfig
 was parsed with the cached official bundletool 1.17.2 Config/protobuf classes:

@@ -10,6 +10,9 @@ All notable changes to LMThermal will be documented in this file.
 - Add host ELF64/ZIP 16 KiB alignment checks and refusal tests, current official Play requirements, draft privacy content and explicit licensing/signing/device/behavior-change gates. Static inspection is not ART, physical or Play-delivery certification.
 
 
+### Fixed (Workspace source replacement — 2026-11-12)
+- Bind the full-image ROI shortcut to the same captured source/geometry guard as image gestures; reject superseded-source actions and cover matching/replaced-device/replaced-geometry admission on the host.
+
 ### Added (Android product workspace — 2026-11-12)
 - Separate Live, Measurements, Captures, Settings and Diagnostics controls around a pinned thermal viewport in portrait/landscape; retain explicit Connect/Initialize, module gates, immutable capture export and native measurement coordinates. Add localized literal-center/full-image ROI alternatives to gestures; LMTR production recording remains unavailable.
 - Add camera-free Compose/Robolectric viewport regressions including French and 200% font scale. Compile updated device layout recipes without claiming a new ART/Pixel validation.
