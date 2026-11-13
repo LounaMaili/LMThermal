@@ -4,6 +4,9 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 isolated host ownership candidate — 2026-11-13)
+- Pack original Float32 bits directly into a private recording payload, avoid a redundant parser-input copy and retain only a bounded scalar payload role. Preserve defensive public byte access, exact metadata/numerics, both complete validations, all capacities and78+32 MiB policy. Add deterministic ownership/concurrency regressions and a host-only attribution probe; retain byte-identical six-profile/codec files without claiming ART/RSS improvement.
+
 ### Validated (Second bounded physical R4 smoke — 2026-11-13)
 - Exercise the exact corrected field APK once with normal preview and unchanged Full/DEFLATE/78+32 MiB admission. Diagnostic samples succeed, but the RSS guard interrupts at4.309s; retain45 acknowledged observations,2 preparation and58 writer losses as explicit gaps in a fully valid interrupted file. Preserve exact Python/original-owner and Linux Desktop readback evidence without claiming ten-second duration, loss-free25 Hz or steady memory. No recorder/camera/safety code change, retry, longer run or CI.
 

@@ -1,23 +1,35 @@
 package org.lmthermal.recorder
 
 import org.lmthermal.lmtr.*
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 /** Canonical owned JSON; callers cannot mutate maps after publication. Numeric semantics stay exact. */
 class FrozenJson(value: Obj) {
     private val bytes = LmtrJson.encode(value)
     val byteSize: Int get() = bytes.size
-    fun value(): Obj = LmtrJson.parse(bytes.copyOf())
+    // The synchronous parser only reads input and constructs fresh maps/strings.
+    // Its result cannot alias these private bytes, so an input copy buys no isolation.
+    fun value(): Obj = LmtrJson.parse(bytes)
     internal fun same(other: FrozenJson): Boolean = bytes.contentEquals(other.bytes)
 }
 
 /** Module-owned exact evidence. Descriptor excludes storage placement/hash; bytes are never borrowed.
  * The module freezes while it owns the source buffer. Copy access cannot mutate retained evidence.
  */
-class RecordingPayload(descriptor: Obj, bytes: ByteArray, val acquisitionViewOffset: Long? = null) {
+class RecordingPayload private constructor(descriptor: Obj, private val owned: ByteArray,
+    val acquisitionViewOffset: Long?, exclusiveOwner: Unit) {
+    /** Public binary input is always copied; only the factory below can supply a fresh private owner. */
+    constructor(descriptor: Obj, bytes: ByteArray, acquisitionViewOffset: Long? = null):
+        this(descriptor,bytes.copyOf(),acquisitionViewOffset,Unit)
     val descriptor = FrozenJson(descriptor)
-    private val owned = bytes.copyOf()
+    @Volatile private var knownRole:String?=null
     val size: Int get() = owned.size
-    val role: String get() = descriptor.value()["role"].text()
+    /** Retain one immutable scalar, not a parsed descriptor tree or another payload owner.
+     * Benign competing cache misses may parse twice; volatile publication needs no recorder lock.
+     * Invalid role access still throws on access, as before, and is never silently defaulted.
+     */
+    val role: String get() = knownRole ?: descriptor.value()["role"].text().also { knownRole=it }
     fun bytes(): ByteArray = owned.copyOf()
     /** Writer-only operations never expose the retained mutable array. Public copy access stays owned.
      * Avoid duplicating every payload merely to hash, concatenate or calculate its existing cache.
@@ -28,6 +40,21 @@ class RecordingPayload(descriptor: Obj, bytes: ByteArray, val acquisitionViewOff
         LmtrChunk.statistics(owned,mask?.owned,width,height)
     internal fun matchesSlice(parent: RecordingPayload, offset: Long): Boolean =
         offset >= 0 && offset <= parent.size.toLong() - size && owned.indices.all { owned[it] == parent.owned[offset.toInt()+it] }
+
+    companion object {
+        /** Pack original Float32 raw bits directly into one new private payload owner.
+         * The input remains caller-owned and no output array/callback escapes construction.
+         * This saves the redundant encoded-array -> defensive-copy step, not the source's
+         * independent matrix copy. No finite-value or mask/integrity check is bypassed.
+         */
+        fun fromFloat32Le(descriptor:Obj,values:FloatArray):RecordingPayload {
+            require(descriptor["dtype"]=="f32" && descriptor["byte_order"]=="little")
+            val owned=ByteArray(Math.multiplyExact(values.size,Float.SIZE_BYTES))
+            val buffer=ByteBuffer.wrap(owned).order(ByteOrder.LITTLE_ENDIAN)
+            for(value in values)buffer.putInt(value.toRawBits())
+            return RecordingPayload(descriptor,owned,null,Unit)
+        }
+    }
 }
 
 /** A source module's immutable observation, separate from UI snapshots and rendered/latest-frame state.

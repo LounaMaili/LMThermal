@@ -6,8 +6,6 @@ import org.lmthermal.core.*
 import org.lmthermal.recorder.*
 import org.lmthermal.lmtr.*
 import java.math.BigDecimal
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 /** HT-specific encoder of existing immutable gate output. It never calls MeasurementGate/thermometry.
  * Large matrix/raw/transport copies occur only on RecorderEngine's charged preparation worker.
@@ -54,9 +52,7 @@ class Ht301RecordingAdapter(override val identity:CameraSourceIdentity):CameraRe
             "layout" to if(grid)"row_major" else "opaque","geometry" to if(grid)geometry else null,"unit" to if(role=="temperature")"Cel" else null,"lossiness" to "lossless")
         val payloads=buildList {
             if(measurement!=null) {
-                val values=measurement.matrix();val bytes=ByteBuffer.allocate(values.size*4).order(ByteOrder.LITTLE_ENDIAN)
-                for(v in values)bytes.putInt(v.toRawBits())
-                add(RecordingPayload(descriptor("temperature","f32","org.lmthermal.temperature.f32le-v1"),bytes.array()))
+                add(RecordingPayload.fromFloat32Le(descriptor("temperature","f32","org.lmthermal.temperature.f32le-v1"),measurement.matrix()))
             }
             if(rawAvailable)add(RecordingPayload(descriptor("native_samples","u16","org.lmthermal.ht301.raw14"),value.frame!!.imageBytes(),0))
             transport?.let { add(RecordingPayload(descriptor("acquisition","bytes","org.lmthermal.ht301.uvc-transport-v1",false),it)) }

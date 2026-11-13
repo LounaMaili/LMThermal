@@ -44,6 +44,34 @@ class RecorderEngineTest {
         val copy=p.bytes();copy[1]=88;assertArrayEquals(byteArrayOf(1,2,3),p.bytes());assertEquals("native_samples",p.role)
         assertEquals(java.math.BigDecimal("1.234567890123456789"),(p.descriptor.value()["unknown"] as JsonNumber).decimal)
     }
+    @Test fun directFloatPackingPreservesRawBitsWithoutInputOrOutputAliases() {
+        val bits=intArrayOf(0,Int.MIN_VALUE,0x3f800000,0x7f800000,0xff800000.toInt(),0x7fc01234,0x7f801234)
+        val values=FloatArray(bits.size){Float.fromBits(bits[it])}
+        val descriptor=mutableMapOf<String,Any?>("role" to "temperature","dtype" to "f32","byte_order" to "little")
+        val payload=RecordingPayload.fromFloat32Le(descriptor,values)
+        values.fill(99f);descriptor["role"]="preview"
+        val first=payload.bytes();val bytes=java.nio.ByteBuffer.wrap(first).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+        for(value in bits)assertEquals(value,bytes.int)
+        first.fill(0);assertEquals("temperature",payload.role)
+        val second=java.nio.ByteBuffer.wrap(payload.bytes()).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+        for(value in bits)assertEquals(value,second.int)
+        assertThrows(IllegalArgumentException::class.java){RecordingPayload.fromFloat32Le(mapOf("dtype" to "f64","byte_order" to "little"),floatArrayOf(1f))}
+    }
+    @Test fun frozenJsonCopiesAndConcurrentScalarRoleReadsRemainIndependent() {
+        val input=mutableMapOf<String,Any?>("role" to "native_samples","nested" to mutableMapOf("n" to java.math.BigDecimal("1.0000000000000000000001")))
+        val payload=RecordingPayload(input,byteArrayOf(1));input["role"]="preview"
+        val changed=payload.descriptor.value() as MutableMap<String,Any?>
+        assertThrows(UnsupportedOperationException::class.java){changed["role"]="acquisition"}
+        assertThrows(UnsupportedOperationException::class.java){(changed["nested"] as MutableMap<String,Any?>)["n"]=0}
+        assertNotSame(changed,payload.descriptor.value()) // Fresh immutable parse, not a retained metadata tree.
+        val failure=java.util.concurrent.atomic.AtomicReference<Throwable?>()
+        val threads=(0..7).map {Thread {
+            try {repeat(100){assertEquals("native_samples",payload.role)}} catch(error:Throwable){failure.compareAndSet(null,error)}
+        }.apply {start()} };threads.forEach {it.join()};failure.get()?.let {throw it}
+        assertEquals(java.math.BigDecimal("1.0000000000000000000001"),(payload.descriptor.value()["nested"].obj()["n"] as JsonNumber).decimal)
+        val invalid=RecordingPayload(emptyMap(),byteArrayOf(1))
+        repeat(2){assertThrows(IllegalArgumentException::class.java){invalid.role}}
+    }
     @Test fun temperatureOnlyNeedsNoUsbNativeOrTransport() {
         val m=SimulatedRecordingModule(width=13,height=7,native=false,acquisition=false);val e=engine(m,profile=RecordingProfile.NATIVE)
         e.admit(m.observation(0));assertEquals("completed",finished(e).status)
