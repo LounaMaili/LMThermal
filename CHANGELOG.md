@@ -5,6 +5,7 @@ All notable changes to LMThermal will be documented in this file.
 ## [Unreleased]
 
 ### Added (Host-only writer phase attribution — 2026-11-13)
+- Pin the independently qualified Desktop readback runtime in the future ten-second protocol; this documentation follow-up does not alter the production candidate or authorize hardware access.
 - Reconstruct one unchanged physical CHUNK through the normal Full encoder and independent append boundary; separate inclusive encode/codec checks from disjoint pre-backend, footer-sync, ACK and index intervals. Preserve twelve exact original DEFLATE bodies and 24 independently verified intentional prefixes, with bounded scalar timing/allocation/RSS point receipts.
 - Keep all production sources, both validations, 78+32 MiB, capacities and loss/ACK rules unchanged. Document limits of host versus physical attribution, retain failed physical/ART evidence and pin the next ten-second protocol to the prior production checkpoint; no device, ART, Actions or speculative throughput optimization.
 

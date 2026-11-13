@@ -128,8 +128,9 @@ R3 bytes. Current report/classpath/originals remain in a private persistent dire
 Candidate branch **`codex/r4-host-memory-writer`**, exact production-source commit
 **`db0de1ddd1d92370829937b6ef3cf6feb2d6489c`**. It includes direct Float32 ownership,
 fresh immutable JSON parsing/scalar role cache and per-pass canonical-size reuse;
-the new host phase probe adds no phone code. Desktop uses the separately qualified
-offline candidate for independent readback, never thermometry recomputation.
+the new host phase probe adds no phone code. Desktop readback candidate `codex/desktop-offline-qualification` uses runtime
+`dfaf6ed9ac6433cdeabc4c52bf2f890c9e2f1e42` (the later receipt commit is documentation
+only). It independently reads stored measurements, never recomputes thermometry.
 
 Before any install, obtain fresh explicit Pixel/HT availability and scene permission,
 then rerun the relevant source/build/lint checks and pin the built/installed APK SHA.

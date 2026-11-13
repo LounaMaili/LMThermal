@@ -165,5 +165,7 @@
   "physical_candidate_branch": "codex/r4-host-memory-writer",
   "physical_candidate_commit": "db0de1ddd1d92370829937b6ef3cf6feb2d6489c",
   "physical_qualification": "requires_new_explicit_authorization; ten_seconds_only; no_longer_run",
-  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "Desktop_readback_branch": "codex/desktop-offline-qualification",
+  "Desktop_readback_runtime_commit": "dfaf6ed9ac6433cdeabc4c52bf2f890c9e2f1e42"
 }
