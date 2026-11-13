@@ -5,6 +5,11 @@ Branch: `feat/lmtr-r4-recorder-foundation`, based on R3 integration
 `8eb4aceaf8bb36a8061c932b3121f898b81b4af3`. [R4 #9](https://github.com/LounaMaili/LMThermal/issues/9)
 stays open. No R5/R6 or Desktop application work is included.
 
+The isolated [post-physical host memory/writer candidates](HOST_MEMORY_WRITER.md)
+retain the second physical failure, controlled allocation/load comparisons and the
+next explicitly authorized ten-second protocol. Host-only gains do not qualify
+physical RSS, retained heap or loss-free 25 Hz.
+
 ## Integration and authorities
 
 R3 PR #14 was merged at the above SHA and #8 was closed for finite contract conformance.

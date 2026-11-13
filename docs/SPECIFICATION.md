@@ -364,4 +364,4 @@ The restricted R4 writer now uses bounded call-local DEFLATE segments and owned 
 
 The field-only [normal-preview memory/visible-owner diagnostic](lmtr-r4/PIXEL_LIVE_MEMORY.md) records bounded resource observations without Connect/init/recording side effects from the sampling action. Its sampled roles are not a full UI/source heap census; production ownership and admission semantics remain unchanged.
 
-The isolated [R4 host candidates](lmtr-r4/HOST_MEMORY_WRITER.md) remove redundant preparation copies and descriptor reparsing without changing source data, Full retention, validation or78+32 MiB policy. Software allocation gains are not a physical RSS/admission qualification.
+The isolated [R4 host candidates](lmtr-r4/HOST_MEMORY_WRITER.md) remove redundant preparation copies, descriptor reparsing and repeated canonical encodings within one closure check. Both complete validation boundaries, source/Full evidence and 78+32 MiB policy remain unchanged. Controlled host allocation savings and finite-load loss counts are not a physical RSS/admission qualification; the documented ten-second/profile protocol awaits separate authorization.

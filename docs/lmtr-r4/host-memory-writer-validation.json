@@ -1,0 +1,387 @@
+{
+  "status": "host_candidates_verified_physical_RSS_and_throughput_unqualified",
+  "base_commit": "bacfd3a66cb7a63aa8f17d883c01c7ed047fdf6e",
+  "physical_code": "bd2cfa614d64021078e0a5d16646e00cca6f08f8",
+  "ownership_checkpoint": "54cf3d9cf79f678c84c69122add81aa92ca9a23c",
+  "device_access": false,
+  "adb_discovery": false,
+  "ci_runs": 0,
+  "emulator_ART_runs": 0,
+  "apk_installed": false,
+  "production_sources_sha256": {
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingObservation.kt": "28bcc3f7b3b13708d4ba15fc4a8990dcd2962d65d2d37db7a08941bd7f97d773",
+    "camera-recording/src/main/kotlin/org/lmthermal/recording/Ht301RecordingAdapter.kt": "f149483da59ef6371721f54a568871a777e1b11fbfb13f5505bc3232b537bdcb",
+    "lmtr-contract/src/main/kotlin/org/lmthermal/lmtr/LmtrMetadata.kt": "b8a923fbd718264543686b694fe91402c8a1b2b7ed3c948ac12994919390077e"
+  },
+  "protected_files_unchanged_from_base": {
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt": "80499da15072f5b3dc79bec53280e01dd1a3d2dbb178ea9e8b842c5aca37265e",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt": "ea7e04bec1183d09d3d08f632ef906ff772a628fd9b421253d64d878a9c21e9a",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt": "c9d7990b44b7fc1edc85592a0cc84156df2b30bd302b49a88f6635c72639d6e8",
+    "docs/LMTR_WIRE_V1.md": "b5b867ff9e5fae707fa07a4a2ebe1854d4716f993a4017a90140f2b934e539d0"
+  },
+  "physical_source_sha256": "0ca64fc9a9a9507a241f20c1b358d176c476972603f088bd64cafcea9cb76a3f",
+  "originals_protected": {
+    "2026-11-13-r4-first-physical": {
+      "files_verified": 717,
+      "manifest_sha256": "ba38f3389885de1aca5d7116143033093b528ef5e11f750d9370cdfb3d4fd30c"
+    },
+    "2026-11-13-r4-second-physical": {
+      "files_verified": 100,
+      "manifest_sha256": "74e22b8e97c15283780d03069dc475098bd8efff95b95958ce35398f6ef38128"
+    },
+    "r4-foundation": {
+      "head": "fc5fae1fb5ae3783efbd3300dae4cdd40c6e1ff1",
+      "pending_files_unchanged": 16
+    },
+    "r4-writer-instrumentation": {
+      "head": "dbfab7ee031275ba5251b00262f7aa9cfc3aa2c3",
+      "pending_files_unchanged": 13
+    }
+  },
+  "cost_comparison": {
+    "method": "mean of two per-process medians; reference/candidate/candidate/reference; 8 samples each; not statistical/ART/RSS proof",
+    "cases": {
+      "fixture_freeze_and_full_select": {
+        "allocated": {
+          "baseline": 2894776.0,
+          "candidate": 2197008.0,
+          "percent_change": -24.10438666066045
+        },
+        "wall_ns": {
+          "baseline": 1736133.7083333333,
+          "candidate": 1074893.2916666665,
+          "percent_change": -38.08695226022939
+        },
+        "cpu_ns": {
+          "baseline": 1653713.25,
+          "candidate": 979372.0,
+          "percent_change": -40.77739898377183
+        }
+      },
+      "physical_metadata_complete_closure": {
+        "allocated": {
+          "baseline": 4087810.0,
+          "candidate": 3535351.5,
+          "percent_change": -13.51477930725743
+        },
+        "wall_ns": {
+          "baseline": 5565231.8125,
+          "candidate": 5264385.25,
+          "percent_change": -5.405822661767157
+        },
+        "cpu_ns": {
+          "baseline": 5450588.125,
+          "candidate": 5188279.1875,
+          "percent_change": -4.812488698180617
+        }
+      },
+      "physical_chunk_two_independent_full_validations": {
+        "allocated": {
+          "baseline": 14764128.0,
+          "candidate": 13517296.0,
+          "percent_change": -8.44500941742039
+        },
+        "wall_ns": {
+          "baseline": 44226810.5,
+          "candidate": 43021071.0,
+          "percent_change": -2.726263744476898
+        },
+        "cpu_ns": {
+          "baseline": 42820613.125,
+          "candidate": 42299474.375,
+          "percent_change": -1.2170277629578008
+        }
+      }
+    }
+  },
+  "cost_method": "fresh baseline/candidate/candidate/baseline; 4 warmups, 8 samples per case, HotSpot JDK17.0.20.1+1 Xms64m/Xmx256m; no forced GC; not ART/RSS",
+  "tests": {
+    "jvm_module_executions": {
+      "core": {
+        "tests": 234,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-contract": {
+        "tests": 74,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-recorder": {
+        "tests": 53,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "camera-recording": {
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-field-support": {
+        "tests": 47,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "app": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "jvm_total_executions": 449,
+    "python_unit": 64,
+    "canonical_fixtures": 51,
+    "canonical_plan_byte_comparisons": 33,
+    "hostile_cross_language_cases": 29,
+    "cancellation_cross_language_modes": 3,
+    "engine_interop_cases": 14,
+    "new_backlog_boundary_cases": 8,
+    "independent_full_size_outputs": 10,
+    "byte_identical_profile_codec_outputs": 6,
+    "android_app_field_build_lint": "passed_build_only",
+    "ART_test_APK": "compiled_host_only_probes_absent_no_runtime"
+  },
+  "stress": {
+    "baseline": {
+      "producer_baseline": {
+        "elapsed_ns": "1966663586",
+        "intervals": {
+          "count": 49,
+          "max_ns": "41457550",
+          "omitted": "0",
+          "p50_ns": "40001449",
+          "p95_ns": "40610456"
+        },
+        "observations": 50
+      },
+      "cases": [
+        {
+          "codec": 0,
+          "verdict": "retained_failure",
+          "observations_offered": 200,
+          "intake_elapsed_ns": "7961874638",
+          "minimum_headroom_bytes": "146821032",
+          "occupied_native_rss_pss_peaks": {
+            "java_occupied_bytes": "121614424"
+          },
+          "stop_ns": "105081209",
+          "seal_encode": {
+            "count": 50,
+            "max_ns": "148890437",
+            "omitted": "0",
+            "p50_ns": "20607586",
+            "p95_ns": "31084118"
+          },
+          "append": {
+            "count": 50,
+            "max_ns": "79752669",
+            "omitted": "0",
+            "p50_ns": "27943946",
+            "p95_ns": "54477798"
+          },
+          "snapshot": {
+            "accepted": "200",
+            "acknowledged": "199",
+            "checkpoints": "2",
+            "chunks": "50",
+            "control_bytes": "0",
+            "error": null,
+            "max_pending_bytes": "3580947",
+            "max_preparation_in_flight_bytes": "3145728",
+            "max_preparation_queued_bytes": "3145728",
+            "max_writer_in_flight_bytes": "894267",
+            "max_writer_queued_bytes": "3577064",
+            "pending_bytes": "0",
+            "preparation_drops": "0",
+            "preparation_in_flight_bytes": "0",
+            "preparation_queued_bytes": "0",
+            "state": "finalized",
+            "writer_drops": "1",
+            "writer_in_flight_bytes": "0",
+            "writer_queued_bytes": "0"
+          }
+        },
+        {
+          "codec": 1,
+          "verdict": "completed_no_drops",
+          "observations_offered": 200,
+          "intake_elapsed_ns": "7962390554",
+          "minimum_headroom_bytes": "133396864",
+          "occupied_native_rss_pss_peaks": {
+            "java_occupied_bytes": "135038592"
+          },
+          "stop_ns": "145346777",
+          "seal_encode": {
+            "count": 50,
+            "max_ns": "57695801",
+            "omitted": "0",
+            "p50_ns": "54033951",
+            "p95_ns": "57029875"
+          },
+          "append": {
+            "count": 50,
+            "max_ns": "56227089",
+            "omitted": "0",
+            "p50_ns": "30362052",
+            "p95_ns": "32989428"
+          },
+          "snapshot": {
+            "accepted": "200",
+            "acknowledged": "200",
+            "checkpoints": "2",
+            "chunks": "50",
+            "control_bytes": "0",
+            "error": null,
+            "max_pending_bytes": "3580732",
+            "max_preparation_in_flight_bytes": "3145728",
+            "max_preparation_queued_bytes": "3145728",
+            "max_writer_in_flight_bytes": "894267",
+            "max_writer_queued_bytes": "1788534",
+            "pending_bytes": "0",
+            "preparation_drops": "0",
+            "preparation_in_flight_bytes": "0",
+            "preparation_queued_bytes": "0",
+            "state": "finalized",
+            "writer_drops": "0",
+            "writer_in_flight_bytes": "0",
+            "writer_queued_bytes": "0"
+          }
+        }
+      ]
+    },
+    "validated": {
+      "producer_baseline": {
+        "elapsed_ns": "1962164640",
+        "intervals": {
+          "count": 49,
+          "max_ns": "41474320",
+          "omitted": "0",
+          "p50_ns": "40014019",
+          "p95_ns": "40672085"
+        },
+        "observations": 50
+      },
+      "cases": [
+        {
+          "codec": 0,
+          "verdict": "retained_failure",
+          "observations_offered": 200,
+          "intake_elapsed_ns": "7962035396",
+          "minimum_headroom_bytes": "178495984",
+          "occupied_native_rss_pss_peaks": {
+            "java_occupied_bytes": "89939472"
+          },
+          "stop_ns": "114164889",
+          "seal_encode": {
+            "count": 50,
+            "max_ns": "157290291",
+            "omitted": "0",
+            "p50_ns": "22070548",
+            "p95_ns": "62506355"
+          },
+          "append": {
+            "count": 50,
+            "max_ns": "76424467",
+            "omitted": "0",
+            "p50_ns": "28018465",
+            "p95_ns": "61876828"
+          },
+          "snapshot": {
+            "accepted": "200",
+            "acknowledged": "199",
+            "checkpoints": "2",
+            "chunks": "50",
+            "control_bytes": "0",
+            "error": null,
+            "max_pending_bytes": "3580947",
+            "max_preparation_in_flight_bytes": "3145728",
+            "max_preparation_queued_bytes": "3145728",
+            "max_writer_in_flight_bytes": "894267",
+            "max_writer_queued_bytes": "3577064",
+            "pending_bytes": "0",
+            "preparation_drops": "0",
+            "preparation_in_flight_bytes": "0",
+            "preparation_queued_bytes": "0",
+            "state": "finalized",
+            "writer_drops": "1",
+            "writer_in_flight_bytes": "0",
+            "writer_queued_bytes": "0"
+          }
+        },
+        {
+          "codec": 1,
+          "verdict": "completed_no_drops",
+          "observations_offered": 200,
+          "intake_elapsed_ns": "7962375805",
+          "minimum_headroom_bytes": "153511264",
+          "occupied_native_rss_pss_peaks": {
+            "java_occupied_bytes": "114924192"
+          },
+          "stop_ns": "173078053",
+          "seal_encode": {
+            "count": 50,
+            "max_ns": "73744573",
+            "omitted": "0",
+            "p50_ns": "53895562",
+            "p95_ns": "60886133"
+          },
+          "append": {
+            "count": 50,
+            "max_ns": "67340248",
+            "omitted": "0",
+            "p50_ns": "31051889",
+            "p95_ns": "57695141"
+          },
+          "snapshot": {
+            "accepted": "200",
+            "acknowledged": "200",
+            "checkpoints": "2",
+            "chunks": "50",
+            "control_bytes": "0",
+            "error": null,
+            "max_pending_bytes": "3580732",
+            "max_preparation_in_flight_bytes": "3145728",
+            "max_preparation_queued_bytes": "3145728",
+            "max_writer_in_flight_bytes": "894267",
+            "max_writer_queued_bytes": "1788534",
+            "pending_bytes": "0",
+            "preparation_drops": "0",
+            "preparation_in_flight_bytes": "0",
+            "preparation_queued_bytes": "0",
+            "state": "finalized",
+            "writer_drops": "0",
+            "writer_in_flight_bytes": "0",
+            "writer_queued_bytes": "0"
+          }
+        }
+      ]
+    }
+  },
+  "negative_results": [
+    "reference and candidate STORED each retain one represented writer drop; no load-throughput gain shown",
+    "preliminary candidate benchmark did not start: missing host main class; fixed host source set and retained earlier error",
+    "initial cancellation checker failed JSON parsing; raw child stdout was not retained by that checker. Identical assertions passed with JVM warnings routed to stderr, and a later unchanged direct probe returned valid JSON. Exact transient stdout cause remains unestablished.",
+    "initial new immutability test attempted to mutate already-unmodifiable parser output; assertion corrected, production behavior unchanged",
+    "sandbox Gradle could not bind local wildcard address; host-context offline build passed"
+  ],
+  "limits": {
+    "queues_changed": false,
+    "loss_reserve_changed": false,
+    "admission_policy": "78 MiB plus 32 MiB unchanged",
+    "full_validations": 2,
+    "frozen_wire_changed": false,
+    "canonical_bytes_regenerated": false,
+    "forced_gc": false,
+    "physical_RSS_reduction_measured": false,
+    "lossless_physical_25hz_proved": false,
+    "thirty_to_sixty_seconds": "not_ready"
+  },
+  "private_evidence_id": "2026-11-13-r4-host-memory-writer",
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

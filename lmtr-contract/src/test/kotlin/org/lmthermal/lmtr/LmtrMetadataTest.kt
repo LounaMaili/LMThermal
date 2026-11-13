@@ -49,6 +49,18 @@ class LmtrMetadataTest {
         assertEquals("invalid_metadata", reject { LmtrMetadata.chunk(chunk + ("contexts" to listOf(changed)), first()["header"].obj()) })
         assertEquals(LmtrMetadata.hash(mapOf("a" to JsonNumber(java.math.BigDecimal("1.0"),false))), LmtrMetadata.hash(mapOf("a" to 1)))
     }
+    @Test fun canonicalSizeReuseStillValidatesPreciseUnicodeClosureAndLaterChanges() {
+        val case=first();val chunk=case["chunk"].obj();val original=chunk["contexts"].arr().first().obj()
+        val old=original["id"]
+        val value=original["value"].obj()+("retained" to mapOf("\uD83D\uDE80" to JsonNumber(java.math.BigDecimal("1.000000000000000000000000000001"),false),"é" to "雪"))
+        val id=LmtrMetadata.hash(value)
+        val changed=chunk+mapOf("contexts" to listOf(original+mapOf("id" to id,"value" to value)),
+            "entries" to chunk["entries"].arr().map { it.obj().let { e -> if(e["context_id"]==old)e+("context_id" to id) else e } })
+        LmtrMetadata.chunk(changed,case["header"].obj())
+        val broken=changed+("contexts" to listOf(original+mapOf("id" to id,"value" to (value+("later_mutation" to true)))))
+        assertEquals("invalid_metadata",reject { LmtrMetadata.chunk(broken,case["header"].obj()) })
+        assertEquals("resource_limit",reject { LmtrMetadata.chunk(changed+("large_optional_value" to List(70){"x".repeat(15000)}),case["header"].obj()) })
+    }
 
     @Test fun aCorrectlyRehashedSegmentStillCannotAddAnUndeclaredStream() {
         val case = first(); val chunk = case["chunk"].obj(); val segment = chunk["segments"].arr().first().obj()

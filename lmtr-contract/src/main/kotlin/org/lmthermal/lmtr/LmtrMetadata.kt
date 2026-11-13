@@ -34,10 +34,19 @@ object LmtrMetadata {
     fun hash(value: Any?): String = MessageDigest.getInstance("SHA-256").digest(LmtrJson.encode(value)).joinToString("") { "%02x".format(it.toInt() and 255) }
     /** Apply byte/structural limits and declared-shape rules before record negotiation. */
     fun local(kind: String, obj: Obj) = lmtrMetadataErrors {
+        checkedLocalSize(kind,obj)
+        Unit
+    }
+    /** One canonical encoding within this synchronous validation boundary is enough to
+     * measure its exact size. The caller keeps metadata immutable during the call.
+     * No result survives to another validation, append, body or source generation.
+     */
+    private fun checkedLocalSize(kind:String,obj:Obj):Int {
         val bytes = LmtrJson.encode(obj)
         val budget = if (kind in listOf("IndexPage", "Checkpoint", "End")) 524288 else 1048576
         demand(bytes.size <= budget, "metadata_limit")
         LmtrSchema.validate(kind, obj)
+        return bytes.size
     }
     /** Read registry object arrays without scalar coercion or implicit defaults. */
     private fun objects(value: Any?) = value.arr().map { it.obj() }
@@ -149,9 +158,9 @@ object LmtrMetadata {
 
     /** Resolve all local references and reject unused or contradictory closure definitions. */
     private fun chunkChecks(obj: Obj, header: Obj) {
-        local("Chunk", obj)
+        val canonicalBytes=checkedLocalSize("Chunk",obj)
         demand(obj["recording_id"] == header["recording_id"], "recording_id")
-        demand(LmtrJson.encode(obj).size <= 1048576, "metadata_limit")
+        demand(canonicalBytes <= 1048576, "metadata_limit")
         val featureSet = features(obj["required_features"])
         demand(header["required_features"].arr().map { it.text() }.containsAll(featureSet), "undeclared_feature")
         extensions("Chunk", obj, featureSet)
@@ -199,7 +208,7 @@ object LmtrMetadata {
             }
         }
         demand(usedSegments == segments.keys && usedContexts == contexts.keys, "unused_closure")
-        blockGroups(blocks, materialized, header, LmtrJson.encode(obj).size)
+        blockGroups(blocks, materialized, header, canonicalBytes)
     }
 
     /** Distinguish complete, partial and unavailable evidence without fabricated values. */

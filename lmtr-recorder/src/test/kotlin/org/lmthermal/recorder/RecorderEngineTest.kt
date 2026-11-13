@@ -444,6 +444,27 @@ class RecorderEngineTest {
         assertThrows(IllegalStateException::class.java){owner.finish("completed","user_stop",mapOf("status" to "unknown","clock_source" to "host_utc","reason" to "not_recorded"))}
         assertEquals(1,writes);base.close()
     }
+    @Test fun appendRevalidatesAllBytesAfterAnEarlierSuccessfulFullValidation() {
+        for(codec in 0..1) {
+            val module=SimulatedRecordingModule();val original=output();val e=engine(module,original,codec=codec)
+            e.admit(module.observation(0));finished(e)
+            val record=java.io.RandomAccessFile(original,"r").use { input ->
+                var at=0L;var selected:Record?=null
+                while(at<input.length()){val r=LmtrFraming.read(input,at);if(r.type==LmtrFraming.CHUNK)selected=r;at+=r.length}
+                checkNotNull(selected)
+            }
+            val header=SimulatedRecordingModule.header(listOf(module),codec)
+            LmtrChunk.validate(record.body,header)
+            val damaged=record.body.copyOf();damaged[damaged.lastIndex]=(damaged.last().toInt() xor 1).toByte()
+            val destination=output();val base=LocalRecorderBackend(destination);var writes=0
+            val append=LmtrAppendSession(header,LmtrRecordSink { type,ordinal,previous,body -> writes++;base.append(type,ordinal,previous,body) })
+            try {
+                assertThrows(LmtrFailure::class.java){append.appendChunk(damaged)}
+                assertEquals("Only HEADER may reach the backend after corrupting the validated body",1,writes)
+                assertThrows(IllegalStateException::class.java){append.checkpoint()}
+            } finally {base.close()}
+        }
+    }
 
     @Test fun suppliedIncorrectStatisticsAreRejectedRatherThanSilentlyReplaced() {
         val m=SimulatedRecordingModule();val o=m.observation(0);val temperature=o.payloads.first { it.role=="temperature" }.bytes()
