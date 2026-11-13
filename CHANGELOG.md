@@ -4,6 +4,9 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (First physical R4 diagnostic sample — 2026-11-13)
+- Convert per-sample callback FPS through the existing finite-decimal boundary, with focused strict-JSON/counter/nonfinite regressions. Preserve the single physical failure: unchanged admission passed, one Full observation was acknowledged, then field diagnostics stopped the run with an honest interrupted END. Python and corrected installed Linux Desktop verify exact original-owner bytes; the fixed APK was not physically retried. Recorder, memory margins, queues, wire and camera code remain unchanged.
+
 ### Changed (First bounded physical R4 attempt — 2026-11-13)
 - Use a named ten-second Full smoke duration only in the separate field APK, within the owner's one-attempt 10–20 second authorization. Preserve the published recorder, all evidence roles, DEFLATE codec, queues, validations and 78+32 MiB admission; add a deterministic short-plan/resource-boundary regression. No product/R6 recording UI or physical success is implied by preparation.
 

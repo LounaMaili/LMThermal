@@ -322,10 +322,8 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                                 metrics=FieldMetrics();measured=true;initialStatistics=latestStatistics
                                 File(root,"measured-window.json").writeBytes(LmtrJson.encode(mapOf("warmup_elapsed_ns" to (SystemClock.elapsedRealtimeNanos()-runStart).toString(),"planned_measure_seconds" to (seconds-20))))
                             }
-                            val sample=metrics.sample()+mapOf("elapsed_ns" to (SystemClock.elapsedRealtimeNanos()-runStart).toString(),
-                                "session_state" to state.status.detail?.machineCode,"callback_fps" to state.statistics.callbackFps,
-                                "received" to state.statistics.received.toString(),"replaced" to state.statistics.replaced.toString(),
-                                "malformed" to state.statistics.malformed.toString(),"recorder" to snapshot?.let(::fieldSnapshot),
+                            val sample=metrics.sample()+fieldCallbackSample(state.statistics)+mapOf("elapsed_ns" to (SystemClock.elapsedRealtimeNanos()-runStart).toString(),
+                                "session_state" to state.status.detail?.machineCode,"recorder" to snapshot?.let(::fieldSnapshot),
                                 "health" to currentHealth.report(),"safety_stop_reason" to safetyFailure,
                                 "thermal" to runCatching { File("/sys/class/thermal/thermal_zone0/temp").readText().trim() }.getOrNull())
                             val sampleBytes=LmtrJson.encode(sample);check(sampleBytes.size<=65536)

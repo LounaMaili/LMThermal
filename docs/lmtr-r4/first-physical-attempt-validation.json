@@ -1,0 +1,74 @@
+{
+  "status": "failed_smoke_with_verified_physical_observation",
+  "date": "2026-11-13",
+  "physical_source_commit": "069664710f1812d16ba52923da027b01d9aecbcb",
+  "physical_apk_sha256": "ddf6f78a1dc049bbae4da2af67de30c6ed88150a7f7c16f2c6109e72caaca56e",
+  "profile": "full",
+  "codec": 1,
+  "requested_seconds": 10,
+  "physical_attempts": 1,
+  "admission": {
+    "passed": true,
+    "reservation_bytes": 81788928,
+    "margin_bytes": 33554432,
+    "java_headroom_bytes": 219427840,
+    "java_used_bytes": 49007616,
+    "java_max_bytes": 268435456,
+    "forced_gc": false,
+    "normal_preview": true
+  },
+  "result": {
+    "stop_request_elapsed_ns": 138655965,
+    "report_duration_ns": 759678182,
+    "accepted": 1,
+    "acknowledged": 1,
+    "preparation_drops": 0,
+    "writer_drops": 0,
+    "gate_deliveries": 4,
+    "gate_count_scope": "includes pre-subscription setup; not engine admission",
+    "chunks": 1,
+    "gaps": 0,
+    "finalized": true,
+    "end_status": "interrupted",
+    "reason": "field_metrics_failed",
+    "diagnostic_exception_class": "LmtrFailure",
+    "exception_code_retained": false,
+    "trace_rows": 0
+  },
+  "capture": {
+    "bytes": 201601,
+    "sha256": "9432aba49701659ad1cad331f0c097d0f96791ad65e486f0e89d4957bb65d384",
+    "oracle_sha256": "fc496f29adb5e022e493551282588c10b81cb1cc9062eb6779e501cdac8c0e19",
+    "physical_payload_bytes": 666624,
+    "temperature_bytes": 442368,
+    "native_view_bytes": 221184,
+    "transport_bytes": 224256,
+    "all_temperatures_finite": true,
+    "mask_present": false
+  },
+  "verification": {
+    "python": "passed_strict_full_original_owner_parity",
+    "desktop_source": "passed",
+    "desktop_installed_linux": "passed_native_window",
+    "source_unchanged": true,
+    "all_six_device_file_hashes_match": true
+  },
+  "correction": {
+    "scope": "field_callback_sample_decimal_projection_only",
+    "host_tests": "passed",
+    "physically_installed_or_retested": false,
+    "wire_encoder_unchanged": true
+  },
+  "tests": {
+    "jvm_module_executions": 444,
+    "python_reader": 64,
+    "python_field": 8,
+    "desktop_source": 260,
+    "desktop_build_root": 260,
+    "canonical_files": 51,
+    "canonical_comparisons": 102,
+    "historical_regeneration": "failed_runtime_specific_byte_check; pinned_files_unchanged"
+  },
+  "next_gate": "new_authorization_and_corrected_10s_smoke_before_any_longer_run",
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

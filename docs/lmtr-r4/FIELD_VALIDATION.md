@@ -432,3 +432,11 @@ adb -s <verified-wireless-Pixel-serial> shell am start \
 Normal permissions/current scene and device safety prerequisites still apply. No record
 or extended profile follows automatically. Missing USB permission or a required physical
 display reset is a blocker to report, not authority to bypass security or invent readiness.
+
+## First actual recording, separate from earlier refusals
+
+[The 2026-11-13 attempt](FIRST_PHYSICAL_ATTEMPT.md) records unchanged admission,
+one acknowledged Full physical observation and valid interrupted END after a
+field-sample diagnostic failure. Python and corrected installed Linux Desktop
+verify the original bytes. The subsequent finite-decimal projection is host-tested
+only; no second physical attempt or longer-run acceptance is claimed.
