@@ -10,6 +10,11 @@ retain the second physical failure, controlled allocation/load comparisons and t
 next explicitly authorized ten-second protocol. Host-only gains do not qualify
 physical RSS, retained heap or loss-free 25 Hz.
 
+The [host phase attribution](WRITER_PHASE_ATTRIBUTION.md) adds exact-source re-encoding
+and independently verified prefixes, with separate backend/ACK intervals and explicit
+inclusive scopes. Production remains at the preceding checkpoint; future physical
+qualification still needs separate authorization.
+
 ## Integration and authorities
 
 R3 PR #14 was merged at the above SHA and #8 was closed for finite contract conformance.

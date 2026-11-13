@@ -248,3 +248,5 @@ The [first physical recording attempt](docs/lmtr-r4/FIRST_PHYSICAL_ATTEMPT.md) p
 The [second physical smoke](docs/lmtr-r4/SECOND_PHYSICAL_ATTEMPT.md) physically validates the callback diagnostic fix but stops at 4.309 seconds on the unchanged RSS guard. It preserves 45 Full observations and 60 explicit losses with full independent integrity; neither ten-second duration nor loss-free 25 Hz recording is accepted.
 
 [Host memory/writer candidates](docs/lmtr-r4/HOST_MEMORY_WRITER.md) investigate the second physical failure without device/CI access; explicit ownership and paired software validation precede any new physical authorization.
+
+[Host writer phase attribution](docs/lmtr-r4/WRITER_PHASE_ATTRIBUTION.md) separates actual append/backend/ACK intervals from inclusive encoding/validation costs. It changes no production source and does not qualify Pixel RSS or throughput.

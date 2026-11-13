@@ -1,0 +1,169 @@
+{
+  "status": "host_attribution_only_no_new_production_optimization",
+  "base_commit": "db0de1ddd1d92370829937b6ef3cf6feb2d6489c",
+  "probe_sha256": "fac4d161ef6765eed5a2283cde7dbf9075dfd34d3d8f6bd33f308b1f2c780207",
+  "production_files_unchanged_from_base": 89,
+  "warmups_per_codec": 4,
+  "samples_per_codec": 8,
+  "codecs": [
+    0,
+    1
+  ],
+  "source_sha256": "0ca64fc9a9a9507a241f20c1b358d176c476972603f088bd64cafcea9cb76a3f",
+  "source_unchanged": true,
+  "medians": {
+    "0": {
+      "samples": 8,
+      "scope": "standalone host operations; encoder/codec inclusive, append subintervals sequential",
+      "encode_including_first_validation": {
+        "allocated_bytes": 10029840.0,
+        "cpu_ns": 23371064.5,
+        "wall_ns": 23769985.0
+      },
+      "separate_full_validation_1": {
+        "allocated_bytes": 4087096.0,
+        "cpu_ns": 15713644.5,
+        "wall_ns": 15821375.0
+      },
+      "separate_full_validation_2": {
+        "allocated_bytes": 4087096.0,
+        "cpu_ns": 15691589.5,
+        "wall_ns": 15958790.0
+      },
+      "append_session_including_validation_backend_ack_index": {
+        "allocated_bytes": 4272864.0,
+        "cpu_ns": 19229944.5,
+        "wall_ns": 26788843.5
+      },
+      "pre_backend_including_second_boundary": {
+        "allocated_bytes": 4178120.0,
+        "wall_ns": 16256502.5
+      },
+      "backend_framing_and_footer_sync": {
+        "allocated_bytes": 46416.0,
+        "cpu_ns": 3105581.0,
+        "wall_ns": 10357671.5
+      },
+      "after_sync_to_ack": {
+        "allocated_bytes": 42384.0,
+        "wall_ns": 137009.0
+      },
+      "after_ack_to_return": {
+        "allocated_bytes": 6032.0,
+        "wall_ns": 57309.5
+      },
+      "codec_call_inclusive_ns": 1789.5
+    },
+    "1": {
+      "samples": 8,
+      "scope": "standalone host operations; encoder/codec inclusive, append subintervals sequential",
+      "encode_including_first_validation": {
+        "allocated_bytes": 12677144.0,
+        "cpu_ns": 57422244.5,
+        "wall_ns": 58046476.0
+      },
+      "separate_full_validation_1": {
+        "allocated_bytes": 6745512.0,
+        "cpu_ns": 21948027.5,
+        "wall_ns": 22148019.5
+      },
+      "separate_full_validation_2": {
+        "allocated_bytes": 6745512.0,
+        "cpu_ns": 21641138.5,
+        "wall_ns": 22516887.5
+      },
+      "append_session_including_validation_backend_ack_index": {
+        "allocated_bytes": 6927968.0,
+        "cpu_ns": 23793977.5,
+        "wall_ns": 28549208.5
+      },
+      "pre_backend_including_second_boundary": {
+        "allocated_bytes": 6837688.0,
+        "wall_ns": 22385323.5
+      },
+      "backend_framing_and_footer_sync": {
+        "allocated_bytes": 41952.0,
+        "cpu_ns": 1543480.5,
+        "wall_ns": 5961991.5
+      },
+      "after_sync_to_ack": {
+        "allocated_bytes": 42384.0,
+        "wall_ns": 83364.5
+      },
+      "after_ack_to_return": {
+        "allocated_bytes": 6032.0,
+        "wall_ns": 43064.5
+      },
+      "codec_call_inclusive_ns": 29381853.0
+    }
+  },
+  "empty_clock_counter_wall_median_ns": 210,
+  "overhead_scope": "empty measured call, not complete callback/NMT/ART instrumentation overhead",
+  "extra_validation_scope": "encoder full pass + two standalone full diagnostic passes + independent append full pass; do not sum all four as normal pipeline cost",
+  "prefixes": {
+    "total": 24,
+    "independent_python_full_verified_prefix": 24,
+    "logical_original_parity": true,
+    "intentionally_missing_END": true,
+    "unknown_tail": true,
+    "recorder_Stop_or_failure_claim": false
+  },
+  "tests": {
+    "JVM_module_executions": {
+      "core": {
+        "tests": 234,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-contract": {
+        "tests": 74,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-recorder": {
+        "tests": 53,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "camera-recording": {
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-field-support": {
+        "tests": 47,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "JVM_total_executions": 428,
+    "Python_unit": 64,
+    "hostile_cross_language": 29
+  },
+  "invariants": {
+    "full_validations": 2,
+    "reservation_MiB": 78,
+    "headroom_margin_MiB": 32,
+    "preferred_chunk_MiB": 4,
+    "preparation_queue_MiB": 4,
+    "writer_queue_MiB": 4,
+    "loss_journal_MiB": 1,
+    "forced_GC": false,
+    "wire_changed": false,
+    "new_production_callbacks": false
+  },
+  "device_access": false,
+  "ADB_discovery": false,
+  "ART_runs": 0,
+  "Actions_runs": 0,
+  "private_evidence_id": "2026-11-13-desktop-r4-software",
+  "physical_candidate_branch": "codex/r4-host-memory-writer",
+  "physical_candidate_commit": "db0de1ddd1d92370829937b6ef3cf6feb2d6489c",
+  "physical_qualification": "requires_new_explicit_authorization; ten_seconds_only; no_longer_run",
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

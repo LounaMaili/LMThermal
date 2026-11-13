@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Host-only writer phase attribution — 2026-11-13)
+- Reconstruct one unchanged physical CHUNK through the normal Full encoder and independent append boundary; separate inclusive encode/codec checks from disjoint pre-backend, footer-sync, ACK and index intervals. Preserve twelve exact original DEFLATE bodies and 24 independently verified intentional prefixes, with bounded scalar timing/allocation/RSS point receipts.
+- Keep all production sources, both validations, 78+32 MiB, capacities and loss/ACK rules unchanged. Document limits of host versus physical attribution, retain failed physical/ART evidence and pin the next ten-second protocol to the prior production checkpoint; no device, ART, Actions or speculative throughput optimization.
+
 ### Changed (R4 isolated host ownership candidate — 2026-11-13)
 - Pack original Float32 bits directly into a private recording payload, avoid a redundant parser-input copy and retain only a bounded scalar payload role. Preserve defensive public byte access, exact metadata/numerics, both complete validations, all capacities and78+32 MiB policy. Add deterministic ownership/concurrency regressions and a host-only attribution probe; retain byte-identical six-profile/codec files without claiming ART/RSS improvement.
 - Reuse one exact canonical metadata size within each synchronous CHUNK closure validation; keep both full validation boundaries independent. Add corruption-after-validation and full-journal 32/33-loss regressions, isolate JDK-only probes from ART sources, and document controlled host allocations, unchanged finite-load loss counts and the future ten-second protocol. Preserve physical/ART failures and all 51 canonical fixtures; no device, CI or physical qualification in this phase.
