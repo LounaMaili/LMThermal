@@ -8,6 +8,18 @@ import org.lmthermal.recorder.RecordingProfile
 class FieldSafetyTest {
     private val plan=FieldPreflight(RecordingProfile.FULL,20,null)
     private val healthy=FieldHealth(78,0,plan.requiredFreeBytes,512L*1048576,1024L*1048576,false,100L*1048576,true,true)
+    @Test fun shortPhysicalButtonKeepsFullEvidenceQueuesAndAdmissionMargins() {
+        val short=FieldPreflight(RecordingProfile.FULL,FIRST_PHYSICAL_SMOKE_SECONDS,null)
+        assertEquals(10,short.seconds);assertEquals(1,short.codec)
+        assertEquals(666624L,short.payloadBytesPerFrame)
+        assertEquals(78L*1048576,short.limits.reservedBytes)
+        assertEquals(4L*1048576,short.limits.preparationBytes)
+        assertEquals(4L*1048576,short.limits.writerBytes)
+        assertEquals(4L*1048576,short.limits.preferredChunkBytes)
+        assertEquals(32L*1048576,FieldSafety.HEAP_MARGIN_BYTES)
+        assertEquals("java_headroom_low",FieldSafety.refusal(healthy.copy(javaHeadroomBytes=110L*1048576-1),short,true))
+        assertNull(FieldSafety.refusal(healthy.copy(javaHeadroomBytes=110L*1048576),short,true))
+    }
     @Test fun admissionRequiresAllKnownAuthorizationResourceFacts() {
         assertNull(FieldSafety.refusal(healthy,plan,true))
         for(h in listOf(healthy.copy(batteryPercent=null),healthy.copy(thermalStatus=null),healthy.copy(freeBytes=null),

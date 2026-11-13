@@ -4,6 +4,9 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (First bounded physical R4 attempt — 2026-11-13)
+- Use a named ten-second Full smoke duration only in the separate field APK, within the owner's one-attempt 10–20 second authorization. Preserve the published recorder, all evidence roles, DEFLATE codec, queues, validations and 78+32 MiB admission; add a deterministic short-plan/resource-boundary regression. No product/R6 recording UI or physical success is implied by preparation.
+
 ### Added (R4 actual Pixel live-memory evidence)
 
 - Record one authorized Android17/Pixel8 HT-301 session, supported initialization,528 valid normal-render observations and clean single-owner release. Preserve4/20 observed110 MiB headroom policy failures; no recorder Start or physical LMTR is claimed.

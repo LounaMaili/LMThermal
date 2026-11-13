@@ -463,7 +463,7 @@ class FieldActivity:AppCompatActivity() {
                 Text("R4 test only — $state",Modifier.padding(6.dp))
                 Row {
                     Button(enabled=!busy,onClick={model.start(null,146)}){Text("Baseline")}
-                    Button(enabled=!busy,onClick={model.start(RecordingProfile.FULL,20)}){Text("Smoke 20s")}
+                    Button(enabled=!busy,onClick={model.start(RecordingProfile.FULL,FIRST_PHYSICAL_SMOKE_SECONDS)}){Text("Smoke ${FIRST_PHYSICAL_SMOKE_SECONDS}s")}
                     Button(enabled=busy,onClick=model::stop){Text("Stop test")}
                 }
                 Row {

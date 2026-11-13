@@ -4,6 +4,11 @@ import org.lmthermal.recorder.*
 import org.lmthermal.lmtr.*
 import java.util.UUID
 
+/** This mission authorizes one 10–20 s attempt. Ten leaves scheduling/drain slack below the 20 s ceiling.
+ * Only the separate field button uses this duration; engine limits and admission remain unchanged.
+ */
+const val FIRST_PHYSICAL_SMOKE_SECONDS=10
+
 /** Finite HT test admission, separate from format hard ceilings and sampled process memory.
  * Rates conservatively assume incompressible bytes, full observations and 32 KiB metadata/frame.
  * Unknown capacity stays unknown; the exclusive local backend still enforces real write failures.

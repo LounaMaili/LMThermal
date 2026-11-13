@@ -1,5 +1,12 @@
 # R4 isolated physical-field preparation
 
+**2026-11-13 first-attempt branch:** the owner reauthorized Pixel/HT-301 access for one
+10–20 second attempt. The separate field button now requests ten seconds, preserving
+Full/codec1, all queues and78+32 MiB. This is a shorter test duration, not a lower
+admission/evidence profile. No retry after refusal or automatic30–60 second follow-up
+is authorized. This note supersedes historical physical-device availability restrictions
+only for this mission; main/old PRs and previous failures remain unchanged.
+
 **Resumed session authorization (2026-10-22):** the owner explicitly released the Pixel8
 from the earlier LMarchery isolation. That earlier prohibition remains historical.
 Current authorization allows bounded diagnostics and at most one20-second Full smoke
