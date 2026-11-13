@@ -1,0 +1,459 @@
+{
+  "status": "passed_for_offline_scopes_only",
+  "date": "2026-11-13",
+  "base": "f75bb403b66720927e4dfd012ae02ed7f56c79c0",
+  "unchanged_production_candidate": "db0de1ddd1d92370829937b6ef3cf6feb2d6489c",
+  "desktop_read_only_reference": "dd1c1ff4d76fef4a7cf4ed90dd76354b2ed8ca86",
+  "source_sha256": {
+    "lmtr-field-support/src/hostTest/kotlin/org/lmthermal/field/OfflineCadenceStudyProbe.kt": "291549ad4f105e8e509636f209fe25e2ffcbe53eb11ffa29a3c21fc8cbedfadd",
+    "lmtr-field-support/src/hostTest/kotlin/org/lmthermal/field/OfflineProfileAdapter.kt": "ed620cda30107f0a00ed431ecde720c3b88f17d6b4b8a067fd35dc3bf9e13b0a",
+    "lmtr-field-support/src/hostTest/kotlin/org/lmthermal/field/OfflineProfileStudyProbe.kt": "9efd3db2ace85543d2114231b2d10f2562d231206d622b6ab0a1167247bfcf95",
+    "lmtr-field-support/src/hostTest/kotlin/org/lmthermal/field/OfflineProfileStudyTest.kt": "d23b519ba8f48123b681f4a6c789a2fc1b1e829cc05fbe8026e7d53499a02d52",
+    "tools/check_temporal_study.py": "a40b1d2a5bb693496b76762419ee4f1b9e5d07e21eef14483ea91b46972717db",
+    "tools/desktop_temporal_study.py": "1f62f735e4ec0441135d6a3c970758185369f73c0babc2c02be3e102a70fdc16",
+    "tools/temporal_sampling_study.py": "de201889acea6920b7d3aacbf3b04943451daf15ca1db29583e0dc79c4900646",
+    "tools/tests/test_temporal_sampling_study.py": "a55dd9076b9451df42bf7ec741df92b6ae116020a15135551ded7bd7d238d536"
+  },
+  "profile_preparation": {
+    "order": [
+      "eager",
+      "profile",
+      "profile",
+      "eager"
+    ],
+    "fresh_processes": 4,
+    "heap_bytes": 268435456,
+    "warmups_per_profile": 4,
+    "samples_per_process_profile": 8,
+    "repetitions_per_sample": 6,
+    "allocations_scope": "current-thread HotSpot freeze+selection; not reachable heap/native/RSS/ART",
+    "medians": [
+      {
+        "profile": "analysis",
+        "arms": {
+          "eager": {
+            "allocated_bytes_per_freeze_median": 2197024.0,
+            "inclusive_wall_ms_per_freeze_median": 1.2396684166666667
+          },
+          "profile": {
+            "allocated_bytes_per_freeze_median": 1267744.0,
+            "inclusive_wall_ms_per_freeze_median": 1.1127408333333333
+          }
+        },
+        "allocation_change_percent": -42.29721659845318
+      },
+      {
+        "profile": "native",
+        "arms": {
+          "eager": {
+            "allocated_bytes_per_freeze_median": 2205752.0,
+            "inclusive_wall_ms_per_freeze_median": 0.8579748333333334
+          },
+          "profile": {
+            "allocated_bytes_per_freeze_median": 1744392.0,
+            "inclusive_wall_ms_per_freeze_median": 0.7502271666666667
+          }
+        },
+        "allocation_change_percent": -20.91622267598533
+      },
+      {
+        "profile": "full",
+        "arms": {
+          "eager": {
+            "allocated_bytes_per_freeze_median": 2200608.0,
+            "inclusive_wall_ms_per_freeze_median": 0.6710550833333333
+          },
+          "profile": {
+            "allocated_bytes_per_freeze_median": 2200618.666666667,
+            "inclusive_wall_ms_per_freeze_median": 0.6742484166666667
+          }
+        },
+        "allocation_change_percent": 0.0004847145273823017
+      }
+    ],
+    "files_independently_verified": 24,
+    "distinct_profile_codec_files": 6,
+    "exact_full_file_byte_parity": true
+  },
+  "cadence_host": {
+    "scope": "one finite synthetic gate replay per configuration; no physical acquisition/Compose/liveness proof",
+    "codec": "DEFLATE-1",
+    "cases": [
+      {
+        "profile": "analysis",
+        "requested_hz": 5,
+        "source_callbacks": "250",
+        "selected": "50",
+        "intentional_not_selected": "200",
+        "missed_slots": "0",
+        "offering_elapsed_ns": "10001591887",
+        "stop_elapsed_ns": "94495565",
+        "minimum_sampled_headroom_bytes": "218448816",
+        "reserved_bytes": "81788928",
+        "finalized": true,
+        "result_status": "completed",
+        "snapshot": {
+          "accepted": "50",
+          "acknowledged": "50",
+          "checkpoints": "2",
+          "chunks": "9",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "2697084",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "448701",
+          "max_writer_queued_bytes": "448701",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        }
+      },
+      {
+        "profile": "analysis",
+        "requested_hz": 10,
+        "source_callbacks": "250",
+        "selected": "100",
+        "intentional_not_selected": "150",
+        "missed_slots": "0",
+        "offering_elapsed_ns": "10001542477",
+        "stop_elapsed_ns": "126159706",
+        "minimum_sampled_headroom_bytes": "208451040",
+        "reserved_bytes": "81788928",
+        "finalized": true,
+        "result_status": "completed",
+        "snapshot": {
+          "accepted": "100",
+          "acknowledged": "100",
+          "checkpoints": "2",
+          "chunks": "11",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "4047545",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "448704",
+          "max_writer_queued_bytes": "897400",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        }
+      },
+      {
+        "profile": "analysis",
+        "requested_hz": 25,
+        "source_callbacks": "250",
+        "selected": "250",
+        "intentional_not_selected": "0",
+        "missed_slots": "0",
+        "offering_elapsed_ns": "10001520268",
+        "stop_elapsed_ns": "103416492",
+        "minimum_sampled_headroom_bytes": "161529192",
+        "reserved_bytes": "81788928",
+        "finalized": true,
+        "result_status": "completed",
+        "snapshot": {
+          "accepted": "250",
+          "acknowledged": "250",
+          "checkpoints": "2",
+          "chunks": "28",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "4047516",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "448704",
+          "max_writer_queued_bytes": "1346106",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        }
+      },
+      {
+        "profile": "full",
+        "requested_hz": 25,
+        "source_callbacks": "250",
+        "selected": "250",
+        "intentional_not_selected": "0",
+        "missed_slots": "0",
+        "offering_elapsed_ns": "10001554458",
+        "stop_elapsed_ns": "188195485",
+        "minimum_sampled_headroom_bytes": "156488120",
+        "reserved_bytes": "81788928",
+        "finalized": true,
+        "result_status": "completed",
+        "snapshot": {
+          "accepted": "250",
+          "acknowledged": "250",
+          "checkpoints": "2",
+          "chunks": "63",
+          "control_bytes": "0",
+          "error": null,
+          "max_pending_bytes": "4031588",
+          "max_preparation_in_flight_bytes": "3145728",
+          "max_preparation_queued_bytes": "3145728",
+          "max_writer_in_flight_bytes": "894732",
+          "max_writer_queued_bytes": "1789460",
+          "pending_bytes": "0",
+          "preparation_drops": "0",
+          "preparation_in_flight_bytes": "0",
+          "preparation_queued_bytes": "0",
+          "state": "finalized",
+          "writer_drops": "0",
+          "writer_in_flight_bytes": "0",
+          "writer_queued_bytes": "0"
+        }
+      }
+    ],
+    "independent_checks": [
+      {
+        "name": "analysis-5",
+        "sha256": "0b8af67faeaee4df56d264c5eccd7a26b90b48e8787431f750704dffec21b0ac",
+        "observations": 50,
+        "unavailable": 1,
+        "overload_gaps": 0,
+        "missed_slots": 0,
+        "source_unchanged": true
+      },
+      {
+        "name": "analysis-10",
+        "sha256": "7a28ab6fcb78527651151bdd13afee08ddcf43dceb686fa07acc2ec5a099818c",
+        "observations": 100,
+        "unavailable": 1,
+        "overload_gaps": 0,
+        "missed_slots": 0,
+        "source_unchanged": true
+      },
+      {
+        "name": "analysis-25",
+        "sha256": "631616142aa9a71fe51de2a29cded7977d32e2cced9707a35f272e57a76ecb26",
+        "observations": 250,
+        "unavailable": 1,
+        "overload_gaps": 0,
+        "missed_slots": 0,
+        "source_unchanged": true
+      },
+      {
+        "name": "full-25",
+        "sha256": "c45e644f8a8585c0f8737bf3b2f65b87ae26d3f05e5e4fa94122dda40ed1efa5",
+        "observations": 250,
+        "unavailable": 1,
+        "overload_gaps": 0,
+        "missed_slots": 0,
+        "source_unchanged": true
+      }
+    ]
+  },
+  "periodic_proposal": {
+    "exact_integer_ns_rates": [
+      5,
+      10,
+      25
+    ],
+    "exact_15_hz_representable": false,
+    "optional_approximation_period_ns": 66666667,
+    "production_sampler_implemented": false,
+    "remaining": [
+      "counter-domain integration review",
+      "bounded monotonic idle/Stop schedule ledger",
+      "overload scheduled-slot witness retention",
+      "self-contained terminal selection totals",
+      "ART and physical RSS/throughput qualification"
+    ],
+    "tiny_masked_wire_examples": 3,
+    "kotlin_and_python_positive_readback": true,
+    "negative_unexplained_counter_skip": "Python writer refused; existing Kotlin continuity rule unchanged"
+  },
+  "desktop_synthetic": {
+    "scope": "unchanged real sampler/writer, 30 seconds per rate, synthetic alternating sanitized matrices; no camera or UI acquisition path",
+    "cases": [
+      {
+        "hz": 5,
+        "requested_slots": 150,
+        "saved_planes": 142,
+        "gaps": 8,
+        "drops": 0,
+        "bytes": 25202788,
+        "stop_ns": 407801758,
+        "sampled_max_queue": 1,
+        "source_unchanged": true
+      },
+      {
+        "hz": 10,
+        "requested_slots": 300,
+        "saved_planes": 284,
+        "gaps": 16,
+        "drops": 0,
+        "bytes": 50561861,
+        "stop_ns": 367363620,
+        "sampled_max_queue": 3,
+        "source_unchanged": true
+      },
+      {
+        "hz": 25,
+        "requested_slots": 750,
+        "saved_planes": 544,
+        "gaps": 92,
+        "drops": 114,
+        "bytes": 97023227,
+        "stop_ns": 489685577,
+        "sampled_max_queue": 4,
+        "source_unchanged": true
+      }
+    ],
+    "point_roi_all_saved_planes_original_byte_verified": true,
+    "historical_live_bundles": "unavailable; existing aggregate evidence retained, not newly revalidated"
+  },
+  "desktop_lmtr_readback": [
+    {
+      "name": "cadence-01/analysis-5/capture.lmtr",
+      "available_temperature_planes": 49,
+      "unavailable_observation_frames": 1,
+      "source_unchanged": true
+    },
+    {
+      "name": "cadence-01/analysis-10/capture.lmtr",
+      "available_temperature_planes": 99,
+      "unavailable_observation_frames": 1,
+      "source_unchanged": true
+    },
+    {
+      "name": "cadence-01/analysis-25/capture.lmtr",
+      "available_temperature_planes": 249,
+      "unavailable_observation_frames": 1,
+      "source_unchanged": true
+    },
+    {
+      "name": "cadence-01/full-25/capture.lmtr",
+      "available_temperature_planes": 249,
+      "unavailable_observation_frames": 1,
+      "source_unchanged": true
+    },
+    {
+      "name": "sampling-final/5hz.lmtr",
+      "available_temperature_planes": 2,
+      "unavailable_observation_frames": 1,
+      "source_unchanged": true
+    },
+    {
+      "name": "sampling-final/10hz.lmtr",
+      "available_temperature_planes": 2,
+      "unavailable_observation_frames": 1,
+      "source_unchanged": true
+    },
+    {
+      "name": "sampling-final/25hz.lmtr",
+      "available_temperature_planes": 2,
+      "unavailable_observation_frames": 1,
+      "source_unchanged": true
+    }
+  ],
+  "tests": {
+    "jvm_module_executions": {
+      "core": {
+        "tests": 234,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-contract": {
+        "tests": 74,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-recorder": {
+        "tests": 53,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "camera-recording": {
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-field-support": {
+        "tests": 49,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "jvm_total_executions": 430,
+    "jvm_shared_sources_overlap": true,
+    "python_reference_unit": 64,
+    "python_sampling_model_unit": 8,
+    "desktop_unit": 264,
+    "canonical_cases_each_reader": 51,
+    "canonical_plan_exact_comparisons": 33,
+    "json_runtime_vectors": 43,
+    "hostile_cross_reader_cases": 29,
+    "cancellation_modes": 3,
+    "recorder_interop_cases": 14,
+    "git_diff_check": "passed_before_publication"
+  },
+  "invariants": {
+    "protected_pending_files_unchanged": 29,
+    "production_src_main_files_unchanged": 89,
+    "canonical_fixtures_unchanged": 51,
+    "canonical_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "physical_reference_unchanged": true,
+    "worktree_base": "f75bb403b66720927e4dfd012ae02ed7f56c79c0",
+    "desktop_head": "dd1c1ff4d76fef4a7cf4ed90dd76354b2ed8ca86"
+  },
+  "private_evidence_file_sha256": {
+    "jvm-tests.log": "13c7030802aa60be3670c7fae63cba0495f8e1d4ee8624715139b23a4ff8e1ed",
+    "jvm-study-final.log": "fd22cf44d3d8dd97882b188d50f8b8525e55f7b8c33ae95748a848efe7a2fdf6",
+    "python-reference-tests.log": "1854d82b182021f3e1951498f2f3fbc649e1b3fa75afa346f36db5a66a6245d2",
+    "sampling-model-hardened-tests.log": "6fe7287dbba44751d0167eead7ab5a8db415085f1654cb55799715abe694f962",
+    "desktop-regression.log": "df210e28d5172d50526f7a959c82ec86d021d87d5359d3b4b08eed8a59d29d2c",
+    "conformance.json": "a54e9ffd1683aecb2e28df58289b10e5bf01381751fb03cd0bee2a7d4972b75d",
+    "hardening.json": "05c6757385d67d4688fa90114f84bdf61825e1359f297de71b63a6d72a23c303",
+    "cancellation-02.json": "f24790492cb9cbfb4d3d80fa7d858603c908270bedaea7f5e3a113492ea0b9de",
+    "r4-interop/python-readback.json": "3fefbc2e53a883246afdb9776979547cd6935e0fad97539f0a3e3f90734f0e23",
+    "independent-readback-02.json": "a4d8a18158675d9cdaf068b187b778bed772f47f7557863ce0a6dcbf2f590b2f",
+    "protected-state-verified.json": "152fbb644a9096e6da724a396fa7064b8507659f3d086bb084eadc11da8976da",
+    "comparison-plan.json": "2260c552bd47ba6fa6f1276d43a46e8e089e95e441fa6fa3834da24011b8b038",
+    "cadence-plan.json": "ee260cc015562e95b4c3459bc8607c23e7af35dfaf44eb5432159a89c18aacb4",
+    "frozen-runtime-02-sha256.json": "f42e18ad8ac665f79c529e053cba67c592879fdb770fe7073a93854dbd94e789",
+    "cadence-runtime-sha256.json": "43b863d67b7ed464fd3cafa5cfa1f0a64b7a9f67a0f7baf4b72db6b8eb45db1f",
+    "desktop-30s-01/report.json": "970c980d8e54fa047ea63771525fd0f5f5601592eec6f12d880ef26058de7adc"
+  },
+  "retained_preparation_issues": [
+    "Initial host probe compilation referenced clockDomainId instead of existing receiptClockId; corrected before any benchmark. Tool output captured the failure; no separate first build log was created.",
+    "Initial runtime copy encountered a nonexistent Gradle Java output directory; partial copy retained, no benchmark ran; second frozen copy excludes absent classpath entries.",
+    "sampling-01 writer refused the missing extension envelope; corrected examples retained separately in sampling-02 and sampling-final.",
+    "independent-readback.json initially mislabeled observation-frame count as available_frames, including unavailable frames; source validation passed. Corrected checker distinguishes temperature planes and unavailable frames in independent-readback-02.json.",
+    "First cancellation command lacked the test-runtime classpath file; no cancellation test ran. Prepared existing task and retained separate second result."
+  ],
+  "not_performed": [
+    "ADB or physical device/camera access",
+    "APK/emulator/ART execution",
+    "GitHub Actions",
+    "production integration",
+    "canonical fixture regeneration",
+    "legacy conversion",
+    "wire/queue/journal/78+32 MiB changes",
+    "merge or issue/PR updates"
+  ],
+  "recommended_first_android_candidate": "Analysis plus explicitly chosen 5 Hz after bounded periodic ledger implementation and review",
+  "physical_tests_require_new_explicit_authorization": true,
+  "physical_accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

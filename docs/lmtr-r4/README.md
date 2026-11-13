@@ -1,6 +1,11 @@
 # R4 camera-free recorder foundation
 
 **Engineering work in progress, not full R4 acceptance or a recording product.**
+The [offline temporal-recording comparison](TEMPORAL_RECORDING_STUDY.md) evaluates
+profile-aware Analysis preparation, explicitly selected cadence and the existing
+Linux legacy recorder. It preserves the physical failures and all production
+protections; isolated host prototypes do not constitute a product sampler.
+
 Branch: `feat/lmtr-r4-recorder-foundation`, based on R3 integration
 `8eb4aceaf8bb36a8061c932b3121f898b81b4af3`. [R4 #9](https://github.com/LounaMaili/LMThermal/issues/9)
 stays open. No R5/R6 or Desktop application work is included.

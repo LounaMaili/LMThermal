@@ -166,6 +166,11 @@ def get_temp_evn(a, env_term, b):
 - [ ] Mobile time series, recording/playback and comparison.
 - [ ] Release licensing, packaging and distribution.
 
+The [offline temporal-recording study](docs/lmtr-r4/TEMPORAL_RECORDING_STUDY.md)
+compares the accepted Analysis default, explicit sampling and existing Linux legacy
+recording. Its isolated host prototypes do not integrate a product sampler or
+qualify Android RSS, physical continuity or Full at 25 FPS.
+
 The [Accepted LMTR v1 wire contract](docs/LMTR_WIRE_V1.md) records explicit owner
 acceptance of `r1b-review-2`, D1–D10 and historical conversion approach B on
 2026-10-13. Wire rules are frozen; finite R3 conformance is integrated, while end-user recording remains unreleased. Scoped R2 evidence/history is preserved;

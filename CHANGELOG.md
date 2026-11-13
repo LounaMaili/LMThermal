@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Offline temporal-recording architecture study — 2026-11-13)
+- Compare the accepted Analysis default, explicitly selected periodic recording and the unchanged Linux legacy recorder. Keep frozen v1 integer-nanosecond/observation-counter rules, historical-conversion limits and the missing production idle/Stop/overload-slot ledger explicit.
+- Isolate host-only profile-aware preparation and cadence prototypes; preserve exact selected matrices/context and six profile/codec file bytes across a predeclared ABBA comparison, both validation boundaries, current capacities and 78+32 MiB. Document HotSpot allocation reductions without claiming Android RSS or physical throughput improvement.
+- Preserve finite synthetic host/legacy load results, including the unsuccessful legacy 25 Hz case, independent Python/Desktop readback and regression evidence. Recommend Analysis with an explicit 5 Hz policy for the next separately authorized qualification; no product integration, hardware access, CI, converter or wire change.
+
 ### Added (Host-only writer phase attribution — 2026-11-13)
 - Pin the independently qualified Desktop readback runtime in the future ten-second protocol; this documentation follow-up does not alter the production candidate or authorize hardware access.
 - Reconstruct one unchanged physical CHUNK through the normal Full encoder and independent append boundary; separate inclusive encode/codec checks from disjoint pre-backend, footer-sync, ACK and index intervals. Preserve twelve exact original DEFLATE bodies and 24 independently verified intentional prefixes, with bounded scalar timing/allocation/RSS point receipts.
