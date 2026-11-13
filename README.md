@@ -254,3 +254,6 @@ Host-only product qualification continues on a separate branch. Pixel/ADB checks
 
 See [the phase 5 integration proposal](docs/phase5/INTEGRATION_PLAN.md) for the Android
 UX/Play changelog conflict, Desktop dependency order and owner gates. No merge is performed.
+
+The [phase 5 result matrix](docs/phase5/RESULTS.md) separates host/offscreen/build
+results from the deferred native, Pixel, ABI, licensing and distribution gates.

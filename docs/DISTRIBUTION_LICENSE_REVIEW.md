@@ -71,3 +71,9 @@ notices. Private prototypes, AppImage/Flatpak encapsulation and store acceptance
 remove these obligations. Google Play privacy/signing declarations remain separate gates.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
+
+Phase-5 ABI inspection also identifies copied host GTK3/tinysparql/SQLite libraries
+through the Qt GTK platform-theme plugin. Include these actual components in the
+notice/source review; the direct PyQt/OpenCV package metadata is not their license audit.
+A standalone interpreter did not remove this chain. No plugin policy or product license
+is chosen merely to make the artifact appear more portable.
