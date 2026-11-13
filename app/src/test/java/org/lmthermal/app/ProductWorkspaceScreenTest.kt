@@ -23,7 +23,7 @@ import org.lmthermal.core.*
 /** Actual product screen and coordinator with a synthetic, counted module. Never uses USB or ADB. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [32,36])
-class ProductWorkspaceScreenTest {
+open class ProductWorkspaceScreenTest {
     @get:Rule val compose = createComposeRule()
     private val context get() = RuntimeEnvironment.getApplication()
     @Before fun permission() {
@@ -58,7 +58,9 @@ class ProductWorkspaceScreenTest {
             publishInGeneration = camera::publishPresentation)
         try {
             camera.enterForeground()
-            compose.setContent { MaterialTheme { Box(Modifier.requiredSize(400.dp,760.dp)) {
+            val landscape = context.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+            compose.setContent { MaterialTheme { Box(Modifier.requiredSize(
+                if (landscape) 800.dp else 400.dp, if (landscape) 360.dp else 760.dp)) {
                 ThermalScreen(camera, presenter, { camera.connect() })
             } } }
             check(camera,presenter)

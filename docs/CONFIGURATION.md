@@ -117,7 +117,8 @@ A Java 17-only host cannot execute the new API 36 test cases; do not call that A
 ./gradlew -Porg.gradle.java.installations.paths=/path/to/jdk17,/path/to/jdk21 :core:test :app:testDebugUnitTest :app:assembleDebugAndroidTest :app:lintDebug
 ```
 
-The product-screen tests use a counted synthetic camera module on SDK 32/36: navigation
+The product-screen tests use a counted synthetic camera module on SDK 32/36,
+with English/portrait and French/landscape configurations: navigation
 never opens/initializes it, explicit Connect opens once, source failure clears readings,
 ROI/center actions use native geometry and palettes/ranges leave source values unchanged.
 Physical checks remain [deferred behind the availability gate](phase5/ANDROID_PHYSICAL_PLAN.md).

@@ -87,3 +87,8 @@ or geometry and accepts a matching current source; no source replacement changes
 ## Phase 5 checks
 
 The actual ThermalScreen is now exercised through all sections with a counted non-USB module on Robolectric SDK 32/36. The instrumented locale recipe now selects Measurements before drawing and Settings before language checks. It compiles but has not run on ART. See [the deferred physical plan](phase5/ANDROID_PHYSICAL_PLAN.md).
+
+Phase-5 host result: 234 core tests and 39 app tests pass (273 total, no failures/skips),
+including real-screen English/portrait and French/landscape on Robolectric API 32/36.
+Debug/instrumentation/release APK and unsigned AAB compile; debug/release lint has zero errors.
+These are host results, not ART or operator/device qualification.
