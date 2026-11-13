@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Phase 6 local integration — 2026-11-13)
+- Combine the preserved UX/Play/phase5 histories in an isolated local candidate, resolving both changelog and workspace-document conflicts without removing prior entries. No main/PR integration or production camera/thermometry change.
+- Qualify actual product actions at 320×568 French portrait and 640×320 English landscape with 200% text on host SDK32/36; retain stable nonzero image bounds across unavailable/no-camera sections. The combined host suite passes 285 executions; physical/ART/performance gates remain explicitly deferred without ADB.
+
 ### Added (Phase 5 host qualification — 2026-11-13)
 - Exercise the actual Compose product screen with a counted synthetic module on Robolectric API 32/36, English/portrait and French/landscape: navigation/no camera, explicit Connect, native center/full ROI, presentation independence, transient/fatal clearing and Close. App host tests use Java 21 as required by the SDK 36 sandbox; app/core bytecode and Android minimum remain unchanged.
 - Record the final 273 host tests, frozen Desktop parity, locked-session/absent-camera boundaries and the retained GTK/SQLite GLIBC2.44 packaging limitation; no native/device/public-distribution acceptance is inferred.

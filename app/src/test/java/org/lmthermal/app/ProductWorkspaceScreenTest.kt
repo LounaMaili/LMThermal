@@ -3,10 +3,13 @@ package org.lmthermal.app
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.*
 import org.junit.Before
@@ -26,6 +29,11 @@ import org.lmthermal.core.*
 open class ProductWorkspaceScreenTest {
     @get:Rule val compose = createComposeRule()
     private val context get() = RuntimeEnvironment.getApplication()
+    /** Subclasses qualify constrained real-screen controls rather than just the layout shell. */
+    protected open val viewport: Pair<Int, Int> get() =
+        if (context.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE)
+            800 to 360 else 400 to 760
+    protected open val fontScale = 1f
     @Before fun permission() {
         shadowOf(context).grantPermissions("org.lmthermal.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION")
     }
@@ -58,11 +66,14 @@ open class ProductWorkspaceScreenTest {
             publishInGeneration = camera::publishPresentation)
         try {
             camera.enterForeground()
-            val landscape = context.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
-            compose.setContent { MaterialTheme { Box(Modifier.requiredSize(
-                if (landscape) 800.dp else 400.dp, if (landscape) 360.dp else 760.dp)) {
+            compose.setContent {
+              val density = LocalDensity.current.density
+              CompositionLocalProvider(LocalDensity provides Density(density, fontScale)) {
+               MaterialTheme { Box(Modifier.requiredSize(viewport.first.dp, viewport.second.dp)) {
                 ThermalScreen(camera, presenter, { camera.connect() })
-            } } }
+               } }
+              }
+            }
             check(camera,presenter)
         } finally { presenter.dispose();camera.dispose() }
     }
@@ -70,9 +81,12 @@ open class ProductWorkspaceScreenTest {
     @Test fun noCameraNavigationNeverOpensOrInitializesAndStageRemainsVisible() {
         val module = Module()
         screen(module, false) { _, _ ->
+            val original = compose.onNodeWithTag("thermal-image").fetchSemanticsNode().boundsInRoot
+            assertTrue(original.width > 0 && original.height > 0)
             for (section in WorkspaceSection.entries) {
                 section(section.tag)
                 compose.onNodeWithTag("thermal-image").assertIsDisplayed()
+                assertEquals(original, compose.onNodeWithTag("thermal-image").fetchSemanticsNode().boundsInRoot)
             }
             section("live")
             compose.onNodeWithText(context.getString(R.string.camera_connect)).assertIsNotEnabled()

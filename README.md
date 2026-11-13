@@ -32,6 +32,9 @@ common LMTR recording is not enabled. English/French labels and accessible liter
 full-image ROI actions are included. See [UX audit, changes and evidence](docs/ANDROID_PRODUCT_WORKSPACE.md).
 
 See also [the cross-product checkpoint and remaining gates](docs/PHASE4_PRODUCT_STATUS.md).
+The [phase6 local integration receipt](docs/phase6/ANDROID_INTEGRATION.md) preserves UX,
+Play and qualification ancestry and expands constrained-screen host checks. It does
+not imply main integration or physical product-UI acceptance.
 
 ## Google Play preparation
 
