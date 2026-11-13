@@ -243,4 +243,6 @@ The [R4 allocation follow-up](docs/lmtr-r4/LIVE_HEAP.md) isolates fixture acquis
 
 [Actual R4 Pixel live memory diagnostics](docs/lmtr-r4/PIXEL_LIVE_MEMORY.md) now separate successful wireless/radiometric acquisition from unresolved recording admission. No Full recording was started in that earlier diagnostic; the normal-preview window and host metadata allocation probe do not complete R4.
 
-The [first physical recording attempt](docs/lmtr-r4/FIRST_PHYSICAL_ATTEMPT.md) passed unchanged admission but stopped after about 139 ms on a field diagnostic serialization error. One Full observation is independently verified and visible in corrected Desktop; ten-second recording acceptance remains pending. The field-only decimal projection is host-tested, not physically retried.
+The [first physical recording attempt](docs/lmtr-r4/FIRST_PHYSICAL_ATTEMPT.md) passed unchanged admission but stopped after about 139 ms on a field diagnostic serialization error. One Full observation is independently verified and visible in corrected Desktop; ten-second recording acceptance remains pending. At that first checkpoint the field-only decimal projection was host-tested, not physically retried.
+
+The [second physical smoke](docs/lmtr-r4/SECOND_PHYSICAL_ATTEMPT.md) physically validates the callback diagnostic fix but stops at 4.309 seconds on the unchanged RSS guard. It preserves 45 Full observations and 60 explicit losses with full independent integrity; neither ten-second duration nor loss-free 25 Hz recording is accepted.

@@ -438,5 +438,9 @@ display reset is a blocker to report, not authority to bypass security or invent
 [The 2026-11-13 attempt](FIRST_PHYSICAL_ATTEMPT.md) records unchanged admission,
 one acknowledged Full physical observation and valid interrupted END after a
 field-sample diagnostic failure. Python and corrected installed Linux Desktop
-verify the original bytes. The subsequent finite-decimal projection is host-tested
-only; no second physical attempt or longer-run acceptance is claimed.
+verify the original bytes. At that checkpoint the subsequent finite-decimal projection was host-tested
+only; no second physical attempt or longer-run acceptance was claimed.
+
+## Corrected diagnostic physical retry
+
+[The one authorized second attempt](SECOND_PHYSICAL_ATTEMPT.md) writes five valid diagnostic samples, then honestly stops on RSS increment at4.309s. All45 saved Full observations and60 represented losses pass independent Python and installed Linux Desktop checks. This does not complete the requested ten-second smoke or authorize a longer run.

@@ -4,6 +4,9 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Validated (Second bounded physical R4 smoke — 2026-11-13)
+- Exercise the exact corrected field APK once with normal preview and unchanged Full/DEFLATE/78+32 MiB admission. Diagnostic samples succeed, but the RSS guard interrupts at4.309s; retain45 acknowledged observations,2 preparation and58 writer losses as explicit gaps in a fully valid interrupted file. Preserve exact Python/original-owner and Linux Desktop readback evidence without claiming ten-second duration, loss-free25 Hz or steady memory. No recorder/camera/safety code change, retry, longer run or CI.
+
 ### Fixed (First physical R4 diagnostic sample — 2026-11-13)
 - Convert per-sample callback FPS through the existing finite-decimal boundary, with focused strict-JSON/counter/nonfinite regressions. Preserve the single physical failure: unchanged admission passed, one Full observation was acknowledged, then field diagnostics stopped the run with an honest interrupted END. Python and corrected installed Linux Desktop verify exact original-owner bytes; the fixed APK was not physically retried. Recorder, memory margins, queues, wire and camera code remain unchanged.
 
