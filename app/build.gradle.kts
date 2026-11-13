@@ -69,3 +69,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
 }
+
+// Robolectric's Android 16 sandbox requires Java 21. This changes only host-test
+// execution; app/core bytecode remains Java 17 and Android minSdk stays 26.
+tasks.withType<Test>().configureEach {
+    javaLauncher.set(javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(21)) })
+}

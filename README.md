@@ -247,3 +247,10 @@ for the original full-payload Android camera test.
 ## Licence
 
 À déterminer.
+
+## Phase 5 qualification
+
+Host-only product qualification continues on a separate branch. Pixel/ADB checks await explicit owner availability; see [the field plan](docs/phase5/ANDROID_PHYSICAL_PLAN.md) and [license review](docs/DISTRIBUTION_LICENSE_REVIEW.md). Java 21 is required for the API 36 Robolectric sandbox; app/core compilation remains Java 17.
+
+See [the phase 5 integration proposal](docs/phase5/INTEGRATION_PLAN.md) for the Android
+UX/Play changelog conflict, Desktop dependency order and owner gates. No merge is performed.

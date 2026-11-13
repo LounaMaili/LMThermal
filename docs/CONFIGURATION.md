@@ -103,3 +103,21 @@ Run `:app:bundleRelease :app:assembleRelease` for unsigned technical artifacts.
 `storeFile`, `storePassword`, `keyAlias`, `keyPassword`; all are required together.
 No key is created or debug-signing fallback selected. Do not set this variable for
 unsigned preparation or commit its file/values. See [release readiness](PLAY_PREPARATION.md).
+
+## Phase 5 host SDK 36 tests
+
+Robolectric's API 36 sandbox requires Java 21. App local tests now launch a Java 21
+toolchain explicitly, while app/core compilation remains Java 17 and minSdk stays 26.
+Install both JDKs using the normal development process, or point Gradle's project
+property `org.gradle.java.installations.paths` to the existing installations. The
+build JVM may stay Java 17. No phone, emulator, ADB or automatic pairing is needed.
+A Java 17-only host cannot execute the new API 36 test cases; do not call that ART failure.
+
+```sh
+./gradlew -Porg.gradle.java.installations.paths=/path/to/jdk17,/path/to/jdk21 :core:test :app:testDebugUnitTest :app:assembleDebugAndroidTest :app:lintDebug
+```
+
+The product-screen tests use a counted synthetic camera module on SDK 32/36: navigation
+never opens/initializes it, explicit Connect opens once, source failure clears readings,
+ROI/center actions use native geometry and palettes/ranges leave source values unchanged.
+Physical checks remain [deferred behind the availability gate](phase5/ANDROID_PHYSICAL_PLAN.md).

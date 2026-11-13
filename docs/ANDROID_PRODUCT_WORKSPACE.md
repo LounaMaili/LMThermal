@@ -83,3 +83,7 @@ transfer is independently tested here; no recorder prototype is imported.
 The full-image shortcut, like a drag, passes its captured source key and geometry to
 the existing ROI admission guard. A camera-free regression rejects a superseded device
 or geometry and accepts a matching current source; no source replacement changes protocol.
+
+## Phase 5 checks
+
+The actual ThermalScreen is now exercised through all sections with a counted non-USB module on Robolectric SDK 32/36. The instrumented locale recipe now selects Measurements before drawing and Settings before language checks. It compiles but has not run on ART. See [the deferred physical plan](phase5/ANDROID_PHYSICAL_PLAN.md).

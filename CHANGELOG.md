@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Phase 5 host qualification — 2026-11-13)
+- Exercise the actual Compose product screen with a counted synthetic module on Robolectric API 32/36: navigation/no camera, explicit Connect, native center/full ROI, presentation independence, transient/fatal clearing and Close. App host tests use Java 21 as required by the SDK 36 sandbox; app/core bytecode and Android minimum remain unchanged.
+- Correct missing section selection in the future instrumented locale/ROI recipe. Prepare an explicitly deferred Pixel/ADB field plan and component-specific licensing/distribution ledger, without choosing a product license or claiming ART/physical/store acceptance.
+
+
 ### Added (Isolated Google Play preparation — 2026-11-12)
 - Target/compile API 36 with build tools 36.0.0, retain min 26/arm64-only/native modules, and prepare unsigned AAB/APK builds with optional external owner-provisioned signing properties. No key generation, store account access or submission.
 - Add a technical adaptive icon and pre-31 backup exclusions without changing capture/USB behavior.

@@ -120,3 +120,11 @@ runner available, no ChromeOS x86_64 ABI, redundant v26 launcher-resource qualif
 two now-unused diagnostics strings and an optional monochrome launcher icon. The colored
 adaptive icon is a technical placeholder. These do not constitute Play acceptance; the
 runtime/branding/signing/privacy/licensing gates above remain open.
+
+## Phase 5 follow-up
+
+Actual product-screen host checks now include API 32/36 with an explicit Java 21 test
+launcher (compilation remains Java 17). Physical Pixel checks are deferred until explicit
+availability. See [the field plan](phase5/ANDROID_PHYSICAL_PLAN.md),
+[integration proposal](phase5/INTEGRATION_PLAN.md) and [license review](DISTRIBUTION_LICENSE_REVIEW.md).
+No Play certification or signed delivery is claimed.

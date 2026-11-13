@@ -117,6 +117,7 @@ class LocalizationLayoutDeviceTest {
                             initialScreenshot.compress(Bitmap.CompressFormat.PNG, 100, it)
                         }
                         initialScreenshot.recycle()
+                        compose.onNodeWithTag("workspace-tab-measure").performScrollTo().performClick()
                         // The real ROI mode/gesture path uses native cells in every locale and viewport.
                         compose.onNode(hasText(labels.getValue(R.string.measurement_mode_roi)) and hasClickAction()).performScrollTo().performClick()
                         val image = compose.onNodeWithTag("thermal-image")
@@ -201,6 +202,7 @@ class LocalizationLayoutDeviceTest {
                         scenario.onActivity { activity -> languageLabel = activity.getString(R.string.language_label,
                             AppLanguage.selected(AppCompatDelegate.getApplicationLocales())?.let { activity.getString(it.label) }
                                 ?: activity.getString(R.string.language_other, tag)) }
+                        compose.onNodeWithTag("workspace-tab-settings").performScrollTo().performClick()
                         compose.onNodeWithText(languageLabel).performScrollTo().assertIsDisplayed()
                         // Numeric values and geometry are identical across locales/presentation controls.
                         assertEquals(36.5f, presenter!!.state.value.measurement!!.temperature(NativePixel(80, 60)), 0f)
