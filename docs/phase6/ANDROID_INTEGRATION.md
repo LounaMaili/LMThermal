@@ -30,6 +30,8 @@ The existing English portrait/French landscape cases remain. Each no-camera sect
 keeps the thermal stage at the same nonzero bounds. Explicit Connect, source failure,
 unavailable measurement, native center/full ROI, independent colors and Close are tested.
 These are programmatic host checks, not touch/TalkBack or ART/visible-latency certification.
+The unchanged pure LMTR contract module separately passes 71 JVM tests: 356 host
+executions in total, with the 285 product checks kept distinct from contract regression.
 
 Debug/instrumentation/unsigned release APK, unsigned AAB and debug/release lint pass on
 the combined worktree. The host sandbox uses Java21; production bytecode stays Java17,
@@ -47,6 +49,7 @@ measure those. Keep normal preview and all safety/admission limits. No physical 
 
 Distribution decisions remain owner-controlled: [licensing](../DISTRIBUTION_LICENSE_REVIEW.md),
 identity/icons/version, privacy contact/policy, signing custody/backups and actual supported
-platform matrix. Builds do not constitute Play certification or independent calibration.
+platform matrix. See the [concrete owner decision ledger](DISTRIBUTION_DECISIONS.md).
+Builds do not constitute Play certification or independent calibration.
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
