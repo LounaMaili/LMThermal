@@ -181,7 +181,9 @@ class PeriodicRecorderTest {
     @Test fun concurrentStopAndBoundaryAdmissionHaveAnExplicitLinearizableOutcome() {
         repeat(5) {
             val m=SimulatedRecordingModule();val file=output();val clock=AtomicLong(0);val e=PeriodicTestSource.engine(m,file,clock)
-            e.admit(PeriodicTestSource.offer(m,0,0));clock.set(PeriodicTestSource.PERIOD)
+            // This isolates Stop/admission ordering, not the separately tested 4 MiB queue.
+            // A still-queued 3 MiB first offer can otherwise make the second a legitimate overload.
+            e.admit(PeriodicTestSource.offer(m,0,0));drained(e);clock.set(PeriodicTestSource.PERIOD)
             val start=CountDownLatch(1);var admission:Admission?=null;val error=AtomicReference<Throwable?>(null)
             val stop=checkedThread(error) {start.await();e.stop()};val callback=checkedThread(error) {start.await();admission=e.admit(PeriodicTestSource.offer(m,1,clock.get()))}
             stop.start();callback.start();start.countDown();stop.join(5000);callback.join(5000);assertFalse(stop.isAlive);assertFalse(callback.isAlive);assertNull(error.get());finish(e)

@@ -87,6 +87,11 @@ class CameraRecorderBinding<P>(private val adapterFor:(CameraSourceIdentity)->Ca
     }
     /** Idempotent non-blocking cutoff; source stays available for a later explicit Start after drain. */
     fun stop():CompletableFuture<RecorderResult>? = synchronized(lock) { generation++;stopLocked("user_stop",false);draining }
+    /** An old run's deadline must never unsubscribe a replacement recording on the same device. */
+    fun stopIfCurrent(expected:RecorderEngine):CompletableFuture<RecorderResult>? = synchronized(lock) {
+        if(engine!==expected)return@synchronized null
+        generation++;stopLocked("user_stop",false);draining
+    }
     fun pendingStop():CompletableFuture<RecorderResult>? = synchronized(lock){draining}
     /** Completed result and released worker ownership are separate gates after a failed writer. */
     fun reservationReleased():Boolean=synchronized(lock){engine==null && !drainPendingLocked()}

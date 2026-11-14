@@ -66,7 +66,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
     private val now:()->Long=System::nanoTime, private val prepareHook:()->Unit={},
     private val sealMetric:((encodeNs:Long,appendNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null,
     private val codecMetric:((wallNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null,
-    sampling:FiveHertzSampling?=null) {
+    sampling:FiveHertzSampling?=null, private val stopDeadline:RecordingStopDeadline?=null) {
     companion object {
         // Accepted wire §14 distinguishes intake sealing from post-footer checkpoint timing.
         private const val SEAL_INTERVAL_NS=1000000000L
@@ -104,6 +104,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
     private var periodic:PeriodicSamplingState?=null
     val periodicSamplingEnabled:Boolean=sampling!=null
     private var periodicClockInvalid=false
+    private var firstObservedExpiryNs:Long?=null
     private val completion=CompletableFuture<RecorderResult>()
     private val controlCharge=CONTROL_ENTRY_BYTES
     private val preparationThread=Thread(::prepareLoop,"lmtr-preparation")
@@ -111,6 +112,9 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
     init {
         try {
             LmtrMetadata.header(this.header)
+            require(stopDeadline==null || (sampling!=null && stopDeadline.monotonicNs>sampling.startMonotonicNs)) {
+                "Finite deadline requires an explicit periodic policy and a target after its Start"
+            }
             if(sampling!=null) {
                 require(initialStreams.size==1 && sampling.startMonotonicNs<=now()) {
                     "Experimental periodic recording requires one stream and a genuine elapsed Start"
@@ -157,6 +161,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
     private fun admitOfferLocked(sourceOffer:RecordingOffer):Admission {
         if(stopped)return Admission.STOPPED
         val witness=intakeWitnessLocked() ?: return Admission.REFUSED
+        if(expireDeadlineLocked(witness))return Admission.STOPPED
         if(sourceOffer.streamId !in streams || sourceOffer.chargedBytes>limits.maxObservationBytes ||
             sourceOffer.stream.byteSize>MAX_OBSERVATION_METADATA_BYTES ||
             (sourceOffer.preparationProfile!=null && sourceOffer.preparationProfile!=profile)) {
@@ -215,6 +220,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
         if(stopped)return Admission.STOPPED
         if(loss.streamId !in streams)return Admission.REFUSED
         val witness=intakeWitnessLocked() ?: return Admission.REFUSED
+        if(expireDeadlineLocked(witness))return Admission.STOPPED
         val facts=loss.facts.value()
         val actualLoss=periodic?.let { p ->
             if(!p.originalStream.same(loss.stream) || facts["observation_first"]!=null) {
@@ -264,13 +270,24 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
      * Test composition must not reuse its oracle/storage reservation until both workers exited.
      */
     fun workersTerminated():Boolean = !preparationThread.isAlive && !writerThread.isAlive
-    fun wakeTimers() = synchronized(lock) { lock.notifyAll() }
+    /** A bounded external notification can wake the existing workers without creating a timer thread.
+     * Expiry uses the actual clock read under the same lock as admission. Default callers retain
+     * their old no-clock-read wake behavior when no deadline was explicitly selected.
+     */
+    fun wakeTimers() = synchronized(lock) {
+        if(stopDeadline!=null && !stopped)intakeWitnessLocked()?.let {expireDeadlineLocked(it)}
+        lock.notifyAll()
+    }
     fun snapshot():RecorderSnapshot = synchronized(lock) {
         RecorderSnapshot(state,accepted,acknowledged,prepDrops,writerDrops,prepQueued,writerQueued,prepFlight,writerFlight,
             pendingBytes,controlUsed,maxPrep,maxWriter,chunks,checkpoints,failure,maxPrepFlight,maxWriterFlight,maxPending)
     }
     /** Immutable scalars; no source owner escapes after Stop, cleanup or failed append. */
     fun periodicSnapshot():PeriodicRecordingSnapshot? = synchronized(lock){periodic?.snapshot()}
+    fun deadlineSnapshot():RecordingDeadlineSnapshot? = synchronized(lock){stopDeadline?.let {
+        RecordingDeadlineSnapshot(it.monotonicNs,firstObservedExpiryNs,terminationWitness,
+            !periodicClockInvalid,if(stopped)reason else null)
+    }}
     /** Additional encoded definitions/scalars use the existing static quarter-control allowance. */
     fun periodicStaticMetadataBytes():Long? = synchronized(lock){periodic?.staticMetadataCharge}
 
@@ -290,6 +307,18 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
             return null
         }
         lastWitness=witness;return witness
+    }
+    /** Expiry wins before an offer at/after the target is admitted. A late observer still records
+     * its actual Stop time, including an honestly missed partial final slot if applicable.
+     * First Stop/failure remains authoritative; expiry never repairs an unrepresented loss.
+     */
+    private fun expireDeadlineLocked(witness:Long):Boolean {
+        if(stopped)return true
+        val target=stopDeadline ?: return false
+        if(witness<target.monotonicNs)return false
+        if(firstObservedExpiryNs==null)firstObservedExpiryNs=witness
+        terminateLocked("completed",RecordingStopDeadline.REASON,null,witness)
+        return true
     }
     /** Coalesce newly closed empty windows into one existing, charged control-journal item. */
     private fun advancePeriodicLocked(witness:Long,stopping:Boolean):Boolean {
@@ -351,7 +380,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
                     while(intake.isEmpty() && !stopped) {
                         // Either existing worker can detect idle windows while its peer is in I/O.
                         // A blocked backend is never made durable by this soft timer.
-                        if(periodic!=null)intakeWitnessLocked()?.let {advancePeriodicLocked(it,false)}
+                        if(periodic!=null)intakeWitnessLocked()?.let {if(!expireDeadlineLocked(it))advancePeriodicLocked(it,false)}
                         if(intake.isEmpty() && !stopped)lock.wait(if(periodic==null)0L else WRITER_WAKE_MS)
                     }
                     if(intake.isEmpty())return@synchronized null
@@ -466,7 +495,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
             while(true) {
                 val work=synchronized(lock) {
                     // Existing writer wakeup drives idle sampling too. There is no second timer queue.
-                    if(periodic!=null && !stopped)intakeWitnessLocked()?.let {advancePeriodicLocked(it,false)}
+                    if(periodic!=null && !stopped)intakeWitnessLocked()?.let {if(!expireDeadlineLocked(it))advancePeriodicLocked(it,false)}
                     if(writer.isEmpty() && !(prepDone && stopped))lock.wait(WRITER_WAKE_MS)
                     if(writer.isEmpty())null else writer.removeFirst().also { writerQueued-=it.charge;writerFlight=it.charge;maxWriterFlight=maxOf(maxWriterFlight,writerFlight) }
                 }
@@ -494,7 +523,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:Recording
                     synchronized(lock){writerFlight=0}
                 }
                 val tick=if(periodic==null)now() else synchronized(lock) {
-                    if(stopped)lastWitness else intakeWitnessLocked() ?: lastWitness
+                    if(stopped)lastWitness else (intakeWitnessLocked()?.also {expireDeadlineLocked(it)} ?: lastWitness)
                 }
                 if(firstPendingWitness!=null && tick-firstPendingWitness!!>=SEAL_INTERVAL_NS)seal()
                 if(firstUncoveredAck!=null && tick-firstUncoveredAck!!>=CHECKPOINT_INTERVAL_NS)checkpoint()

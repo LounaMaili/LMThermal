@@ -47,6 +47,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     @Volatile private var clock:FieldClock?=null
     @Volatile private var engine:RecorderEngine?=null
     private var sampler:Job?=null
+    @Volatile private var stopDeadlineJob:Job?=null
     private var oracle:BufferedWriter?=null
     private var directory:File?=null
     private var header:Obj?=null
@@ -55,8 +56,8 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     @Volatile private var safetyFailure:String?=null
     @Volatile private var foreground=false
     @Volatile private var lastValidNs:Long?=null
-    private val stopRequestNs=java.util.concurrent.atomic.AtomicLong()
-    private val stopRequestWallNs=java.util.concurrent.atomic.AtomicLong()
+    @Volatile private var stopTiming=FieldStopTiming()
+    @Volatile private var deadlineNotificationFailure=java.util.concurrent.atomic.AtomicReference<String?>(null)
     private var closeWallNs:Long?=null
     private var storageCap=0L
     private var oracleBytes=java.util.concurrent.atomic.AtomicLong()
@@ -261,8 +262,9 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         running.value=true
         scope.launch {
             try {
-                require(!periodicFiveHz || (profile==RecordingProfile.ANALYSIS && seconds==FIRST_PHYSICAL_SMOKE_SECONDS)) {
-                    "The explicit Analysis 5 Hz field candidate is bounded to ten seconds"
+                require(!periodicFiveHz || (profile==RecordingProfile.ANALYSIS && seconds in setOf(
+                    FieldPeriodicDuration.REGRESSION_SECONDS,FieldPeriodicDuration.QUALIFICATION_SECONDS))) {
+                    "Explicit Analysis 5 Hz field actions allow only ten or sixty seconds"
                 }
                 val sourceAdapter=checkNotNull(route.adapter){"Connect/Open first; no authoritative source"}
                 if(profile!=null)check(route.prepareAdapter(checkNotNull(fieldAdapter(sourceAdapter.identity,profile)))) {
@@ -286,19 +288,26 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                 val safety=FieldSafety(preflight,checkNotNull(health.rssBytes),SystemClock.elapsedRealtimeNanos(),camera.state.value.statistics.received)
                 val id=UUID.randomUUID().toString()
                 val root=File(getApplication<Application>().filesDir,"r4-field/$id");check(root.mkdirs())
-                directory=root;diagnosticFailure=null;safetyFailure=null;storageCap=preflight.storageCapBytes;oracleBytes=java.util.concurrent.atomic.AtomicLong();traceBytes=java.util.concurrent.atomic.AtomicLong();stopRequestNs.set(0);stopRequestWallNs.set(0);closeWallNs=null;metrics=FieldMetrics();runStart=SystemClock.elapsedRealtimeNanos();initialStatistics=camera.state.value.statistics;latestStatistics=initialStatistics;measured=seconds<=20
+                stopDeadlineJob?.cancel();stopDeadlineJob=null
+                directory=root;diagnosticFailure=null;safetyFailure=null;storageCap=preflight.storageCapBytes;oracleBytes=java.util.concurrent.atomic.AtomicLong();traceBytes=java.util.concurrent.atomic.AtomicLong();stopTiming=FieldStopTiming();deadlineNotificationFailure=java.util.concurrent.atomic.AtomicReference(null);closeWallNs=null;metrics=FieldMetrics();runStart=SystemClock.elapsedRealtimeNanos();initialStatistics=camera.state.value.statistics;latestStatistics=initialStatistics;measured=periodicFiveHz || seconds<=20
                 // Both intake and timeline origin use the exact API used by HT receipt, including suspend.
                 // Controller receipt and this field clock both use elapsedRealtimeNanos; the shared
                 // UUID is explicit only for the periodic candidate, never inferred from two UUIDs.
                 val selectedClock=if(periodicFiveHz)FieldClock(SystemClock::elapsedRealtimeNanos,adapter.identity.receiptClockId)
                     else FieldClock(SystemClock::elapsedRealtimeNanos)
+                // The periodic run and its absolute target share this genuine HEADER origin.
+                // Existing acquisition-following diagnostic actions retain their previous timing.
+                if(periodicFiveHz)runStart=selectedClock.origin
+                val deadline=if(periodicFiveHz)FieldPeriodicDuration.deadline(selectedClock.origin,seconds) else null
                 clock=selectedClock;header=selectedClock.header()
                 File(root,"preflight.json").writeBytes(LmtrJson.encode(preflight.report()+mapOf("run_id" to id,
                     "baseline" to (profile==null),"private_wall_clock_label" to java.time.Instant.now().toString(),
                     "health" to health.report(),"safety_policy" to "sampled_1hz_battery30_thermal3_storage256MiB_heap32MiB_rss128MiB_stale3s_half_cadence5samples",
                     "wall_clock_quality" to "unqualified_not_lmtr_utc_anchor")+
                     if(periodicFiveHz)mapOf("requested_recording_period_ns" to FiveHertzSampling.PERIOD_NS.toString(),
-                        "requested_recording_hz" to 5,"acquisition_policy" to "unchanged_normal_source_cadence") else emptyMap()))
+                        "requested_recording_hz" to 5,"acquisition_policy" to "unchanged_normal_source_cadence",
+                        "requested_stop_deadline_monotonic_ns" to deadline!!.monotonicNs.toString(),
+                        "deadline_policy" to "absolute_notification_and_serialized_intake_guard_actual_stop_witness") else emptyMap()))
                 if(profile!=null) {
                     synchronized(writeLock){oracle=File(root,"oracle.jsonl").bufferedWriter()}
                     val local=LocalRecorderBackend(File(root,"capture.lmtr"))
@@ -314,16 +323,21 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                     }
                     val current=RecorderEngine(header!!,listOf(adapter.stream.value()),profile,preflight.limits,backend,preflight.codec,
                         now=selectedClock::now,sealMetric={a,b,c,d -> metrics.sealed(a,b,c,d)},codecMetric={a,b,c -> metrics.codec(a,b,c)},
-                        sampling=if(periodicFiveHz)FiveHertzSampling(selectedClock.origin) else null)
+                        sampling=if(periodicFiveHz)FiveHertzSampling(selectedClock.origin) else null,stopDeadline=deadline)
                     engine=current
                     check(route.start(current,adapter.identity)){"Source replaced or recorder still draining; explicit Start refused"}
                 }
+                val boundEngine=engine;val boundMetrics=metrics;val boundTiming=stopTiming
+                val boundDeadlineFailure=deadlineNotificationFailure
                 status.value="${profile?.wire ?: "Baseline"}${if(periodicFiveHz) " explicitly 5 Hz" else ""}: $id; bounded $seconds s, Stop is always available"
-                sampler=scope.launch {
+                // Publish both jobs before either may finish/cancel the run. A fast safety
+                // refusal must not finish before its deadline job has become cancellable.
+                val sampleJob=scope.launch(start=CoroutineStart.LAZY) {
                     var trace:BufferedWriter?=null
                     try {
                         val localTrace=File(root,"samples.jsonl").bufferedWriter();trace=localTrace
-                        while(isActive && SystemClock.elapsedRealtimeNanos()-runStart<seconds*1000000000L) {
+                        while(isActive && (if(periodicFiveHz)boundEngine?.snapshot()?.state=="recording"
+                            else SystemClock.elapsedRealtimeNanos()-runStart<seconds*1000000000L)) {
                             val snapshot=engine?.snapshot()
                             val state=camera.state.value
                             val currentHealth=fieldHealth(getApplication(),foreground)
@@ -359,7 +373,31 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                     }
                     finishSafely()
                 }
+                sampler=sampleJob
+                val notification=if(deadline!=null && boundEngine!=null)scope.launch(start=CoroutineStart.LAZY) {
+                    try {
+                        FieldRunDeadline(deadline,selectedClock::now).awaitExpiry {
+                            // Run-scoped objects and targeted unsubscribe protect a successor even if
+                            // an old notification resumes after cancellation/rotation/source change.
+                            boundTiming.record(SystemClock::elapsedRealtimeNanos,{stopCountersFor(adapter.identity)}) {
+                                boundMetrics.closeSourceWindow();boundEngine.wakeTimers();route.stopIfCurrent(boundEngine)
+                            }
+                        }
+                    } catch(cancelled:CancellationException) {throw cancelled}
+                    catch(error:Exception) {
+                        boundDeadlineFailure.compareAndSet(null,error.javaClass.simpleName.take(64))
+                        boundMetrics.closeSourceWindow();boundEngine.failSourceEvidence("field_deadline_notification_failed")
+                        route.stopIfCurrent(boundEngine)
+                    } catch(_:OutOfMemoryError) {
+                        // No throwable/stack/source owner is retained or formatted on allocation refusal.
+                        boundDeadlineFailure.compareAndSet(null,"allocation_failed")
+                        boundMetrics.closeSourceWindow();boundEngine.sourceAllocationFailure();route.stopIfCurrent(boundEngine)
+                    }
+                } else null
+                stopDeadlineJob=notification
+                notification?.start();sampleJob.start()
             } catch(error:Exception) {
+                stopDeadlineJob?.cancel()
                 running.value=false
                 status.value="Test refused/failed: ${error.message}; originals retained"
                 engine?.failSource("field_setup_failed")
@@ -388,8 +426,18 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     /** Bounds the actual nonblocking Stop request; it is not a fabricated source-failure cutoff. */
     private fun requestStop() {
         running.value=false
-        val start=SystemClock.elapsedRealtimeNanos();metrics.closeSourceWindow();route.stop()
-        if(stopRequestNs.compareAndSet(0,start))stopRequestWallNs.set(SystemClock.elapsedRealtimeNanos()-start)
+        stopDeadlineJob?.cancel()
+        val identity=route.adapter?.identity
+        stopTiming.record(SystemClock::elapsedRealtimeNanos,{stopCountersFor(identity)}) {
+            metrics.closeSourceWindow();route.stop()
+        }
+    }
+    /** Source-epoch checked scalar counter reads; replacement makes this witness unknown, not stale. */
+    private fun stopCountersFor(expected:CameraSourceIdentity?):FieldStopCounters? {
+        if(expected==null || route.adapter?.identity!=expected)return null
+        val counters=camera.state.value.statistics
+        if(route.adapter?.identity!=expected)return null
+        return FieldStopCounters(counters.received,counters.replaced,counters.malformed)
     }
     /** Terminal result is not permission to reuse an oracle while a failed materializer unwinds. */
     private suspend fun waitWorkers(current:RecorderEngine):Boolean {
@@ -427,19 +475,24 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         val reopenNs=SystemClock.elapsedRealtimeNanos()-reopenStart
         val after=if(capture.exists())fileHash(capture) else null
         check(before==after){"Source changed during read-only check"}
-        val stats=latestStatistics
+        val stats=stopTiming.afterCounters()
         val report=metrics.report()+mapOf("status" to "executed_not_automatically_accepted","physical" to true,
-            "duration_ns" to (SystemClock.elapsedRealtimeNanos()-runStart).toString(),"warmup_seconds" to if(File(root,"measured-window.json").exists())20 else 0,"camera_received_delta" to (stats.received-initialStatistics.received).toString(),
-            "callback_replaced_delta" to (stats.replaced-initialStatistics.replaced).toString(),"callback_malformed_delta" to (stats.malformed-initialStatistics.malformed).toString(),
+            "duration_ns" to (SystemClock.elapsedRealtimeNanos()-runStart).toString(),"warmup_seconds" to if(File(root,"measured-window.json").exists())20 else 0,"camera_received_delta" to stats?.let {(it.received-initialStatistics.received).toString()},
+            "callback_replaced_delta" to stats?.let {(it.replaced-initialStatistics.replaced).toString()},"callback_malformed_delta" to stats?.let {(it.malformed-initialStatistics.malformed).toString()},
+            "last_sample_camera_received_delta" to (latestStatistics.received-initialStatistics.received).toString(),
+            "stop_counter_request_window" to stopTiming.report(),
+            "native_counter_scope" to "epoch_checked_after_first_stop_request_bracket_not_exact_sensor_boundary",
             "stop_cutoff_drain_close_reopen_ns" to (SystemClock.elapsedRealtimeNanos()-stopStart).toString(),"full_reopen_ns" to reopenNs.toString(),
-            "observed_stop_request_elapsed_ns" to (stopRequestNs.get()-runStart).toString(),"stop_request_call_wall_ns" to stopRequestWallNs.get().toString(),
+            "observed_stop_request_elapsed_ns" to stopTiming.requestedNs()?.let {(it-runStart).toString()},"stop_request_call_wall_ns" to stopTiming.callWallNs()?.toString(),
             "backend_close_wall_ns" to closeWallNs?.toString(),"stop_cutoff_authority" to "engine_serialized_witness_request_window_not_assumed_first_on_source_failure",
             "recorder_snapshot" to current?.snapshot()?.let(::fieldSnapshot),"finalized" to result?.finalized,"termination_status" to result?.status,
             "termination_reason" to result?.reason,"reopen" to reopened,"source_sha256" to before,"source_unchanged" to if(before==null)null else (before==after),"diagnostic_failure" to diagnosticFailure,
             "safety_stop_reason" to safetyFailure,
+            "deadline_notification_failure" to deadlineNotificationFailure.get(),
             "clock_correlation" to "source_receipt_and_recorder_intake_use_Android_elapsedRealtimeNanos_same_boot",
             "utc_sensor_resolution" to "unknown","warning" to NativeEquivalentThermometry.WARNING)+
-            (current?.periodicSnapshot()?.let {mapOf("periodic_sampling" to it.report())} ?: emptyMap())
+            (current?.periodicSnapshot()?.let {mapOf("periodic_sampling" to it.report())} ?: emptyMap())+
+            (current?.deadlineSnapshot()?.let {mapOf("stop_deadline" to it.report())} ?: emptyMap())
         File(root,"private-report.json").writeBytes(LmtrJson.encode(report))
         val inventory=root.listFiles().orEmpty().filter { it.isFile }.sortedBy { it.name }.map {
             mapOf("file" to it.name,"bytes" to it.length().toString(),"sha256" to fileHash(it)) }
@@ -451,7 +504,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
             else "Stopped and read-only checked: ${root.name}; private files retained; inspect before longer run"
     }
     fun memoryPressure() { if(busy.value){stopForSafety("android_memory_pressure");stop()} }
-    override fun onCleared() { route.stop();lifetime.dispose();presenter.dispose();camera.dispose();scope.launch { sampler?.cancelAndJoin();finishSafely();scope.cancel() } }
+    override fun onCleared() { stopDeadlineJob?.cancel();route.stop();lifetime.dispose();presenter.dispose();camera.dispose();scope.launch { sampler?.cancelAndJoin();finishSafely();scope.cancel() } }
 }
 
 /** Deliberate field buttons plus the unchanged product camera/measurement screen, in a separate APK. */
@@ -484,6 +537,11 @@ class FieldActivity:AppCompatActivity() {
                 Row {
                     Button(enabled=!busy,onClick={model.start(RecordingProfile.ANALYSIS,FIRST_PHYSICAL_SMOKE_SECONDS,true)}) {
                         Text("Analysis 5 Hz / ${FIRST_PHYSICAL_SMOKE_SECONDS}s (test)")
+                    }
+                }
+                Row {
+                    Button(enabled=!busy,onClick={model.start(RecordingProfile.ANALYSIS,FieldPeriodicDuration.QUALIFICATION_SECONDS,true)}) {
+                        Text("Analysis 5 Hz / ${FieldPeriodicDuration.QUALIFICATION_SECONDS}s (test)")
                     }
                 }
                 Row {

@@ -30,12 +30,16 @@ def sha(path):
     return digest.hexdigest()
 
 
-def rows(path):
-    """These finite test plans admit at most512 source/oracle rows, not duration-sized payload caches."""
-    result=[]
+def rows(path,maximum=512):
+    """Bounded scalar diagnostic oracles: 512 materialized owners or 4096 source decisions.
+
+    The 60-second virtual plan has 1500 callbacks. An additional aggregate 8 MiB
+    input limit bounds JSON evidence; no recorder/wire/queue capacity changes.
+    """
+    result=[];total=0
     with path.open('rb') as stream:
         while line:=stream.readline(65537):
-            assert len(line)<=65536 and len(result)<512
+            total+=len(line);assert len(line)<=65536 and len(result)<maximum and total<=8*1024**2
             result.append(loads(line))
     return result
 
@@ -78,7 +82,7 @@ def check_case(root,case,series_path,desktop_model,rectangle):
     """Reconcile slot identities with actual offered events, losses, durable ACKs and END separately."""
     directory=root/case['name'];path=directory/'capture.lmtr';before=sha(path)
     assert before==case['file_sha256']
-    offered=rows(directory/'offered.jsonl');originals={int(r['original_ordinal']):r for r in rows(directory/'oracle.jsonl')}
+    offered=rows(directory/'offered.jsonl',4096);originals={int(r['original_ordinal']):r for r in rows(directory/'oracle.jsonl')}
     assert len(originals)==len(rows(directory/'oracle.jsonl'))
     selected={};not_selected=late=0;last_slot=-1
     for ordinal,event in enumerate(offered):
@@ -96,6 +100,12 @@ def check_case(root,case,series_path,desktop_model,rectangle):
     assert int(producer['selected'])==len(selected)
     assert int(producer['intentionally_not_selected'])==not_selected
     assert int(producer['late_not_selected'])==late
+    if 'deadline' in case:
+        deadline=case['deadline'];target=int(deadline['target_monotonic_ns'])
+        assert deadline['clock_qualified'] and int(deadline['cutoff_monotonic_ns'])==cutoff
+        assert int(deadline['first_observed_expiry_monotonic_ns'])==cutoff
+        assert int(deadline['overshoot_ns'])==cutoff-target==int(case['notification_lag_ns'])
+        assert case['result']['reason']=='duration_deadline' and all(int(e['intake_upper_ns'])<target for e in offered)
     assert int(producer['selected_available'])==sum(e['measurement_available'] for e in selected.values())
     counts=Counter();covered=set();seen_ordinals=set();expected_scalars={};closing=None
     with Reader(path) as reader,series_path.open('x',newline='') as stream:
@@ -311,6 +321,7 @@ def main():
     parser.add_argument('root',type=Path);parser.add_argument('--desktop',type=Path)
     parser.add_argument('--field',action='store_true',help='Bounded candidate field/real-paced owner oracle instead of virtual offered-event cases')
     parser.add_argument('--recover',action='store_true')
+    parser.add_argument('--expected-cases',type=int,default=24,help='Explicit predeclared finite case count (24 original; 6 deadline cases)')
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args();args.output.mkdir(mode=0o700)
     if args.field:
@@ -320,7 +331,7 @@ def main():
     sys.path.insert(0,str(args.desktop))
     from lmtr_reader import LmtrPlaybackModel
     from offline_measurement import Rectangle
-    cases=loads((args.root/'cases.json').read_bytes())['cases'];assert len(cases)==24
+    cases=loads((args.root/'cases.json').read_bytes())['cases'];assert args.expected_cases in (6,24) and len(cases)==args.expected_cases
     result=[]
     for case in cases:
         checked=check_case(args.root,case,args.output/(case['name']+'-scalar-oracle.csv'),LmtrPlaybackModel,Rectangle)

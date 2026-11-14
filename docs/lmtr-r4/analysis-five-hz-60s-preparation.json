@@ -1,0 +1,380 @@
+{
+  "status": "software_preparation_verified_physical_60s_pending",
+  "date": "2026-11-14",
+  "branch": "codex/r4-analysis-five-hz-60s",
+  "base_commit": "b6a88905b14dd9215edb0313132143975655dc50",
+  "scope": "Explicit field-only Analysis 5 Hz 10/60-second actions; optional actual-witness absolute deadline. No product recording or physical/ART acceptance.",
+  "source_files_sha256": {
+    "camera-recording/src/main/kotlin/org/lmthermal/recording/CameraRecorderBinding.kt": "316ee91a0a15ebe373ca1f2e4bf0ca374c596260b10124b54ccdbd881a94d78f",
+    "camera-recording/src/test/kotlin/org/lmthermal/recording/PeriodicCameraLifetimeTest.kt": "2ff7c1b68bbe0ea1f859de8c9c7638dd106b83bb7241c33a68114e498dd1704f",
+    "lmtr-field-support/src/hostTest/kotlin/org/lmthermal/field/AnalysisDeadlineInteropProbe.kt": "0ad6aa2d0f276a18163a6943597d1311ea7bf4779f1cf3fbed0c5daaeea42470",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldRunDeadline.kt": "9b059662dcc37e886291e86f66be53556735026b4a0c563729b75f764c7fb20b",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldSourceRoute.kt": "30a30194f2dc1a0fe777d292db50806cd4b2719ea3906504437177456d62609d",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/FieldRunDeadlineTest.kt": "ae33a1796518535c626029f15883fbf5cefc60c9fb8de3a8286e190815049fbd",
+    "lmtr-field/src/main/java/org/lmthermal/field/FieldActivity.kt": "a519f43be02a5319c98b2f5a3da8b5df56a7d04e2fd1fa83f6d5ec5e6fa2fe31",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt": "d3df312966571030bbd5c236c0fff31db9165a7a64e9a3f8ead86bd1c63da9f5",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingStopDeadline.kt": "232e469c64634cd1020075f02c4d632120eaf38e08aac487474d915a3871fb81",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/PeriodicRecorderTest.kt": "5e0ff4d48bcb4cc8161c4094e509bd04ee6095f0a60e1d61816b03902c54a0c3",
+    "lmtr-recorder/src/test/kotlin/org/lmthermal/recorder/RecorderDeadlineTest.kt": "28974bd8c5eeb61df8a918cd8ff6c5bde0dfd89df4d20ff5d8296c67507bdfe6",
+    "tools/check_lmtr_analysis_five_hz.py": "b73cddc6e5ef38e722f525e78d84b822f2b64b7e521db95df6dddd230e693c76",
+    "tools/test_lmtr_analysis_five_hz.py": "9ad7f6c932f99567c7e435d351e097400223186b7d93793b86c054ccc7ef87f7"
+  },
+  "source_hash_scope": "Changed implementation/host-test/checker sources; documents/receipt excluded to avoid self-reference",
+  "field_apk": {
+    "file": "lmtr-field-debug.apk",
+    "sha256": "9275b53e7fb8c8302ffa055be1bce92529e7c51c1b94ed89797e8f8a3512b0aa",
+    "bytes": 11751802,
+    "package": "org.lmthermal.field",
+    "installed": false
+  },
+  "tests": {
+    "jvm": {
+      "core": {
+        "tests": 234,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-contract": {
+        "tests": 74,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-recorder": {
+        "tests": 82,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "camera-recording": {
+        "tests": 61,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-field-support": {
+        "tests": 85,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "jvm_execution_total": 536,
+    "jvm_note": "Shared regressions execute in several host modules; not unique methods",
+    "python_total": 92,
+    "python_breakdown": {
+      "reference_and_hostile": 64,
+      "historical_sampling": 8,
+      "field_oracle": 8,
+      "periodic_field_and_bounds": 12
+    },
+    "desktop_linux_offscreen": 272,
+    "android_offline_tasks": [
+      ":lmtr-field:assembleDebug",
+      ":lmtr-field:lintDebug",
+      ":app:assembleDebug",
+      ":app:lintDebug"
+    ],
+    "android_lint": {
+      "app": {
+        "Error": 0,
+        "Warning": 5
+      },
+      "lmtr-field": {
+        "Error": 0,
+        "Warning": 6
+      }
+    },
+    "r3_cross_language": {
+      "python_original_reads": 51,
+      "kotlin_original_reads": 51,
+      "positive_rewrites": 33,
+      "canonical_plan_comparisons": 33,
+      "json_vectors": 43,
+      "hostile_combinations": 29
+    }
+  },
+  "deadline": {
+    "period_ns": "200000000",
+    "allowed_field_seconds": [
+      10,
+      60
+    ],
+    "clock": "same explicit HEADER/source Android elapsedRealtimeNanos domain",
+    "boundary": "expiry ordered before intake at or after target; earlier accepted owners drain",
+    "cutoff": "actual first serialized Stop witness, never substituted target",
+    "late_partial_slot": "target 60 s; actual 60.025 s => 301 planned, 300 selected, one explicitly missed",
+    "notification": "one cancellable existing-dispatcher coroutine; existing workers/intake also observe expiry; no dedicated timer thread",
+    "stale_run": "original engine/timing/metrics captured; targeted unsubscribe; both jobs published before either starts",
+    "runtime_cost": "bounded scalar/coroutine state within existing allowance, not an ART worker-stack/peak-memory measurement",
+    "counter_boundary": "source-epoch checked first-Stop request bracket, distinct from last 1 Hz sample and actual engine cutoff",
+    "periodic_warmup_reset": false
+  },
+  "virtual_cases": [
+    {
+      "name": "deadline-10s-exact-0",
+      "sha256": "e7e65e6c96aca6e9f1a88ef4b8e497942e009c8f746abe42f788bd610f31eb8d",
+      "recovered": false,
+      "counts": {
+        "available": 49,
+        "unavailable": 1
+      },
+      "original_offers": 250,
+      "selected": 50,
+      "planned_slots": 50,
+      "complete_slot_coverage": true,
+      "desktop_point_roi_parity": true,
+      "source_unchanged": true,
+      "pending_tail": "closed",
+      "producer_ledger_seen": true,
+      "deadline": {
+        "clock_qualified": true,
+        "current_engine_reason": "duration_deadline",
+        "cutoff_monotonic_ns": "10000000000",
+        "first_observed_expiry_monotonic_ns": "10000000000",
+        "overshoot_ns": "0",
+        "scope": "actual_serialized_stop_witness_not_backdated_to_target",
+        "target_monotonic_ns": "10000000000"
+      },
+      "requested_duration_ns": "10000000000",
+      "notification_lag_ns": "0"
+    },
+    {
+      "name": "deadline-60s-exact-0",
+      "sha256": "7417f26f9029740c949259b1fb89e3a10f87172f77822776b6411262857ba0c1",
+      "recovered": false,
+      "counts": {
+        "available": 299,
+        "unavailable": 1
+      },
+      "original_offers": 1500,
+      "selected": 300,
+      "planned_slots": 300,
+      "complete_slot_coverage": true,
+      "desktop_point_roi_parity": true,
+      "source_unchanged": true,
+      "pending_tail": "closed",
+      "producer_ledger_seen": true,
+      "deadline": {
+        "clock_qualified": true,
+        "current_engine_reason": "duration_deadline",
+        "cutoff_monotonic_ns": "60000000000",
+        "first_observed_expiry_monotonic_ns": "60000000000",
+        "overshoot_ns": "0",
+        "scope": "actual_serialized_stop_witness_not_backdated_to_target",
+        "target_monotonic_ns": "60000000000"
+      },
+      "requested_duration_ns": "60000000000",
+      "notification_lag_ns": "0"
+    },
+    {
+      "name": "deadline-60s-late-0",
+      "sha256": "d7e40434d3174f59feafe8c99d8fe97231d3d900829ca25ccea7609cdb8a0936",
+      "recovered": false,
+      "counts": {
+        "available": 299,
+        "unavailable": 1,
+        "missed_schedule": 1
+      },
+      "original_offers": 1500,
+      "selected": 300,
+      "planned_slots": 301,
+      "complete_slot_coverage": true,
+      "desktop_point_roi_parity": true,
+      "source_unchanged": true,
+      "pending_tail": "closed",
+      "producer_ledger_seen": true,
+      "deadline": {
+        "clock_qualified": true,
+        "current_engine_reason": "duration_deadline",
+        "cutoff_monotonic_ns": "60025000000",
+        "first_observed_expiry_monotonic_ns": "60025000000",
+        "overshoot_ns": "25000000",
+        "scope": "actual_serialized_stop_witness_not_backdated_to_target",
+        "target_monotonic_ns": "60000000000"
+      },
+      "requested_duration_ns": "60000000000",
+      "notification_lag_ns": "25000000"
+    },
+    {
+      "name": "deadline-10s-exact-1",
+      "sha256": "9eaebed90546054a01597a3a2ad761167a0d847979c22f9e7d9aff1900e1c086",
+      "recovered": false,
+      "counts": {
+        "available": 49,
+        "unavailable": 1
+      },
+      "original_offers": 250,
+      "selected": 50,
+      "planned_slots": 50,
+      "complete_slot_coverage": true,
+      "desktop_point_roi_parity": true,
+      "source_unchanged": true,
+      "pending_tail": "closed",
+      "producer_ledger_seen": true,
+      "deadline": {
+        "clock_qualified": true,
+        "current_engine_reason": "duration_deadline",
+        "cutoff_monotonic_ns": "10000000000",
+        "first_observed_expiry_monotonic_ns": "10000000000",
+        "overshoot_ns": "0",
+        "scope": "actual_serialized_stop_witness_not_backdated_to_target",
+        "target_monotonic_ns": "10000000000"
+      },
+      "requested_duration_ns": "10000000000",
+      "notification_lag_ns": "0"
+    },
+    {
+      "name": "deadline-60s-exact-1",
+      "sha256": "4f46f600b98fc995297a29af7ebafd5d301db24cf23ef40a72a1f0b70f9e746e",
+      "recovered": false,
+      "counts": {
+        "available": 299,
+        "unavailable": 1
+      },
+      "original_offers": 1500,
+      "selected": 300,
+      "planned_slots": 300,
+      "complete_slot_coverage": true,
+      "desktop_point_roi_parity": true,
+      "source_unchanged": true,
+      "pending_tail": "closed",
+      "producer_ledger_seen": true,
+      "deadline": {
+        "clock_qualified": true,
+        "current_engine_reason": "duration_deadline",
+        "cutoff_monotonic_ns": "60000000000",
+        "first_observed_expiry_monotonic_ns": "60000000000",
+        "overshoot_ns": "0",
+        "scope": "actual_serialized_stop_witness_not_backdated_to_target",
+        "target_monotonic_ns": "60000000000"
+      },
+      "requested_duration_ns": "60000000000",
+      "notification_lag_ns": "0"
+    },
+    {
+      "name": "deadline-60s-late-1",
+      "sha256": "4405e32cfaf4012579988c677cd26422ea11200656403e1467beb64333d841a0",
+      "recovered": false,
+      "counts": {
+        "available": 299,
+        "unavailable": 1,
+        "missed_schedule": 1
+      },
+      "original_offers": 1500,
+      "selected": 300,
+      "planned_slots": 301,
+      "complete_slot_coverage": true,
+      "desktop_point_roi_parity": true,
+      "source_unchanged": true,
+      "pending_tail": "closed",
+      "producer_ledger_seen": true,
+      "deadline": {
+        "clock_qualified": true,
+        "current_engine_reason": "duration_deadline",
+        "cutoff_monotonic_ns": "60025000000",
+        "first_observed_expiry_monotonic_ns": "60025000000",
+        "overshoot_ns": "25000000",
+        "scope": "actual_serialized_stop_witness_not_backdated_to_target",
+        "target_monotonic_ns": "60000000000"
+      },
+      "requested_duration_ns": "60000000000",
+      "notification_lag_ns": "25000000"
+    }
+  ],
+  "virtual_scope": "Six full-size fixture-derived synthetic virtual-clock cases; complete hashes/context/availability/clock/slot/point/ROI parity, not cadence, ART, RSS or calibration validation",
+  "acquisition_following_exact_byte_parity": {
+    "status": "passed",
+    "scope": "six deterministic files without the opt-in deadline, not a timing or RSS benchmark",
+    "cases": [
+      {
+        "file": "analysis-0/capture.lmtr",
+        "sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+        "old_and_prior_and_current_equal": true
+      },
+      {
+        "file": "analysis-1/capture.lmtr",
+        "sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+        "old_and_prior_and_current_equal": true
+      },
+      {
+        "file": "native-0/capture.lmtr",
+        "sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+        "old_and_prior_and_current_equal": true
+      },
+      {
+        "file": "native-1/capture.lmtr",
+        "sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+        "old_and_prior_and_current_equal": true
+      },
+      {
+        "file": "full-0/capture.lmtr",
+        "sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+        "old_and_prior_and_current_equal": true
+      },
+      {
+        "file": "full-1/capture.lmtr",
+        "sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+        "old_and_prior_and_current_equal": true
+      }
+    ]
+  },
+  "invariants": {
+    "prior_physical_manifest_sha256": "82bc5b5d6d61fd5a8f2021ee81d400c349be69cbbfff4b02fa499b1c7cb68648",
+    "prior_regular_files": 99,
+    "prior_files_unchanged": true,
+    "canonical_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "canonical_members_verified": 51,
+    "canonical_regenerated": false,
+    "unchanged_guarded_sources": {
+      "docs/LMTR_WIRE_V1.md": "b5b867ff9e5fae707fa07a4a2ebe1854d4716f993a4017a90140f2b934e539d0",
+      "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt": "ea7e04bec1183d09d3d08f632ef906ff772a628fd9b421253d64d878a9c21e9a",
+      "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt": "c9d7990b44b7fc1edc85592a0cc84156df2b30bd302b49a88f6635c72639d6e8",
+      "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldSafety.kt": "3da688e296b70f468252c5d3ab29cb48d521394e4447bb2b38199d0bac47dd5f",
+      "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt#prefix-including-RecorderLimits-and-backend": "f6e7fdb7047fb1f4eb1d9ba9a4ea4288fb9b0236a6819751a24b14148a2270c1"
+    },
+    "production_application_unchanged": true,
+    "normal_preview_and_acquisition_unchanged": true,
+    "both_complete_validations": true,
+    "ack_after_synced_footer": true,
+    "end_refused_after_unrepresented_loss": true,
+    "logical_reservation_bytes": 81788928,
+    "heap_system_margin_bytes": 33554432,
+    "rss_increment_guard_bytes": 134217728,
+    "preparation_bytes": 4194304,
+    "writer_bytes": 4194304,
+    "preferred_chunk_bytes": 4194304,
+    "control_bytes": 1048576,
+    "max_ht_offer_bytes": 3145728,
+    "forced_gc": false
+  },
+  "retained_initial_failures": [
+    "Existing Stop/admission fixture unintentionally overloaded the unchanged preparation queue; actual failed LMTR retained, first offer now drained without changing assertions/production limits",
+    "New aggregate-oracle test first exceeded unchanged JSON 16 KiB string limit; test input now uses four individually valid scalar strings",
+    "Incomplete runtime-copy preparation from Gradle NO-SOURCE entries, stale old Desktop venv without NumPy, and unavailable pytest command retained; use verified existing Desktop venv and repository unittest suite"
+  ],
+  "preservation": {
+    "private_runtime_manifest_sha256": "5ba43d4270e1a6600e1120bee4cfa88a81c1e769b9456672fe2c6107ac051b73",
+    "same_filesystem_local_only": true,
+    "atomic_snapshot": false,
+    "previous_evidence_unmodified": true
+  },
+  "physical_gate": {
+    "adb_in_software_preparation": false,
+    "new_start_count": 0,
+    "fresh_availability_confirmation_required": true,
+    "explicit_operator_observation_and_start_consent_required": true,
+    "single_start_only": true,
+    "no_retry": true,
+    "no_actions": true,
+    "no_emulator": true,
+    "no_merge": true
+  },
+  "pending": [
+    "Physical deadline overshoot, memory/RSS/cadence and real selected-data qualification",
+    "Operator-observed normal preview reaction before and throughout the run, with unobserved intervals explicit",
+    "Independent readback of the future physical file; no completed 60-second LMTR yet"
+  ],
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

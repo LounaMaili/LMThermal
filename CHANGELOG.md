@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Experimental Analysis 5 Hz / 60-second preparation — 2026-11-14)
+- Retain the separate ten-second field regression action and add an explicit sixty-second Analysis action. Serialize an optional absolute monotonic deadline with intake/Stop, retain genuine expiry/cutoff and partial-final-slot evidence, and prevent stale notifications from stopping a successor recording. Separate first-request camera-counter brackets from last one-Hz samples; measure the complete minute without the older twenty-second reset.
+- Add virtual boundary/race/drain/cancellation tests and six full-size noncanonical STORED/DEFLATE cases with independent readback. Synchronize an existing race fixture after its initial offer to isolate Stop from legitimate preparation overload, keeping its assertions and all production capacities unchanged.
+- Preserve both complete validations, durable ACKs, loss rules, 78+32 MiB/RSS/queue guards, normal acquisition/preview and all historical evidence. Document fresh hardware confirmation and explicit visual-observation/Start consent gates; no physical, ART, indefinite-runtime or production-recording acceptance is implied.
+
 ### Verified (First physical Analysis 5 Hz qualification — 2026-11-14)
 - Preserve one authorized d1b8c89 field-APK run: ten seconds requested, 10.644236008 s to Stop, 54 selected/acknowledged available observations, 210 intentional nonselections, no missed slots or preparation/writer losses, and completed END. Keep soft-timer overshoot and callback population boundaries explicit.
 - Record unchanged admission/78+32 MiB/queue/validation/RSS protections, sampled memory/GC limits, exact independent Python/Desktop Float32/point/ROI parity, private original hashes and normal camera release. Manual Pixel preview responsiveness was not observed; no general RSS reduction, long-run, Full-25-Hz or calibration acceptance follows.

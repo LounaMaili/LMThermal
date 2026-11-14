@@ -231,3 +231,7 @@ not execution. Before that run:
 
 No 30/60-second run, production integration, R4 closure or further hardware experiment
 is authorized or performed by this report.
+
+The owner subsequently requested a separate **60-second** preparation instead of
+this historical 30-second proposal. See [the new scope and mandatory operator gates](ANALYSIS_FIVE_HZ_60S.md).
+That follow-up does not change any result, artifact or authorization recorded above.

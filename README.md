@@ -178,6 +178,10 @@ A [subsequent single physical Analysis 5 Hz run](docs/lmtr-r4/ANALYSIS_FIVE_HZ_P
 passed finite-duration and selected-data integrity gates with 54 observations and no
 losses; its 10.644 s Stop, sampled-memory limits and unobserved manual preview remain
 explicit. This does not complete R4 or qualify longer recording/Full at 25 Hz.
+The [separate 60-second preparation](docs/lmtr-r4/ANALYSIS_FIVE_HZ_60S.md) adds an
+explicit experimental action and absolute Stop deadline with genuine cutoff witnesses.
+Its camera-free checks do not replace fresh hardware availability and operator consent
+before the single supervised physical Start.
 
 The [Accepted LMTR v1 wire contract](docs/LMTR_WIRE_V1.md) records explicit owner
 acceptance of `r1b-review-2`, D1–D10 and historical conversion approach B on

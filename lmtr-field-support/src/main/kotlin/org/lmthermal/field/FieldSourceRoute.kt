@@ -66,6 +66,8 @@ class FieldSourceRoute<P>(private val observer:(CameraAcquiredObservation)->Unit
         else {adapter=replacement;true}
     }
     fun stop():CompletableFuture<RecorderResult>?=synchronized(lock){binding.stop()}
+    /** Target the original recording only; stale deadline notifications cannot stop its successor. */
+    fun stopIfCurrent(expected:RecorderEngine):CompletableFuture<RecorderResult>?=synchronized(lock){binding.stopIfCurrent(expected)}
 }
 
 /** Capture independent original-owner hashes before adapter transformation, off the acquisition thread.

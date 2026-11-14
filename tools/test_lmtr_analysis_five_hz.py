@@ -9,7 +9,35 @@ from pathlib import Path
 import shutil
 import tempfile
 import unittest
-from check_lmtr_analysis_five_hz import check_periodic_field
+from check_lmtr_analysis_five_hz import check_periodic_field, rows
+
+
+class PeriodicDiagnosticBoundsTests(unittest.TestCase):
+    """Longer source decisions do not remove owner, line or aggregate evidence bounds."""
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory(prefix='lmtr-periodic-bounds-')
+        self.path=Path(self.temp.name)/'scalar.jsonl'
+
+    def tearDown(self):self.temp.cleanup()
+
+    def test_explicit_source_decision_limit_accepts_the_sixty_second_plan(self):
+        self.path.write_bytes(b'{"ordinal":"0"}\n'*1500)
+        self.assertEqual(len(rows(self.path,4096)),1500)
+        with self.assertRaises(AssertionError):rows(self.path)
+
+    def test_source_decision_count_limit_is_still_finite(self):
+        self.path.write_bytes(b'{}\n'*4097)
+        with self.assertRaises(AssertionError):rows(self.path,4096)
+
+    def test_overlong_line_is_refused_before_json_parsing(self):
+        self.path.write_bytes(b' '*65537)
+        with self.assertRaises(AssertionError):rows(self.path,4096)
+
+    def test_aggregate_json_evidence_budget_is_independent_of_the_row_limit(self):
+        # Each string also respects the unchanged wire JSON's 16 KiB scalar bound.
+        row=json.dumps({k:'x'*16000 for k in ('a','b','c','d')}).encode()+b'\n'
+        self.path.write_bytes(row*132)
+        with self.assertRaises(AssertionError):rows(self.path,4096)
 
 
 class PeriodicFieldReadbackTests(unittest.TestCase):

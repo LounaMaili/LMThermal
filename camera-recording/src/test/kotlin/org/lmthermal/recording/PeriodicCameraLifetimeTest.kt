@@ -91,6 +91,22 @@ class PeriodicCameraLifetimeTest {
         assertFalse(binding.start(e));assertEquals(0,source.subscriptions)
         assertTrue(checkNotNull(e.awaitStop(10000)).finalized);assertEquals(0L,e.snapshot().acknowledged)
     }
+    @Test fun oldTargetedDeadlineCannotUnsubscribeANewRecordingOnTheSameSource() {
+        val m=SimulatedRecordingModule();val source=Source(m);val adapter=Adapter(source);val clock=AtomicLong(0)
+        val binding=CameraRecorderBinding<Unit>{adapter};binding.opened(source.session())
+        val first=PeriodicTestSource.engine(m,file(),clock);assertTrue(binding.start(first))
+        source.emit(0,0);binding.stop()!!.get(10,TimeUnit.SECONDS);released(binding)
+        clock.set(250000000);val next=PeriodicTestSource.engine(m,file(),clock);assertTrue(binding.start(next))
+        source.emit(0,clock.get())
+        val drainedBy=System.nanoTime()+TimeUnit.SECONDS.toNanos(10)
+        while(next.snapshot().let {it.preparationQueuedBytes+it.preparationInFlightBytes+it.writerQueuedBytes+it.writerInFlightBytes>0}) {
+            check(System.nanoTime()<drainedBy);Thread.sleep(2)
+        }
+        first.wakeTimers();assertNull(binding.stopIfCurrent(first))
+        assertNotNull(source.current);assertEquals(1,source.unsubscriptions)
+        clock.set(450000000);source.emit(1,clock.get());binding.stop()!!.get(10,TimeUnit.SECONDS)
+        assertEquals(2L,next.snapshot().acknowledged);assertEquals(2,source.unsubscriptions)
+    }
     @Test fun adapterFailureCannotCloseAnUnrepresentedDeliveredCallbackAsOrdinaryIdle() {
         val m=SimulatedRecordingModule();val source=Source(m);val clock=AtomicLong(0)
         val e=PeriodicTestSource.engine(m,file(),clock);val binding=CameraRecorderBinding<Unit>{Adapter(source,true)}

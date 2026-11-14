@@ -321,3 +321,8 @@ completed at 10.644236008 s with 54 selected/saved measurements and no represent
 losses. Its unmodified guards, timing overshoot, sampled-memory scope and unobserved
 operator preview are recorded separately. It does not turn this earlier offline
 campaign into ART/physical evidence, complete R4, or authorize 30/60 seconds.
+
+The later [60-second preparation](ANALYSIS_FIVE_HZ_60S.md) is a separate owner-requested
+scope: it retains the ten-second action, adds an absolute deadline and actual cutoff
+diagnostics, and requires fresh hardware confirmation plus explicit operator consent
+before one supervised Start. Its new offline receipt does not alter this historical campaign.
