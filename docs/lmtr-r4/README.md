@@ -1,6 +1,11 @@
 # R4 camera-free recorder foundation
 
 **Engineering work in progress, not full R4 acceptance or a recording product.**
+The [first physical Analysis 5 Hz follow-up](ANALYSIS_FIVE_HZ_PHYSICAL.md) records one
+completed 10.644 s window with all 54 selected observations retained, independent
+readback and unchanged guards. Long-run/Full/physical-accuracy acceptance remains open;
+this is a separate subsequent experiment, not a reinterpretation of earlier failures.
+
 The [experimental Analysis 5 Hz candidate](ANALYSIS_FIVE_HZ.md) now implements the
 profile-aware preparation and bounded periodic ledger studied below. Its software
 qualification, producer/ACK scopes and future physical protocol remain separate

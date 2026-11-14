@@ -146,6 +146,9 @@ profile-aware preparation and a bounded periodic ledger in those isolated module
 including idle/Stop slots and original-ordinal witnesses on overload. Its optional
 producer evidence does not change LMTR v1, and the separate field test action does
 not enable recording in the production application.
+One [subsequent physical Analysis 5 Hz run](lmtr-r4/ANALYSIS_FIVE_HZ_PHYSICAL.md)
+passed its finite selected-data/duration gates; broader R4, long-run memory, Full
+throughput and absolute thermometric accuracy remain unaccepted.
 The recorder/adapter are not linked into the app; the optional source channel and guarded lifetime notifications are implemented, with host and test-only ART evidence. Physical module/lifecycle/resource acceptance remains pending in open #9. Recording product UI/backend export and R5/R6 remain outside this scope. See [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
 Accepted LMTX v1 remain unchanged.
 

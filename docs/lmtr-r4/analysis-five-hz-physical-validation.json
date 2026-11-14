@@ -1,0 +1,356 @@
+{
+  "status": "one_finite_physical_Analysis_5Hz_duration_and_selected_data_integrity_gates_passed",
+  "date": "2026-11-14",
+  "source": {
+    "android_commit": "d1b8c8917961a162270e58510c1eeb39baa94f04",
+    "desktop_commit": "26b1785226b15dc17f977d36c2ca42eb79feeac7",
+    "package": "org.lmthermal.field",
+    "apk_sha256": "552803b67c3ffc1b182ba05ee1134d88b4bd21f389f2a4b11f8b118aace59f3c",
+    "apk_bytes": 11789361,
+    "rebuilt_installed_and_pulled_back_equal": true,
+    "signer_matches_prior_field_apk": true,
+    "install": "non_destructive_install_r",
+    "product_application_unchanged": true,
+    "gradle_build_execution": {
+      "passed": true,
+      "actionable_tasks": 61,
+      "executed_tasks": 3,
+      "up_to_date_tasks": 58,
+      "cached_artifact_sha_matches_prior_offline_candidate": true
+    }
+  },
+  "device": {
+    "model": "Pixel 8",
+    "android": "17",
+    "api": 37,
+    "camera_vid": "1514",
+    "camera_pid": "0001",
+    "camera_product": "T3-317-13",
+    "existing_wifi_adb_used": true,
+    "mdns_needed": false,
+    "pairing_or_security_changes": false,
+    "other_app_data_access": false
+  },
+  "execution": {
+    "recording_requests": 1,
+    "recordings_created": 1,
+    "retries": 0,
+    "profile": "analysis",
+    "codec": 1,
+    "period_ns": "200000000",
+    "requested_seconds": 10,
+    "field_stop_request_elapsed_ns": "10644236008",
+    "engine_schedule_cutoff_relative_header_ns": "10644411382",
+    "report_elapsed_including_drain_close_reopen_ns": "13590357632",
+    "stop_drain_close_reopen_ns": "2946291831",
+    "full_reopen_ns": "2562546794",
+    "finalized": true,
+    "end_status": "completed",
+    "end_reason": "user_stop",
+    "safety_stop_reason": null,
+    "diagnostic_failure": null,
+    "engine_error": null,
+    "first_periodic_failure": null,
+    "initialization_ns_from_ms": "6355000000",
+    "shutter_discard_frames": 75,
+    "subsequent_live_frames": 5,
+    "ready_to_policy_start_approx_s": 231.988738709,
+    "source_clock": "shared Android elapsedRealtimeNanos domain; original receipt preserved",
+    "normal_thermometry_and_Compose": true,
+    "preview_suppressed": false,
+    "forced_gc": false
+  },
+  "admission": {
+    "health": {
+      "android_thermal_status": 0,
+      "battery_percent": 72,
+      "camera_permission": true,
+      "foreground_unlocked": true,
+      "free_bytes": "90622615552",
+      "java_headroom_bytes": "149783552",
+      "java_max_bytes": "268435456",
+      "java_used_bytes": "118651904",
+      "rss_bytes": "388730880",
+      "system_available_bytes": "721035264",
+      "system_low_memory": false
+    },
+    "plan": {
+      "capacity_status": "known",
+      "codec": 1,
+      "control_bytes": "1048576",
+      "duration_seconds": 10,
+      "estimated_bytes_per_second": "11878400",
+      "free_bytes": "90622615552",
+      "headroom_bytes": "268435456",
+      "max_observation_bytes": "3145728",
+      "memory_assurance": "accounting_reservation_not_measured_rss",
+      "permitted": true,
+      "preferred_chunk_bytes": "4194304",
+      "preparation_bytes": "4194304",
+      "profile": "analysis",
+      "required_free_bytes": "469008384",
+      "reserved_logical_bytes": "81788928",
+      "storage_cap_bytes": "200572928",
+      "writer_bytes": "4194304"
+    },
+    "recording_created": false,
+    "safety_refusal": null,
+    "scope": "admission_witness_not_run_completion"
+  },
+  "rss_guard_threshold_bytes": "522948608",
+  "runtime_guards": {
+    "health_sample_max_rss_bytes": "465272832",
+    "health_sample_min_java_headroom_bytes": "91898880",
+    "health_sample_min_system_available_bytes": "646270976",
+    "all_thermal_status_zero": true,
+    "all_low_memory_false": true
+  },
+  "periodic": {
+    "acknowledged_available": "54",
+    "acknowledged_missed": "0",
+    "acknowledged_preparation_loss": "0",
+    "acknowledged_unavailable": "0",
+    "acknowledged_writer_loss": "0",
+    "acquired_callbacks": "264",
+    "cutoff_ns": "155392631150091",
+    "first_periodic_failure": null,
+    "intentionally_not_selected": "210",
+    "late_not_selected": "12",
+    "ledger_complete": true,
+    "materialization_losses": "0",
+    "missed_detected": "0",
+    "missed_journaled": "0",
+    "planned_slots": "54",
+    "selected": "54",
+    "selected_available": "54",
+    "selected_unavailable": "0",
+    "unclassified_callbacks_at_failure": "0"
+  },
+  "gate_callbacks": "266",
+  "gate_valid": "266",
+  "gate_unavailable": "0",
+  "held": "0",
+  "invalid": "0",
+  "known_source_losses": "0",
+  "unknown_source_loss_signals": "0",
+  "gate_fps": 24.999634741185695,
+  "last_sample_camera_received_delta": "239",
+  "counter_boundaries": "LatestStatistics stops at the final 1 Hz sample, approximately one second before Stop; 239 is not a complete-window count. Gate callbacks 266 include setup before the periodic intake population 264. Do not report boundary differences as losses.",
+  "selected_interval_statistics": {
+    "timeline_ns": {
+      "count": 53,
+      "min_ns": 116711751,
+      "median_ns": 200937907,
+      "p95_ns": 207083822,
+      "max_ns": 208976359,
+      "span_ns": 10519907516,
+      "event_interval_hz": 5.038067104619592
+    },
+    "receipt_ns": {
+      "count": 53,
+      "min_ns": 119232748,
+      "median_ns": 200093221,
+      "p95_ns": 201745321,
+      "max_ns": 202430461,
+      "span_ns": 10519700038,
+      "event_interval_hz": 5.038166469438261
+    }
+  },
+  "queues_and_acknowledgements": {
+    "accepted": "54",
+    "acknowledged": "54",
+    "checkpoints": "2",
+    "chunks": "11",
+    "control_bytes": "0",
+    "error": null,
+    "max_pending_bytes": "2699365",
+    "max_preparation_in_flight_bytes": "3145728",
+    "max_preparation_queued_bytes": "3145728",
+    "max_writer_in_flight_bytes": "449068",
+    "max_writer_queued_bytes": "898134",
+    "pending_bytes": "0",
+    "preparation_drops": "0",
+    "preparation_in_flight_bytes": "0",
+    "preparation_queued_bytes": "0",
+    "state": "finalized",
+    "writer_drops": "0",
+    "writer_in_flight_bytes": "0",
+    "writer_queued_bytes": "0"
+  },
+  "writer_metrics": {
+    "encode_validation_ns_not_codec_only": {
+      "count": 11,
+      "max_ns": "363956136",
+      "omitted": "0",
+      "p50_ns": "222366821",
+      "p95_ns": "276870484"
+    },
+    "append_sync": {
+      "count": 11,
+      "max_ns": "161108276",
+      "omitted": "0",
+      "p50_ns": "129282919",
+      "p95_ns": "149606201"
+    },
+    "codec_call_wall": {
+      "count": 11,
+      "max_ns": "25707845",
+      "omitted": "0",
+      "p50_ns": "15020629",
+      "p95_ns": "24996094"
+    },
+    "seal_encode_plus_append": {
+      "count": 11,
+      "max_ns": "525064412",
+      "omitted": "0",
+      "p50_ns": "353139933",
+      "p95_ns": "403164877"
+    },
+    "codec_decoded_bytes": "23887872",
+    "codec_stored_bytes": "5920189",
+    "codec_ratio": 0.2478324147081833
+  },
+  "memory": {
+    "samples": 10,
+    "sample_span_ns": "9493188481",
+    "metrics": {
+      "java_used_bytes": {
+        "first": 131963904,
+        "last": 76319744,
+        "min": 33885184,
+        "max": 184650752
+      },
+      "native_allocated_bytes": {
+        "first": 43189120,
+        "last": 40946160,
+        "min": 26025056,
+        "max": 65942336
+      },
+      "rss_bytes": {
+        "first": 405192704,
+        "last": 347119616,
+        "min": 293457920,
+        "max": 477184000
+      },
+      "pss_bytes": {
+        "first": 360592384,
+        "last": 300583936,
+        "min": 249116672,
+        "max": 427072512
+      }
+    },
+    "gc_deltas": {
+      "art.gc.bytes-allocated": 993923072,
+      "art.gc.bytes-freed": 1049509888,
+      "art.gc.gc-count": 5,
+      "art.gc.gc-time": 362,
+      "art.gc.blocking-gc-count": 0
+    },
+    "scope": "whole-process Runtime occupied heap and sampled OS/Debug values; includes natural GC and uncollected garbage, not reachable heap or complete peaks; no native/graphics attribution during recording",
+    "notes": [
+      "Health guard and later FieldMetrics sample are different instants",
+      "Longer ready preview and different system state prevent a matched baseline with old Full",
+      "P95 collection age is not LCD/photons latency",
+      "No live-heap plateau or indefinite-memory proof"
+    ]
+  },
+  "preview": {
+    "operator_observed": false,
+    "operator_answer": "Pas regard\u00e9.",
+    "collection_age": {
+      "count": 266,
+      "max_ns": "81483300",
+      "omitted": "0",
+      "p50_ns": "60431015",
+      "p95_ns": "74190290"
+    },
+    "collection_fps": 25.093972985492055,
+    "preview_publications": "266",
+    "manual_usability_gate": "not_observed_not_failed_or_passed"
+  },
+  "file": {
+    "sha256": "9708b17ffe387e49373229ae70dd52351a565c34ae65da857d462fcbefcdb0e9",
+    "bytes": 6225492,
+    "observations": 54,
+    "temperature_bytes": 23887872,
+    "native_bytes": 0,
+    "transport_bytes": 0,
+    "validity_mask_bytes": 0,
+    "validity": "54 all-valid finite planes, no mask required",
+    "gaps": 0,
+    "entries": 56,
+    "chunks": 11,
+    "end_status": "completed",
+    "unknown_tail": false,
+    "source_unchanged": true,
+    "six_device_files_and_fedora_hashes_equal": true,
+    "distinct_original_native_hashes": 54,
+    "distinct_temperature_hashes": 54,
+    "scope": "Analysis intentionally omits native and transport payloads; source hashes do not reconstruct omitted evidence"
+  },
+  "validation": {
+    "kotlin_full_reopen": "passed",
+    "independent_python_full_owner_slot_hash_context_clock_check": "passed",
+    "nonselection_oracle_scope": "cumulative producer evidence; materialized-owner oracle cannot independently recount all unselected callbacks",
+    "desktop_full_planes": 54,
+    "desktop_point_checks": 216,
+    "desktop_sequential_binary64_roi_checks": 216,
+    "all_palettes_each_frame": true,
+    "desktop_qt_offscreen": {
+      "initial_open": true,
+      "point_roi": true,
+      "palette_locked_auto_values_unchanged": true,
+      "resize": true,
+      "next_previous_seek": true,
+      "play_pause": true,
+      "segment_endpoints_have_no_readings": true,
+      "normal_worker_shutdown": true
+    },
+    "real_gaps_in_this_file": 0,
+    "gap_scope": "No gap occurred in this physical file; generic gap/unavailable behavior is covered separately by pinned Desktop regressions, not manufactured in the source",
+    "operator_Desktop_test": false,
+    "build_lint": "exact source offline field assembleDebug/lintDebug passed; no source changed",
+    "no_additional_JVM_or_ART_suite": "Existing d1b8c89 offline receipt remains separately pinned; this task adds physical/readback checks only",
+    "private_script_setup_failure": "First Desktop helper expected unknown_tail on a complete Python report; changed helper to assert valid/completed/full. Original script and failure log retained; no reader or recording change.",
+    "fresh_Desktop_ui_regression_tests": 9,
+    "fresh_Desktop_periodic_evidence_tests": 8
+  },
+  "comparison_with_old_Full": {
+    "old_android_commit": "bd2cfa614d64021078e0a5d16646e00cca6f08f8",
+    "old_source_sha256": "0ca64fc9a9a9507a241f20c1b358d176c476972603f088bd64cafcea9cb76a3f",
+    "old_stop_elapsed_ns": "4308975303",
+    "old_retained": 45,
+    "old_preparation_losses": 2,
+    "old_writer_losses": 58,
+    "old_admission_rss_bytes": "297185280",
+    "old_sampled_metrics_peak_rss_bytes": "448307200",
+    "old_guard_trigger_rss_bytes": "440557568",
+    "new_all_selected_retained": true,
+    "matched_code_only_benchmark": false,
+    "confounders": [
+      "profile and selected cadence differ",
+      "roughly 232 seconds ready preview before new Start",
+      "different heap/GC phase, admission RSS, available system memory and scene/time",
+      "no matched no-recorder physical baseline"
+    ]
+  },
+  "preservation": {
+    "prior_two_original_physical_hashes_verified": true,
+    "public_scene_or_oracle_data": false,
+    "local_private_evidence_label": "2026-11-14-r4-analysis-five-hz-physical-01",
+    "independent_backup": false,
+    "atomic_snapshot": false,
+    "private_originals_never_repaired_or_resumed": true,
+    "camera_release": "one open, one explicit initialization action, one BACKGROUND release after normal Back, zero active owners"
+  },
+  "next_step": {
+    "thirty_second_execution_authorized": false,
+    "proposed": "One separately reviewed and authorized Analysis/5 Hz/DEFLATE-1/30-second qualification, same safety/preview/evidence; current exact APK only exposes 10-second periodic action. Review timer deadline and explicit 30-second test-only guard before new build; do not use 146-second acquisition buttons.",
+    "sixty_seconds_or_Full_25Hz_qualified": false,
+    "R4_complete": false,
+    "production_recording_enabled": false,
+    "issue_or_PR_changed": false,
+    "CI_or_emulator_started": false
+  },
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

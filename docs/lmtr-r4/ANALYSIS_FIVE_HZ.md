@@ -312,3 +312,12 @@ After a new explicit availability confirmation **and specific test authorization
 The software candidate/field action still needs real Android/ART and physical
 qualification. No phone discovery, camera access, install, initialization, physical
 recording, hosted CI, release or main/PR merge occurred as part of this campaign.
+
+## Subsequent physical follow-up — separate scope
+
+The [first authorized physical result](ANALYSIS_FIVE_HZ_PHYSICAL.md) uses this exact
+implementation at `d1b8c8917961a162270e58510c1eeb39baa94f04`. One ten-second request
+completed at 10.644236008 s with 54 selected/saved measurements and no represented
+losses. Its unmodified guards, timing overshoot, sampled-memory scope and unobserved
+operator preview are recorded separately. It does not turn this earlier offline
+campaign into ART/physical evidence, complete R4, or authorize 30/60 seconds.

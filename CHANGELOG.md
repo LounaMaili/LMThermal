@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Verified (First physical Analysis 5 Hz qualification — 2026-11-14)
+- Preserve one authorized d1b8c89 field-APK run: ten seconds requested, 10.644236008 s to Stop, 54 selected/acknowledged available observations, 210 intentional nonselections, no missed slots or preparation/writer losses, and completed END. Keep soft-timer overshoot and callback population boundaries explicit.
+- Record unchanged admission/78+32 MiB/queue/validation/RSS protections, sampled memory/GC limits, exact independent Python/Desktop Float32/point/ROI parity, private original hashes and normal camera release. Manual Pixel preview responsiveness was not observed; no general RSS reduction, long-run, Full-25-Hz or calibration acceptance follows.
+- Prepare only a separately reviewed/authorized 30-second proposal. Publish documentation and sanitized receipts only; preserve the exact implementation branches, previous physical evidence and all scenes/oracles privately. No production code, second run, hardware extension, CI or merge.
+
 ### Added (Experimental R4 Analysis at explicit 5 Hz — 2026-11-14)
 - Integrate one profile-aware HT preparation path and remove the duplicate host adapter; preserve Full's selected source bytes and exact unavailable/context facts. Require explicit matching preparation/engine profiles without fallback.
 - Add bounded periodic intake/idle/Stop accounting with original ordinals, a distinct selected counter, slot-preserving overload witnesses and optional producer closure evidence. Preserve real receipts, both independent validations, durable ACKs, 78+32 MiB, capacities and refusal of END after unrepresented loss or clock failure.

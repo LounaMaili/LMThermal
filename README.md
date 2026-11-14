@@ -174,6 +174,10 @@ The subsequent [experimental Analysis 5 Hz implementation](docs/lmtr-r4/ANALYSIS
 promotes profile-aware preparation and a bounded slot/loss/Stop ledger in isolated
 R4 modules. A separate field-APK action is prepared; product recording and physical
 acceptance remain pending.
+A [subsequent single physical Analysis 5 Hz run](docs/lmtr-r4/ANALYSIS_FIVE_HZ_PHYSICAL.md)
+passed finite-duration and selected-data integrity gates with 54 observations and no
+losses; its 10.644 s Stop, sampled-memory limits and unobserved manual preview remain
+explicit. This does not complete R4 or qualify longer recording/Full at 25 Hz.
 
 The [Accepted LMTR v1 wire contract](docs/LMTR_WIRE_V1.md) records explicit owner
 acceptance of `r1b-review-2`, D1–D10 and historical conversion approach B on
