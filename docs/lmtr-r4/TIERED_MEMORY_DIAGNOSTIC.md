@@ -4,8 +4,8 @@
 
 This is an isolated software follow-up to the
 [reference sidecar](SYNCHRONIZED_MEMORY_DIAGNOSTIC.md) at
-`a2f42df8e8e71a1bcd36a5943023723e8ef446b0`. The reference code and its historical
-HotSpot receipt remain intact. The already completed private physical A/B
+`a2f42df8e8e71a1bcd36a5943023723e8ef446b0`. That original branch/code and its
+historical HotSpot receipt remain intact. The already completed private physical A/B
 campaign is read-only input; its originals, device identifiers, observations,
 time series, APKs and logs are **not published here**. The new branch contains no
 physical recording, product UI, native/USB change or recorder optimization.
@@ -58,8 +58,11 @@ capacities remain unattributed. No new RSS policy follows from this analysis.
 
 The physical reference identifies Android `Debug.getMemoryInfo` as the dominant
 observed domain wall cost. It reads PSS and **all** Android summary categories,
-not graphics alone. The original reference remains available and unchanged by
-default. A new explicit `MEMORY_ARM_TIERED` field action selects this alternative:
+not graphics alone. Reference mode keeps the original domain-call pattern and
+v1 export and remains the default plan. The shared candidate class now includes
+plan dispatch and one extra reference; its cost is disclosed below, not assumed
+identical to the old binary. A new explicit `MEMORY_ARM_TIERED` field action
+selects this alternative:
 
 | Domain | Reference | Tiered |
 |---|---|---|
@@ -220,7 +223,12 @@ established. Runtime overhead qualification remains pending.
    plans during a recording. Arm before unchanged admission, retain startup cost
    and use the actual Start safety witness. Do not wait/select a favorable GC or
    RSS endpoint. Keep the complete campaign within the finite collector window.
-4. Request only **Analysis / 5 Hz / DEFLATE-1 / ten seconds**. Analysis retains
+4. Request only **Analysis / 5 Hz / DEFLATE-1 / ten seconds**, using the existing
+   `Analysis 5 Hz / 10s (test)` control, not the generic profile or sixty-second
+   controls. Diagnostic actions are `org.lmthermal.field.MEMORY_ARM_TIERED`,
+   `MEMORY_STOP` and `MEMORY_SAVE` under the same package prefix; they never
+   start a recorder. These are instructions for a later authorized session only.
+   Analysis retains
    selected authoritative Float32/validity/context and availability facts; native
    samples and full transport evidence are absent by explicit profile choice.
    Acquisition/thermometry/normal presentation remain at their normal cadence.
