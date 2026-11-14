@@ -11,7 +11,10 @@ import java.math.BigDecimal
  * Large matrix/raw/transport copies occur only on RecorderEngine's charged preparation worker.
  * Source callback performs a typed epoch check and creates a small deferred offer. No SHA or I/O.
  */
-class Ht301RecordingAdapter(override val identity:CameraSourceIdentity):CameraRecordingAdapter {
+class Ht301RecordingAdapter(override val identity:CameraSourceIdentity,
+    override val preparationProfile:RecordingProfile):CameraRecordingAdapter {
+    init { require(preparationProfile in listOf(RecordingProfile.ANALYSIS,RecordingProfile.NATIVE,RecordingProfile.FULL)) }
+
     override val maximumCharge=3L*1024*1024
     private val geometry=mapOf("width_px" to Ht301Layout.WIDTH,"height_px" to Ht301Layout.IMAGE_HEIGHT,"coordinate_space" to "native",
         "origin" to "top_left","x_direction" to "right","y_direction" to "down","matrix_order" to "row_major","orientation" to "source_native")
@@ -28,13 +31,17 @@ class Ht301RecordingAdapter(override val identity:CameraSourceIdentity):CameraRe
         "sampling" to mapOf("mode" to "acquisition","period_ns" to null,"origin_timeline_ns" to null)))
     override fun offer(source:CameraAcquiredObservation):RecordingOffer {
         require(source is Ht301AcquiredObservation && source.identity==identity && source.retainedBytes<=maximumCharge)
-        return RecordingOffer("primary",source.ordinal,stream,maximumCharge){freeze(source)}
+        val witness=RecordingSourceWitness(source.identity.receiptClockId,source.receivedMonotonicNs,
+            source.sourceSequence,source.result.measurement!=null,source.unavailableReason)
+        return RecordingOffer("primary",source.ordinal,stream,maximumCharge,witness,preparationProfile){freeze(source)}
     }
     override fun loss(source:CameraSourceLoss):RecordingLoss { require(source.identity==identity);return RecordingSourceMetadata.loss(stream,source) }
     private fun freeze(value:Ht301AcquiredObservation):RecordingObservation {
         val measurement=value.result.measurement
         val rawAvailable=value.frame!=null && value.inspection.mode==FrameMode.RAW14 && value.inspection.reason==null
-        val transport=value.transportBytes()
+        // Profile is immutable before worker preparation; do not allocate owners to discard them later.
+        // Context and source facts below remain identical for every profile.
+        val transport=if(preparationProfile==RecordingProfile.FULL)value.transportBytes() else null
         val parsed=measurement?.parameters ?: value.frame?.let { runCatching { FrameParameters.decode(it) }.getOrNull() }
         val interpreted=measurement?.let { Ht301ExportEvidence.interpretation(it) }
         fun known(v:Any?)=mapOf("status" to "known","value" to exact(v))
@@ -54,7 +61,7 @@ class Ht301RecordingAdapter(override val identity:CameraSourceIdentity):CameraRe
             if(measurement!=null) {
                 add(RecordingPayload.fromFloat32Le(descriptor("temperature","f32","org.lmthermal.temperature.f32le-v1"),measurement.matrix()))
             }
-            if(rawAvailable)add(RecordingPayload(descriptor("native_samples","u16","org.lmthermal.ht301.raw14"),value.frame!!.imageBytes(),0))
+            if(rawAvailable && preparationProfile!=RecordingProfile.ANALYSIS)add(RecordingPayload(descriptor("native_samples","u16","org.lmthermal.ht301.raw14"),value.frame!!.imageBytes(),0))
             transport?.let { add(RecordingPayload(descriptor("acquisition","bytes","org.lmthermal.ht301.uvc-transport-v1",false),it)) }
         }
         val availability=buildMap<String,Any?> {

@@ -60,6 +60,11 @@ class FieldSourceRoute<P>(private val observer:(CameraAcquiredObservation)->Unit
     fun start(engine:RecorderEngine,expectedIdentity:CameraSourceIdentity?=adapter?.identity):Boolean=synchronized(lock) {
         if(adapter?.identity!=expectedIdentity){engine.stop("field_source_replaced",true);false} else binding.start(engine)
     }
+    /** Explicit test-only profile choice before admission; acquisition/lifetime ownership is unchanged. */
+    fun prepareAdapter(replacement:CameraRecordingAdapter):Boolean=synchronized(lock) {
+        if(adapter?.identity!=replacement.identity || !binding.prepareAdapter(replacement))false
+        else {adapter=replacement;true}
+    }
     fun stop():CompletableFuture<RecorderResult>?=synchronized(lock){binding.stop()}
 }
 
@@ -73,11 +78,12 @@ class FieldOracleAdapter(private val delegate:CameraRecordingAdapter,
     override val identity=delegate.identity
     override val stream=delegate.stream
     override val maximumCharge=delegate.maximumCharge
+    override val preparationProfile=delegate.preparationProfile
     override fun loss(source:CameraSourceLoss)=delegate.loss(source)
     override fun offer(source:CameraAcquiredObservation):RecordingOffer {
         val lower=now()
         val offered=delegate.offer(source)
-        return RecordingOffer(offered.streamId,offered.sequence,offered.stream,offered.chargedBytes) {
+        val freeze={
             val upper=now()
             val independent=capture(source)+mapOf("intake_lower_monotonic_ns" to lower.toString(),"intake_upper_monotonic_ns" to upper.toString())
             val original=offered.materialize()
@@ -86,13 +92,20 @@ class FieldOracleAdapter(private val delegate:CameraRecordingAdapter,
                 "adapter_facts" to original.facts.value()))
             original
         }
+        val witness=offered.sourceWitness;val profile=offered.preparationProfile
+        return if(witness!=null && profile!=null)
+            RecordingOffer(offered.streamId,offered.sequence,offered.stream,offered.chargedBytes,witness,profile,freeze)
+        else RecordingOffer(offered.streamId,offered.sequence,offered.stream,offered.chargedBytes,freeze)
     }
 }
 
 /** Match the actual registry ID, not the namespaced payload encoding ID. */
 object HtFieldRoute {
+    /** Explicit experimental profile selection; opening a camera still never starts a recorder. */
+    fun forProfile(identity:CameraSourceIdentity,profile:RecordingProfile):Ht301RecordingAdapter? =
+        if(identity.module.id!=Ht301ModuleProfile.ID)null else Ht301RecordingAdapter(identity,profile)
     fun native(identity:CameraSourceIdentity):Ht301RecordingAdapter? =
-        if(identity.module.id!=Ht301ModuleProfile.ID)null else Ht301RecordingAdapter(identity)
+        forProfile(identity,RecordingProfile.FULL)
     fun adapter(identity:CameraSourceIdentity,sink:(Obj)->Unit,now:()->Long):CameraRecordingAdapter? =
         native(identity)?.let { FieldOracleAdapter(it,HtFieldOracle::capture,sink,now) }
 }

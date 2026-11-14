@@ -39,7 +39,7 @@ object HtRecorderStressProbe {
             "forced_gc" to false,"warning" to NativeEquivalentThermometry.WARNING)))
         for(codec in 0..1) {
             val directory=File(root,"full-$codec");check(directory.mkdir())
-            val clock=FieldClock(now,identity.receiptClockId);val original=Ht301RecordingAdapter(identity)
+            val clock=FieldClock(now,identity.receiptClockId);val original=Ht301RecordingAdapter(identity,RecordingProfile.FULL)
             val oracle=File(directory,"oracle.jsonl").bufferedWriter()
             val adapter=FieldOracleAdapter(original,HtFieldOracle::capture,{row->oracle.write(String(LmtrJson.encode(row)));oracle.newLine()},now)
             val codecTimes=FieldDistribution();val encodeTimes=FieldDistribution();val appendTimes=FieldDistribution()

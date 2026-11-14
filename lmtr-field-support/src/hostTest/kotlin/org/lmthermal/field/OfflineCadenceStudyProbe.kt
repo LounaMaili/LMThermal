@@ -24,7 +24,7 @@ object OfflineCadenceStudyProbe {
             RecordingProfile.ANALYSIS to 25,RecordingProfile.FULL to 25)) {
             val dir=File(root,"${profile.wire}-$hz");check(dir.mkdir())
             val identity=OfflineProfileSource.identity
-            val adapter=OfflineProfileAdapter(identity,profile)
+            val adapter=Ht301RecordingAdapter(identity,profile)
             val period=SECOND/hz;check(SECOND%hz==0L)
             val clock=FieldClock(System::nanoTime,identity.receiptClockId)
             val stream=adapter.stream.value()+mapOf("sampling" to mapOf("mode" to "periodic",

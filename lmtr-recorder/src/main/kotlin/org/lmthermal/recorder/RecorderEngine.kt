@@ -42,7 +42,7 @@ class LocalRecorderBackend(override val destination:File):RecorderBackend {
     override fun close() = file.close()
 }
 
-enum class Admission { ACCEPTED, PREPARATION_OVERLOAD, STOPPED, REFUSED }
+enum class Admission { ACCEPTED, PREPARATION_OVERLOAD, NOT_SELECTED, STOPPED, REFUSED }
 /** Counts distinguish accepted pending observations from successful CHUNK-footer acknowledgments. */
 data class RecorderSnapshot(val state:String,val accepted:Long,val acknowledged:Long,val preparationDrops:Long,
     val writerDrops:Long,val preparationQueuedBytes:Long,val writerQueuedBytes:Long,
@@ -61,11 +61,12 @@ data class RecorderResult(val finalized:Boolean,val status:String,val reason:Str
  * acknowledged bytes. Their extra clock reads do not become source/intake witnesses.
  * Timer flags are coalesced by the writer's wakeup, not queued per tick. Stop is idempotent.
  */
-class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:RecordingProfile,
+class RecorderEngine(header:Obj, initialStreams:List<Obj>, val profile:RecordingProfile,
     private val limits:RecorderLimits, private val backend:RecorderBackend, private val codec:Int=0,
     private val now:()->Long=System::nanoTime, private val prepareHook:()->Unit={},
     private val sealMetric:((encodeNs:Long,appendNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null,
-    private val codecMetric:((wallNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null) {
+    private val codecMetric:((wallNs:Long,decodedBytes:Long,storedBytes:Long)->Unit)?=null,
+    sampling:FiveHertzSampling?=null) {
     companion object {
         // Accepted wire §14 distinguishes intake sealing from post-footer checkpoint timing.
         private const val SEAL_INTERVAL_NS=1000000000L
@@ -80,7 +81,8 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     private val lock=Object()
     private data class Intake(val offer:RecordingOffer,val witness:Long,val drop:String?=null,val loss:FrozenJson?=null)
     private data class Work(val observation:PreparedObservation?,val streamId:String,val sequence:Long,val witness:Long,
-        val stream:FrozenJson,val drop:String?,val charge:Long,val loss:FrozenJson?=null)
+        val stream:FrozenJson,val drop:String?,val charge:Long,val loss:FrozenJson?=null,
+        val selection:RecordingSelectionWitness?=null)
     private val intake=ArrayDeque<Intake>();private val writer=ArrayDeque<Work>()
     private val streams=mutableMapOf<String,FrozenJson>()
     private val nextSequence=mutableMapOf<String,Long>()
@@ -99,6 +101,9 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     private var failureCode="local_resource_limit"
     private var status="completed";private var reason="user_stop";private var failure:String?=null
     private var state="recording"
+    private var periodic:PeriodicSamplingState?=null
+    val periodicSamplingEnabled:Boolean=sampling!=null
+    private var periodicClockInvalid=false
     private val completion=CompletableFuture<RecorderResult>()
     private val controlCharge=CONTROL_ENTRY_BYTES
     private val preparationThread=Thread(::prepareLoop,"lmtr-preparation")
@@ -106,7 +111,14 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     init {
         try {
             LmtrMetadata.header(this.header)
-            for(stream in initialStreams) {
+            if(sampling!=null) {
+                require(initialStreams.size==1 && sampling.startMonotonicNs<=now()) {
+                    "Experimental periodic recording requires one stream and a genuine elapsed Start"
+                }
+                periodic=PeriodicSamplingState(sampling,this.header,initialStreams.single())
+            }
+            val configured=periodic?.let {listOf(it.selectedStream.value())} ?: initialStreams
+            for(stream in configured) {
                 val selected=stream+("policy" to mapOf("level" to profile.wire,"choice" to "explicit",
                     "requested_roles" to RecordingProfiles.requested(profile,stream["capabilities"].obj())))
                 LmtrMetadata.local("SegmentStream",selected)
@@ -116,8 +128,14 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             require(streams.isNotEmpty() && streams.size==initialStreams.size)
             require(streams.keys==this.header["streams"].arr().map { it.obj()["id"].text() }.toSet())
             require(initialStreams.sumOf { LmtrJson.encode(it).size.toLong() } <=limits.controlBytes/4)
+            if(periodic!=null)require(periodic!!.staticMetadataCharge+streams.values.sumOf {it.byteSize.toLong()}<=limits.controlBytes/4) {
+                "Periodic metadata exceeds the existing static stream/termination allowance"
+            }
         } catch(error:Exception) {
             try { backend.close() } catch(close:Exception) { error.addSuppressed(close) }
+            throw error
+        } catch(error:OutOfMemoryError) {
+            try {backend.close()} catch(_:Exception) { } catch(_:OutOfMemoryError) { }
             throw error
         }
         // Daemon workers cannot prevent process exit; partial files remain explicit recovery evidence.
@@ -132,35 +150,82 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         return admit(RecordingOffer(observation.streamId,observation.sequence,observation.stream,observation.ownedBytes){observation})
     }
     /** Bounded source admission retains an immutable owner, not an acquisition/UI buffer lease. */
-    fun admit(offer:RecordingOffer):Admission = synchronized(lock) {
-        if(stopped)return@synchronized Admission.STOPPED
-        val witness=now();require(witness>=lastWitness && witness>=origin) { "Intake clock regressed" };lastWitness=witness
-        if(offer.streamId !in streams || offer.chargedBytes>limits.maxObservationBytes || offer.stream.byteSize>MAX_OBSERVATION_METADATA_BYTES) {
-            terminateLocked("failed","admission_refused","unsupported_or_oversize_observation");return@synchronized Admission.REFUSED
+    fun admit(sourceOffer:RecordingOffer):Admission = synchronized(lock) {
+        try { admitOfferLocked(sourceOffer) }
+        catch(_:OutOfMemoryError) { allocationFailure();Admission.REFUSED }
+    }
+    private fun admitOfferLocked(sourceOffer:RecordingOffer):Admission {
+        if(stopped)return Admission.STOPPED
+        val witness=intakeWitnessLocked() ?: return Admission.REFUSED
+        if(sourceOffer.streamId !in streams || sourceOffer.chargedBytes>limits.maxObservationBytes ||
+            sourceOffer.stream.byteSize>MAX_OBSERVATION_METADATA_BYTES ||
+            (sourceOffer.preparationProfile!=null && sourceOffer.preparationProfile!=profile)) {
+            if(periodic!=null)unrepresentedLoss=true
+            terminateLocked("failed","admission_refused","unsupported_or_oversize_observation");return Admission.REFUSED
         }
+        val offer=if(periodic!=null) {
+            val p=periodic!!
+            try {
+                val problem=p.sourceError(sourceOffer,witness)
+                if(problem!=null) {
+                    if(problem!="periodic_source_changed") {p.fail(problem);unrepresentedLoss=true}
+                    terminateLocked(if(problem=="periodic_source_changed")"interrupted" else "failed",problem,problem,witness)
+                    return Admission.REFUSED
+                }
+                if(!advancePeriodicLocked(witness,false))return Admission.REFUSED
+                val selection=p.select(sourceOffer,witness) ?: return Admission.NOT_SELECTED
+                sourceOffer.selected(p.selectedStream,selection)
+            } catch(_:ArithmeticException) {
+                p.fail("periodic_counter_or_deadline_overflow");unrepresentedLoss=true
+                terminateLocked("failed","periodic_counter_or_deadline_overflow","periodic_counter_or_deadline_overflow",witness)
+                return Admission.REFUSED
+            }
+        } else sourceOffer
         val session=offer.stream.value()["session_id"].text()
         val next=if(intakeSessions[offer.streamId]==session)nextSequence[offer.streamId] else null
         intakeSessions[offer.streamId]=session
         if(next!=null && offer.sequence!=next) {
-            terminateLocked("failed","admission_refused","source_sequence_requires_explicit_gap");return@synchronized Admission.REFUSED
+            terminateLocked("failed","admission_refused","source_sequence_requires_explicit_gap");return Admission.REFUSED
         }
         nextSequence[offer.streamId]=Math.addExact(offer.sequence,1)
         if(prepQueued+offer.chargedBytes>limits.preparationBytes) {
-            if(!reserveControlLocked())return@synchronized Admission.REFUSED
-            intake.add(Intake(lightOffer(offer.streamId,offer.sequence,offer.stream),witness,"preparation_overload"));prepDrops++;lock.notifyAll()
-            return@synchronized Admission.PREPARATION_OVERLOAD
+            if(!reserveControlLocked())return Admission.REFUSED
+            intake.add(Intake(offer.lightened(),witness,"preparation_overload"));prepDrops++;lock.notifyAll()
+            return Admission.PREPARATION_OVERLOAD
         }
         intake.add(Intake(offer,witness));prepQueued+=offer.chargedBytes;accepted++
-        maxPrep=maxOf(maxPrep,prepQueued);lock.notifyAll();Admission.ACCEPTED
+        maxPrep=maxOf(maxPrep,prepQueued);lock.notifyAll();return Admission.ACCEPTED
     }
     /** Loss entries release the heavy owner immediately; their materializer is never called. */
     private fun lightOffer(id:String,sequence:Long,stream:FrozenJson)=RecordingOffer(id,sequence,stream,1){error("Loss must not materialize source data")}
     /** Admit bounded original loss evidence in the same intake ordering as observations. */
     fun admitLoss(loss:RecordingLoss):Admission = synchronized(lock) {
-        if(stopped)return@synchronized Admission.STOPPED
-        if(loss.streamId !in streams)return@synchronized Admission.REFUSED
-        val witness=now();require(witness>=lastWitness && witness>=origin);lastWitness=witness
+        try { admitLossLocked(loss) }
+        catch(_:OutOfMemoryError) { allocationFailure();Admission.REFUSED }
+        catch(error:ArithmeticException) {
+            val p=periodic ?: throw error
+            // Individually valid source-loss counts can overflow their cumulative producer ledger.
+            // Refuse certification; do not escape to the caller and later close it as ordinary idle.
+            p.fail("periodic_counter_or_deadline_overflow");unrepresentedLoss=true
+            terminateLocked("failed","periodic_counter_or_deadline_overflow","periodic_counter_or_deadline_overflow",lastWitness)
+            Admission.REFUSED
+        }
+    }
+    private fun admitLossLocked(loss:RecordingLoss):Admission {
+        if(stopped)return Admission.STOPPED
+        if(loss.streamId !in streams)return Admission.REFUSED
+        val witness=intakeWitnessLocked() ?: return Admission.REFUSED
         val facts=loss.facts.value()
+        val actualLoss=periodic?.let { p ->
+            if(!p.originalStream.same(loss.stream) || facts["observation_first"]!=null) {
+                p.fail("periodic_ambiguous_source_loss");unrepresentedLoss=true
+                terminateLocked("failed","periodic_ambiguous_source_loss","periodic_ambiguous_source_loss",witness)
+                return Admission.REFUSED
+            }
+            if(!advancePeriodicLocked(witness,false))return Admission.REFUSED
+            p.sourceLoss(facts)
+            RecordingLoss(loss.streamId,p.selectedStream.value(),facts)
+        } ?: loss
         val first=facts["observation_first"]?.d();val last=facts["observation_last"]?.d()
         if(first!=null) {
             val session=loss.stream.value()["session_id"].text()
@@ -169,8 +234,8 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
             intakeSessions[loss.streamId]=session
             nextSequence[loss.streamId]=Math.addExact(last!!,1)
         }
-        if(!reserveControlLocked())return@synchronized Admission.REFUSED
-        intake.add(Intake(lightOffer(loss.streamId,first?:0,loss.stream),witness,"source_loss",loss.facts));lock.notifyAll();Admission.ACCEPTED
+        if(!reserveControlLocked())return Admission.REFUSED
+        intake.add(Intake(lightOffer(actualLoss.streamId,first?:0,actualLoss.stream),witness,"source_loss",actualLoss.facts));lock.notifyAll();return Admission.ACCEPTED
     }
     /** First normal termination wins. Resource failures can upgrade it, never reopen intake. */
     fun stop(reason:String="user_stop", interrupted:Boolean=false):CompletableFuture<RecorderResult> = synchronized(lock) {
@@ -181,6 +246,13 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
     fun failSource(reason:String):CompletableFuture<RecorderResult> = synchronized(lock) {
         terminateLocked("failed",reason,reason);failureCode="source_failure";completion
     }
+    /** Adapter failure may hide a delivered periodic callback; never certify its slot as ordinary idle. */
+    fun failSourceEvidence(reason:String):CompletableFuture<RecorderResult> = synchronized(lock) {
+        if(periodic!=null && !completion.isDone){periodic!!.fail(reason);unrepresentedLoss=true}
+        terminateLocked("failed",reason,reason);failureCode="source_failure";completion
+    }
+    /** Allocation refusal retains only the verified prefix; no formatting, JSON closure or GC here. */
+    fun sourceAllocationFailure() = synchronized(lock) {if(!completion.isDone)allocationFailure()}
     /** Memory-pressure callback stops admission; no queue growth or implicit crop/downgrade. */
     fun memoryPressure():CompletableFuture<RecorderResult> = synchronized(lock) {
         terminateLocked("failed","memory_pressure","memory_pressure");completion
@@ -197,15 +269,74 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         RecorderSnapshot(state,accepted,acknowledged,prepDrops,writerDrops,prepQueued,writerQueued,prepFlight,writerFlight,
             pendingBytes,controlUsed,maxPrep,maxWriter,chunks,checkpoints,failure,maxPrepFlight,maxWriterFlight,maxPending)
     }
-    private fun terminateLocked(nextStatus:String,nextReason:String,error:String?) {
+    /** Immutable scalars; no source owner escapes after Stop, cleanup or failed append. */
+    fun periodicSnapshot():PeriodicRecordingSnapshot? = synchronized(lock){periodic?.snapshot()}
+    /** Additional encoded definitions/scalars use the existing static quarter-control allowance. */
+    fun periodicStaticMetadataBytes():Long? = synchronized(lock){periodic?.staticMetadataCharge}
+
+    /** Timer/admission/Stop use one real witness order. A bad periodic clock cannot certify END. */
+    private fun intakeWitnessLocked():Long? {
+        val witness=try {now()} catch(_:OutOfMemoryError) {allocationFailure();return null}
+            catch(error:Exception) {
+                if(periodic==null)throw error
+                periodic!!.fail("periodic_clock_unavailable");periodicClockInvalid=true;unrepresentedLoss=true
+                terminateLocked("failed","periodic_clock_unavailable","periodic_clock_unavailable",lastWitness)
+                return null
+            }
+        if(periodic==null) {require(witness>=lastWitness && witness>=origin){"Intake clock regressed"};lastWitness=witness;return witness}
+        if(witness<lastWitness || witness<periodic!!.policy.startMonotonicNs) {
+            periodic!!.fail("periodic_clock_regressed");periodicClockInvalid=true;unrepresentedLoss=true
+            terminateLocked("failed","periodic_clock_regressed","periodic_clock_regressed",lastWitness)
+            return null
+        }
+        lastWitness=witness;return witness
+    }
+    /** Coalesce newly closed empty windows into one existing, charged control-journal item. */
+    private fun advancePeriodicLocked(witness:Long,stopping:Boolean):Boolean {
+        val p=periodic ?: return true
+        val range=p.missing(witness,stopping) ?: return true
+        // Claim before reserveControlLocked: exhaustion may recursively latch Stop's cutoff.
+        p.missingDetected(range)
+        val admitted=reserveControlLocked()
+        if(!admitted){p.missingAdmitted(range,false);return false}
+        val stream=p.selectedStream
+        intake.add(Intake(lightOffer(stream.value()["stream_id"].text(),0,stream),witness,"source_loss",FrozenJson(p.missingFacts(range))))
+        p.missingAdmitted(range,true)
+        lock.notifyAll();return true
+    }
+    private fun terminateLocked(nextStatus:String,nextReason:String,error:String?,knownWitness:Long?=null) {
         if(state in listOf("finalized","failed","finalizing"))return
         if(!stopped || nextStatus=="failed") { status=nextStatus;reason=nextReason;if(error!=null)failure=error }
-        if(terminationWitness==null)terminationWitness=maxOf(lastWitness,now())
+        if(terminationWitness==null) {
+            val raw=try {knownWitness ?: now()} catch(_:OutOfMemoryError) {allocationFailure();return}
+                catch(error:Exception) {
+                    if(periodic==null)throw error
+                    periodic!!.fail("periodic_clock_unavailable");periodicClockInvalid=true;unrepresentedLoss=true
+                    lastWitness
+                }
+            if(periodic!=null && (raw<lastWitness || raw<periodic!!.policy.startMonotonicNs)) {
+                periodic!!.fail("periodic_clock_regressed");periodicClockInvalid=true;unrepresentedLoss=true
+            }
+            terminationWitness=maxOf(lastWitness,raw)
+            // Publish cutoff before closure: a nested journal refusal must not recursively close it.
+            stopped=true;state="draining"
+            if(periodic!=null) {
+                try {
+                    if(!periodicClockInvalid && !unrepresentedLoss)advancePeriodicLocked(terminationWitness!!,true)
+                    periodic!!.close(terminationWitness!!,!unrepresentedLoss && !periodicClockInvalid)
+                } catch(_:OutOfMemoryError) {allocationFailure()}
+                catch(_:ArithmeticException) {
+                    periodic!!.fail("periodic_counter_or_deadline_overflow");unrepresentedLoss=true
+                    status="failed";reason="periodic_counter_or_deadline_overflow";failure=reason
+                }
+            }
+        }
         stopped=true;state="draining";lock.notifyAll()
     }
     private fun reserveControlLocked():Boolean {
         if(controlUsed+controlCharge>limits.controlBytes) {
             unrepresentedLoss=true
+            periodic?.fail("loss_journal_exhausted")
             terminateLocked("failed","loss_journal_exhausted","loss_journal_exhausted");return false
         }
         controlUsed+=controlCharge;return true
@@ -217,7 +348,12 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         try {
             while(true) {
                 val item=synchronized(lock) {
-                    while(intake.isEmpty() && !stopped)lock.wait()
+                    while(intake.isEmpty() && !stopped) {
+                        // Either existing worker can detect idle windows while its peer is in I/O.
+                        // A blocked backend is never made durable by this soft timer.
+                        if(periodic!=null)intakeWitnessLocked()?.let {advancePeriodicLocked(it,false)}
+                        if(intake.isEmpty() && !stopped)lock.wait(if(periodic==null)0L else WRITER_WAKE_MS)
+                    }
                     if(intake.isEmpty())return@synchronized null
                     intake.removeFirst().also { if(it.drop==null){prepQueued-=it.offer.chargedBytes;prepFlight=it.offer.chargedBytes;maxPrepFlight=maxOf(maxPrepFlight,prepFlight)} }
                 } ?: break
@@ -229,7 +365,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     require(original.stream.byteSize+original.context.byteSize+original.facts.byteSize<=MAX_OBSERVATION_METADATA_BYTES)
                     prepared=RecordingProfiles.select(original,profile)
                 } }
-                catch(_:Exception) { drop="source_loss";synchronized(lock){reserveControlLocked();terminateLocked("failed","invalid_module_evidence","invalid_module_evidence");failureCode="source_failure"} }
+                catch(_:Exception) { drop="source_loss";synchronized(lock){periodic?.invalidMaterialization();reserveControlLocked();terminateLocked("failed","invalid_module_evidence","invalid_module_evidence");failureCode="source_failure"} }
                 synchronized(lock) {
                     if(prepared!=null && writerQueued+prepared.ownedBytes>limits.writerBytes) {
                         if(!reserveControlLocked()) { prepFlight=0;throw IllegalStateException("loss_journal_exhausted") }
@@ -241,7 +377,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     // The writer owns the resolved byte/JSON owners, never the deferred HT source.
                     // Keep its byte capacity unchanged; count the actual prepared ownership.
                     val charge=prepared?.ownedBytes ?: 0L
-                    writer.add(Work(prepared,item.offer.streamId,item.offer.sequence,item.witness,stream,drop,charge,item.loss))
+                    writer.add(Work(prepared,item.offer.streamId,item.offer.sequence,item.witness,stream,drop,charge,item.loss,item.offer.selection))
                     writerQueued+=charge;maxWriter=maxOf(maxWriter,writerQueued);prepFlight=0;unresolvedIntake=false;lock.notifyAll()
                 }
             }
@@ -260,6 +396,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
      */
     private fun allocationFailure() = synchronized(lock) {
         allocationFailed=true;unrepresentedLoss=true;stopped=true;status="failed"
+        periodic?.fail("allocation_failed")
         reason="allocation_failed";failure="allocation_failed";state="failed"
         intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()
     }
@@ -314,12 +451,22 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         }
         try {
             append=LmtrAppendSession(header,LmtrRecordSink(backend::append),onChunkAcknowledged={ summary ->
-                val ack=now()
-                synchronized(lock) { acknowledged=summary["observations"].d();chunks=summary["chunks"].d() }
+                val acquisitionAck=if(periodic==null)now() else null
+                synchronized(lock) {
+                    acknowledged=summary["observations"].d();chunks=summary["chunks"].d()
+                    periodic?.acknowledged(pending)
+                }
+                // The footer is already synced. A clock fault must not erase its actual ACK count,
+                // but it prevents END and a fabricated post-sync checkpoint deadline.
+                val ack=acquisitionAck ?: synchronized(lock) {
+                    intakeWitnessLocked() ?: error("Periodic clock unavailable after footer sync")
+                }
                 if(firstUncoveredAck==null)firstUncoveredAck=ack
             },onCheckpointAcknowledged={ synchronized(lock){checkpoints++};firstUncoveredAck=null },validationBudget=limits.memoryBudgetBytes)
             while(true) {
                 val work=synchronized(lock) {
+                    // Existing writer wakeup drives idle sampling too. There is no second timer queue.
+                    if(periodic!=null && !stopped)intakeWitnessLocked()?.let {advancePeriodicLocked(it,false)}
                     if(writer.isEmpty() && !(prepDone && stopped))lock.wait(WRITER_WAKE_MS)
                     if(writer.isEmpty())null else writer.removeFirst().also { writerQueued-=it.charge;writerFlight=it.charge;maxWriterFlight=maxOf(maxWriterFlight,writerFlight) }
                 }
@@ -331,10 +478,12 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     }
                     if(active==null)start(work.witness,if(nextEntry==0L)"recording_start" else "source_configuration_changed")
                     if(work.drop!=null) {
-                        add(event("gap",timeline(work.witness),(work.loss?.value() ?: mapOf("stream_id" to work.streamId,"category" to work.drop,"reason" to work.drop,
+                        val base=work.loss?.value() ?: mapOf("stream_id" to work.streamId,"category" to work.drop,"reason" to work.drop,
                             "count" to "1","observation_first" to work.sequence.toString(),"observation_last" to work.sequence.toString(),
-                            "device_first" to null,"device_last" to null,"scheduled" to null,
-                            "evidence" to mapOf("basis" to "host_observation","before" to null,"after" to null)))+("stream_id" to work.streamId)),witness=work.witness)
+                            "device_first" to null,"device_last" to null,"scheduled" to work.selection?.schedule(),
+                            "evidence" to mapOf("basis" to "host_observation","before" to null,"after" to null))
+                        val loss=work.selection?.let {PeriodicRecordingEvidence.attach(base,it.evidence())} ?: base
+                        add(event("gap",timeline(work.witness),loss+("stream_id" to work.streamId)),witness=work.witness)
                         synchronized(lock){controlUsed=maxOf(0,controlUsed-controlCharge)}
                     } else {
                         val o=work.observation!!;val contextValue=o.context.value()
@@ -344,15 +493,25 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
                     }
                     synchronized(lock){writerFlight=0}
                 }
-                val tick=now()
+                val tick=if(periodic==null)now() else synchronized(lock) {
+                    if(stopped)lastWitness else intakeWitnessLocked() ?: lastWitness
+                }
                 if(firstPendingWitness!=null && tick-firstPendingWitness!!>=SEAL_INTERVAL_NS)seal()
                 if(firstUncoveredAck!=null && tick-firstUncoveredAck!!>=CHECKPOINT_INTERVAL_NS)checkpoint()
                 if(synchronized(lock){stopped && prepDone && writer.isEmpty()})break
             }
             synchronized(lock) { check(!unrepresentedLoss) { "Cannot certify unjournaled delivered/admitted loss" } }
             val cutoff=synchronized(lock){terminationWitness!!}
-            if(active!=null)add(event("segment_end",timeline(cutoff),mapOf("reason" to reason)),witness=cutoff)
+            // A zero-observation periodic recording still closes its actual policy/counter ledger.
+            if(active==null && periodic!=null)start(cutoff,"recording_start")
+            if(active!=null) {
+                val closure=synchronized(lock) {
+                    periodic?.let {it.close(cutoff,!unrepresentedLoss);mapOf("extensions" to it.closure(prepDrops,writerDrops))} ?: emptyMap()
+                }
+                add(event("segment_end",timeline(cutoff),mapOf("reason" to reason)+closure),witness=cutoff)
+            }
             seal()
+            synchronized(lock) { check(!unrepresentedLoss) { "Cannot certify END after a final-seal failure witness" } }
             val terminal=synchronized(lock){state="finalizing";status to reason}
             append.finish(terminal.first,terminal.second,mapOf("status" to "unknown","clock_source" to "host_utc","reason" to "not_recorded"),
                 if(terminal.first=="failed")mapOf("code" to failureCode,"message" to (failure?:terminal.second)) else null)
@@ -369,7 +528,7 @@ class RecorderEngine(header:Obj, initialStreams:List<Obj>, private val profile:R
         } catch(error:Exception) {
             // Any uncertain body/footer/sync/close halts append. Never fabricate a repair END.
             if(!backendCloseAttempted)try { backendCloseAttempted=true;backend.close() } catch(_:Exception) { }
-            synchronized(lock){stopped=true;state="failed";failure=if(allocationFailed)"allocation_failed" else error.javaClass.simpleName;intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()}
+            synchronized(lock){periodic?.fail("write_or_validation_failure");stopped=true;state="failed";failure=if(allocationFailed)"allocation_failed" else error.javaClass.simpleName;intake.clear();writer.clear();prepQueued=0;writerQueued=0;controlUsed=0;lock.notifyAll()}
             completion.complete(if(allocationFailed)RecorderResult(false,"failed","allocation_failed",null,"allocation_failed")
                 else RecorderResult(false,"failed","write_or_validation_failure",null,error.toString()))
         } finally { pending.clear();synchronized(lock){writerFlight=0;pendingBytes=0} }

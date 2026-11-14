@@ -27,8 +27,8 @@ class OfflineProfileStudyTest {
         for(profile in listOf(RecordingProfile.ANALYSIS,RecordingProfile.NATIVE,RecordingProfile.FULL))
             for(state in listOf(SessionState.RADIOMETRIC_READY,SessionState.RAW14_UNSETTLED)) {
                 val source=OfflineProfileSource.observation(0,state)
-                val eager=Ht301RecordingAdapter(source.identity).offer(source).materialize()
-                val lazy=OfflineProfileAdapter(source.identity,profile).offer(source).materialize()
+                val eager=Ht301RecordingAdapter(source.identity,RecordingProfile.FULL).offer(source).materialize()
+                val lazy=Ht301RecordingAdapter(source.identity,profile).offer(source).materialize()
                 val first=RecordingProfiles.select(eager,profile);val second=RecordingProfiles.select(lazy,profile)
                 assertArrayEquals(LmtrJson.encode(first.stream.value()),LmtrJson.encode(second.stream.value()))
                 assertArrayEquals(LmtrJson.encode(first.context.value()),LmtrJson.encode(second.context.value()))
@@ -39,7 +39,7 @@ class OfflineProfileStudyTest {
                     assertArrayEquals(a.bytes(),b.bytes());assertArrayEquals(LmtrJson.encode(a.descriptor.value()),LmtrJson.encode(b.descriptor.value()))
                     assertEquals(a.acquisitionViewOffset,b.acquisitionViewOffset)
                 }
-                assertEquals(3L*1024*1024,OfflineProfileAdapter(source.identity,profile).maximumCharge)
+                assertEquals(3L*1024*1024,Ht301RecordingAdapter(source.identity,profile).maximumCharge)
             }
     }
     @Test fun omittedOwnersAreNotMaterializedAndFullStillRetainsEveryOriginalRole() {
@@ -47,7 +47,7 @@ class OfflineProfileStudyTest {
         for((profile,roles) in listOf(RecordingProfile.ANALYSIS to listOf("temperature"),
             RecordingProfile.NATIVE to listOf("temperature","native_samples"),
             RecordingProfile.FULL to listOf("temperature","native_samples","acquisition"))) {
-            val frozen=OfflineProfileAdapter(source.identity,profile).offer(source).materialize()
+            val frozen=Ht301RecordingAdapter(source.identity,profile).offer(source).materialize()
             assertEquals(roles,frozen.payloads.map {it.role})
             assertTrue(frozen.ownedBytes<=3L*1024*1024)
         }

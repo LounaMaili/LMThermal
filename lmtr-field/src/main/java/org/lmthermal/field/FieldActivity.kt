@@ -172,9 +172,11 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         // A new baseline-only source after cutoff must not upgrade the old interrupted run.
         runCatching { if(engine?.snapshot()?.state=="recording")clock?.source(source.identity.receiptClockId,source.receivedMonotonicNs) }
             .onFailure { engine?.failSource("field_source_clock_changed_or_regressed") }
-    },lossObserver={metrics.loss(it)},adapterFactory={ identity ->
-        val native=HtFieldRoute.native(identity)
-        if(native==null)null else object:CameraRecordingAdapter by native {
+    },lossObserver={metrics.loss(it)},adapterFactory={identity -> fieldAdapter(identity,RecordingProfile.FULL)})
+    /** A new adapter is selected only before Start; no camera re-open, control or profile fallback. */
+    private fun fieldAdapter(identity:CameraSourceIdentity,profile:RecordingProfile):CameraRecordingAdapter? {
+        val native=HtFieldRoute.forProfile(identity,profile)
+        return if(native==null)null else object:CameraRecordingAdapter by native {
             override fun offer(source:CameraAcquiredObservation):RecordingOffer {
                 // Bind the run now, not when an older failed preparation worker eventually executes.
                 val boundClock=checkNotNull(clock);val boundOracle=checkNotNull(oracle);val boundDirectory=checkNotNull(directory)
@@ -189,7 +191,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                 },boundClock::now).offer(source)
             }
         }
-    })
+    }
     val camera=AndroidCameraCoordinator(application,recordingLifetime=route)
     val presenter=CelsiusPresenter(application,camera.state,camera::measurementEvidence,camera::cursorEvidence,camera::presentationGeneration,camera::publishPresentation,
         {event,m,elapsed->presentationCounters.event(event,m,elapsed)}, { !suppressPresentation.get() })
@@ -252,14 +254,21 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         }
     }
     /** UI actions launch only admission/recorder work. Unsupported/absent source cannot create a file. */
-    fun start(profile:RecordingProfile?,seconds:Int) {
+    fun start(profile:RecordingProfile?,seconds:Int,periodicFiveHz:Boolean=false) {
         // Diagnostic sampling declares no recorder and must not overlap a later admission window.
         if(busy.value || healthSampler?.isActive==true || presentationSampler?.isActive==true)return
         busy.value=true
         running.value=true
         scope.launch {
             try {
-                val adapter=checkNotNull(route.adapter){"Connect/Open first; no authoritative source"}
+                require(!periodicFiveHz || (profile==RecordingProfile.ANALYSIS && seconds==FIRST_PHYSICAL_SMOKE_SECONDS)) {
+                    "The explicit Analysis 5 Hz field candidate is bounded to ten seconds"
+                }
+                val sourceAdapter=checkNotNull(route.adapter){"Connect/Open first; no authoritative source"}
+                if(profile!=null)check(route.prepareAdapter(checkNotNull(fieldAdapter(sourceAdapter.identity,profile)))) {
+                    "Profile selection refused while the source changed or a recording still drains"
+                }
+                val adapter=checkNotNull(route.adapter)
                 val preflight=FieldPreflight(profile?:RecordingProfile.FULL,seconds,
                     runCatching { StatFs(getApplication<Application>().filesDir.path).availableBytes }.getOrNull())
                 check(preflight.permitted){"Known insufficient storage: ${preflight.requiredFreeBytes} bytes required"}
@@ -279,11 +288,17 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                 val root=File(getApplication<Application>().filesDir,"r4-field/$id");check(root.mkdirs())
                 directory=root;diagnosticFailure=null;safetyFailure=null;storageCap=preflight.storageCapBytes;oracleBytes=java.util.concurrent.atomic.AtomicLong();traceBytes=java.util.concurrent.atomic.AtomicLong();stopRequestNs.set(0);stopRequestWallNs.set(0);closeWallNs=null;metrics=FieldMetrics();runStart=SystemClock.elapsedRealtimeNanos();initialStatistics=camera.state.value.statistics;latestStatistics=initialStatistics;measured=seconds<=20
                 // Both intake and timeline origin use the exact API used by HT receipt, including suspend.
-                val selectedClock=FieldClock(SystemClock::elapsedRealtimeNanos);clock=selectedClock;header=selectedClock.header()
+                // Controller receipt and this field clock both use elapsedRealtimeNanos; the shared
+                // UUID is explicit only for the periodic candidate, never inferred from two UUIDs.
+                val selectedClock=if(periodicFiveHz)FieldClock(SystemClock::elapsedRealtimeNanos,adapter.identity.receiptClockId)
+                    else FieldClock(SystemClock::elapsedRealtimeNanos)
+                clock=selectedClock;header=selectedClock.header()
                 File(root,"preflight.json").writeBytes(LmtrJson.encode(preflight.report()+mapOf("run_id" to id,
                     "baseline" to (profile==null),"private_wall_clock_label" to java.time.Instant.now().toString(),
                     "health" to health.report(),"safety_policy" to "sampled_1hz_battery30_thermal3_storage256MiB_heap32MiB_rss128MiB_stale3s_half_cadence5samples",
-                    "wall_clock_quality" to "unqualified_not_lmtr_utc_anchor")))
+                    "wall_clock_quality" to "unqualified_not_lmtr_utc_anchor")+
+                    if(periodicFiveHz)mapOf("requested_recording_period_ns" to FiveHertzSampling.PERIOD_NS.toString(),
+                        "requested_recording_hz" to 5,"acquisition_policy" to "unchanged_normal_source_cadence") else emptyMap()))
                 if(profile!=null) {
                     synchronized(writeLock){oracle=File(root,"oracle.jsonl").bufferedWriter()}
                     val local=LocalRecorderBackend(File(root,"capture.lmtr"))
@@ -298,11 +313,12 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                         override fun close() { val start=SystemClock.elapsedRealtimeNanos();try {local.close()} finally {closeWallNs=SystemClock.elapsedRealtimeNanos()-start} }
                     }
                     val current=RecorderEngine(header!!,listOf(adapter.stream.value()),profile,preflight.limits,backend,preflight.codec,
-                        now=selectedClock::now,sealMetric={a,b,c,d -> metrics.sealed(a,b,c,d)},codecMetric={a,b,c -> metrics.codec(a,b,c)})
+                        now=selectedClock::now,sealMetric={a,b,c,d -> metrics.sealed(a,b,c,d)},codecMetric={a,b,c -> metrics.codec(a,b,c)},
+                        sampling=if(periodicFiveHz)FiveHertzSampling(selectedClock.origin) else null)
                     engine=current
                     check(route.start(current,adapter.identity)){"Source replaced or recorder still draining; explicit Start refused"}
                 }
-                status.value="${profile?.wire ?: "Baseline"}: $id; bounded $seconds s, Stop is always available"
+                status.value="${profile?.wire ?: "Baseline"}${if(periodicFiveHz) " explicitly 5 Hz" else ""}: $id; bounded $seconds s, Stop is always available"
                 sampler=scope.launch {
                     var trace:BufferedWriter?=null
                     try {
@@ -422,7 +438,8 @@ class FieldModel(application:Application):AndroidViewModel(application) {
             "termination_reason" to result?.reason,"reopen" to reopened,"source_sha256" to before,"source_unchanged" to if(before==null)null else (before==after),"diagnostic_failure" to diagnosticFailure,
             "safety_stop_reason" to safetyFailure,
             "clock_correlation" to "source_receipt_and_recorder_intake_use_Android_elapsedRealtimeNanos_same_boot",
-            "utc_sensor_resolution" to "unknown","warning" to NativeEquivalentThermometry.WARNING)
+            "utc_sensor_resolution" to "unknown","warning" to NativeEquivalentThermometry.WARNING)+
+            (current?.periodicSnapshot()?.let {mapOf("periodic_sampling" to it.report())} ?: emptyMap())
         File(root,"private-report.json").writeBytes(LmtrJson.encode(report))
         val inventory=root.listFiles().orEmpty().filter { it.isFile }.sortedBy { it.name }.map {
             mapOf("file" to it.name,"bytes" to it.length().toString(),"sha256" to fileHash(it)) }
@@ -463,6 +480,11 @@ class FieldActivity:AppCompatActivity() {
                     Button(enabled=!busy,onClick={model.start(null,146)}){Text("Baseline")}
                     Button(enabled=!busy,onClick={model.start(RecordingProfile.FULL,FIRST_PHYSICAL_SMOKE_SECONDS)}){Text("Smoke ${FIRST_PHYSICAL_SMOKE_SECONDS}s")}
                     Button(enabled=busy,onClick=model::stop){Text("Stop test")}
+                }
+                Row {
+                    Button(enabled=!busy,onClick={model.start(RecordingProfile.ANALYSIS,FIRST_PHYSICAL_SMOKE_SECONDS,true)}) {
+                        Text("Analysis 5 Hz / ${FIRST_PHYSICAL_SMOKE_SECONDS}s (test)")
+                    }
                 }
                 Row {
                     for(p in listOf(RecordingProfile.ANALYSIS,RecordingProfile.NATIVE,RecordingProfile.FULL))

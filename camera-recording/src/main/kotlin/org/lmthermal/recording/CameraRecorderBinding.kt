@@ -10,6 +10,8 @@ interface CameraRecordingAdapter {
     val identity:CameraSourceIdentity
     val stream:FrozenJson
     val maximumCharge:Long
+    /** Null for a generic all-role adapter; profile-aware adapters require a matching explicit engine. */
+    val preparationProfile:RecordingProfile? get()=null
     fun offer(source:CameraAcquiredObservation):RecordingOffer
     fun loss(source:CameraSourceLoss):RecordingLoss
 }
@@ -28,6 +30,7 @@ class CameraRecorderBinding<P>(private val adapterFor:(CameraSourceIdentity)->Ca
     private var subscription:AutoCloseable?=null
     private var engine:RecorderEngine?=null
     private var draining:CompletableFuture<RecorderResult>?=null
+    private var drainingEngine:RecorderEngine?=null
     var staleCallbacks=0L;private set
     override fun opened(session:CameraSession<P>) {
         val acquired=session.observations
@@ -44,11 +47,19 @@ class CameraRecorderBinding<P>(private val adapterFor:(CameraSourceIdentity)->Ca
         }
         source=null;adapter=null
     }
+    /** Select an immutable preparation policy before Start, without reopening/subscribing a camera.
+     * Same-identity only; an active or draining recording retains its original policy/reservation.
+     */
+    fun prepareAdapter(replacement:CameraRecordingAdapter):Boolean = synchronized(lock) {
+        if(source?.identity!=replacement.identity || engine!=null || drainPendingLocked())return@synchronized false
+        adapter=replacement;true
+    }
     /** Explicit feature/test request; refuse overlapping reservations while an earlier engine drains. */
     fun start(preflighted:RecorderEngine):Boolean = synchronized(lock) {
         val current=source;val module=adapter
         if(engine===preflighted)return@synchronized true
-        if(current==null || module==null || engine!=null || draining?.isDone==false) {
+        if(current==null || module==null || engine!=null || drainPendingLocked() ||
+            (module.preparationProfile!=null && module.preparationProfile!=preflighted.profile)) {
             preflighted.stop("start_refused",true);return@synchronized false
         }
         val token=generation
@@ -57,12 +68,14 @@ class CameraRecorderBinding<P>(private val adapterFor:(CameraSourceIdentity)->Ca
             override fun observation(value:CameraAcquiredObservation) = synchronized(lock) {
                 if(token!=generation || engine!==preflighted || value.identity!=module.identity){staleCallbacks++;return@synchronized}
                 try { preflighted.admit(module.offer(value)) }
-                catch(_:Exception){stopLocked("recording_adapter_failure",true,true)}
+                catch(_:Exception){if(preflighted.periodicSamplingEnabled)preflighted.failSourceEvidence("recording_adapter_failure");stopLocked("recording_adapter_failure",true,true)}
+                catch(_:OutOfMemoryError){preflighted.sourceAllocationFailure();stopLocked("allocation_failed",true,true)}
             }
             override fun loss(value:CameraSourceLoss) = synchronized(lock) {
                 if(token!=generation || engine!==preflighted || value.identity!=module.identity){staleCallbacks++;return@synchronized}
                 try { preflighted.admitLoss(module.loss(value)) }
-                catch(_:Exception){stopLocked("source_loss_evidence_failure",true,true)}
+                catch(_:Exception){if(preflighted.periodicSamplingEnabled)preflighted.failSourceEvidence("source_loss_evidence_failure");stopLocked("source_loss_evidence_failure",true,true)}
+                catch(_:OutOfMemoryError){preflighted.sourceAllocationFailure();stopLocked("allocation_failed",true,true)}
             }
             override fun ended(reason:CameraCloseReason) = synchronized(lock) {
                 if(token!=generation || engine!==preflighted){staleCallbacks++;return@synchronized}
@@ -70,15 +83,25 @@ class CameraRecorderBinding<P>(private val adapterFor:(CameraSourceIdentity)->Ca
             }
         }
         try { subscription=current.subscribe(consumer);true }
-        catch(_:Exception){engine=null;draining=preflighted.failSource("source_already_ended");false}
+        catch(_:Exception){engine=null;drainingEngine=preflighted;draining=preflighted.failSource("source_already_ended");false}
     }
     /** Idempotent non-blocking cutoff; source stays available for a later explicit Start after drain. */
     fun stop():CompletableFuture<RecorderResult>? = synchronized(lock) { generation++;stopLocked("user_stop",false);draining }
     fun pendingStop():CompletableFuture<RecorderResult>? = synchronized(lock){draining}
+    /** Completed result and released worker ownership are separate gates after a failed writer. */
+    fun reservationReleased():Boolean=synchronized(lock){engine==null && !drainPendingLocked()}
+    private fun drainPendingLocked():Boolean {
+        if(drainingEngine?.workersTerminated()==false)return true
+        drainingEngine=null
+        return draining?.isDone==false
+    }
     private fun stopLocked(reason:String,interrupted:Boolean,failed:Boolean=false) {
         subscription?.close();subscription=null
         val previous=engine;engine=null
-        if(previous!=null)draining=if(failed)previous.failSource(reason) else previous.stop(reason,interrupted)
+        if(previous!=null) {
+            drainingEngine=previous
+            draining=if(failed)previous.failSource(reason) else previous.stop(reason,interrupted)
+        }
     }
 }
 

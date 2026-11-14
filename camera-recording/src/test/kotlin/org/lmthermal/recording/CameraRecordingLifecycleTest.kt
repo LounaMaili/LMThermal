@@ -15,7 +15,10 @@ import java.io.IOException
 class CameraRecordingLifecycleTest {
     private fun file()=Files.createTempDirectory("source-r4-").resolve("recording.lmtr").toFile()
     private fun done(binding:CameraRecorderBinding<Unit>):RecorderResult {
-        val result=binding.pendingStop()!!.get(10,TimeUnit.SECONDS);assertTrue(result.toString(),result.finalized);return result
+        val result=binding.pendingStop()!!.get(10,TimeUnit.SECONDS);assertTrue(result.toString(),result.finalized)
+        val deadline=System.nanoTime()+TimeUnit.SECONDS.toNanos(10)
+        while(!binding.reservationReleased()){check(System.nanoTime()<deadline);Thread.sleep(2)}
+        return result
     }
     private fun setup():Triple<RecordingTestSession,RecordingTestAdapter,CameraRecorderBinding<Unit>> {
         val p=SimulatedRecordingModule();val identity=testIdentity(p);val session=RecordingTestSession(CameraObservationHub(identity),object:CameraDeviceIdentity{override val key="same_device"})

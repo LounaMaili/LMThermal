@@ -156,10 +156,32 @@ class RecordingLoss(val streamId:String,stream:Obj,facts:Obj) {
  * The callback must not perform thermometry, USB, hashing, compression or I/O. It may copy exact
  * owned source evidence. Never use a borrowed/recycled-buffer lambda here.
  */
-class RecordingOffer(val streamId:String,val sequence:Long,val stream:FrozenJson,val chargedBytes:Long,
-    private val freeze:()->RecordingObservation) {
+class RecordingOffer private constructor(val streamId:String,val sequence:Long,val stream:FrozenJson,val chargedBytes:Long,
+    val sourceWitness:RecordingSourceWitness?,val preparationProfile:RecordingProfile?,
+    val selection:RecordingSelectionWitness?,private val freeze:()->RecordingObservation) {
+    /** Existing acquisition-mode producers retain their exact binary/metadata behavior. */
+    constructor(streamId:String,sequence:Long,stream:FrozenJson,chargedBytes:Long,freeze:()->RecordingObservation):
+        this(streamId,sequence,stream,chargedBytes,null,null,null,freeze)
+    /** Profile-aware immutable-source adapter; the same owned evidence may be selected periodically. */
+    constructor(streamId:String,sequence:Long,stream:FrozenJson,chargedBytes:Long,
+        sourceWitness:RecordingSourceWitness,preparationProfile:RecordingProfile,freeze:()->RecordingObservation):
+        this(streamId,sequence,stream,chargedBytes,sourceWitness,preparationProfile,null,freeze)
     init { require(sequence>=0 && chargedBytes>0);require(stream.value()["stream_id"]==streamId) }
     fun materialize():RecordingObservation = freeze().also {
         require(it.streamId==streamId && it.sequence==sequence && it.stream.same(stream) && it.ownedBytes<=chargedBytes)
+        sourceWitness?.verify(it.facts.value())
     }
+    /** Only the preparation worker executes this closure. Payload owners are reused, never re-encoded. */
+    internal fun selected(selectedStream:FrozenJson,witness:RecordingSelectionWitness):RecordingOffer =
+        RecordingOffer(streamId,witness.selectedSequence,selectedStream,chargedBytes,sourceWitness,preparationProfile,witness) {
+            val original=materialize()
+            val facts=PeriodicRecordingEvidence.attach(original.facts.value(),witness.evidence())+
+                ("scheduled" to witness.schedule())
+            RecordingObservation(streamId,witness.selectedSequence,selectedStream.value(),original.context.value(),facts,original.payloads)
+        }
+    /** No reference to the source materializer survives overload; selection contains no payload owner. */
+    internal fun lightened():RecordingOffer =
+        RecordingOffer(streamId,sequence,stream,1,sourceWitness,preparationProfile,selection) {
+            error("Loss must not materialize source data")
+        }
 }

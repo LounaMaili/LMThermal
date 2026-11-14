@@ -17,14 +17,16 @@ import org.lmthermal.recorder.*
 object OfflineProfileStudyProbe {
     @Volatile private var sink=0L
     @JvmStatic fun main(args:Array<String>) {
-        require(args.size==2 && args[0] in listOf("eager","profile"))
+        require(args.size==2 && args[0]=="profile") {
+            "Use the pinned 4229456 runtime for the original eager baseline; do not bypass profile checks"
+        }
         val root=File(args[1]);check(root.mkdirs())
         val bean=ManagementFactory.getThreadMXBean() as ThreadMXBean
         check(bean.isThreadAllocatedMemorySupported);bean.isThreadAllocatedMemoryEnabled=true
         val reports=mutableListOf<Obj>()
         val source=OfflineProfileSource.observation(1)
         for(profile in listOf(RecordingProfile.ANALYSIS,RecordingProfile.NATIVE,RecordingProfile.FULL)) {
-            val adapter:CameraRecordingAdapter=if(args[0]=="eager")Ht301RecordingAdapter(source.identity) else OfflineProfileAdapter(source.identity,profile)
+            val adapter:CameraRecordingAdapter=Ht301RecordingAdapter(source.identity,profile)
             fun prepare():PreparedObservation=RecordingProfiles.select(adapter.offer(source).materialize(),profile)
             repeat(4) { repeat(6){sink=prepare().ownedBytes} }
             val samples=(0 until 8).map {

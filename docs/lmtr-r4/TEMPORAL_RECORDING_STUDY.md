@@ -375,3 +375,11 @@ ABBA/cadence/sampling directory layout (see its CLI). These are disposable engin
 files, never canonical corpus generation or production/UI integration.
 Do not interpret a host schema/test/readback pass as ART, physical timing, steady
 memory, filesystem power-loss or calibrated physical accuracy validation.
+
+## Follow-up implementation boundary
+
+The [experimental 5 Hz implementation](ANALYSIS_FIVE_HZ.md) supersedes the disposable
+profile adapter, without changing this study's measurements or private evidence.
+The historical `OfflineProfileStudyProbe eager` command above requires the frozen
+`4229456` runtime; current source deliberately refuses an eager bypass of its explicit
+profile guard. Use the new candidate's qualification commands for new work.

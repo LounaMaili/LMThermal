@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Experimental R4 Analysis at explicit 5 Hz — 2026-11-14)
+- Integrate one profile-aware HT preparation path and remove the duplicate host adapter; preserve Full's selected source bytes and exact unavailable/context facts. Require explicit matching preparation/engine profiles without fallback.
+- Add bounded periodic intake/idle/Stop accounting with original ordinals, a distinct selected counter, slot-preserving overload witnesses and optional producer closure evidence. Preserve real receipts, both independent validations, durable ACKs, 78+32 MiB, capacities and refusal of END after unrepresented loss or clock failure.
+- Add camera-free ownership/validity/concurrency/failure tests and persistent STORED/DEFLATE qualification/readback tools. Prepare a separate explicit ten-second Analysis 5 Hz field action with unchanged health/RSS guards; production Android recording stays disabled and no hardware/ART/CI qualification is implied.
+
 ### Added (Offline temporal-recording architecture study — 2026-11-13)
 - Compare the accepted Analysis default, explicitly selected periodic recording and the unchanged Linux legacy recorder. Keep frozen v1 integer-nanosecond/observation-counter rules, historical-conversion limits and the missing production idle/Stop/overload-slot ledger explicit.
 - Isolate host-only profile-aware preparation and cadence prototypes; preserve exact selected matrices/context and six profile/codec file bytes across a predeclared ABBA comparison, both validation boundaries, current capacities and 78+32 MiB. Document HotSpot allocation reductions without claiming Android RSS or physical throughput improvement.

@@ -170,6 +170,10 @@ The [offline temporal-recording study](docs/lmtr-r4/TEMPORAL_RECORDING_STUDY.md)
 compares the accepted Analysis default, explicit sampling and existing Linux legacy
 recording. Its isolated host prototypes do not integrate a product sampler or
 qualify Android RSS, physical continuity or Full at 25 FPS.
+The subsequent [experimental Analysis 5 Hz implementation](docs/lmtr-r4/ANALYSIS_FIVE_HZ.md)
+promotes profile-aware preparation and a bounded slot/loss/Stop ledger in isolated
+R4 modules. A separate field-APK action is prepared; product recording and physical
+acceptance remain pending.
 
 The [Accepted LMTR v1 wire contract](docs/LMTR_WIRE_V1.md) records explicit owner
 acceptance of `r1b-review-2`, D1–D10 and historical conversion approach B on

@@ -17,7 +17,7 @@ object FieldOracleProbe {
             val directory=File(root,profile.wire);check(directory.mkdir())
             val identity=CameraSourceIdentity(Ht301ModuleProfile.metadata.copy(sourceOrigin="simulated"))
             val clock=FieldClock(System::nanoTime)
-            val source=Ht301RecordingAdapter(identity)
+            val source=Ht301RecordingAdapter(identity,profile)
             val oracle=File(directory,"oracle.jsonl").bufferedWriter()
             val adapter=FieldOracleAdapter(source,HtFieldOracle::capture,{ row ->oracle.write(LmtrJson.encode(row).toString(Charsets.UTF_8));oracle.newLine()},clock::now)
             val engine=RecorderEngine(clock.header(),listOf(source.stream.value()),profile,FieldPreflight(profile,10,null).limits,

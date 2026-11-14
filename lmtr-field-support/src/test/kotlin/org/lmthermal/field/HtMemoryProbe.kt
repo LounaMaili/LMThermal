@@ -39,7 +39,7 @@ object HtMemoryProbe {
             val active=AtomicBoolean(true)
             val sampler=Thread({while(active.get()){sample();Thread.sleep(5)}},"field-memory-sample")
             sampler.start()
-            val original=Ht301RecordingAdapter(identity)
+            val original=Ht301RecordingAdapter(identity,profile)
             val oracle=File(directory,"oracle.jsonl").bufferedWriter()
             val adapter=FieldOracleAdapter(original,HtFieldOracle::capture,{r->oracle.write(LmtrJson.encode(r).toString(Charsets.UTF_8));oracle.newLine()},clock::get)
             val engine=RecorderEngine(header,listOf(original.stream.value()),profile,limits,

@@ -1,6 +1,11 @@
 # R4 camera-free recorder foundation
 
 **Engineering work in progress, not full R4 acceptance or a recording product.**
+The [experimental Analysis 5 Hz candidate](ANALYSIS_FIVE_HZ.md) now implements the
+profile-aware preparation and bounded periodic ledger studied below. Its software
+qualification, producer/ACK scopes and future physical protocol remain separate
+from physical/ART acceptance; the production app has no recording UI.
+
 The [offline temporal-recording comparison](TEMPORAL_RECORDING_STUDY.md) evaluates
 profile-aware Analysis preparation, explicitly selected cadence and the existing
 Linux legacy recorder. It preserves the physical failures and all production

@@ -84,7 +84,7 @@ object CameraRecordingStressProbe {
         val f=Ht301Frame.parse(CameraRecordingStressProbe::class.java.getResourceAsStream("/fixtures/radiometric-room-settled.raw")!!.readBytes())
         val m=MeasurementGate.evaluate(SessionState.RADIOMETRIC_READY,f,99,42)
         val source=Ht301AcquiredObservation(CameraSourceIdentity(Ht301ModuleProfile.metadata),0,99,42000001,f,f.inspect(),SessionState.RADIOMETRIC_READY,m)
-        val ht=Ht301RecordingAdapter(source.identity);repeat(5){ht.offer(source).materialize()}
+        val ht=Ht301RecordingAdapter(source.identity,RecordingProfile.FULL);repeat(5){ht.offer(source).materialize()}
         val offerTimes=mutableListOf<Long>();val freezeTimes=mutableListOf<Long>()
         repeat(50){val at=System.nanoTime();val offer=ht.offer(source);offerTimes.add(System.nanoTime()-at)
             val begin=System.nanoTime();offer.materialize();freezeTimes.add(System.nanoTime()-begin)}

@@ -72,7 +72,7 @@ object HostWriterCostProbe {
         val source=Ht301AcquiredObservation(identity,0,0,1000000000L,frame,
             frame.inspect(),SessionState.RADIOMETRIC_READY,
             MeasurementGate.evaluate(SessionState.RADIOMETRIC_READY,frame,0,1000))
-        val adapter=Ht301RecordingAdapter(identity)
+        val adapter=Ht301RecordingAdapter(identity,RecordingProfile.FULL)
         val cases=listOf(
             measure("fixture_freeze_and_full_select",6) {
                 val prepared=RecordingProfiles.select(adapter.offer(source).materialize(),RecordingProfile.FULL)
