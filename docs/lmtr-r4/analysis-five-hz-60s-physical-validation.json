@@ -1,0 +1,397 @@
+{
+  "status": "sixty_second_duration_not_qualified_rss_guard_interruption_short_file_verified",
+  "date": "2026-11-14",
+  "branch": "codex/r4-analysis-five-hz-60s",
+  "code_commit": "c8d5d5cc1c5154ca3cbf62ab4ad6322d0eb8f23f",
+  "desktop_commit": "26b1785226b15dc17f977d36c2ca42eb79feeac7",
+  "apk": {
+    "package": "org.lmthermal.field",
+    "bytes": 11751802,
+    "sha256": "9275b53e7fb8c8302ffa055be1bce92529e7c51c1b94ed89797e8f8a3512b0aa",
+    "same_signer_data_preserving_replacement": true,
+    "pulled_installed_bytes_equal": true
+  },
+  "authorization": {
+    "fresh_availability_confirmed": true,
+    "concrete_raw14_unsettled_reset_needed": true,
+    "operator_replug_confirmed": true,
+    "initialization_actions": 1,
+    "visual_before_start_confirmed": true,
+    "start60_explicitly_authorized": true,
+    "warning_before_start": true,
+    "start_input_attempts": 1,
+    "new_recording_directories": 1,
+    "retries": 0
+  },
+  "device": {
+    "model": "Pixel 8",
+    "android_version": "17",
+    "api": 37,
+    "camera": "Infiray T3-317-13",
+    "vid": "1514",
+    "pid": "0001",
+    "wireless_already_paired": true,
+    "no_pairing_reset": true,
+    "other_applications_untouched": true
+  },
+  "requested": {
+    "profile": "analysis",
+    "codec": 1,
+    "seconds": 60,
+    "period_ns": "200000000",
+    "source_cadence_policy": "normal unchanged acquisition and thermometry, normal Inferno Auto Compose preview",
+    "periodic_metric_warmup_reset": false
+  },
+  "admission": {
+    "safety_refusal": null,
+    "health": {
+      "android_thermal_status": 0,
+      "battery_percent": 47,
+      "camera_permission": true,
+      "foreground_unlocked": true,
+      "free_bytes": "90676609024",
+      "java_headroom_bytes": "227165184",
+      "java_max_bytes": "268435456",
+      "java_used_bytes": "41270272",
+      "rss_bytes": "301993984",
+      "system_available_bytes": "1253756928",
+      "system_low_memory": false
+    },
+    "required_free_bytes": "1062928384",
+    "storage_cap_bytes": "794492928",
+    "reservation_bytes": "81788928",
+    "additional_java_system_margin_bytes": 33554432,
+    "rss_increment_guard_bytes": 134217728,
+    "rss_guard_threshold_bytes": 436211712,
+    "preparation_bytes": "4194304",
+    "writer_bytes": "4194304",
+    "control_bytes": "1048576",
+    "preferred_chunk_bytes": "4194304",
+    "max_offer_bytes": "3145728",
+    "forced_gc": false
+  },
+  "timing": {
+    "engine_cutoff_elapsed_ns": "3279581138",
+    "field_first_stop_request_elapsed_ns": "3281383221",
+    "stop_request_call_wall_ns": "351522",
+    "report_elapsed_including_drain_readback_ns": "4513822186",
+    "stop_drain_close_reopen_ns": "1184142293",
+    "full_kotlin_reopen_ns": "733734254",
+    "backend_close_wall_ns": "65227",
+    "deadline_first_expiry_observed": false,
+    "deadline_overshoot_physical_validation": "not exercised because safety Stop preceded target; zero diagnostic overshoot is not exact-60s acceptance",
+    "ready_to_policy_start_approx_seconds": "248.8",
+    "ready_warmup_scope": "ordinary setup/operator wait, not a matched or GC-selected warmup"
+  },
+  "counts": {
+    "planned_until_actual_stop": 17,
+    "selected": 17,
+    "accepted": 17,
+    "acknowledged": 17,
+    "available": 17,
+    "unavailable": 0,
+    "missed_schedule": 0,
+    "preparation_losses": 0,
+    "writer_losses": 0,
+    "known_source_losses": 0,
+    "unknown_source_loss_signals": 0,
+    "periodic_intake_callbacks": 79,
+    "intentionally_not_selected": 62,
+    "late_receipt_nonselections_included": 16,
+    "gate_deliveries": 82,
+    "valid_gate_deliveries": 82,
+    "invalid": 0,
+    "held": 0,
+    "camera_first_stop_bracket_received_delta": "82",
+    "last_one_hz_sample_received_delta": "82",
+    "callback_replaced_delta": "0",
+    "callback_malformed_delta": "0",
+    "counter_scope": "Gate/native request bracket includes subscription/setup boundaries beyond periodic intake. Future unopened slots after early Stop are not fabricated losses."
+  },
+  "terminal": {
+    "finalized": true,
+    "status": "interrupted",
+    "reason": "field_safety_rss_increment_exceeded",
+    "diagnostic_failure": null,
+    "safety_stop_reason": "rss_increment_exceeded",
+    "deadline_notification_failure": null,
+    "recorder_error": null,
+    "first_periodic_failure": null,
+    "ledger_complete": true,
+    "ui_verdict": "Diagnostic/read-only check failed; originals retained; no longer run before inspection",
+    "ui_verdict_scope": "Safety refusal latches the field action; Kotlin full readback itself is valid, not failed integrity"
+  },
+  "actual_gate_fps": 24.98791277587872,
+  "preview": {
+    "publications": "82",
+    "publication_fps": 25.29640552619821,
+    "software_age": {
+      "count": 82,
+      "max_ns": "84971192",
+      "omitted": "0",
+      "p50_ns": "57826497",
+      "p95_ns": "73063843"
+    },
+    "operator_after": "Entire short beginning observed; preview and UI responsive",
+    "operator_scope": "approximately 3.28-second recording only; no one-minute or measured optical-latency claim"
+  },
+  "memory": {
+    "sample_count": 4,
+    "sample_span_ns": "3192452232",
+    "health_rss_values": [
+      "314155008",
+      "426303488",
+      "362545152",
+      "493776896"
+    ],
+    "health_java_used_values": [
+      "51465216",
+      "147586048",
+      "86907904",
+      "197520384"
+    ],
+    "health_last_rss_bytes": "493776896",
+    "diagnostic_sampled_peaks": {
+      "java_used_bytes": "202460160",
+      "native_allocated_bytes": "66405760",
+      "pss_bytes": "449430528",
+      "rss_bytes": "499560448"
+    },
+    "allocated_bytes_between_first_last_samples": "323055616",
+    "freed_bytes_between_first_last_samples": "173768704",
+    "natural_gc_count_delta": 1,
+    "natural_gc_ms_delta": 50,
+    "scope": "Occupied and allocator/GC point samples, not retained-live/peak census. Health predicate precedes later diagnostic/JSON timestamp; no attribution of all native/graphics/RSS owners."
+  },
+  "writer": {
+    "snapshot": {
+      "accepted": "17",
+      "acknowledged": "17",
+      "checkpoints": "1",
+      "chunks": "4",
+      "control_bytes": "0",
+      "error": null,
+      "max_pending_bytes": "2699358",
+      "max_preparation_in_flight_bytes": "3145728",
+      "max_preparation_queued_bytes": "3145728",
+      "max_writer_in_flight_bytes": "449068",
+      "max_writer_queued_bytes": "1347189",
+      "pending_bytes": "0",
+      "preparation_drops": "0",
+      "preparation_in_flight_bytes": "0",
+      "preparation_queued_bytes": "0",
+      "state": "finalized",
+      "writer_drops": "0",
+      "writer_in_flight_bytes": "0",
+      "writer_queued_bytes": "0"
+    },
+    "encode_including_first_validation": {
+      "count": 4,
+      "max_ns": "383453044",
+      "omitted": "0",
+      "p50_ns": "235929118",
+      "p95_ns": "265176880"
+    },
+    "append_including_second_validation_and_sync": {
+      "count": 4,
+      "max_ns": "203863769",
+      "omitted": "0",
+      "p50_ns": "132512003",
+      "p95_ns": "133886068"
+    },
+    "seal_encode_plus_append": {
+      "count": 4,
+      "max_ns": "587316813",
+      "omitted": "0",
+      "p50_ns": "368441121",
+      "p95_ns": "399062948"
+    },
+    "codec_inclusive_subset": {
+      "count": 4,
+      "max_ns": "19197754",
+      "omitted": "0",
+      "p50_ns": "15981812",
+      "p95_ns": "16246093"
+    },
+    "codec_decoded_bytes": "7520256",
+    "codec_stored_bytes": "2634323",
+    "scope": "Four short-run CHUNK samples; inclusive intervals are not disjoint bottleneck attribution or long-run throughput proof"
+  },
+  "integrity": {
+    "original_files": {
+      "capture.lmtr": {
+        "bytes": 2729959,
+        "sha256": "a780e306c1044c87e4360bf8727822c162ab9e5d43d6ebfec0f57a984c19ce47"
+      },
+      "inventory.json": {
+        "bytes": 600,
+        "sha256": "58df38ff079bee401b28f061ddd610d051cd0fedd4079b7624e0715fe808b14a"
+      },
+      "oracle.jsonl": {
+        "bytes": 83519,
+        "sha256": "90864827cb625d2322eee426849d2f50d19dfdff7768cf933e1e84206deed1f7"
+      },
+      "preflight.json": {
+        "bytes": 1386,
+        "sha256": "bdbfbf579e2a87cd6b255b912e18fe6271c4f67df85dc14d841cd8830e67e571"
+      },
+      "private-report.json": {
+        "bytes": 5945,
+        "sha256": "0975d8862db61cf0683723148d181f313bb07c86ecb2fee4b74f1b2dedd5e4e1"
+      },
+      "samples.jsonl": {
+        "bytes": 6355,
+        "sha256": "ccff0258b3bcc14402b71ccef470a4bf9f630de35da6013329730e0ad7f5ad9b"
+      }
+    },
+    "kotlin_full": {
+      "accuracy_warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+      "chunks_decoded": "4",
+      "declared_end_status": "interrupted",
+      "integrity_scope": "full",
+      "records_read": "20",
+      "status": "valid",
+      "summary": {
+        "chunks": "4",
+        "entries": "19",
+        "first_entry": "0",
+        "first_timeline_ns": "126562663",
+        "gap_events": "0",
+        "known_missing_observations": "0",
+        "last_entry": "18",
+        "last_timeline_ns": "3279581138",
+        "logical_bytes": {
+          "acquisition": "0",
+          "module_extension": "0",
+          "native_samples": "0",
+          "preview": "0",
+          "temperature": "7520256",
+          "validity": "0",
+          "visible": "0"
+        },
+        "measurable_planes": "17",
+        "observations": "17",
+        "physical_payload_bytes": "7520256",
+        "streams": [
+          {
+            "gap_events": "0",
+            "known_missing_observations": "0",
+            "logical_bytes": {
+              "acquisition": "0",
+              "module_extension": "0",
+              "native_samples": "0",
+              "preview": "0",
+              "temperature": "7520256",
+              "validity": "0",
+              "visible": "0"
+            },
+            "measurable_planes": "17",
+            "observations": "17",
+            "stream_id": "primary",
+            "temperature_planes": "17",
+            "unknown_gap_events": "0"
+          }
+        ],
+        "temperature_planes": "17",
+        "unknown_gap_events": "0"
+      },
+      "unknown_tail": false
+    },
+    "independent_python": {
+      "status": "passed",
+      "sha256": "a780e306c1044c87e4360bf8727822c162ab9e5d43d6ebfec0f57a984c19ce47",
+      "counts": {
+        "observations": 17,
+        "available": 17
+      },
+      "recovered": false,
+      "source_unchanged": true,
+      "integrity_scope": "full",
+      "planned_slot_coverage": true,
+      "original_owner_parity": true,
+      "nonselection_scope": "producer aggregate, not independently witnessed by this materialized-owner oracle",
+      "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+    },
+    "desktop": {
+      "status": "passed",
+      "desktop_commit": "26b1785226b15dc17f977d36c2ca42eb79feeac7",
+      "source_sha256": "a780e306c1044c87e4360bf8727822c162ab9e5d43d6ebfec0f57a984c19ce47",
+      "full_integrity": true,
+      "source_unchanged": true,
+      "declared_end_status": "interrupted",
+      "sixty_second_duration_qualified": false,
+      "observations": 17,
+      "distinct_temperature_planes": 17,
+      "contexts": 4,
+      "point_checks": 68,
+      "roi_checks": 68,
+      "all_palettes_per_frame": true,
+      "qt_offscreen": {
+        "initial_open": true,
+        "point_roi": true,
+        "palette_locked_auto_values_unchanged": true,
+        "resize": true,
+        "next_previous_seek": true,
+        "play_pause": true,
+        "segment_endpoints_have_no_readings": true,
+        "normal_worker_shutdown": true
+      },
+      "real_gaps": 0,
+      "gap_scope": "No gap occurred in this physical file; generic gap/unavailable behavior is covered separately by pinned Desktop regressions, not manufactured in the source"
+    },
+    "six_android_and_host_sources_unchanged": true,
+    "analysis_retained_roles": [
+      "temperature"
+    ],
+    "native_and_transport_payloads": "absent by explicitly selected Analysis policy, not reprocessable raw evidence",
+    "local_preservation_only": true,
+    "atomic_snapshot_claim": false
+  },
+  "gates": {
+    "sixty_seconds": "not reached",
+    "memory_protections": "honored sampled RSS interruption; stability not qualified",
+    "periodic_coverage": "17 of 17 actually opened slots accounted",
+    "unexplained_losses": "none in short prefix",
+    "integrity_finalization": "valid full interrupted END",
+    "operator_preview": "responsive during fully observed short beginning only",
+    "desktop": "exact data and automated Linux Qt inspection pass; no new human Desktop check"
+  },
+  "camera_release": {
+    "reason": "USER",
+    "opens": 2,
+    "releases": 2,
+    "active_owners": 0,
+    "explicit_initialization_actions": 1
+  },
+  "unchanged": {
+    "production_application": true,
+    "wire": true,
+    "both_validations": true,
+    "ack_after_sync": true,
+    "loss_rules": true,
+    "budgets_margins_queues": true,
+    "previous_physical_and_canonical_evidence": true,
+    "no_actions": true,
+    "no_emulator": true,
+    "no_merge": true,
+    "no_full_or_longer_run": true
+  },
+  "conclusion": "60-second qualification failed on RSS protection; this does not erase the prior 10-second success. Analyze recorded GC/RSS/native/owner evidence before any separately authorized physical repeat; do not raise thresholds, force GC or retry to select a favorable baseline.",
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated.",
+  "private_preservation_manifests": [
+    {
+      "scope": "preparation",
+      "manifest_sha256": "f6d4ba21fa54d632ce98bb02dda02123b41860124a608b24b7e841c6147a4fe6",
+      "regular_files": 513,
+      "regular_bytes": 417843877,
+      "symlinks": 0
+    },
+    {
+      "scope": "physical60_attempt",
+      "manifest_sha256": "7c2249dda5aedfbac2f7e313716b6e24fed76d1c82bcf8842f60ec7bcc602893",
+      "regular_files": 72,
+      "regular_bytes": 41992742,
+      "symlinks": 0
+    }
+  ]
+}

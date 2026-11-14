@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Measured (Single physical Analysis 5 Hz / 60-second request — 2026-11-14)
+- Preserve one explicitly observed/authorized c8d5d5c attempt: unchanged RSS protection interrupts at 3.279581138 s, retaining all 17 opened slots with zero preparation/writer/source losses and a valid interrupted END. The requested minute and physical deadline remain unqualified; no retry or favorable-baseline selection occurred.
+- Record actual admission, four health/GC/native/RSS samples, writer/drain and counter populations separately from operator-confirmed short-window responsiveness. Verify 17 exact planes, 68 points/68 ROIs and Qt inspection in the unchanged Desktop reference, both independent readers and six unchanged Android/host originals; keep all scene data private and release the camera normally.
+- Keep the prior ten-second success, six virtual deadline cases, all protections and canonical evidence intact. No production code, safety-margin/queue change, further physical/Full/longer run, Actions or merge.
+
 ### Added (Experimental Analysis 5 Hz / 60-second preparation — 2026-11-14)
 - Retain the separate ten-second field regression action and add an explicit sixty-second Analysis action. Serialize an optional absolute monotonic deadline with intake/Stop, retain genuine expiry/cutoff and partial-final-slot evidence, and prevent stale notifications from stopping a successor recording. Separate first-request camera-counter brackets from last one-Hz samples; measure the complete minute without the older twenty-second reset.
 - Add virtual boundary/race/drain/cancellation tests and six full-size noncanonical STORED/DEFLATE cases with independent readback. Synchronize an existing race fixture after its initial offer to isolate Stop from legitimate preparation overload, keeping its assertions and all production capacities unchanged.

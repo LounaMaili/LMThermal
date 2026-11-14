@@ -182,6 +182,10 @@ The [separate 60-second preparation](docs/lmtr-r4/ANALYSIS_FIVE_HZ_60S.md) adds 
 explicit experimental action and absolute Stop deadline with genuine cutoff witnesses.
 Its camera-free checks do not replace fresh hardware availability and operator consent
 before the single supervised physical Start.
+The [single authorized 60-second request](docs/lmtr-r4/ANALYSIS_FIVE_HZ_60S_PHYSICAL.md)
+was interrupted by the unchanged RSS guard at 3.280 s. Its 17 acknowledged planes
+pass independent integrity/inspection checks; one-minute duration/memory qualification
+remains unpassed, while the operator confirmed a responsive short beginning.
 
 The [Accepted LMTR v1 wire contract](docs/LMTR_WIRE_V1.md) records explicit owner
 acceptance of `r1b-review-2`, D1–D10 and historical conversion approach B on

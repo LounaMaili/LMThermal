@@ -160,3 +160,12 @@ preview usability and Desktop usability as **seven distinct gates**. Around 300
 requested slots are expected according to actual boundaries, not a promise of 300
 available saved matrices. A passing minute would not qualify indefinite memory,
 generic cameras, Full at 25 Hz, absolute calibration or a subsequent longer run.
+
+## Subsequent single physical request — separate evidence
+
+The [authorized physical attempt](ANALYSIS_FIVE_HZ_60S_PHYSICAL.md) tested this
+checkpoint at `c8d5d5cc1c5154ca3cbf62ab4ad6322d0eb8f23f`. The RSS guard interrupted
+at 3.279581138 s, with all 17 opened slots retained and independent readers passing.
+The operator confirmed a responsive short beginning; the minute and physical deadline
+remain unqualified. The software-preparation receipt above is its earlier checkpoint,
+not a statement of the later physical outcome. No second Start occurred.
