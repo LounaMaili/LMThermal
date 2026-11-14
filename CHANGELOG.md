@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Offline tiered field-memory candidate — 2026-11-14)
+- Add a bounded host-only GC-interval analysis that retains actual probe brackets, unknowns and alias semantics without claiming retained-live plateaus, atomic samples or causal RSS attribution. Keep all original physical evidence private and unchanged.
+- Preserve the default reference diagnostic and add an explicit field-only five-row MemoryInfo schedule. Version only the experimental sidecar, mark skipped PSS/category reads without timestamps or carried values, and retain regular Java/GC/VmRSS/role/recorder probes, existing storage, leases and post-quiescence export.
+- Qualify failure/Stop/concurrency/source-replacement/capacity/schema behavior, real recorder isolation and full-size virtual Analysis cases with independent Python readback. Keep measured host/synthetic costs distinct from unmeasured Android gains; prepare only a separately authorized future ten-second protocol. No product, wire, RSS/78+32 MiB, queue/journal/validation/ACK change, new device/ART/Actions run or merge.
+
 ### Added (Experimental synchronized field memory probes — 2026-11-14)
 - Add an opt-in field-only scalar sidecar with independent monotonic brackets for GC, Java, VmRSS, Android summary categories, native allocator, published role aliases and existing recorder charges. Unsupported native capacities and unobserved roots remain explicit; no atomic heap census or unique-owner sum is inferred.
 - Preallocate a finite first-64-row window before admission, isolate diagnostic jobs/errors, retain partial/error/clock/source-change states and protect blocked collectors with a token-checked process lease. Preserve the product/preview layout, all recorder/78+32 MiB/RSS/queue/journal/validation/ACK/loss decisions and the 51 canonical fixtures.

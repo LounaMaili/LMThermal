@@ -2,6 +2,11 @@
 
 ## Status and limits
 
+This document retains the reference candidate's original offline qualification.
+The later [isolated tiered follow-up](TIERED_MEMORY_DIAGNOSTIC.md) uses preserved
+private physical observations as read-only input and adds an explicit opt-in
+schedule; it does not replace this reference or publish the physical time series.
+
 This is an **opt-in diagnostic candidate for `org.lmthermal.field`**, based on
 `758287118c9ed9bfa5c856c60f33299f66ec616e`. It is not product instrumentation,
 a new RSS policy, R4 acceptance or authority to use hardware. No ADB, phone,

@@ -283,4 +283,10 @@ bounded scalar storage, explicit alias/unknown semantics and independent readbac
 Host cost/isolation tests and an offline APK build do not qualify ART memory,
 physical observer overhead or another recording duration.
 
+The [isolated tiered memory follow-up](docs/lmtr-r4/TIERED_MEMORY_DIAGNOSTIC.md)
+adds an explicit field-only option that reads PSS/Android categories every five
+rows while retaining regular Java/GC/VmRSS and logical recorder observations.
+Skipped values stay unknown; the reference remains available and default.
+Offline interval/host isolation tests do not authorize a new physical recording.
+
 [Host writer phase attribution](docs/lmtr-r4/WRITER_PHASE_ATTRIBUTION.md) separates actual append/backend/ACK intervals from inclusive encoding/validation costs. It changes no production source and does not qualify Pixel RSS or throughput.

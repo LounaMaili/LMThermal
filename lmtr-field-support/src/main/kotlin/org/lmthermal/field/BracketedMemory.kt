@@ -23,7 +23,7 @@ enum class MemoryDomain(val fields:List<String>) {
     GC_AFTER(listOf("allocated", "freed", "count", "time_ms"))
 }
 
-enum class MemoryProbeStatus { OK, PARTIAL, UNSUPPORTED, FAILED, CANCELLED, CLOCK_INVALID, SOURCE_CHANGED }
+enum class MemoryProbeStatus { OK, PARTIAL, UNSUPPORTED, FAILED, CANCELLED, CLOCK_INVALID, SOURCE_CHANGED, NOT_SCHEDULED }
 
 /** Fill only scalars in the supplied fixed scratch, without retaining it or source owners.
  * Invoked only by the diagnostic worker; no callback is installed in acquisition, writer or ACK.
@@ -37,7 +37,10 @@ fun interface MemoryScalarProbe {
  * cannot be forcibly interrupted or exported as complete. No thread or source is owned here.
  * The first 64 rows are preserved, never overwritten; over-capacity/contended attempts are counted.
  */
-class BracketedMemoryWindow(val generation:Long,private val probe:MemoryScalarProbe,private val now:()->Long) {
+class BracketedMemoryWindow(val generation:Long,private val probe:MemoryScalarProbe,private val now:()->Long,
+    val plan:MemoryProbePlan) {
+    // Preserve the original positional/trailing-clock constructor and its exact reference export.
+    constructor(generation:Long,probe:MemoryScalarProbe,now:()->Long):this(generation,probe,now,MemoryProbePlan.REFERENCE)
     companion object {
         const val CAPACITY=64
         const val VALUES=16
@@ -81,11 +84,17 @@ class BracketedMemoryWindow(val generation:Long,private val probe:MemoryScalarPr
                 if(stop.get())break
                 values.fill(-1)
                 val offset=HEADER+domain.ordinal*STRIDE
+                if(!plan.scheduled(domain,count)) {
+                    // No platform call or invented read instant. Fresh row scratch is already unknown.
+                    scratch[offset+2]=MemoryProbeStatus.NOT_SCHEDULED.ordinal.toLong()
+                    continue
+                }
                 val begin=tick();var status=MemoryProbeStatus.FAILED
                 try {status=probe.read(domain,values)}
                 catch(_:CancellationException){status=MemoryProbeStatus.CANCELLED;requestStop()}
                 catch(_:OutOfMemoryError){failed=true;requestStop()}
                 catch(_:Throwable){failed=true}
+                if(status==MemoryProbeStatus.NOT_SCHEDULED)status=MemoryProbeStatus.FAILED
                 if(status==MemoryProbeStatus.FAILED || status==MemoryProbeStatus.CANCELLED)failed=true
                 if(status==MemoryProbeStatus.CANCELLED)requestStop()
                 if(status==MemoryProbeStatus.CLOCK_INVALID)clockFailed=true
@@ -115,7 +124,7 @@ class BracketedMemoryWindow(val generation:Long,private val probe:MemoryScalarPr
     fun writeTo(out:Appendable) {
         synchronized(lock) {
             check(quiescent()){"Diagnostic probe still running; no complete export"}
-            out.append("{\"format\":\"r4-memory-probes-1\",\"generation\":\"").append(generation.toString())
+            out.append("{\"format\":\"").append(plan.format).append("\",\"generation\":\"").append(generation.toString())
                 .append("\",\"rows\":").append(count.toString()).append(",\"contended_attempts\":\"").append(contended.get().toString())
                 .append("\",\"capacity_exceeded\":").append(full.toString()).append(",\"probe_failed\":").append(failed.toString())
                 .append(",\"clock_failed\":").append(clockFailed.toString()).append(",\"atomic\":false,\"primitive_bytes\":")
@@ -126,8 +135,13 @@ class BracketedMemoryWindow(val generation:Long,private val probe:MemoryScalarPr
                 d.fields.forEachIndexed {i,f->if(i>0)out.append(',');out.append('"').append(f).append('"')};out.append("]}")
             }
             out.append("],\"statuses\":[")
-            MemoryProbeStatus.entries.forEachIndexed {i,s->if(i>0)out.append(',');out.append('"').append(s.name).append('"')}
-            out.append("]}\n")
+            // The unchanged default still emits the exact v1 schema/bytes, including its seven statuses.
+            val statuses=if(plan==MemoryProbePlan.REFERENCE)MemoryProbeStatus.SOURCE_CHANGED.ordinal+1 else MemoryProbeStatus.entries.size
+            repeat(statuses) {i->if(i>0)out.append(',');out.append('"').append(MemoryProbeStatus.entries[i].name).append('"')}
+            out.append(']')
+            if(plan==MemoryProbePlan.TIERED)out.append(",\"schedule\":{\"id\":\"android-memory-every-five-rows\",\"android_memory_every_rows\":")
+                .append(plan.androidMemoryEveryRows.toString()).append('}')
+            out.append("}\n")
             repeat(count) {index ->
                 val start=index*WIDTH
                 out.append("{\"sample\":").append(index.toString()).append(",\"values\":[")

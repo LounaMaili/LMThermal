@@ -77,7 +77,9 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     internal val memoryProbes=FieldMemoryController(java.lang.ref.WeakReference(this))
 
     /** Explicit pre-Start arming: no recorder/camera operation or safety-policy change. */
-    fun startMemoryProbes()=memoryProbes.arm(!busy.value && engine==null && healthSampler?.isActive!=true && presentationSampler?.isActive!=true,getApplication<Application>().filesDir)
+    fun startMemoryProbes(plan:MemoryProbePlan=MemoryProbePlan.REFERENCE)=memoryProbes.arm(
+        !busy.value && engine==null && healthSampler?.isActive!=true && presentationSampler?.isActive!=true,
+        getApplication<Application>().filesDir,plan)
     /** The operator saves only after the existing recorder/worker drain has completed. */
     fun saveMemoryProbes()=memoryProbes.save(!busy.value && engine==null)
 
@@ -597,6 +599,7 @@ class FieldActivity:AppCompatActivity() {
     private fun memoryAction(action:String?) {
         when(action) {
             "org.lmthermal.field.MEMORY_ARM"->model.startMemoryProbes()
+            "org.lmthermal.field.MEMORY_ARM_TIERED"->model.startMemoryProbes(MemoryProbePlan.TIERED)
             "org.lmthermal.field.MEMORY_STOP"->model.memoryProbes.stop()
             "org.lmthermal.field.MEMORY_SAVE"->model.saveMemoryProbes()
             else->return

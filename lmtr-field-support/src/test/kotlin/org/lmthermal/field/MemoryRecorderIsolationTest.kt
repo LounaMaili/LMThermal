@@ -20,15 +20,15 @@ class MemoryRecorderIsolationTest {
             for(codec in listOf(0,1)) {
                 val module=SimulatedRecordingModule();val header=SimulatedRecordingModule.header(listOf(module),codec)
                 var reference:ByteArray?=null
-                for(mode in listOf("off","on","failed")) {
+                for(mode in listOf("off","on","failed","tiered","tiered_failed")) {
                     val clock=AtomicLong(0);val file=File(root,"$codec-$mode.lmtr")
                     val engine=RecorderEngine(header,listOf(module.stream),RecordingProfile.FULL,RecorderLimits(maxObservationBytes=1048576),LocalRecorderBackend(file),codec,now=clock::get)
                     val diagnosticClock=AtomicLong(100)
                     val memory=BracketedMemoryWindow(1,MemoryScalarProbe {d,v->
-                        if(mode=="failed")throw java.io.IOException("synthetic probe failure")
+                        if(mode=="failed" || mode=="tiered_failed")throw java.io.IOException("synthetic probe failure")
                         if(d==MemoryDomain.RECORDER){val s=engine.snapshot();v[2]=s.accepted;v[3]=s.acknowledged;MemoryProbeStatus.PARTIAL}
                         else MemoryProbeStatus.UNSUPPORTED
-                    },diagnosticClock::incrementAndGet)
+                    },diagnosticClock::incrementAndGet,if(mode.startsWith("tiered"))MemoryProbePlan.TIERED else MemoryProbePlan.REFERENCE)
                     repeat(3) {index->
                         assertEquals(Admission.ACCEPTED,engine.admit(module.observation(index.toLong())))
                         val until=System.nanoTime()+10000000000L

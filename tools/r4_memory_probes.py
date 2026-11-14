@@ -24,6 +24,8 @@ FIELDS = {
     'GC_AFTER': ['allocated', 'freed', 'count', 'time_ms'],
 }
 STATUSES = ['OK', 'PARTIAL', 'UNSUPPORTED', 'FAILED', 'CANCELLED', 'CLOCK_INVALID', 'SOURCE_CHANGED']
+TIERED_STATUSES = STATUSES + ['NOT_SCHEDULED']
+TIERED_SCHEDULE = {'id': 'android-memory-every-five-rows', 'android_memory_every_rows': 5}
 VALUES = 16
 STRIDE = 19
 WIDTH = 6 + len(FIELDS) * STRIDE
@@ -61,8 +63,14 @@ def exact_json(line):
 def validate_header(header):
     """Pin this diagnostic schema independently; it does not revise LMTR v1."""
     keys = {'format', 'generation', 'rows', 'contended_attempts', 'capacity_exceeded', 'probe_failed', 'clock_failed', 'atomic', 'primitive_bytes', 'domains', 'statuses'}
-    if set(header) != keys or header['format'] != 'r4-memory-probes-1' or header['atomic'] is not False:
+    tiered = header.get('format') == 'r4-memory-probes-2'
+    if tiered:
+        keys = keys | {'schedule'}
+    if set(header) != keys or header['format'] not in ('r4-memory-probes-1', 'r4-memory-probes-2') or header['atomic'] is not False:
         raise ValueError('diagnostic header')
+    if tiered and (header['schedule'] != TIERED_SCHEDULE or
+                   type(header['schedule'].get('android_memory_every_rows')) is not int):
+        raise ValueError('diagnostic schedule')
     if type(header['rows']) is not int or not 0 <= header['rows'] <= 64:
         raise ValueError('row count')
     for key in ('capacity_exceeded', 'probe_failed', 'clock_failed'):
@@ -70,7 +78,7 @@ def validate_header(header):
             raise ValueError('diagnostic flag')
     if header['primitive_bytes'] != PRIMITIVE_BYTES or type(header['primitive_bytes']) is not int:
         raise ValueError('primitive charge')
-    if header['domains'] != [{'id': k, 'fields': v} for k, v in FIELDS.items()] or header['statuses'] != STATUSES:
+    if header['domains'] != [{'id': k, 'fields': v} for k, v in FIELDS.items()] or header['statuses'] != (TIERED_STATUSES if tiered else STATUSES):
         raise ValueError('domain schema')
     if not counter(header['generation']):
         raise ValueError('generation')
@@ -100,9 +108,16 @@ def validate_row(row, header, expected):
         if status is None:
             if begin is not None or end is not None or any(x is not None for x in data):
                 raise ValueError('skipped domain contains invented data')
+        elif status == len(STATUSES):
+            if header['format'] != 'r4-memory-probes-2' or name != 'ANDROID_MEMORY' or expected % 5 == 0:
+                raise ValueError('unscheduled domain or due row')
+            if begin is not None or end is not None or any(x is not None for x in data):
+                raise ValueError('unscheduled probe contains a fabricated observation')
         else:
             if status not in range(len(STATUSES)):
                 raise ValueError('probe status')
+            if header['format'] == 'r4-memory-probes-2' and name == 'ANDROID_MEMORY' and expected % 5 != 0:
+                raise ValueError('unannounced MemoryInfo call')
             if not header['clock_failed'] and (begin is None or end is None or end < begin):
                 raise ValueError('probe bracket')
             if not header['clock_failed'] and (begin < previous or end > values[3]):
@@ -112,7 +127,10 @@ def validate_row(row, header, expected):
                 raise ValueError('OK probe missing data')
             if status == 2 and any(x is not None for x in data):
                 raise ValueError('unsupported probe has data')
-        domains[name] = {'begin_ns': begin, 'end_ns': end, 'status': None if status is None else STATUSES[status], 'values': dict(zip(fields, data))}
+        if (header['format'] == 'r4-memory-probes-2' and name == 'ANDROID_MEMORY' and
+                status is None and values[4] == 0):
+            raise ValueError('missing schedule/Stop witness')
+        domains[name] = {'begin_ns': begin, 'end_ns': end, 'status': None if status is None else header['statuses'][status], 'values': dict(zip(fields, data))}
     roles = domains['PUBLISHED_ROLES']
     for key in ('source_is_rendered', 'source_is_roi', 'rendered_is_roi'):
         if roles['values'][key] not in (None, 0, 1):

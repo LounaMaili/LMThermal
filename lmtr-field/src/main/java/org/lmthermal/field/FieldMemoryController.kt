@@ -26,7 +26,7 @@ internal class FieldMemoryController(private val model:WeakReference<FieldModel>
     private val exporting=AtomicBoolean()
 
     /** Allocate the complete scalar window before any Start, never select a favorable health probe. */
-    fun arm(allowed:Boolean,files:File) {
+    fun arm(allowed:Boolean,files:File,plan:MemoryProbePlan=MemoryProbePlan.REFERENCE) {
         if(!allowed || active.value || !saved || exporting.get()) {
             status.value="Memory arm refused: prior work/window still owned";return
         }
@@ -35,7 +35,7 @@ internal class FieldMemoryController(private val model:WeakReference<FieldModel>
         var completionOwnsLease=false
         try {
             val directory=File(files,"r4-synchronized-memory/${UUID.randomUUID()}");check(directory.mkdirs())
-            val next=BracketedMemoryWindow(lease,AndroidMemoryProbe(model),SystemClock::elapsedRealtimeNanos)
+            val next=BracketedMemoryWindow(lease,AndroidMemoryProbe(model),SystemClock::elapsedRealtimeNanos,plan)
             root=directory;window=next;saved=false;active.value=true
             val collector=scope.launch(start=CoroutineStart.LAZY) {
                 try {
@@ -54,7 +54,7 @@ internal class FieldMemoryController(private val model:WeakReference<FieldModel>
                 status.value="Memory probes stopped: ${next.rowCount()} rows; save after recorder drain (${directory.name})"
             }
             completionOwnsLease=true
-            status.value="Memory probes active: max 60 rows, no faster than 1 Hz; normal preview unchanged"
+            status.value="Memory probes active (${plan.name}): max 60 rows, no faster than 1 Hz; normal preview unchanged"
             collector.start()
         } catch(_:Throwable) {
             window?.requestStop()

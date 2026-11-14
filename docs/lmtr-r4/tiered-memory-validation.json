@@ -1,0 +1,521 @@
+{
+  "schema": "r4-tiered-memory-offline-receipt-1",
+  "status": "offline_functional_qualification_android_performance_unqualified",
+  "base_commit": "a2f42df8e8e71a1bcd36a5943023723e8ef446b0",
+  "branch": "codex/r4-tiered-memory-diagnostic",
+  "code_source_hashes": {
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/BracketedMemory.kt": "f0762d268a2234d79add2c6fd0c76b522eeeb7037c4acb019d4b98feb306999a",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/MemoryProbePlan.kt": "9cf1a57d2664f9f7cedde9c64a426ded7cb1148254218c9f852b59e7f6e8d8da",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/TieredMemoryTest.kt": "75ab8cac299ab7799387744fbe625fc25f43699f4bd043faa5efe989e20069fa",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/MemoryRecorderIsolationTest.kt": "f8460feff80a40347250620f888f1016d4e24d7a25d612fbcc0bba4decb4289a",
+    "lmtr-field-support/src/hostTest/kotlin/org/lmthermal/field/TieredMemoryCostProbe.kt": "68b1857de85407653c644a9052ca6e8ea67285eb903bf14e9b34d4dfb7728538",
+    "lmtr-field-support/src/hostTest/kotlin/org/lmthermal/field/TieredRecorderInteropProbe.kt": "03fb96ce52e5fa278194b57f90977b465ee690b6cdca5754345c61046d512cea",
+    "lmtr-field/src/main/java/org/lmthermal/field/FieldMemoryController.kt": "27cb950cc0143127f780f24623aff91e51d7d5f949158030440e1a4691cfc8a5",
+    "lmtr-field/src/main/java/org/lmthermal/field/FieldActivity.kt": "d7be7e08818ea4e1990f79a68afeca3b645451b80af2734c63af78a25559586e",
+    "tools/r4_memory_probes.py": "a6ed19ce63b976d4787ffc227b9c138bf9c03bebcdb7c1abfad72c9345ed9cdc",
+    "tools/analyze_r4_memory_intervals.py": "284b28adbc2c3345645ccc421a5913234afa35653b21f36abd44c7b4c29a1610",
+    "tools/tests/test_r4_tiered_memory.py": "3cf7aa23374e3f81a95d0edcb74960efd8595b70c1908c0b1c2d893c2551a6ff",
+    "tools/tests/test_r4_memory_intervals.py": "59aa92ef87a08a05a5e9905b4fa70881e6a90b5ed77bc36b0453b946bf2007b5"
+  },
+  "field_only": true,
+  "default_enabled": false,
+  "product_code_changed": false,
+  "new_adb_device_emulator_art_or_actions": false,
+  "forced_gc": false,
+  "protected_sources": {
+    "docs/LMTR_WIRE_V1.md": "b5b867ff9e5fae707fa07a4a2ebe1854d4716f993a4017a90140f2b934e539d0",
+    "lmtr-contract/src/test/resources/lmtr/manifest.json": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldSafety.kt": "3da688e296b70f468252c5d3ab29cb48d521394e4447bb2b38199d0bac47dd5f",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt": "c9d7990b44b7fc1edc85592a0cc84156df2b30bd302b49a88f6635c72639d6e8",
+    "lmtr-field/src/main/java/org/lmthermal/field/FieldMetrics.kt": "a070e291a4cb4d7fbb2a622f12f293cf64d6e40b2b486e5e4b2d55e7cb089c8d",
+    "lmtr-field/src/main/java/org/lmthermal/field/FieldHealthProbe.kt": "238872c50d45bcca254ffa6ff66de0109b7352e020de5b2dcad684f34681305c",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt": "d3df312966571030bbd5c236c0fff31db9165a7a64e9a3f8ead86bd1c63da9f5",
+    "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt": "ea7e04bec1183d09d3d08f632ef906ff772a628fd9b421253d64d878a9c21e9a",
+    "app/src/main/cpp/transport.cpp": "c735dc6d958096e4cb21dfac32c4baf8cd9d4eb9e8d778c15a65fde6089e0c13"
+  },
+  "canonical_fixtures_unchanged": 51,
+  "policies": {
+    "relative_rss_guard_and_start_reference": "unchanged",
+    "logical_reservation_mib": 78,
+    "independent_margin_mib": 32,
+    "preparation_queue_mib": 4,
+    "writer_queue_mib": 4,
+    "journal_mib": 1,
+    "two_full_chunk_validations": true,
+    "acks_losses_and_integrity": "unchanged"
+  },
+  "diagnostic": {
+    "reference_format": "r4-memory-probes-1",
+    "reference_export_byte_identity": "e9f6bbe999f44584f4063982b0723c14c6168b2342e64b898e8002013fb4dca6",
+    "tiered_format": "r4-memory-probes-2",
+    "period_rows": 5,
+    "sample_delay_after_completion_ms": 1000,
+    "controller_max_rows": 60,
+    "window_capacity": 64,
+    "primitive_backing_bytes": 92168,
+    "proc_parser_backing_bytes": 1152,
+    "alias_sum": false,
+    "interpolation": false,
+    "not_scheduled_has_no_times_or_values": true,
+    "blocked_collector_keeps_lease": true
+  },
+  "tests": {
+    "jvm": {
+      "core": {
+        "tests": 241,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-contract": {
+        "tests": 74,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-recorder": {
+        "tests": 82,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "camera-recording": {
+        "tests": 61,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-field-support": {
+        "tests": 131,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "app": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "host_jvm": 589,
+    "robolectric": 21,
+    "python_reference": 84,
+    "python_diagnostics": 37,
+    "python_total": 121,
+    "builds_and_lint": {
+      "app": {
+        "apk_sha256": "2f2e1e6b251b49f79d3a0a8198de453e0399daca844f28a3f04faeb9af2522b2",
+        "apk_bytes": 11084555,
+        "experimental_plan_symbol_present": false,
+        "lint": {
+          "Warning": 5
+        },
+        "installed": false
+      },
+      "lmtr-field": {
+        "apk_sha256": "51ccb4a0290ed672395a2c6c903e0e2f3cfa98cc5d795dea24301bd33cb113f3",
+        "apk_bytes": 11689834,
+        "experimental_plan_symbol_present": true,
+        "lint": {
+          "Warning": 6
+        },
+        "installed": false
+      }
+    }
+  },
+  "interop": {
+    "profiles": [
+      {
+        "case": "analysis-0",
+        "sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+        "exact_previous_bytes": true,
+        "source_unchanged": true
+      },
+      {
+        "case": "analysis-1",
+        "sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+        "exact_previous_bytes": true,
+        "source_unchanged": true
+      },
+      {
+        "case": "full-0",
+        "sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+        "exact_previous_bytes": true,
+        "source_unchanged": true
+      },
+      {
+        "case": "full-1",
+        "sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+        "exact_previous_bytes": true,
+        "source_unchanged": true
+      },
+      {
+        "case": "native-0",
+        "sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+        "exact_previous_bytes": true,
+        "source_unchanged": true
+      },
+      {
+        "case": "native-1",
+        "sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+        "exact_previous_bytes": true,
+        "source_unchanged": true
+      }
+    ],
+    "virtual_analysis_cases": [
+      {
+        "case": "0-off",
+        "observations": 50,
+        "unavailable": 1,
+        "source_unchanged": true,
+        "original_oracle_bytes_equal_off": true,
+        "artifact_bytes_equal_off": true,
+        "sha256": "6d55fae66f4ad1e9d993058f191ea661aa8a764904bc25ea5618ba071cab6567"
+      },
+      {
+        "case": "0-reference",
+        "observations": 50,
+        "unavailable": 1,
+        "source_unchanged": true,
+        "original_oracle_bytes_equal_off": true,
+        "artifact_bytes_equal_off": true,
+        "sha256": "6d55fae66f4ad1e9d993058f191ea661aa8a764904bc25ea5618ba071cab6567"
+      },
+      {
+        "case": "0-tiered",
+        "observations": 50,
+        "unavailable": 1,
+        "source_unchanged": true,
+        "original_oracle_bytes_equal_off": true,
+        "artifact_bytes_equal_off": true,
+        "sha256": "6d55fae66f4ad1e9d993058f191ea661aa8a764904bc25ea5618ba071cab6567"
+      },
+      {
+        "case": "0-tiered_failed",
+        "observations": 50,
+        "unavailable": 1,
+        "source_unchanged": true,
+        "original_oracle_bytes_equal_off": true,
+        "artifact_bytes_equal_off": true,
+        "sha256": "6d55fae66f4ad1e9d993058f191ea661aa8a764904bc25ea5618ba071cab6567"
+      },
+      {
+        "case": "1-off",
+        "observations": 50,
+        "unavailable": 1,
+        "source_unchanged": true,
+        "original_oracle_bytes_equal_off": true,
+        "artifact_bytes_equal_off": true,
+        "sha256": "9d284ea247331b330ba93b5382aa659ff18954622943dd20ebdbc6735b5c9b82"
+      },
+      {
+        "case": "1-reference",
+        "observations": 50,
+        "unavailable": 1,
+        "source_unchanged": true,
+        "original_oracle_bytes_equal_off": true,
+        "artifact_bytes_equal_off": true,
+        "sha256": "9d284ea247331b330ba93b5382aa659ff18954622943dd20ebdbc6735b5c9b82"
+      },
+      {
+        "case": "1-tiered",
+        "observations": 50,
+        "unavailable": 1,
+        "source_unchanged": true,
+        "original_oracle_bytes_equal_off": true,
+        "artifact_bytes_equal_off": true,
+        "sha256": "9d284ea247331b330ba93b5382aa659ff18954622943dd20ebdbc6735b5c9b82"
+      },
+      {
+        "case": "1-tiered_failed",
+        "observations": 50,
+        "unavailable": 1,
+        "source_unchanged": true,
+        "original_oracle_bytes_equal_off": true,
+        "artifact_bytes_equal_off": true,
+        "sha256": "9d284ea247331b330ba93b5382aa659ff18954622943dd20ebdbc6735b5c9b82"
+      }
+    ],
+    "diagnostic_exports": [
+      {
+        "case": "0-reference",
+        "rows": 10,
+        "source_unchanged": true,
+        "format": "r4-memory-probes-1",
+        "probe_failed": false
+      },
+      {
+        "case": "0-tiered",
+        "rows": 10,
+        "source_unchanged": true,
+        "format": "r4-memory-probes-2",
+        "probe_failed": false
+      },
+      {
+        "case": "0-tiered_failed",
+        "rows": 10,
+        "source_unchanged": true,
+        "format": "r4-memory-probes-2",
+        "probe_failed": true
+      },
+      {
+        "case": "1-reference",
+        "rows": 10,
+        "source_unchanged": true,
+        "format": "r4-memory-probes-1",
+        "probe_failed": false
+      },
+      {
+        "case": "1-tiered",
+        "rows": 10,
+        "source_unchanged": true,
+        "format": "r4-memory-probes-2",
+        "probe_failed": false
+      },
+      {
+        "case": "1-tiered_failed",
+        "rows": 10,
+        "source_unchanged": true,
+        "format": "r4-memory-probes-2",
+        "probe_failed": true
+      }
+    ],
+    "existing_physical_reader_output_unchanged": true,
+    "virtual_cadence_scope": "250 events/50 selected/49 available/1 unavailable/200 nonselected, ten virtual seconds, drained selected work; not real throughput",
+    "eight_cases_zero_preparation_and_writer_losses": true
+  },
+  "host_cost": {
+    "arms": [
+      {
+        "platform": "linux",
+        "arm": "A",
+        "mode": "off",
+        "wall_ns_per_operation": 36632.5,
+        "allocated_bytes_per_operation": 0.0,
+        "constructor_bytes": 0.0,
+        "constructor_wall_ns": 60.0,
+        "memoryinfo_calls_total": 0,
+        "cost_sha256": "5a656cc62feb93912cc436317beaf4b6eea7e8d3122cebb514be57c6cab4c730"
+      },
+      {
+        "platform": "linux",
+        "arm": "B",
+        "mode": "reference",
+        "wall_ns_per_operation": 92048.9,
+        "allocated_bytes_per_operation": 4536.0,
+        "constructor_bytes": 92360.0,
+        "constructor_wall_ns": 48485.0,
+        "memoryinfo_calls_total": 240,
+        "cost_sha256": "873153f6849d804039e1917664671c2535d4eb6e658509a002d70be7a87bae90"
+      },
+      {
+        "platform": "linux",
+        "arm": "C",
+        "mode": "tiered",
+        "wall_ns_per_operation": 600226.8500000001,
+        "allocated_bytes_per_operation": 1081.6,
+        "constructor_bytes": 92360.0,
+        "constructor_wall_ns": 47004.5,
+        "memoryinfo_calls_total": 48,
+        "cost_sha256": "eacaae9435f756adeae2a4e5ca29bae5f68186f1ac48a3cef982e9040a34cf0b"
+      },
+      {
+        "platform": "linux",
+        "arm": "D",
+        "mode": "tiered",
+        "wall_ns_per_operation": 82833.2,
+        "allocated_bytes_per_operation": 4497.6,
+        "constructor_bytes": 92360.0,
+        "constructor_wall_ns": 48245.0,
+        "memoryinfo_calls_total": 48,
+        "cost_sha256": "3dea6eeb01582721b6643397abacce23ea9c79406ed113291680e50ad4d52312"
+      },
+      {
+        "platform": "linux",
+        "arm": "E",
+        "mode": "reference",
+        "wall_ns_per_operation": 83566.45,
+        "allocated_bytes_per_operation": 4536.0,
+        "constructor_bytes": 92360.0,
+        "constructor_wall_ns": 49280.0,
+        "memoryinfo_calls_total": 240,
+        "cost_sha256": "d58410378d239a63b67267f6abc80c4274803b38a1cdb64287842569b8a0fe23"
+      },
+      {
+        "platform": "linux",
+        "arm": "F",
+        "mode": "off",
+        "wall_ns_per_operation": 36444.775,
+        "allocated_bytes_per_operation": 0.0,
+        "constructor_bytes": 0.0,
+        "constructor_wall_ns": 65.0,
+        "memoryinfo_calls_total": 0,
+        "cost_sha256": "1166d6bc560b21193a4e59fb18a9c2d31b26c7c28bc6e7782ff2c792ee545d29"
+      },
+      {
+        "platform": "synthetic",
+        "arm": "A",
+        "mode": "off",
+        "wall_ns_per_operation": 36309.0,
+        "allocated_bytes_per_operation": 0.0,
+        "constructor_bytes": 0.0,
+        "constructor_wall_ns": 55.0,
+        "memoryinfo_calls_total": 0,
+        "cost_sha256": "0dc115a4584142016420ce807d9176798c07a7ed47b52b9f6c3719e823f7a123"
+      },
+      {
+        "platform": "synthetic",
+        "arm": "B",
+        "mode": "reference",
+        "wall_ns_per_operation": 415394.57499999995,
+        "allocated_bytes_per_operation": 9440.0,
+        "constructor_bytes": 92360.0,
+        "constructor_wall_ns": 47399.0,
+        "memoryinfo_calls_total": 240,
+        "cost_sha256": "87c6476d0cfa00570e9b04dcc35b6e09b0fff64bdecb049cf3e645ae844d604a"
+      },
+      {
+        "platform": "synthetic",
+        "arm": "C",
+        "mode": "tiered",
+        "wall_ns_per_operation": 205915.15,
+        "allocated_bytes_per_operation": 6161.6,
+        "constructor_bytes": 92360.0,
+        "constructor_wall_ns": 45775.0,
+        "memoryinfo_calls_total": 48,
+        "cost_sha256": "c40842bfef85d30f8a7566f6dd69cd5fd22da1560d28c08415994a521d5148ef"
+      },
+      {
+        "platform": "synthetic",
+        "arm": "D",
+        "mode": "tiered",
+        "wall_ns_per_operation": 732050.75,
+        "allocated_bytes_per_operation": 5580.4,
+        "constructor_bytes": 92360.0,
+        "constructor_wall_ns": 43625.0,
+        "memoryinfo_calls_total": 48,
+        "cost_sha256": "73a875a0979bd2a100341ebf118d8f9d3dcbf42acec222a3f6c1be5c776239a4"
+      },
+      {
+        "platform": "synthetic",
+        "arm": "E",
+        "mode": "reference",
+        "wall_ns_per_operation": 425284.0,
+        "allocated_bytes_per_operation": 9440.0,
+        "constructor_bytes": 92360.0,
+        "constructor_wall_ns": 46245.0,
+        "memoryinfo_calls_total": 240,
+        "cost_sha256": "d979046cf591c84dc76d80a52051df8b09b1d0613cf5447b6b9641915e14ad6b"
+      },
+      {
+        "platform": "synthetic",
+        "arm": "F",
+        "mode": "off",
+        "wall_ns_per_operation": 36402.0,
+        "allocated_bytes_per_operation": 0.0,
+        "constructor_bytes": 0.0,
+        "constructor_wall_ns": 65.0,
+        "memoryinfo_calls_total": 0,
+        "cost_sha256": "24f55017494647fc0527fc66b926ddad18da51c64eb6b76a4cba023983d0acda"
+      }
+    ],
+    "diagnostic_exports_verified": 8,
+    "scope": "Matched host fixed/synthetic workload only; no Android latency/alloc/RSS inference",
+    "no_retry": true
+  },
+  "constructor_comparison": {
+    "arms": [
+      {
+        "arm": "baseline-A",
+        "bytes_per_constructor": [
+          92352,
+          92352,
+          92352,
+          92352,
+          92352,
+          92352,
+          92352,
+          92352
+        ],
+        "median": 92352.0
+      },
+      {
+        "arm": "candidate-B",
+        "bytes_per_constructor": [
+          92360,
+          92360,
+          92360,
+          92360,
+          92360,
+          92360,
+          92360,
+          92360
+        ],
+        "median": 92360.0
+      },
+      {
+        "arm": "candidate-C",
+        "bytes_per_constructor": [
+          92360,
+          92360,
+          92360,
+          92360,
+          92360,
+          92360,
+          92360,
+          92360
+        ],
+        "median": 92360.0
+      },
+      {
+        "arm": "baseline-D",
+        "bytes_per_constructor": [
+          92352,
+          92352,
+          92352,
+          92352,
+          92352,
+          92352,
+          92352,
+          92352
+        ],
+        "median": 92352.0
+      }
+    ],
+    "scope": "Caller construction allocation in fresh HotSpot JVMs, not ART or retained RSS",
+    "forced_gc": false
+  },
+  "physical_evidence": {
+    "originals_remain_private": true,
+    "historical_manifest_files_verified": 373,
+    "no_new_physical_trial": true,
+    "no_physical_series_or_identifiers_in_repository": true
+  },
+  "existing_recorder_observer": {
+    "own_memoryinfo_sample_unchanged": true,
+    "not_in_preview_ab": true,
+    "sidecar_call_reduction_is_not_process_wide": true,
+    "guard_values_not_retroactively_bracketed": true
+  },
+  "preserved_failures": [
+    "Initial sandbox Gradle local socket refused before tests; same offline checks run with permitted host socket access.",
+    "Initial Python integration discovery lacked LMTR_FIELD_TEST_ROOT/LMTR_PERIODIC_TEST_ROOT, producing 16 setup errors. All 84 pass after copying/hash-verifying original synthetic fixtures and providing the documented environment.",
+    "First independent virtual Analysis readback used the nonperiodic checker, whose unchanged scheduled=null assertion correctly failed. The existing periodic source/slot/payload/closure checker passes all eight original outputs; no recorder/checker assertion changed.",
+    "Predeclared host Linux C and synthetic D tiered arms are slower. Preserve all arms/batches; no selected rerun or stable host/Android latency claim."
+  ],
+  "limitations": [
+    "No unique roots, retained-live floor, native capacities or causal graphics attribution",
+    "Whole-process ART allocation counters cannot isolate diagnostic or recorder allocation",
+    "Additional existing recorder field sampler overhead/contended OS reads unmeasured on Android",
+    "Same primitive array cap is not total ART/OS memory bound; constructor overhead is HotSpot only",
+    "No new physical safety/admission, ten-second co-sampling, RSS reduction or 30\u201360 second qualification",
+    "No crash-durable sidecar or worst-case blocked-call bound"
+  ],
+  "publication": {
+    "no_workflow_changes": true,
+    "branch_excluded_from_both_push_filters": true,
+    "no_dispatch_or_pull_request_changes": true
+  },
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

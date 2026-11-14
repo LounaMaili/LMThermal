@@ -397,3 +397,9 @@ scalar storage, with explicit unknown/error/cancellation states. No production
 instrumentation, source-control action, atomic heap census or new admission/RSS
 policy is introduced. Its costs are observed before existing admission; ART/native
 transients and physical co-sampling still require separate review/authorization.
+
+The [isolated tiered option](lmtr-r4/TIERED_MEMORY_DIAGNOSTIC.md) preserves that
+default reference and explicitly spaces the whole PSS/Android-category domain
+by five diagnostic rows. Skipped values and timestamps remain unknown; only the
+experimental sidecar schema is versioned. Product behavior, LMTR v1 and current
+recording safety/admission remain unchanged; this is offline qualification only.
