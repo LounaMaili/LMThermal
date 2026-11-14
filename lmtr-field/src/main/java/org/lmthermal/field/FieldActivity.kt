@@ -74,6 +74,36 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     private var presentationSampler:Job?=null
     private val suppressPresentation=java.util.concurrent.atomic.AtomicBoolean()
     @Volatile private var presentationCounters=PresentationCounters()
+    internal val memoryProbes=FieldMemoryController(java.lang.ref.WeakReference(this))
+
+    /** Explicit pre-Start arming: no recorder/camera operation or safety-policy change. */
+    fun startMemoryProbes()=memoryProbes.arm(!busy.value && engine==null && healthSampler?.isActive!=true && presentationSampler?.isActive!=true,getApplication<Application>().filesDir)
+    /** The operator saves only after the existing recorder/worker drain has completed. */
+    fun saveMemoryProbes()=memoryProbes.save(!busy.value && engine==null)
+
+    /** Published roles only, not roots. Alias equality is instantaneous and is never summed.
+     * Source-generation brackets invalidate replacement/Close/reopen. No plane/bitmap copy or history.
+     */
+    internal fun memoryRoleScalars(v:LongArray):MemoryProbeStatus {
+        val source=camera.state.value;val before=camera.presentationGeneration(source)
+        val rendered=presenter.state.value;val roi=presenter.roi.state.value
+        PublishedMemoryRoles.fill(source,rendered.measurement,roi.measurement,rendered.bitmap?.allocationByteCount?.toLong(),
+            rendered.legend?.allocationByteCount?.toLong(),v)
+        presentationCounters.memoryEventSequences(v,14)
+        return PublishedMemoryRoles.qualify(v,before,camera.presentationGeneration(camera.state.value))
+    }
+
+    /** Existing logical charges only, not allocated/live heap. Reference is local and epoch-checked. */
+    internal fun memoryRecorderScalars(v:LongArray):MemoryProbeStatus {
+        val current=engine ?: return MemoryProbeStatus.UNSUPPORTED
+        val origin=runStart;val s=current.snapshot()
+        if(engine!==current)return MemoryProbeStatus.SOURCE_CHANGED
+        v[0]=origin;v[1]=when(s.state){"recording"->0;"stopping"->1;"finalized"->2;"failed"->3;else->4}
+        v[2]=s.accepted;v[3]=s.acknowledged;v[4]=s.preparationDrops;v[5]=s.writerDrops
+        v[6]=s.preparationQueuedBytes;v[7]=s.preparationInFlightBytes;v[8]=s.writerQueuedBytes;v[9]=s.writerInFlightBytes
+        v[10]=s.pendingBytes;v[11]=s.controlBytes;v[12]=s.chunks;v[13]=s.checkpoints
+        return MemoryProbeStatus.OK
+    }
     /** One bounded normal-preview memory window. No recorder/admission attempt, GC, hidden
      * preview, source controls or UI-ownership changes. Counts describe only sampled roles.
      */
@@ -419,6 +449,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     /** Foreground activity only: lifecycle loss stops intake, even during a recorder-free baseline. */
     fun foreground(value:Boolean) {
         foreground=value
+        if(!value)memoryProbes.stop()
         if(!value && busy.value){stopForSafety("foreground_lost");stop()}
     }
     /** Reserve final diagnostics until all worker/file ownership is resolved; no overlapping Start. */
@@ -503,8 +534,8 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         status.value=if(refused)"Diagnostic/read-only check failed: ${root.name}; originals retained; no longer run before inspection"
             else "Stopped and read-only checked: ${root.name}; private files retained; inspect before longer run"
     }
-    fun memoryPressure() { if(busy.value){stopForSafety("android_memory_pressure");stop()} }
-    override fun onCleared() { stopDeadlineJob?.cancel();route.stop();lifetime.dispose();presenter.dispose();camera.dispose();scope.launch { sampler?.cancelAndJoin();finishSafely();scope.cancel() } }
+    fun memoryPressure() { memoryProbes.stop();if(busy.value){stopForSafety("android_memory_pressure");stop()} }
+    override fun onCleared() { memoryProbes.dispose();stopDeadlineJob?.cancel();route.stop();lifetime.dispose();presenter.dispose();camera.dispose();scope.launch { sampler?.cancelAndJoin();finishSafely();scope.cancel() } }
 }
 
 /** Deliberate field buttons plus the unchanged product camera/measurement screen, in a separate APK. */
@@ -518,6 +549,7 @@ class FieldActivity:AppCompatActivity() {
         if(intent.action=="org.lmthermal.field.SAMPLE_HEALTH")model.sampleHealth(intent.getStringExtra("phase") ?: "foreground_idle")
         if(intent.action=="org.lmthermal.field.PROFILE_PRESENTATION")model.profilePresentation()
         if(intent.action=="org.lmthermal.field.SAMPLE_LIVE_MEMORY")model.sampleLiveMemory()
+        memoryAction(intent.action)
         setContent {
             val state by model.status.collectAsState();val busy by model.busy.collectAsState()
             val running by model.running.collectAsState()
@@ -559,6 +591,17 @@ class FieldActivity:AppCompatActivity() {
         if(intent.action=="org.lmthermal.field.SAMPLE_HEALTH")model.sampleHealth(intent.getStringExtra("phase") ?: "foreground_idle")
         if(intent.action=="org.lmthermal.field.PROFILE_PRESENTATION")model.profilePresentation()
         if(intent.action=="org.lmthermal.field.SAMPLE_LIVE_MEMORY")model.sampleLiveMemory()
+        memoryAction(intent.action)
+    }
+    /** Explicit field-only intents preserve the exact preview layout and original Start controls. */
+    private fun memoryAction(action:String?) {
+        when(action) {
+            "org.lmthermal.field.MEMORY_ARM"->model.startMemoryProbes()
+            "org.lmthermal.field.MEMORY_STOP"->model.memoryProbes.stop()
+            "org.lmthermal.field.MEMORY_SAVE"->model.saveMemoryProbes()
+            else->return
+        }
+        android.util.Log.i("LMThermalMemory",model.memoryProbes.status.value)
     }
     override fun onStart(){super.onStart();model.foreground(true);model.camera.enterForeground()}
     override fun onStop(){window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);if(!isChangingConfigurations)model.foreground(false);model.lifetime.stopped(token,isChangingConfigurations,isFinishing);super.onStop()}

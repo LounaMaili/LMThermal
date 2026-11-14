@@ -1,0 +1,389 @@
+{
+  "schema": "r4-bracketed-memory-candidate-receipt-1",
+  "status": "host_verified_field_prototype_android_runtime_cost_unqualified",
+  "base_commit": "758287118c9ed9bfa5c856c60f33299f66ec616e",
+  "field_only": true,
+  "default_enabled": false,
+  "product_changed": false,
+  "physical_or_adb_access": false,
+  "emulator_or_art_or_actions": false,
+  "forced_gc": false,
+  "candidate_apk": {
+    "file": "lmtr-field-debug.apk",
+    "bytes": 11776361,
+    "sha256": "ff600d6e771dbb0f28cc9441f3b551cbce2fd5b5622c020abd4161f2a2100094",
+    "application_id": "org.lmthermal.field",
+    "diagnostic_symbols_present": true,
+    "built_after_latest_sources": true,
+    "installed": false,
+    "art_or_device_executed": false
+  },
+  "reviewed_code_sha256": {
+    "lmtr-field-support/src/hostTest/kotlin/org/lmthermal/field/MemoryEventContentionProbe.kt": "5f582c653367444a04fd88993095fdae60ee4b533092dcdf5dedd6ed4ce2c8a0",
+    "lmtr-field-support/src/hostTest/kotlin/org/lmthermal/field/SynchronizedMemoryCostProbe.kt": "1bf8ae58f34ac875eeee6aaf967f6abee20d0941b46155791b355199f564f388",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/BoundedProcRss.kt": "6ae3d64ce733bc70e7160b91cd5602498db9a08e028c268c3771a2153ca93756",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/BracketedMemory.kt": "e96b784a86c98ecfded59429ead7fd936666c2272bd7d69e8796bcdda0f715d5",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/MemoryProbeLease.kt": "ff7fb132482933cafb163a178c35b6fe57a3c341259633f788f331ebdf9d78bc",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/PresentationCounters.kt": "82bb3c89ccbda7dc164ef2f092bc3d6f4f7044299cca8783eb16169c5167cf83",
+    "lmtr-field-support/src/main/kotlin/org/lmthermal/field/PublishedMemoryRoles.kt": "2202899ef2b324b0bc2b6b6d8fc10d1b879c2d89e2ec228e0d07f35989845b55",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/BoundedProcRssTest.kt": "d4a18b31d914731048f22f59a4b7add2b9a61891b3ac85728289bc980b54fca2",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/BracketedMemoryTest.kt": "9287e62cecc4b7f15f173d0af26b0fba45912fdb7c55d92021904e0359dc49a6",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/MemoryProbeCompletionTest.kt": "272aa4d54bebe9203a468477c90ecf15a5c5e499a36ba333e9db29c735d338f4",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/MemoryProbeLeaseTest.kt": "c693de3676c754aacfdbad47e7bebca21fc0594e257758417e55f514621d0425",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/MemoryRecorderIsolationTest.kt": "c56058614773d91972a4b330b0d5b694a7f3bd9c4913890283aa7afc4cad5870",
+    "lmtr-field-support/src/test/kotlin/org/lmthermal/field/PublishedMemoryRolesTest.kt": "4740386474ab7c28fb8e5f2d81a06299508146c70c05087dc520232c9a0c35ce",
+    "lmtr-field/src/main/java/org/lmthermal/field/AndroidMemoryProbe.kt": "7ad4a14ff8c197dba9e7ab6c1302cfbff34e05606ea777018aaee6fff9062ad6",
+    "lmtr-field/src/main/java/org/lmthermal/field/FieldActivity.kt": "58632bbc2900a8aa92942e0f199af627c9be0bc6765a4f195548dccd612b27f3",
+    "lmtr-field/src/main/java/org/lmthermal/field/FieldMemoryController.kt": "9666ce17ddeec9549e2abe2fc18a02f3eb9baaa0b4043773e5c1d03e9d1d1b95",
+    "tools/r4_memory_probes.py": "51d6f26aee01653896d10d88bc59011d58d444c4b286ccdbf69e6dc31001bd08",
+    "tools/tests/test_r4_memory_probes.py": "33b98f14a655fddd583fa027129675f43549473dece4c0f237b7e646dfcdd1dc"
+  },
+  "observation": {
+    "domains": 9,
+    "row_width_longs": 177,
+    "value_slots_per_domain": 16,
+    "capacity_rows": 64,
+    "field_max_rows": 60,
+    "min_delay_after_sample_ms": 1000,
+    "each_domain_has_begin_end_ns": true,
+    "atomic_snapshot": false,
+    "unknown_values": "null",
+    "known_aliases_are_not_summed": true,
+    "source_generation_checked": true,
+    "native_capacity": "unsupported_no_new_transport_API",
+    "gc_semantics": "Two sequential counter groups; unchanged does not prove post-GC floor or atomicity",
+    "recorder_values": "Existing logical charges/counters, not reachable or allocated bytes"
+  },
+  "accounting": {
+    "window_primitive_bytes": 92168,
+    "proc_parser_primitive_bytes": 1152,
+    "total_declared_primitive_bytes": 93320,
+    "window_primitive_cap_bytes": 131072,
+    "preallocated_before_existing_admission": true,
+    "extra_costs_not_in_primitive_charge": [
+      "headers/metadata/atomics/locks",
+      "weak model binding and independent coroutine scope",
+      "Android MemoryInfo and platform native allocations",
+      "InputStream and counter strings",
+      "IO worker/stack growth",
+      "post-drain export temporaries"
+    ],
+    "android_total_retained_or_rss_bound": false,
+    "charge_scope": "Declared primitive array backing only; object fields/atomics/static tables and listed platform/runtime costs are additional"
+  },
+  "ownership": {
+    "process_wide_collector_lease": true,
+    "token_checked_actual_completion_release": true,
+    "stopped_blocked_collector_is_not_quiescent": true,
+    "no_replacement_collector_while_blocked": true,
+    "scalar_only_ring": true,
+    "source_bindings_weak": true,
+    "independent_supervisor_scope": true,
+    "no_acquisition_or_ack_callback_hook": true,
+    "extra_existing_monitor_read": "Two PresentationCounters scalars per diagnostic sample; no sorting/history scan",
+    "in_memory_process_death_loss_possible": true,
+    "export_post_drain_exclusive_partial": true
+  },
+  "host_cost": {
+    "runtime": "JDK 17.0.20.1+1 HotSpot/Fedora",
+    "heap": [
+      "-Xms64m",
+      "-Xmx256m"
+    ],
+    "order": [
+      "off-A",
+      "on-B",
+      "on-C",
+      "off-D"
+    ],
+    "warmups": 4,
+    "measured_batches": 8,
+    "operations_per_batch": 16,
+    "arms": [
+      {
+        "arm": "off-A",
+        "median_ns_per_operation": 36573.1875,
+        "median_allocated_bytes_per_operation": 0.0,
+        "median_window_constructor_ns": 35.0,
+        "median_window_constructor_bytes": 0.0,
+        "sha256": "6835f8630246297b6f2f7fde023c377b0f27b53e2197bf266d2bc0d4b121f30b"
+      },
+      {
+        "arm": "on-B",
+        "median_ns_per_operation": 96826.90625,
+        "median_allocated_bytes_per_operation": 4536.0,
+        "median_window_constructor_ns": 51379.0,
+        "median_window_constructor_bytes": 92352.0,
+        "sha256": "74b087a235e42f959ac17dd4973a0cec2f9824363d67f3f6f865974fb99ce356"
+      },
+      {
+        "arm": "on-C",
+        "median_ns_per_operation": 98135.625,
+        "median_allocated_bytes_per_operation": 4536.0,
+        "median_window_constructor_ns": 48839.5,
+        "median_window_constructor_bytes": 92352.0,
+        "sha256": "5c9931570ac047a2bc46cd97b6ccd82d72174b350347e6ad0994545edb560b5f"
+      },
+      {
+        "arm": "off-D",
+        "median_ns_per_operation": 36383.84375,
+        "median_allocated_bytes_per_operation": 0.0,
+        "median_window_constructor_ns": 30.0,
+        "median_window_constructor_bytes": 0.0,
+        "sha256": "7724f1558527862e08aad2781d76540a60dc8c8d18dfcea8d75738b021438dfd"
+      }
+    ],
+    "scope": "Accelerated fixed CPU workload + Linux proc/HotSpot probes; excludes Android Debug/native allocator/graphics/real roles/whole application",
+    "observed_extra_allocation_bytes_per_sample": 4536,
+    "window_constructor_allocation_bytes": 92352,
+    "no_retry": true
+  },
+  "host_contention": {
+    "order": [
+      "off-A",
+      "on-B",
+      "on-C",
+      "off-D"
+    ],
+    "warmups": 4,
+    "measured_batches": 8,
+    "producer_events_per_batch": 30000,
+    "reader_iterations_per_batch": 10000,
+    "arms": [
+      {
+        "arm": "off-A",
+        "median_wall_ns": 2132667.0,
+        "median_producer_allocated_bytes": 1680000.0,
+        "median_reader_allocated_bytes": 0.0,
+        "sha256": "f2bbbdf3156ae8ff6d8e3b63b164eee0825fbaa6c0a9bfd1c8fc6051be592448"
+      },
+      {
+        "arm": "on-B",
+        "median_wall_ns": 4772475.0,
+        "median_producer_allocated_bytes": 1680000.0,
+        "median_reader_allocated_bytes": 0.0,
+        "sha256": "2a4ee7e13bcba9a2935b561f25deb3abaab1aa341c198b66e56c1d86e2be0609"
+      },
+      {
+        "arm": "on-C",
+        "median_wall_ns": 4458207.5,
+        "median_producer_allocated_bytes": 1680000.0,
+        "median_reader_allocated_bytes": 0.0,
+        "sha256": "eb991f0f76106a8b62979d3ebc59b13b12bcbd24a7c6937b20269bf82a707440"
+      },
+      {
+        "arm": "off-D",
+        "median_wall_ns": 3412229.0,
+        "median_producer_allocated_bytes": 1680000.0,
+        "median_reader_allocated_bytes": 0.0,
+        "sha256": "e652e47714e85033866285d356c748e16e068d5c9279aa97763e0e13b0cc0043"
+      }
+    ],
+    "scope": "Artificial two-worker high-contention stress, includes thread startup/join; not one-Hz/ART bound",
+    "reader_median_allocated_bytes": 0,
+    "producer_median_allocated_bytes": 1680000,
+    "observed_contention_cost": true,
+    "no_retry": true
+  },
+  "validation": {
+    "jvm": {
+      "core": {
+        "tests": 241,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-contract": {
+        "tests": 74,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-recorder": {
+        "tests": 82,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "camera-recording": {
+        "tests": 61,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-field-support": {
+        "tests": 121,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "app": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "host_jvm_tests": 579,
+    "android_robolectric_tests": 21,
+    "python_tests": 109,
+    "python_probe_tests_repeated_after_schema_change": 8,
+    "lint": {
+      "app": {
+        "Error": 0,
+        "Warning": 5,
+        "Fatal": 0
+      },
+      "lmtr-field": {
+        "Error": 0,
+        "Warning": 6,
+        "Fatal": 0
+      }
+    },
+    "apk_built_not_installed": true,
+    "independent_scalar_readbacks": [
+      {
+        "arm": "B",
+        "rows": 16,
+        "source_sha256": "1b218adb3ca4ad99dc60bc850bfbb925a6e3b23ba6984e6053a8c288a54345f9",
+        "reader_status": "structurally_verified_not_runtime_qualification",
+        "source_unchanged": true
+      },
+      {
+        "arm": "C",
+        "rows": 16,
+        "source_sha256": "f04cd0ad7b576ea7282d1415c43b5d2b2bd56c5e88aac91cc452591546cc89cc",
+        "reader_status": "structurally_verified_not_runtime_qualification",
+        "source_unchanged": true
+      }
+    ],
+    "profile_byte_parity": {
+      "status": "passed",
+      "cases": [
+        {
+          "case": "analysis-0",
+          "bytes": 2238051,
+          "sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+          "exact_previous_bytes": true,
+          "independent_python_readback": true,
+          "source_unchanged": true
+        },
+        {
+          "case": "analysis-1",
+          "bytes": 548856,
+          "sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+          "exact_previous_bytes": true,
+          "independent_python_readback": true,
+          "source_unchanged": true
+        },
+        {
+          "case": "full-0",
+          "bytes": 3594140,
+          "sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+          "exact_previous_bytes": true,
+          "independent_python_readback": true,
+          "source_unchanged": true
+        },
+        {
+          "case": "full-1",
+          "bytes": 1044518,
+          "sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+          "exact_previous_bytes": true,
+          "independent_python_readback": true,
+          "source_unchanged": true
+        },
+        {
+          "case": "native-0",
+          "bytes": 3568517,
+          "sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+          "exact_previous_bytes": true,
+          "independent_python_readback": true,
+          "source_unchanged": true
+        },
+        {
+          "case": "native-1",
+          "bytes": 1035053,
+          "sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+          "exact_previous_bytes": true,
+          "independent_python_readback": true,
+          "source_unchanged": true
+        }
+      ],
+      "scope": "Existing six deterministic profile/codec cases, no canonical regeneration"
+    },
+    "canonical_fixtures": 51,
+    "canonical_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "protected_sources": [
+      {
+        "path": "docs/LMTR_WIRE_V1.md",
+        "sha256": "b5b867ff9e5fae707fa07a4a2ebe1854d4716f993a4017a90140f2b934e539d0",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-contract/src/test/resources/lmtr/manifest.json",
+        "sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldSafety.kt",
+        "sha256": "3da688e296b70f468252c5d3ab29cb48d521394e4447bb2b38199d0bac47dd5f",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt",
+        "sha256": "c9d7990b44b7fc1edc85592a0cc84156df2b30bd302b49a88f6635c72639d6e8",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt",
+        "sha256": "d3df312966571030bbd5c236c0fff31db9165a7a64e9a3f8ead86bd1c63da9f5",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt",
+        "sha256": "ea7e04bec1183d09d3d08f632ef906ff772a628fd9b421253d64d878a9c21e9a",
+        "unchanged": true
+      },
+      {
+        "path": "app/src/main/cpp/transport.cpp",
+        "sha256": "c735dc6d958096e4cb21dfac32c4baf8cd9d4eb9e8d778c15a65fde6089e0c13",
+        "unchanged": true
+      }
+    ],
+    "historical_files_reverified": 689,
+    "unchanged_start_stop_sampling_deadline_finish_compose": true,
+    "diff_check": "passed"
+  },
+  "retained_policies": {
+    "relative_rss_reference": "unchanged actual Start witness",
+    "relative_rss_increment_mib": 128,
+    "logical_reservation_mib": 78,
+    "independent_margin_mib": 32,
+    "preparation_mib": 4,
+    "writer_mib": 4,
+    "preferred_chunk_mib": 4,
+    "journal_mib": 1,
+    "two_complete_validations": true,
+    "durable_ack_and_loss_rules_unchanged": true
+  },
+  "known_failures_preserved": [
+    "Initial synthetic isolation HEADER declared codec1 while test requested codec0; unchanged constructor correctly refused. Fixed test HEADER only, assertions retained.",
+    "Initial runtime freeze encountered absent empty Gradle Java/resources directories before any probe ran; preserved partial copy and explicit corrected inventory."
+  ],
+  "physical_gates_pending": [
+    "Fresh hardware authorization and exact APK review",
+    "First matched normal-preview control covering natural GC without recorder",
+    "ART/OS observer allocation/latency/stack/graphics qualification",
+    "Separate reviewed Analysis5Hz/10s authorization, existing safety and operator gates",
+    "Process-death diagnostic durability decision"
+  ],
+  "remaining_unknowns": [
+    "Native transfer/assembly/latest capacities",
+    "Unpublished in-flight Bitmap/matrix/coroutine roots",
+    "Exact total retained/live memory and native/graphics attribution",
+    "Actual guard probe is not retroactively bracketed by the sidecar",
+    "Worst-case OS probe blocking and ART overhead",
+    "Physical duration or RSS improvement"
+  ],
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

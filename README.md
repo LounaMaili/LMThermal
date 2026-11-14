@@ -277,4 +277,10 @@ and measured host allocation savings. Current safety policy stays unchanged;
 Android RSS, longer duration and the proposed bounded instrumentation still need
 separate review/validation. No new device or CI execution is implied.
 
+The [experimental bracketed field sidecar](docs/lmtr-r4/SYNCHRONIZED_MEMORY_DIAGNOSTIC.md)
+now prepares those observations in `org.lmthermal.field` only, default off, with
+bounded scalar storage, explicit alias/unknown semantics and independent readback.
+Host cost/isolation tests and an offline APK build do not qualify ART memory,
+physical observer overhead or another recording duration.
+
 [Host writer phase attribution](docs/lmtr-r4/WRITER_PHASE_ATTRIBUTION.md) separates actual append/backend/ACK intervals from inclusive encoding/validation costs. It changes no production source and does not qualify Pixel RSS or throughput.

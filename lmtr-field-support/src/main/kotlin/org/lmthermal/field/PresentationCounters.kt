@@ -29,4 +29,10 @@ class PresentationCounters {
         "roi_wall_ns" to roi.report(),"active_sequence" to active?.toString(),"pending_sequence" to pending?.toString(),
         "observed_weak_owners" to owners.size,"observed_alive_weak_owners" to owners.values.count{it.get()!=null},
         "weak_owner_capacity" to 128,"reachability_scope" to "sampled_HT_measurements_else_wrappers_not_entire_heap_no_forced_GC")
+    /** Read two existing event scalars without weak-history scans, sorting or new callback work.
+     * These are not generation-bound ownership proofs; cancellation can leave event state stale.
+     */
+    @Synchronized fun memoryEventSequences(destination:LongArray,offset:Int) {
+        destination[offset]=active ?: -1;destination[offset+1]=pending ?: -1
+    }
 }

@@ -13,6 +13,11 @@ failure with Full, Analysis-10 and preview-only probes, removes one display-only
 HT matrix copy with exact host parity, and proposes bounded future instrumentation.
 Its host gains do not qualify Android RSS, longer duration or a new safety policy.
 
+The [bracketed field diagnostic candidate](SYNCHRONIZED_MEMORY_DIAGNOSTIC.md) adds
+default-off scalar probes and independent readback without changing product,
+recorder or preview behavior. Host cost/concurrency evidence and an offline APK
+build remain distinct from pending ART/physical observer qualification.
+
 The [experimental Analysis 5 Hz candidate](ANALYSIS_FIVE_HZ.md) now implements the
 profile-aware preparation and bounded periodic ledger studied below. Its software
 qualification, producer/ACK scopes and future physical protocol remain separate

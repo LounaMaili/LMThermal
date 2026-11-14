@@ -1,5 +1,12 @@
 # R4 isolated physical-field preparation
 
+**2026-11-14 bracketed-memory candidate:** this later engineering phase authorizes
+host tests/build/lint only, with **no ADB, device, ART, emulator or Actions run**.
+The [opt-in sidecar and two future controls](SYNCHRONIZED_MEMORY_DIAGNOSTIC.md)
+preserve the normal viewport and recorder safety. Historical consents below apply
+only to their original scoped missions; they do not authorize this candidate's
+physical execution. Its ART/OS cost and co-sampling still need separate review.
+
 **2026-11-13 first-attempt branch:** the owner reauthorized Pixel/HT-301 access for one
 10–20 second attempt. The separate field button now requests ten seconds, preserving
 Full/codec1, all queues and78+32 MiB. This is a shorter test duration, not a lower

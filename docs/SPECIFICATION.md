@@ -389,3 +389,11 @@ copy-only. Host allocation/byte-parity tests qualify this narrow copy removal,
 not Android RSS or longer recording. The bounded owner-claim/policy prototypes
 are host-only and cannot admit or override a recording. RSS, 78+32 MiB, queues,
 both validations, ACK/loss rules and LMTR v1 remain unchanged.
+
+The [experimental bracketed memory sidecar](lmtr-r4/SYNCHRONIZED_MEMORY_DIAGNOSTIC.md)
+is opt-in in the separate field APK only. It samples independent monotonic
+intervals, published aliases and existing logical recorder charges into finite
+scalar storage, with explicit unknown/error/cancellation states. No production
+instrumentation, source-control action, atomic heap census or new admission/RSS
+policy is introduced. Its costs are observed before existing admission; ART/native
+transients and physical co-sampling still require separate review/authorization.

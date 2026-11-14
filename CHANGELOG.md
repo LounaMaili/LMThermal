@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Experimental synchronized field memory probes — 2026-11-14)
+- Add an opt-in field-only scalar sidecar with independent monotonic brackets for GC, Java, VmRSS, Android summary categories, native allocator, published role aliases and existing recorder charges. Unsupported native capacities and unobserved roots remain explicit; no atomic heap census or unique-owner sum is inferred.
+- Preallocate a finite first-64-row window before admission, isolate diagnostic jobs/errors, retain partial/error/clock/source-change states and protect blocked collectors with a token-checked process lease. Preserve the product/preview layout, all recorder/78+32 MiB/RSS/queue/journal/validation/ACK/loss decisions and the 51 canonical fixtures.
+- Add deterministic fault/concurrency/cancellation/lease/recorder-isolation tests, independent bounded Python readback and predeclared active/off host cost/contention comparisons. Build the diagnostic APK locally without installation. Document unqualified ART/native/graphics cost, in-memory crash limits and two separately authorized future physical controls; no device, ART or Actions run.
+
 ### Changed (R4 offline RSS and immutable render ownership — 2026-11-14)
 - Compare preserved Full/Analysis/preview-only RSS, Java/native/GC and graphics observations without inventing atomic samples, retained-live attribution or a leak. Keep the actual relative RSS guard and 78+32 MiB/queue/journal/validation/ACK protections unchanged; document baseline sensitivity and missing Android measurements.
 - Opt HT into synchronous shared Celsius rendering inside immutable evidence, avoiding one display-only defensive plane copy while retaining public copies, exact colors/ranges, full validation and generic/delegated fallback. Seven regressions and controlled frozen-runtime ABBA measurements show 442384 fewer allocated bytes per render on HotSpot; no Android RSS or physical-duration improvement is claimed.
