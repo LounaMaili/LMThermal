@@ -100,6 +100,12 @@ process lease, refuses replacement, and cannot be exported as complete.
   The platform reads use no acquisition/writer callback hook. The only added
   existing-observer synchronization is a one-Hz two-scalar read under the old
   `PresentationCounters` monitor; no new callback lock or history is introduced.
+  In addition, the role probe reads the existing camera-owner generation twice,
+  and the recorder probe calls the existing snapshot monitor when an engine is
+  present. These calls can contend with their owners. They are outside platform
+  reads/I/O; the contention benchmark below covers only `PresentationCounters`,
+  not those two other monitors or ART scheduling. The window's own row-publication
+  monitor is never taken by source/recorder callbacks.
 - Each probe scratch is cleared before reading. Known partial values can survive
   a failing read with `FAILED`; unsupported values stay unknown. Clock failures,
   source changes, cancellation, exceptions, OOM and contention are explicit and

@@ -82,7 +82,12 @@
     "no_acquisition_or_ack_callback_hook": true,
     "extra_existing_monitor_read": "Two PresentationCounters scalars per diagnostic sample; no sorting/history scan",
     "in_memory_process_death_loss_possible": true,
-    "export_post_drain_exclusive_partial": true
+    "export_post_drain_exclusive_partial": true,
+    "other_existing_monitor_reads": [
+      "Two camera-owner generation reads per published-role probe",
+      "One RecorderEngine.snapshot when an engine exists"
+    ],
+    "monitor_measurement_limit": "Contention benchmark covers PresentationCounters only; owner/snapshot/ART contention remains unqualified"
   },
   "host_cost": {
     "runtime": "JDK 17.0.20.1+1 HotSpot/Fedora",
