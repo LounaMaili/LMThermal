@@ -5,6 +5,8 @@ import org.lmthermal.core.NativeImageGeometry
 import org.lmthermal.core.NativePixel
 import org.lmthermal.core.NativeRect
 import org.lmthermal.core.RoiStatistics
+import org.lmthermal.core.CelsiusPresentationSettings
+import org.lmthermal.core.CelsiusRender
 
 /** Stable untranslated identity, independent of any resource/display label. */
 @JvmInline
@@ -150,6 +152,16 @@ interface ThermalMeasurement {
  * A wrapper overriding matrix/mask does not implicitly inherit another owner's capability.
  */
 interface ImmutableRoiProvider { fun roiStatistics(roi: NativeRect): RoiStatistics }
+
+/** Explicit opt-in display computation on a module's immutable Celsius storage.
+ * The implementation must keep shared full-plane validation/range/palette semantics and
+ * return a new owned display result, never expose or cache a borrowed source array.
+ * This avoids a defensive matrix copy used only by a synchronous read-only renderer.
+ * Delegating ThermalMeasurement or overriding matrix() does not acquire this capability.
+ */
+interface ImmutableCelsiusRenderProvider {
+    fun renderCelsius(settings: CelsiusPresentationSettings): CelsiusRender
+}
 
 /** Generic modules retain the original defensive-copy/full-validation path. No arrays escape. */
 fun ThermalMeasurement.roiStatistics(roi: NativeRect): RoiStatistics =

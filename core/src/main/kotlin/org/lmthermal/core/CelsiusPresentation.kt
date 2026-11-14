@@ -2,6 +2,7 @@ package org.lmthermal.core
 
 import org.lmthermal.camera.ThermalMeasurement
 import org.lmthermal.camera.MeasurementValidity
+import org.lmthermal.camera.ImmutableCelsiusRenderProvider
 
 /** Exact display bounds; these never clamp or replace measurement values. */
 data class CelsiusRange(val lower: Double, val upper: Double) {
@@ -89,9 +90,12 @@ object CelsiusRenderer {
         val scaled = (celsius - range.lower) * (255.0 / (range.upper - range.lower))
         return Math.rint(scaled.coerceIn(0.0, 255.0)).toInt()
     }
-    /** A renderer owns only a matrix copy; it cannot modify source samples or measurement evidence. */
+    /** Generic modules retain a defensive copy; explicitly immutable providers can compute
+     * inside their storage owner. Both paths preserve full validation and new display ownership.
+     */
     fun render(measurement: ThermalMeasurement, settings: CelsiusPresentationSettings): CelsiusRender {
         require(measurement.validity == MeasurementValidity.VALID)
+        if (measurement is ImmutableCelsiusRenderProvider) return measurement.renderCelsius(settings)
         return render(measurement.matrix(), measurement.geometry, settings)
     }
     /** Matrix overload supports deterministic Desktop presentation goldens without hardware. */

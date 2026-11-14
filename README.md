@@ -270,4 +270,11 @@ The [second physical smoke](docs/lmtr-r4/SECOND_PHYSICAL_ATTEMPT.md) physically 
 
 [Host memory/writer candidates](docs/lmtr-r4/HOST_MEMORY_WRITER.md) investigate the second physical failure without device/CI access; explicit ownership and paired software validation precede any new physical authorization.
 
+The [offline RSS investigation](docs/lmtr-r4/RSS_OFFLINE_INVESTIGATION.md) compares
+preserved Full/Analysis and preview-only memory probes after the interrupted
+60-second request. One read-only HT rendering copy is removed with exact parity
+and measured host allocation savings. Current safety policy stays unchanged;
+Android RSS, longer duration and the proposed bounded instrumentation still need
+separate review/validation. No new device or CI execution is implied.
+
 [Host writer phase attribution](docs/lmtr-r4/WRITER_PHASE_ATTRIBUTION.md) separates actual append/backend/ACK intervals from inclusive encoding/validation costs. It changes no production source and does not qualify Pixel RSS or throughput.

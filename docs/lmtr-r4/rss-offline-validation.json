@@ -1,0 +1,1764 @@
+{
+  "schema": "r4-rss-offline-study-receipt-1",
+  "status": "host_candidate_verified_android_rss_unqualified",
+  "base_commit": "3d4624836b779fcdabd622cbd0a8f5b2df8fb7ad",
+  "physical_or_adb_access": false,
+  "new_art_or_actions_runs": false,
+  "forced_gc": false,
+  "scope": "Preserved scalar memory evidence plus controlled HotSpot comparisons; no images, matrices, recordings, device identifiers or private paths",
+  "sampling_caveats": [
+    "Health, diagnostic and GC fields are sequential probes, not an atomic sample",
+    "Row elapsed is output time; do not place guard crossing or GC at that timestamp",
+    "Unpaired configurations/commits cannot be subtracted for recorder attribution",
+    "Occupied heap is not a live-root census; RSS minus heap is not native ownership",
+    "Sensitivity holds supplied points fixed and does not authorize selecting a favorable Start baseline"
+  ],
+  "physical_and_historical_preview_cases": [
+    {
+      "label": "full-first",
+      "kind": "recording",
+      "configuration": "Full/25Hz",
+      "source_commit": "069664710f1812d16ba52923da027b01d9aecbcb",
+      "original_fingerprints": {
+        "samples": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "preflight": {
+          "sha256": "7823989c55da1ad81118a5da51595c8f62839e4e711078a8cb05079383fc60aa",
+          "bytes": 1108
+        },
+        "report": {
+          "sha256": "00cd30e21e4800b6fd1f2f0a0152a2cbe6935700f4643ddbdc8105d344b03ea5",
+          "bytes": 4557
+        }
+      },
+      "existing_guard_reference_bytes": 318513152,
+      "existing_guard_limit_bytes": 452730880,
+      "first_observed_health_trip_row": null,
+      "minimum_reference_for_held_points_bytes": null,
+      "endpoint_gc_counter_deltas": {
+        "art.gc.bytes-allocated": null,
+        "art.gc.bytes-freed": null,
+        "art.gc.gc-count": null,
+        "art.gc.gc-time": null
+      },
+      "shadow": {
+        "verdict": "inconclusive",
+        "reason": "rss_unknown"
+      },
+      "rows": 0,
+      "row_output_elapsed_ns": [],
+      "health_rss_bytes": [],
+      "diagnostic_rss_bytes": [],
+      "health_java_used_bytes": [],
+      "diagnostic_java_used_bytes": [],
+      "diagnostic_native_allocated_bytes": [],
+      "admission_health": {
+        "android_thermal_status": 0,
+        "battery_percent": 73,
+        "camera_permission": true,
+        "foreground_unlocked": true,
+        "free_bytes": "90886938624",
+        "java_headroom_bytes": "219427840",
+        "java_max_bytes": "268435456",
+        "java_used_bytes": "49007616",
+        "rss_bytes": "318513152",
+        "system_available_bytes": "1266135040",
+        "system_low_memory": false
+      },
+      "sampled_bounds": {
+        "health": {},
+        "diagnostic": {},
+        "recorder": {}
+      },
+      "terminal": {
+        "termination_status": "interrupted",
+        "termination_reason": "field_metrics_failed",
+        "diagnostic_failure": "LmtrFailure",
+        "safety_stop_reason": null,
+        "observed_stop_request_elapsed_ns": "138655965",
+        "duration_ns": "759678182"
+      },
+      "gc_counter_row_anchor_span_ns": null
+    },
+    {
+      "label": "full-second",
+      "kind": "recording",
+      "configuration": "Full/25Hz",
+      "source_commit": "bd2cfa614d64021078e0a5d16646e00cca6f08f8",
+      "original_fingerprints": {
+        "samples": {
+          "sha256": "8f2b0305e63abba1486eedf4ccd1da8a7c0c8fdac302eece174b9fd98e690ea2",
+          "bytes": 8063
+        },
+        "preflight": {
+          "sha256": "635a86a9889c7e7c2262c90ba4934e413c6f7a80b6034498e62ad493ea27bdae",
+          "bytes": 1108
+        },
+        "report": {
+          "sha256": "c21271cfeccfe230d6efb1c31c3d79bd6267f0a32d27b6725dfbdaf3cd267be5",
+          "bytes": 4643
+        }
+      },
+      "existing_guard_reference_bytes": 297185280,
+      "existing_guard_limit_bytes": 431403008,
+      "first_observed_health_trip_row": 4,
+      "minimum_reference_for_held_points_bytes": 306339840,
+      "endpoint_gc_counter_deltas": {
+        "art.gc.bytes-allocated": 960851968,
+        "art.gc.bytes-freed": 859131904,
+        "art.gc.gc-count": 4,
+        "art.gc.gc-time": 365
+      },
+      "shadow": {
+        "verdict": "inconclusive",
+        "reason": "independent_budget_not_qualified"
+      },
+      "rows": 5,
+      "row_output_elapsed_ns": [
+        131320353,
+        1205097494,
+        2244390708,
+        3298906292,
+        4355834149
+      ],
+      "health_rss_bytes": [
+        309411840,
+        371937280,
+        335028224,
+        382365696,
+        440557568
+      ],
+      "diagnostic_rss_bytes": [
+        311840768,
+        311451648,
+        343236608,
+        396242944,
+        448307200
+      ],
+      "health_java_used_bytes": [
+        49183744,
+        27634688,
+        60300288,
+        96496640,
+        146684928
+      ],
+      "diagnostic_java_used_bytes": [
+        50969600,
+        41528320,
+        68025344,
+        108715008,
+        152173568
+      ],
+      "diagnostic_native_allocated_bytes": [
+        30674096,
+        28462160,
+        33344128,
+        45549328,
+        56654192
+      ],
+      "admission_health": {
+        "android_thermal_status": 0,
+        "battery_percent": 67,
+        "camera_permission": true,
+        "foreground_unlocked": true,
+        "free_bytes": "90887905280",
+        "java_headroom_bytes": "229643264",
+        "java_max_bytes": "268435456",
+        "java_used_bytes": "38792192",
+        "rss_bytes": "297185280",
+        "system_available_bytes": "1437626368",
+        "system_low_memory": false
+      },
+      "sampled_bounds": {
+        "health": {
+          "rss_bytes": {
+            "min": 309411840,
+            "max": 440557568
+          },
+          "java_used_bytes": {
+            "min": 27634688,
+            "max": 146684928
+          },
+          "java_headroom_bytes": {
+            "min": 121750528,
+            "max": 240800768
+          },
+          "system_available_bytes": {
+            "min": 1307586560,
+            "max": 1425330176
+          }
+        },
+        "diagnostic": {
+          "rss_bytes": {
+            "min": 311451648,
+            "max": 448307200
+          },
+          "java_used_bytes": {
+            "min": 41528320,
+            "max": 152173568
+          },
+          "native_allocated_bytes": {
+            "min": 28462160,
+            "max": 56654192
+          },
+          "pss_bytes": {
+            "min": 257327104,
+            "max": 391725056
+          }
+        },
+        "recorder": {
+          "accepted": {
+            "min": 0,
+            "max": 103
+          },
+          "acknowledged": {
+            "min": 0,
+            "max": 36
+          },
+          "preparation_queued_bytes": {
+            "min": 0,
+            "max": 0
+          },
+          "preparation_in_flight_bytes": {
+            "min": 0,
+            "max": 3145728
+          },
+          "writer_queued_bytes": {
+            "min": 0,
+            "max": 3577032
+          },
+          "writer_in_flight_bytes": {
+            "min": 0,
+            "max": 894266
+          },
+          "pending_bytes": {
+            "min": 0,
+            "max": 3588250
+          },
+          "control_bytes": {
+            "min": 0,
+            "max": 360448
+          }
+        }
+      },
+      "terminal": {
+        "termination_status": "interrupted",
+        "termination_reason": "field_safety_rss_increment_exceeded",
+        "diagnostic_failure": null,
+        "safety_stop_reason": "rss_increment_exceeded",
+        "observed_stop_request_elapsed_ns": "4308975303",
+        "duration_ns": "7581784834"
+      },
+      "gc_counter_row_anchor_span_ns": 4224513796
+    },
+    {
+      "label": "analysis-10",
+      "kind": "recording",
+      "configuration": "Analysis/5Hz",
+      "source_commit": "d1b8c8917961a162270e58510c1eeb39baa94f04",
+      "original_fingerprints": {
+        "samples": {
+          "sha256": "c3dec6bda11df6f48687e79a811329e836b455c15b80f3aed0bfa2a612bd6d5a",
+          "bytes": 16116
+        },
+        "preflight": {
+          "sha256": "26b02c5ff69e78ad5f71201e8905dce6f4ce76104d6c108bb301a76c44d939f0",
+          "bytes": 1238
+        },
+        "report": {
+          "sha256": "7cb0ade7b55432be1fa513cdfc7556915a278b3895c317725b51b7092fc258ae",
+          "bytes": 5162
+        }
+      },
+      "existing_guard_reference_bytes": 388730880,
+      "existing_guard_limit_bytes": 522948608,
+      "first_observed_health_trip_row": null,
+      "minimum_reference_for_held_points_bytes": 331055104,
+      "endpoint_gc_counter_deltas": {
+        "art.gc.bytes-allocated": 993923072,
+        "art.gc.bytes-freed": 1049509888,
+        "art.gc.gc-count": 5,
+        "art.gc.gc-time": 362
+      },
+      "shadow": {
+        "verdict": "inconclusive",
+        "reason": "independent_budget_not_qualified"
+      },
+      "rows": 10,
+      "row_output_elapsed_ns": [
+        148038859,
+        1207111980,
+        2268927166,
+        3322962852,
+        4376357953,
+        5424705895,
+        6481646773,
+        7535410608,
+        8588324264,
+        9641092372
+      ],
+      "health_rss_bytes": [
+        402022400,
+        299421696,
+        423342080,
+        314056704,
+        447574016,
+        328986624,
+        463630336,
+        336314368,
+        465272832,
+        340934656
+      ],
+      "diagnostic_rss_bytes": [
+        405192704,
+        293457920,
+        429776896,
+        318599168,
+        457154560,
+        336490496,
+        474816512,
+        346718208,
+        477184000,
+        347119616
+      ],
+      "health_java_used_bytes": [
+        129244160,
+        30383104,
+        141790208,
+        53763072,
+        165919744,
+        64703488,
+        176393216,
+        68496384,
+        176536576,
+        71437312
+      ],
+      "diagnostic_java_used_bytes": [
+        131963904,
+        33885184,
+        147753984,
+        57547776,
+        172944384,
+        70736896,
+        184208384,
+        75377664,
+        184650752,
+        76319744
+      ],
+      "diagnostic_native_allocated_bytes": [
+        43189120,
+        26025056,
+        52041216,
+        28691536,
+        57098272,
+        36486240,
+        64601552,
+        40769872,
+        65942336,
+        40946160
+      ],
+      "admission_health": {
+        "android_thermal_status": 0,
+        "battery_percent": 72,
+        "camera_permission": true,
+        "foreground_unlocked": true,
+        "free_bytes": "90622615552",
+        "java_headroom_bytes": "149783552",
+        "java_max_bytes": "268435456",
+        "java_used_bytes": "118651904",
+        "rss_bytes": "388730880",
+        "system_available_bytes": "721035264",
+        "system_low_memory": false
+      },
+      "sampled_bounds": {
+        "health": {
+          "rss_bytes": {
+            "min": 299421696,
+            "max": 465272832
+          },
+          "java_used_bytes": {
+            "min": 30383104,
+            "max": 176536576
+          },
+          "java_headroom_bytes": {
+            "min": 91898880,
+            "max": 238052352
+          },
+          "system_available_bytes": {
+            "min": 646270976,
+            "max": 801124352
+          }
+        },
+        "diagnostic": {
+          "rss_bytes": {
+            "min": 293457920,
+            "max": 477184000
+          },
+          "java_used_bytes": {
+            "min": 33885184,
+            "max": 184650752
+          },
+          "native_allocated_bytes": {
+            "min": 26025056,
+            "max": 65942336
+          },
+          "pss_bytes": {
+            "min": 249116672,
+            "max": 427072512
+          }
+        },
+        "recorder": {
+          "accepted": {
+            "min": 0,
+            "max": 48
+          },
+          "acknowledged": {
+            "min": 0,
+            "max": 41
+          },
+          "preparation_queued_bytes": {
+            "min": 0,
+            "max": 0
+          },
+          "preparation_in_flight_bytes": {
+            "min": 0,
+            "max": 3145728
+          },
+          "writer_queued_bytes": {
+            "min": 0,
+            "max": 898133
+          },
+          "writer_in_flight_bytes": {
+            "min": 0,
+            "max": 0
+          },
+          "pending_bytes": {
+            "min": 0,
+            "max": 2699365
+          },
+          "control_bytes": {
+            "min": 0,
+            "max": 0
+          }
+        }
+      },
+      "terminal": {
+        "termination_status": "completed",
+        "termination_reason": "user_stop",
+        "diagnostic_failure": null,
+        "safety_stop_reason": null,
+        "observed_stop_request_elapsed_ns": "10644236008",
+        "duration_ns": "13590357632"
+      },
+      "gc_counter_row_anchor_span_ns": 9493053513
+    },
+    {
+      "label": "analysis-60-request",
+      "kind": "recording",
+      "configuration": "Analysis/5Hz",
+      "source_commit": "c8d5d5cc1c5154ca3cbf62ab4ad6322d0eb8f23f",
+      "original_fingerprints": {
+        "samples": {
+          "sha256": "ccff0258b3bcc14402b71ccef470a4bf9f630de35da6013329730e0ad7f5ad9b",
+          "bytes": 6355
+        },
+        "preflight": {
+          "sha256": "bdbfbf579e2a87cd6b255b912e18fe6271c4f67df85dc14d841cd8830e67e571",
+          "bytes": 1386
+        },
+        "report": {
+          "sha256": "0975d8862db61cf0683723148d181f313bb07c86ecb2fee4b74f1b2dedd5e4e1",
+          "bytes": 5945
+        }
+      },
+      "existing_guard_reference_bytes": 301993984,
+      "existing_guard_limit_bytes": 436211712,
+      "first_observed_health_trip_row": 3,
+      "minimum_reference_for_held_points_bytes": 359559168,
+      "endpoint_gc_counter_deltas": {
+        "art.gc.bytes-allocated": 323055616,
+        "art.gc.bytes-freed": 173768704,
+        "art.gc.gc-count": 1,
+        "art.gc.gc-time": 50
+      },
+      "shadow": {
+        "verdict": "inconclusive",
+        "reason": "independent_budget_not_qualified"
+      },
+      "rows": 4,
+      "row_output_elapsed_ns": [
+        137110148,
+        1196743653,
+        2265283286,
+        3329313071
+      ],
+      "health_rss_bytes": [
+        314155008,
+        426303488,
+        362545152,
+        493776896
+      ],
+      "diagnostic_rss_bytes": [
+        316919808,
+        431009792,
+        367943680,
+        499560448
+      ],
+      "health_java_used_bytes": [
+        51465216,
+        147586048,
+        86907904,
+        197520384
+      ],
+      "diagnostic_java_used_bytes": [
+        53636096,
+        151063552,
+        91470848,
+        202460160
+      ],
+      "diagnostic_native_allocated_bytes": [
+        33097152,
+        50075296,
+        41429344,
+        66405760
+      ],
+      "admission_health": {
+        "android_thermal_status": 0,
+        "battery_percent": 47,
+        "camera_permission": true,
+        "foreground_unlocked": true,
+        "free_bytes": "90676609024",
+        "java_headroom_bytes": "227165184",
+        "java_max_bytes": "268435456",
+        "java_used_bytes": "41270272",
+        "rss_bytes": "301993984",
+        "system_available_bytes": "1253756928",
+        "system_low_memory": false
+      },
+      "sampled_bounds": {
+        "health": {
+          "rss_bytes": {
+            "min": 314155008,
+            "max": 493776896
+          },
+          "java_used_bytes": {
+            "min": 51465216,
+            "max": 197520384
+          },
+          "java_headroom_bytes": {
+            "min": 70915072,
+            "max": 216970240
+          },
+          "system_available_bytes": {
+            "min": 1062322176,
+            "max": 1242767360
+          }
+        },
+        "diagnostic": {
+          "rss_bytes": {
+            "min": 316919808,
+            "max": 499560448
+          },
+          "java_used_bytes": {
+            "min": 53636096,
+            "max": 202460160
+          },
+          "native_allocated_bytes": {
+            "min": 33097152,
+            "max": 66405760
+          },
+          "pss_bytes": {
+            "min": 268315648,
+            "max": 449430528
+          }
+        },
+        "recorder": {
+          "accepted": {
+            "min": 0,
+            "max": 17
+          },
+          "acknowledged": {
+            "min": 0,
+            "max": 11
+          },
+          "preparation_queued_bytes": {
+            "min": 0,
+            "max": 0
+          },
+          "preparation_in_flight_bytes": {
+            "min": 0,
+            "max": 3145728
+          },
+          "writer_queued_bytes": {
+            "min": 0,
+            "max": 0
+          },
+          "writer_in_flight_bytes": {
+            "min": 0,
+            "max": 0
+          },
+          "pending_bytes": {
+            "min": 0,
+            "max": 2699358
+          },
+          "control_bytes": {
+            "min": 0,
+            "max": 0
+          }
+        }
+      },
+      "terminal": {
+        "termination_status": "interrupted",
+        "termination_reason": "field_safety_rss_increment_exceeded",
+        "diagnostic_failure": null,
+        "safety_stop_reason": "rss_increment_exceeded",
+        "observed_stop_request_elapsed_ns": "3281383221",
+        "duration_ns": "4513822186"
+      },
+      "gc_counter_row_anchor_span_ns": 3192202923
+    },
+    {
+      "label": "preview-only-20",
+      "kind": "preview-only",
+      "configuration": "historical Auto/full ROI; no recorder",
+      "source_commit": "145ee46152e46882d7cae794f1eb1d04cfc50e87",
+      "original_fingerprints": {
+        "samples": {
+          "sha256": "7c75d0b55631af2bba5537977ca75ffdedead0c11d32eea112e5e635fdd0a86f",
+          "bytes": 78645
+        }
+      },
+      "existing_guard_reference_bytes": null,
+      "existing_guard_limit_bytes": null,
+      "first_observed_health_trip_row": null,
+      "minimum_reference_for_held_points_bytes": 336785408,
+      "endpoint_gc_counter_deltas": {
+        "art.gc.bytes-allocated": 1456558080,
+        "art.gc.bytes-freed": 1371103232,
+        "art.gc.gc-count": 8,
+        "art.gc.gc-time": 525
+      },
+      "shadow": {
+        "verdict": "inconclusive",
+        "reason": "independent_budget_not_qualified"
+      },
+      "rows": 20,
+      "row_output_elapsed_ns": [
+        10933349,
+        1067917806,
+        2139773235,
+        3200678387,
+        4257106773,
+        5312172732,
+        6388484378,
+        7438435591,
+        8489705367,
+        9550279790,
+        10604072393,
+        11656682541,
+        12707772548,
+        13764753058,
+        14813703905,
+        15853042895,
+        16902286711,
+        17953835010,
+        19004141285,
+        20068712615
+      ],
+      "health_rss_bytes": [
+        363036672,
+        450240512,
+        337444864,
+        425426944,
+        324280320,
+        410615808,
+        296468480,
+        383709184,
+        471003136,
+        356876288,
+        444551168,
+        345964544,
+        428589056,
+        315006976,
+        403333120,
+        303230976,
+        389574656,
+        280956928,
+        368857088,
+        456396800
+      ],
+      "diagnostic_rss_bytes": [
+        367091712,
+        454209536,
+        341229568,
+        429305856,
+        327254016,
+        415010816,
+        299970560,
+        387751936,
+        475676672,
+        360390656,
+        448262144,
+        349470720,
+        432549888,
+        319057920,
+        404688896,
+        306167808,
+        393809920,
+        283660288,
+        373329920,
+        460083200
+      ],
+      "health_java_used_bytes": [
+        87216320,
+        163360960,
+        64573632,
+        141820096,
+        53190848,
+        128680128,
+        28549312,
+        105046208,
+        181846208,
+        81395904,
+        158453952,
+        71430336,
+        147259584,
+        48300224,
+        124874944,
+        37937344,
+        113320128,
+        19505344,
+        95133888,
+        172187840
+      ],
+      "diagnostic_java_used_bytes": [
+        90587328,
+        166899904,
+        67985600,
+        145158336,
+        55742656,
+        133017792,
+        32399552,
+        108204224,
+        185249984,
+        84320448,
+        161824960,
+        74395840,
+        151085248,
+        52228288,
+        126873792,
+        40870080,
+        117211328,
+        21471424,
+        99287232,
+        175657152
+      ],
+      "diagnostic_native_allocated_bytes": [
+        36887616,
+        48778400,
+        33266176,
+        45564448,
+        31443536,
+        43345696,
+        27806416,
+        40123952,
+        52000224,
+        36008688,
+        47881168,
+        35092368,
+        46945568,
+        31040640,
+        42928304,
+        29247376,
+        41552432,
+        26056544,
+        38378992,
+        50261184
+      ],
+      "admission_health": null,
+      "sampled_bounds": {
+        "health": {
+          "rss_bytes": {
+            "min": 280956928,
+            "max": 471003136
+          },
+          "java_used_bytes": {
+            "min": 19505344,
+            "max": 181846208
+          },
+          "java_headroom_bytes": {
+            "min": 86589248,
+            "max": 248930112
+          },
+          "system_available_bytes": {
+            "min": 1358536704,
+            "max": 1542160384
+          }
+        },
+        "diagnostic": {
+          "rss_bytes": {
+            "min": 283660288,
+            "max": 475676672
+          },
+          "java_used_bytes": {
+            "min": 21471424,
+            "max": 185249984
+          },
+          "native_allocated_bytes": {
+            "min": 26056544,
+            "max": 52000224
+          },
+          "pss_bytes": {
+            "min": 218133504,
+            "max": 408331264
+          }
+        },
+        "recorder": {}
+      },
+      "terminal": null,
+      "gc_counter_row_anchor_span_ns": 20057779266
+    },
+    {
+      "label": "historical-locked_no_roi",
+      "kind": "historical-preview",
+      "configuration": "locked_no_roi; no recorder; preserved prior authorized experiment",
+      "source_commit": null,
+      "original_fingerprints": {
+        "samples": {
+          "sha256": "ed410d8dfe32fba1061db08d92a630a3645788c95b6d3be222341fb5a601cc22",
+          "bytes": 14894
+        }
+      },
+      "existing_guard_reference_bytes": null,
+      "existing_guard_limit_bytes": null,
+      "first_observed_health_trip_row": null,
+      "minimum_reference_for_held_points_bytes": 312750080,
+      "endpoint_gc_counter_deltas": {
+        "art.gc.bytes-allocated": 572563456,
+        "art.gc.bytes-freed": 620945408,
+        "art.gc.gc-count": 4,
+        "art.gc.gc-time": 256
+      },
+      "shadow": {
+        "verdict": "inconclusive",
+        "reason": "independent_budget_not_qualified"
+      },
+      "rows": 10,
+      "row_output_elapsed_ns": [
+        11253785,
+        1065823853,
+        2112074668,
+        3178543540,
+        4233692996,
+        5282502322,
+        6343412601,
+        7389055587,
+        8448789799,
+        9498357386
+      ],
+      "health_rss_bytes": [
+        430530560,
+        327098368,
+        400207872,
+        297168896,
+        372633600,
+        446967808,
+        339132416,
+        412913664,
+        299827200,
+        375365632
+      ],
+      "diagnostic_rss_bytes": [
+        434638848,
+        328179712,
+        403935232,
+        300953600,
+        375865344,
+        450203648,
+        341024768,
+        416149504,
+        302530560,
+        377528320
+      ],
+      "health_java_used_bytes": [
+        148447424,
+        59695296,
+        122450112,
+        35205312,
+        98885824,
+        162382016,
+        70213824,
+        132767936,
+        37490880,
+        101306560
+      ],
+      "diagnostic_java_used_bytes": [
+        151646400,
+        61214912,
+        125796544,
+        38510784,
+        101753024,
+        165355712,
+        71700672,
+        135659712,
+        39977152,
+        103751872
+      ],
+      "diagnostic_native_allocated_bytes": [
+        49490544,
+        32414800,
+        44606336,
+        27910656,
+        40092032,
+        51822752,
+        34701248,
+        46440208,
+        28406048,
+        40140912
+      ],
+      "admission_health": null,
+      "sampled_bounds": {
+        "health": {
+          "rss_bytes": {
+            "min": 297168896,
+            "max": 446967808
+          },
+          "java_used_bytes": {
+            "min": 35205312,
+            "max": 162382016
+          },
+          "java_headroom_bytes": {
+            "min": 106053440,
+            "max": 233230144
+          },
+          "system_available_bytes": {
+            "min": 1027244032,
+            "max": 1177190400
+          }
+        },
+        "diagnostic": {
+          "rss_bytes": {
+            "min": 300953600,
+            "max": 450203648
+          },
+          "java_used_bytes": {
+            "min": 38510784,
+            "max": 165355712
+          },
+          "native_allocated_bytes": {
+            "min": 27910656,
+            "max": 51822752
+          },
+          "pss_bytes": {
+            "min": 242445312,
+            "max": 392104960
+          }
+        },
+        "recorder": {}
+      },
+      "terminal": null,
+      "gc_counter_row_anchor_span_ns": 9487103601
+    },
+    {
+      "label": "historical-auto_no_roi",
+      "kind": "historical-preview",
+      "configuration": "auto_no_roi; no recorder; preserved prior authorized experiment",
+      "source_commit": null,
+      "original_fingerprints": {
+        "samples": {
+          "sha256": "85e1f817a639e2badb2f7940ed6f6ea6be9fca4d1e5cbeeececa1f4ba1162da2",
+          "bytes": 14867
+        }
+      },
+      "existing_guard_reference_bytes": null,
+      "existing_guard_limit_bytes": null,
+      "first_observed_health_trip_row": null,
+      "minimum_reference_for_held_points_bytes": 317833216,
+      "endpoint_gc_counter_deltas": {
+        "art.gc.bytes-allocated": 684490752,
+        "art.gc.bytes-freed": 662261760,
+        "art.gc.gc-count": 4,
+        "art.gc.gc-time": 224
+      },
+      "shadow": {
+        "verdict": "inconclusive",
+        "reason": "independent_budget_not_qualified"
+      },
+      "rows": 10,
+      "row_output_elapsed_ns": [
+        7375651,
+        1060814250,
+        2118152141,
+        3184156129,
+        4257391481,
+        5312214846,
+        6374669558,
+        7429016686,
+        8470150232,
+        9528998214
+      ],
+      "health_rss_bytes": [
+        325046272,
+        411148288,
+        302256128,
+        388931584,
+        278454272,
+        366125056,
+        452050944,
+        352604160,
+        439009280,
+        350724096
+      ],
+      "diagnostic_rss_bytes": [
+        328290304,
+        416104448,
+        304783360,
+        394440704,
+        282243072,
+        369369088,
+        407871488,
+        355848192,
+        442089472,
+        356028416
+      ],
+      "health_java_used_bytes": [
+        60117184,
+        135737536,
+        39649472,
+        115851456,
+        19841216,
+        94998720,
+        171028672,
+        84197568,
+        159187136,
+        81432768
+      ],
+      "diagnostic_java_used_bytes": [
+        63119552,
+        139075776,
+        41656512,
+        120127680,
+        22708416,
+        97931456,
+        174911680,
+        87089344,
+        162046144,
+        85774528
+      ],
+      "diagnostic_native_allocated_bytes": [
+        31156720,
+        43381856,
+        28005008,
+        40258768,
+        24414416,
+        36602736,
+        48387936,
+        34382464,
+        46627072,
+        35228560
+      ],
+      "admission_health": null,
+      "sampled_bounds": {
+        "health": {
+          "rss_bytes": {
+            "min": 278454272,
+            "max": 452050944
+          },
+          "java_used_bytes": {
+            "min": 19841216,
+            "max": 171028672
+          },
+          "java_headroom_bytes": {
+            "min": 97406784,
+            "max": 248594240
+          },
+          "system_available_bytes": {
+            "min": 1003663360,
+            "max": 1176240128
+          }
+        },
+        "diagnostic": {
+          "rss_bytes": {
+            "min": 282243072,
+            "max": 442089472
+          },
+          "java_used_bytes": {
+            "min": 22708416,
+            "max": 174911680
+          },
+          "native_allocated_bytes": {
+            "min": 24414416,
+            "max": 48387936
+          },
+          "pss_bytes": {
+            "min": 223153152,
+            "max": 398035968
+          }
+        },
+        "recorder": {}
+      },
+      "terminal": null,
+      "gc_counter_row_anchor_span_ns": 9521622563
+    },
+    {
+      "label": "historical-auto_full_roi",
+      "kind": "historical-preview",
+      "configuration": "auto_full_roi; no recorder; preserved prior authorized experiment",
+      "source_commit": null,
+      "original_fingerprints": {
+        "samples": {
+          "sha256": "6378efe1b684dd4447edef372e756e66064e0ec6dee77f49f79a324c8568db89",
+          "bytes": 15270
+        }
+      },
+      "existing_guard_reference_bytes": null,
+      "existing_guard_limit_bytes": null,
+      "first_observed_health_trip_row": null,
+      "minimum_reference_for_held_points_bytes": 286855168,
+      "endpoint_gc_counter_deltas": {
+        "art.gc.bytes-allocated": 685408256,
+        "art.gc.bytes-freed": 662257664,
+        "art.gc.gc-count": 4,
+        "art.gc.gc-time": 231
+      },
+      "shadow": {
+        "verdict": "inconclusive",
+        "reason": "independent_budget_not_qualified"
+      },
+      "rows": 10,
+      "row_output_elapsed_ns": [
+        3175455,
+        1063115723,
+        2132263103,
+        3183145957,
+        4234857464,
+        5286802452,
+        6321171552,
+        7358424442,
+        8414681767,
+        9469430506
+      ],
+      "health_rss_bytes": [
+        333152256,
+        421072896,
+        326381568,
+        414527488,
+        316477440,
+        403382272,
+        294289408,
+        381452288,
+        326737920,
+        361963520
+      ],
+      "diagnostic_rss_bytes": [
+        336404480,
+        425578496,
+        330162176,
+        417689600,
+        318910464,
+        405450752,
+        297533440,
+        383049728,
+        278536192,
+        365203456
+      ],
+      "health_java_used_bytes": [
+        66314432,
+        142414016,
+        59011264,
+        135848128,
+        50716864,
+        127082688,
+        31654080,
+        106918080,
+        183283904,
+        89878720
+      ],
+      "diagnostic_java_used_bytes": [
+        69206208,
+        146870464,
+        62390464,
+        138715328,
+        52715712,
+        128528576,
+        34025664,
+        108699840,
+        16924864,
+        92770496
+      ],
+      "diagnostic_native_allocated_bytes": [
+        31794672,
+        44080352,
+        30857904,
+        43175312,
+        29501968,
+        41342800,
+        26784288,
+        38641056,
+        24058912,
+        35910832
+      ],
+      "admission_health": null,
+      "sampled_bounds": {
+        "health": {
+          "rss_bytes": {
+            "min": 294289408,
+            "max": 421072896
+          },
+          "java_used_bytes": {
+            "min": 31654080,
+            "max": 183283904
+          },
+          "java_headroom_bytes": {
+            "min": 85151552,
+            "max": 236781376
+          },
+          "system_available_bytes": {
+            "min": 1050505216,
+            "max": 1176686592
+          }
+        },
+        "diagnostic": {
+          "rss_bytes": {
+            "min": 278536192,
+            "max": 425578496
+          },
+          "java_used_bytes": {
+            "min": 16924864,
+            "max": 146870464
+          },
+          "native_allocated_bytes": {
+            "min": 24058912,
+            "max": 44080352
+          },
+          "pss_bytes": {
+            "min": 214581248,
+            "max": 365420544
+          }
+        },
+        "recorder": {}
+      },
+      "terminal": null,
+      "gc_counter_row_anchor_span_ns": 9466255051
+    },
+    {
+      "label": "historical-suppressed",
+      "kind": "historical-preview",
+      "configuration": "suppressed; no recorder; preserved prior authorized experiment",
+      "source_commit": null,
+      "original_fingerprints": {
+        "samples": {
+          "sha256": "c22266172aec9d6c5568db77592f541cd818e4773787cd63d96815f9566b64bc",
+          "bytes": 14054
+        }
+      },
+      "existing_guard_reference_bytes": null,
+      "existing_guard_limit_bytes": null,
+      "first_observed_health_trip_row": null,
+      "minimum_reference_for_held_points_bytes": 237940736,
+      "endpoint_gc_counter_deltas": {
+        "art.gc.bytes-allocated": 360751104,
+        "art.gc.bytes-freed": 375390208,
+        "art.gc.gc-count": 3,
+        "art.gc.gc-time": 200
+      },
+      "shadow": {
+        "verdict": "inconclusive",
+        "reason": "independent_budget_not_qualified"
+      },
+      "rows": 10,
+      "row_output_elapsed_ns": [
+        11456747,
+        1091041545,
+        2170113323,
+        3244290163,
+        4318501345,
+        5374549116,
+        6440120772,
+        7521035038,
+        8601723841,
+        9661462204
+      ],
+      "health_rss_bytes": [
+        371261440,
+        293552128,
+        333619200,
+        372158464,
+        289714176,
+        328765440,
+        367783936,
+        276316160,
+        316112896,
+        355151872
+      ],
+      "diagnostic_rss_bytes": [
+        373153792,
+        295714816,
+        335511552,
+        375029760,
+        291336192,
+        330117120,
+        370216960,
+        279019520,
+        318275584,
+        357044224
+      ],
+      "health_java_used_bytes": [
+        112398528,
+        33915072,
+        74232000,
+        114028736,
+        29745344,
+        69644480,
+        108933312,
+        16228544,
+        56963264,
+        96571584
+      ],
+      "diagnostic_java_used_bytes": [
+        113959104,
+        36335808,
+        76652736,
+        116711616,
+        31600832,
+        71139520,
+        111423680,
+        19161280,
+        59453632,
+        98808000
+      ],
+      "diagnostic_native_allocated_bytes": [
+        22729728,
+        22238784,
+        22271696,
+        22303296,
+        22243152,
+        22274240,
+        22305840,
+        22234784,
+        22266320,
+        22297920
+      ],
+      "admission_health": null,
+      "sampled_bounds": {
+        "health": {
+          "rss_bytes": {
+            "min": 276316160,
+            "max": 372158464
+          },
+          "java_used_bytes": {
+            "min": 16228544,
+            "max": 114028736
+          },
+          "java_headroom_bytes": {
+            "min": 154406720,
+            "max": 252206912
+          },
+          "system_available_bytes": {
+            "min": 1097658368,
+            "max": 1193656320
+          }
+        },
+        "diagnostic": {
+          "rss_bytes": {
+            "min": 279019520,
+            "max": 375029760
+          },
+          "java_used_bytes": {
+            "min": 19161280,
+            "max": 116711616
+          },
+          "native_allocated_bytes": {
+            "min": 22234784,
+            "max": 22729728
+          },
+          "pss_bytes": {
+            "min": 219418624,
+            "max": 316579840
+          }
+        },
+        "recorder": {}
+      },
+      "terminal": null,
+      "gc_counter_row_anchor_span_ns": 9650005457
+    }
+  ],
+  "separate_meminfo_snapshots": {
+    "unit": "KiB (1024 bytes)",
+    "scope": "Existing dumpsys App Summary snapshots, not simultaneous with admission/health/GC; no graphics trajectory inferred",
+    "snapshots": [
+      {
+        "case": "full-first-before",
+        "graphics_pss_kib": 120092,
+        "graphics_rss_kib": 120092,
+        "total_pss_kib": 262828,
+        "total_rss_kib": 373412
+      },
+      {
+        "case": "analysis-10-before",
+        "graphics_pss_kib": 124568,
+        "graphics_rss_kib": 124568,
+        "total_pss_kib": 387656,
+        "total_rss_kib": 483256
+      },
+      {
+        "case": "analysis-10-after",
+        "graphics_pss_kib": 124568,
+        "graphics_rss_kib": 124568,
+        "total_pss_kib": 324826,
+        "total_rss_kib": 422456
+      }
+    ]
+  },
+  "render_comparison": {
+    "order": "ABBA, four sequential fresh processes",
+    "java": "17.0.20.1+1",
+    "heap": [
+      "-Xms64m",
+      "-Xmx256m"
+    ],
+    "warmup_samples_per_case": 4,
+    "measured_samples_per_case": 8,
+    "operations_per_sample": 8,
+    "source": "existing sanitized warm-hand-settled fixture; no regeneration",
+    "scope": "Caller-thread cumulative allocation and isolated core wall time; no Bitmap/Compose/ART/RSS or acquisition throughput qualification",
+    "avoided_allocated_bytes_per_ht_render": 442384,
+    "conditional_bytes_per_second_at_25_actual_renders": 11059600,
+    "all_argb_hashes_equal": true,
+    "arms": [
+      {
+        "arm": "render-baseline-2A",
+        "raw_report_sha256": "441e3d891c135c3a6f632faf10e5541205700d8dcb4fb5baa8e5d70f59f6d019",
+        "argb_sha256": {
+          "auto-direct": "59fcbb13ef5734bc532e686ec9872a8f63d34685b81e9b7946a2ae47cfaee12c",
+          "auto-fallback": "59fcbb13ef5734bc532e686ec9872a8f63d34685b81e9b7946a2ae47cfaee12c",
+          "locked-direct": "c4a2b573e24ad063b8f9b8d84ef7f3a1daede48582a4bf3f84ae8e4ad8a1546a",
+          "locked-fallback": "c4a2b573e24ad063b8f9b8d84ef7f3a1daede48582a4bf3f84ae8e4ad8a1546a"
+        },
+        "cases": [
+          {
+            "case": "public_matrix_copy",
+            "median_allocated_bytes_per_render": 442384.0,
+            "median_wall_ns_per_render": 51834.8125
+          },
+          {
+            "case": "auto-direct",
+            "median_allocated_bytes_per_render": 1327208.0,
+            "median_wall_ns_per_render": 3146107.125
+          },
+          {
+            "case": "auto-fallback",
+            "median_allocated_bytes_per_render": 1327208.0,
+            "median_wall_ns_per_render": 3150019.625
+          },
+          {
+            "case": "locked-direct",
+            "median_allocated_bytes_per_render": 884792.0,
+            "median_wall_ns_per_render": 273544.25
+          },
+          {
+            "case": "locked-fallback",
+            "median_allocated_bytes_per_render": 884792.0,
+            "median_wall_ns_per_render": 279427.3125
+          }
+        ]
+      },
+      {
+        "arm": "render-candidate-2B",
+        "raw_report_sha256": "4f18b409c61f1f8a737a0475835ac0cc0b4be9129e800fb934fbdfa3a7d7a516",
+        "argb_sha256": {
+          "auto-direct": "59fcbb13ef5734bc532e686ec9872a8f63d34685b81e9b7946a2ae47cfaee12c",
+          "auto-fallback": "59fcbb13ef5734bc532e686ec9872a8f63d34685b81e9b7946a2ae47cfaee12c",
+          "locked-direct": "c4a2b573e24ad063b8f9b8d84ef7f3a1daede48582a4bf3f84ae8e4ad8a1546a",
+          "locked-fallback": "c4a2b573e24ad063b8f9b8d84ef7f3a1daede48582a4bf3f84ae8e4ad8a1546a"
+        },
+        "cases": [
+          {
+            "case": "public_matrix_copy",
+            "median_allocated_bytes_per_render": 442384.0,
+            "median_wall_ns_per_render": 52707.8125
+          },
+          {
+            "case": "auto-direct",
+            "median_allocated_bytes_per_render": 884824.0,
+            "median_wall_ns_per_render": 3096602.9375
+          },
+          {
+            "case": "auto-fallback",
+            "median_allocated_bytes_per_render": 1327208.0,
+            "median_wall_ns_per_render": 3150122.75
+          },
+          {
+            "case": "locked-direct",
+            "median_allocated_bytes_per_render": 442408.0,
+            "median_wall_ns_per_render": 249513.6875
+          },
+          {
+            "case": "locked-fallback",
+            "median_allocated_bytes_per_render": 884792.0,
+            "median_wall_ns_per_render": 271922.375
+          }
+        ]
+      },
+      {
+        "arm": "render-candidate-2C",
+        "raw_report_sha256": "dc6b1f442638eb2c04c39557222401b924586f3f59b3ad28df8dceb9e511912e",
+        "argb_sha256": {
+          "auto-direct": "59fcbb13ef5734bc532e686ec9872a8f63d34685b81e9b7946a2ae47cfaee12c",
+          "auto-fallback": "59fcbb13ef5734bc532e686ec9872a8f63d34685b81e9b7946a2ae47cfaee12c",
+          "locked-direct": "c4a2b573e24ad063b8f9b8d84ef7f3a1daede48582a4bf3f84ae8e4ad8a1546a",
+          "locked-fallback": "c4a2b573e24ad063b8f9b8d84ef7f3a1daede48582a4bf3f84ae8e4ad8a1546a"
+        },
+        "cases": [
+          {
+            "case": "public_matrix_copy",
+            "median_allocated_bytes_per_render": 442384.0,
+            "median_wall_ns_per_render": 41582.25
+          },
+          {
+            "case": "auto-direct",
+            "median_allocated_bytes_per_render": 884824.0,
+            "median_wall_ns_per_render": 3136080.9375
+          },
+          {
+            "case": "auto-fallback",
+            "median_allocated_bytes_per_render": 1327208.0,
+            "median_wall_ns_per_render": 3149762.0625
+          },
+          {
+            "case": "locked-direct",
+            "median_allocated_bytes_per_render": 442408.0,
+            "median_wall_ns_per_render": 249979.3125
+          },
+          {
+            "case": "locked-fallback",
+            "median_allocated_bytes_per_render": 884792.0,
+            "median_wall_ns_per_render": 278356.0625
+          }
+        ]
+      },
+      {
+        "arm": "render-baseline-2D",
+        "raw_report_sha256": "edbda7da3b7b6364093ec1021111b8a03bd101d2fb7e6054e382dd33c7096bb1",
+        "argb_sha256": {
+          "auto-direct": "59fcbb13ef5734bc532e686ec9872a8f63d34685b81e9b7946a2ae47cfaee12c",
+          "auto-fallback": "59fcbb13ef5734bc532e686ec9872a8f63d34685b81e9b7946a2ae47cfaee12c",
+          "locked-direct": "c4a2b573e24ad063b8f9b8d84ef7f3a1daede48582a4bf3f84ae8e4ad8a1546a",
+          "locked-fallback": "c4a2b573e24ad063b8f9b8d84ef7f3a1daede48582a4bf3f84ae8e4ad8a1546a"
+        },
+        "cases": [
+          {
+            "case": "public_matrix_copy",
+            "median_allocated_bytes_per_render": 442384.0,
+            "median_wall_ns_per_render": 51715.9375
+          },
+          {
+            "case": "auto-direct",
+            "median_allocated_bytes_per_render": 1327208.0,
+            "median_wall_ns_per_render": 3144001.5
+          },
+          {
+            "case": "auto-fallback",
+            "median_allocated_bytes_per_render": 1327208.0,
+            "median_wall_ns_per_render": 3136015.25
+          },
+          {
+            "case": "locked-direct",
+            "median_allocated_bytes_per_render": 884792.0,
+            "median_wall_ns_per_render": 283400.4375
+          },
+          {
+            "case": "locked-fallback",
+            "median_allocated_bytes_per_render": 884792.0,
+            "median_wall_ns_per_render": 283912.875
+          }
+        ]
+      }
+    ]
+  },
+  "host_only_instrumentation": {
+    "integrated": false,
+    "claim_slots": 64,
+    "stages": 8,
+    "primitive_claim_backing_bytes": 1408,
+    "ring_rows": 64,
+    "ring_width": 24,
+    "ring_primitive_backing_bytes": 12288,
+    "ring_snapshot_max_bytes": 12288,
+    "excluded_costs": "Object/array headers, enum/class metadata, snapshot wrapper/arrays, clocks, OS/JNI/Debug/graphics probes, export and observer interference; not an ART admission bound",
+    "single_thread_median_allocated_bytes_per_pair": 0.0,
+    "single_thread_median_ns_per_pair": 6.0994150000000005,
+    "single_thread_caveat": "HotSpot may elide locks; not an upper bound",
+    "contended_workers": 3,
+    "contended_worker_median_allocated_bytes_per_pair": 0.0,
+    "contended_aggregate_median_wall_ns_per_pair": 76.19571666666667,
+    "contended_caveat": "Wall includes thread startup/join; worker allocation excludes thread creation; no ART guarantee"
+  },
+  "validation": {
+    "jvm": {
+      "core": {
+        "tests": 241,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-contract": {
+        "tests": 74,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-recorder": {
+        "tests": 82,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "camera-recording": {
+        "tests": 61,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lmtr-field-support": {
+        "tests": 93,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "app": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "jvm_total_without_android": 551,
+    "android_robolectric": 21,
+    "python_tests": 101,
+    "python_scope": "Contract/hardening, field/original-owner, periodic, temporal sampling and new memory-study tests",
+    "lint": {
+      "errors": 0,
+      "app_warnings": 5,
+      "field_warnings": 6
+    },
+    "profile_byte_parity": {
+      "status": "passed",
+      "cases": [
+        {
+          "file": "analysis-0/capture.lmtr",
+          "sha256": "0dcb4c28959041983400cf59f67b868228507fc73bf078a80b28e7849ff06891",
+          "exactly_equal": true
+        },
+        {
+          "file": "analysis-1/capture.lmtr",
+          "sha256": "79352861e313e4a66eab751bd1d6f4df019349384dae9f18a7b2c9ad2e81c9a9",
+          "exactly_equal": true
+        },
+        {
+          "file": "native-0/capture.lmtr",
+          "sha256": "e88b0e5c7687404e0308348c75860339f6ef6ed5508bf7993ea3a34686a44fb2",
+          "exactly_equal": true
+        },
+        {
+          "file": "native-1/capture.lmtr",
+          "sha256": "3860b72273e1127404397364465c7bb4f60aa2f003c9aeb75af5095998194960",
+          "exactly_equal": true
+        },
+        {
+          "file": "full-0/capture.lmtr",
+          "sha256": "b97cc6e2a6dcde1e354b17b6092e44f20a584dd559cab2f5ef0e59cc0534a9b5",
+          "exactly_equal": true
+        },
+        {
+          "file": "full-1/capture.lmtr",
+          "sha256": "8a9397aef050bcda2567e6150ca227031d1e4384dac94eb447afaaf692186cf4",
+          "exactly_equal": true
+        }
+      ],
+      "scope": "Six complete deterministic Analysis/Native/Full files, both codecs; exact frozen C8 reference bytes, no canonical regeneration"
+    },
+    "independent_profile_readback": {
+      "cases": 6,
+      "status": "passed",
+      "exact_original_owner_bits": true,
+      "full_integrity": true,
+      "source_unchanged": true
+    },
+    "canonical_fixture_count": 51,
+    "canonical_manifest_sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+    "protected_sources": [
+      {
+        "path": "docs/LMTR_WIRE_V1.md",
+        "sha256": "b5b867ff9e5fae707fa07a4a2ebe1854d4716f993a4017a90140f2b934e539d0",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-contract/src/test/resources/lmtr/manifest.json",
+        "sha256": "29b262a1f831b119c5094dd7385869ea03fdd44b0947263922ead0bd77f660e3",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldSafety.kt",
+        "sha256": "3da688e296b70f468252c5d3ab29cb48d521394e4447bb2b38199d0bac47dd5f",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-field-support/src/main/kotlin/org/lmthermal/field/FieldPreflight.kt",
+        "sha256": "c9d7990b44b7fc1edc85592a0cc84156df2b30bd302b49a88f6635c72639d6e8",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecorderEngine.kt",
+        "sha256": "d3df312966571030bbd5c236c0fff31db9165a7a64e9a3f8ead86bd1c63da9f5",
+        "unchanged": true
+      },
+      {
+        "path": "lmtr-recorder/src/main/kotlin/org/lmthermal/recorder/RecordingChunk.kt",
+        "sha256": "ea7e04bec1183d09d3d08f632ef906ff772a628fd9b421253d64d878a9c21e9a",
+        "unchanged": true
+      },
+      {
+        "path": "app/src/main/cpp/transport.cpp",
+        "sha256": "c735dc6d958096e4cb21dfac32c4baf8cd9d4eb9e8d778c15a65fde6089e0c13",
+        "unchanged": true
+      }
+    ],
+    "thermometry_arithmetic_object_unchanged": true,
+    "historical_files_reverified": 689,
+    "historical_manifest_hashes": [
+      {
+        "sha256": "82bc5b5d6d61fd5a8f2021ee81d400c349be69cbbfff4b02fa499b1c7cb68648",
+        "files": 99
+      },
+      {
+        "sha256": "7c2249dda5aedfbac2f7e313716b6e24fed76d1c82bcf8842f60ec7bcc602893",
+        "files": 72
+      },
+      {
+        "sha256": "f6d4ba21fa54d632ce98bb02dda02123b41860124a608b24b7e841c6147a4fe6",
+        "files": 513
+      },
+      {
+        "sha256": "a8fd00ada27f5458674f88399bf387b567fad24bdd7b8792f8f93135d85b083c",
+        "files": 5
+      }
+    ]
+  },
+  "retained_limits": {
+    "logical_reservation_mib": 78,
+    "independent_java_system_margin_mib": 32,
+    "relative_rss_increment_mib": 128,
+    "preparation_mib": 4,
+    "writer_mib": 4,
+    "journal_mib": 1,
+    "canonical_unchanged": true,
+    "guard_unchanged": true,
+    "two_complete_validations": true,
+    "preferred_chunk_mib": 4
+  },
+  "conclusion": "A redundant display-only copy is removed with exact parity. No Android RSS reduction, leak diagnosis, safe duration extension or new guard policy is proven.",
+  "warning": "Native-equivalent temperatures; absolute physical accuracy not yet independently validated."
+}

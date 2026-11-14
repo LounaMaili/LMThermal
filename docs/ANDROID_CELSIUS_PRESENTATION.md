@@ -11,8 +11,12 @@ nor thermometry. Architecture and ownership:
 [CAMERA_MODULE_ARCHITECTURE.md](CAMERA_MODULE_ARCHITECTURE.md).
 
 The measurement path remains full native raw14 → native-equivalent LUT → Celsius
-matrix. Presentation consumes an owned matrix copy; it cannot change image words,
-calibration, the LUT, session gates, controls or measurement extrema.
+matrix. Generic presentation consumes an owned matrix copy. An explicit
+`ImmutableCelsiusRenderProvider` can instead compute synchronously inside its
+immutable owner using the same full-validation renderer; HT-301 opts in. No borrowed
+source array escapes. Delegated wrappers retain the generic copy path unless they
+explicitly opt in. Neither route changes image words, calibration, the LUT, session
+gates, controls or measurement extrema.
 
 `CelsiusRenderer` in plain JVM core produces ARGB pixels and an effective Celsius
 range. `CelsiusPresenter` creates the Android bitmap/legend off the UI and camera
@@ -249,3 +253,12 @@ See ANDROID_LOCALIZATION.md and its camera-free synthetic layout/number tests.
 ## R4 allocation and profiling follow-up
 
 The percentile full sort/interpolation is unchanged; a slower exact selector was rejected. Rendering validates once and transfers display-only pixels once to a copying Android Bitmap; public unconsumed ARGB access remains defensive. HT ROI opts into immutable module-owned statistics with full-plane validation; generic/delegated masked modules retain defensive fallback. Optional diagnostic observers are null in production; generation/conflation/ROI guards are unchanged. See [benchmarks and partial real UI evidence](lmtr-r4/PRESENTATION_PERFORMANCE.md).
+
+The later [offline RSS investigation](lmtr-r4/RSS_OFFLINE_INVESTIGATION.md) removes
+one additional defensive plane copy used only by read-only HT rendering. Auto
+still sorts an independent scratch; output pixels remain newly owned and public
+matrix/raw access remains defensive. Exact range/color and concurrent/wrapper
+regressions pass. A controlled HotSpot comparison saves 442384 allocated bytes
+per render; it does not measure Android RSS, Bitmap/Compose residency or safe
+recording duration. Presenter scheduling, lifecycle guards and all recorder
+protections are unchanged.

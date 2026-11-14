@@ -59,8 +59,18 @@ class RadiometricMeasurement internal constructor(val source: Ht301Frame,
     val high: TemperaturePoint, val low: TemperaturePoint,
     val rawMinimum: Int, val rawMaximum: Int, val matrixMinimum: Float, val matrixMaximum: Float,
     val sequence: Long, val receivedMonotonicMs: Long) {
+    private companion object {
+        // Geometry is immutable and identical for every HT evidence owner, not per-render scratch.
+        val imageGeometry = NativeImageGeometry(Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT)
+    }
     fun raw14(): IntArray = indices.copyOf()
     fun matrix(): FloatArray = temperatures.copyOf()
+    /** Synchronous display-only computation; the private plane never escapes this owner.
+     * The shared renderer still validates the full plane and sorts an independent Auto scratch.
+     * No palette/range operation changes native evidence, and public matrix() stays defensive.
+     */
+    internal fun renderCelsius(settings: CelsiusPresentationSettings): CelsiusRender = CelsiusRenderer.render(
+        temperatures, imageGeometry, settings)
     /** Compute exact ROI statistics on immutable private storage without a full-plane copy.
      * The shared algorithm still validates the whole plane, including outside the rectangle.
      */

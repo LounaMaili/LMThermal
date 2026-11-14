@@ -140,6 +140,14 @@ rejects mismatched module/model provenance, capabilities, preview/measurement ge
 invalid measurements or out-of-bounds extrema before shared consumers see them.
 Module implementations must preserve immutable/read-only ownership after publication.
 
+An explicitly implemented `ImmutableCelsiusRenderProvider` optionally computes
+display pixels inside an immutable module owner using the shared renderer. It
+must preserve full geometry/finite-value validation, range/palette semantics and
+fresh owned display output without exposing/caching a borrowed matrix. The HT
+adapter opts in; public `matrix()` stays copy-only. A delegated or matrix-overriding
+wrapper does not implicitly acquire this separate capability and retains the
+generic fallback. See the [offline ownership study](lmtr-r4/RSS_OFFLINE_INVESTIGATION.md).
+
 The shared Celsius renderer validates the supplied geometry, uses matrix data and
 changes colors only. Bitmap dimensions, aspect ratio, touch and extrema all follow
 current geometry. The presenter publishes a coherent completed measurement/bitmap;

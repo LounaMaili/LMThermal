@@ -6,6 +6,13 @@ completed 10.644 s window with all 54 selected observations retained, independen
 readback and unchanged guards. Long-run/Full/physical-accuracy acceptance remains open;
 this is a separate subsequent experiment, not a reinterpretation of earlier failures.
 
+The later [60-second request](ANALYSIS_FIVE_HZ_60S_PHYSICAL.md) stops at 3.279581138 s
+on the unchanged RSS guard with all 17 opened slots preserved. The
+[offline RSS/ownership investigation](RSS_OFFLINE_INVESTIGATION.md) compares that
+failure with Full, Analysis-10 and preview-only probes, removes one display-only
+HT matrix copy with exact host parity, and proposes bounded future instrumentation.
+Its host gains do not qualify Android RSS, longer duration or a new safety policy.
+
 The [experimental Analysis 5 Hz candidate](ANALYSIS_FIVE_HZ.md) now implements the
 profile-aware preparation and bounded periodic ledger studied below. Its software
 qualification, producer/ACK scopes and future physical protocol remain separate

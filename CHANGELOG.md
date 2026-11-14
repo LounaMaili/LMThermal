@@ -4,6 +4,11 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (R4 offline RSS and immutable render ownership — 2026-11-14)
+- Compare preserved Full/Analysis/preview-only RSS, Java/native/GC and graphics observations without inventing atomic samples, retained-live attribution or a leak. Keep the actual relative RSS guard and 78+32 MiB/queue/journal/validation/ACK protections unchanged; document baseline sensitivity and missing Android measurements.
+- Opt HT into synchronous shared Celsius rendering inside immutable evidence, avoiding one display-only defensive plane copy while retaining public copies, exact colors/ranges, full validation and generic/delegated fallback. Seven regressions and controlled frozen-runtime ABBA measurements show 442384 fewer allocated bytes per render on HotSpot; no Android RSS or physical-duration improvement is claimed.
+- Add bounded host-only scalar ownership/ring and unintegrated policy prototypes, precision/domain tests, independent six-profile/codec byte checks and an explicit future instrumentation/qualification protocol. Preserve all 51 canonical fixtures, historical failures and private originals; no new ADB/device/ART/Actions run, policy change or duration acceptance.
+
 ### Measured (Single physical Analysis 5 Hz / 60-second request — 2026-11-14)
 - Preserve one explicitly observed/authorized c8d5d5c attempt: unchanged RSS protection interrupts at 3.279581138 s, retaining all 17 opened slots with zero preparation/writer/source losses and a valid interrupted END. The requested minute and physical deadline remain unqualified; no retry or favorable-baseline selection occurred.
 - Record actual admission, four health/GC/native/RSS samples, writer/drain and counter populations separately from operator-confirmed short-window responsiveness. Verify 17 exact planes, 68 points/68 ROIs and Qt inspection in the unchanged Desktop reference, both independent readers and six unchanged Android/host originals; keep all scene data private and release the camera normally.

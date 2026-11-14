@@ -379,3 +379,13 @@ The restricted R4 writer now uses bounded call-local DEFLATE segments and owned 
 The field-only [normal-preview memory/visible-owner diagnostic](lmtr-r4/PIXEL_LIVE_MEMORY.md) records bounded resource observations without Connect/init/recording side effects from the sampling action. Its sampled roles are not a full UI/source heap census; production ownership and admission semantics remain unchanged.
 
 The isolated [R4 host candidates](lmtr-r4/HOST_MEMORY_WRITER.md) remove redundant preparation copies, descriptor reparsing and repeated canonical encodings within one closure check. Both complete validation boundaries, source/Full evidence and 78+32 MiB policy remain unchanged. Controlled host allocation savings and finite-load loss counts are not a physical RSS/admission qualification; the documented ten-second/profile protocol awaits separate authorization.
+
+The [offline RSS investigation](lmtr-r4/RSS_OFFLINE_INVESTIGATION.md) compares
+preserved recording/preview probes without changing field safety. Optional
+`ImmutableCelsiusRenderProvider` permits synchronous shared-renderer computation
+inside immutable module storage with full validation and fresh display output;
+generic/delegated modules retain defensive copying. HT public evidence remains
+copy-only. Host allocation/byte-parity tests qualify this narrow copy removal,
+not Android RSS or longer recording. The bounded owner-claim/policy prototypes
+are host-only and cannot admit or override a recording. RSS, 78+32 MiB, queues,
+both validations, ACK/loss rules and LMTR v1 remain unchanged.
