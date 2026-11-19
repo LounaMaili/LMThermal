@@ -108,8 +108,13 @@ class FieldModel(application:Application):AndroidViewModel(application) {
             if(recordingProgress.value===progress)progress.copy(phase=phase,counts=counts) else recordingProgress.value,
             source.statistics.callbackFps.takeIf { source.statistics.received>0 && it.isFinite() },
             eligible && permitsStartRequest(),phase==FieldRecordingPhase.RECORDING && snapshot?.state=="recording",
-            busy.value && phase in listOf(FieldRecordingPhase.INTERRUPTED,FieldRecordingPhase.ERROR))
+            busy.value && phase in listOf(FieldRecordingPhase.INTERRUPTED,FieldRecordingPhase.ERROR),
+            canOpenRecordings=canBrowseRecordingLibrary())
     }
+
+    /** Browsing waits for released ownership, independently of the RSS Start lock. */
+    internal fun canBrowseRecordingLibrary()=engine==null && !running.value && !recordingProgress.value.phase.isActive &&
+        healthSampler?.isActive!=true && presentationSampler?.isActive!=true
 
     /** Reading storage for a label never substitutes for the existing authoritative preflight. */
     internal suspend fun recordingSpace():FieldRecordingSpace=withContext(Dispatchers.IO) {
@@ -624,7 +629,7 @@ class FieldActivity:AppCompatActivity() {
         super.onCreate(savedInstanceState)
         demo=BuildConfig.DEBUG && intent.action==RECORDING_UI_DEMO
         if(demo) {
-            setContent { MaterialTheme { FieldRecordingDemo() } }
+            setContent { MaterialTheme { FieldRecordingDemo(::openRecordings) } }
             return
         }
         token=model.lifetime.started(resources.configuration.locales.toLanguageTags())
@@ -645,9 +650,15 @@ class FieldActivity:AppCompatActivity() {
                 Box(Modifier.weight(1f)) { ThermalScreen(model.camera,model.presenter,{
                     if(model.lifetime.current(token) && model.camera.connect())permission.launch(Manifest.permission.CAMERA)
                 }) }
-                FieldRecordingPanel(panel,model::startAnalysisRecording,model::stopAnalysisRecording,model::recordingSpace)
+                FieldRecordingPanel(panel,model::startAnalysisRecording,model::stopAnalysisRecording,model::recordingSpace,
+                    openRecordings=::openRecordings)
             } }
         }
+    }
+    /** Recheck ownership when the button is tapped, beyond the sampled enabled state. */
+    private fun openRecordings() {
+        if(demo || model.canBrowseRecordingLibrary())startActivity(
+            android.content.Intent(this,FieldRecordingLibraryActivity::class.java).putExtra(EXTRA_SYNTHETIC_LIBRARY,demo))
     }
     override fun onNewIntent(intent:android.content.Intent) {
         super.onNewIntent(intent)

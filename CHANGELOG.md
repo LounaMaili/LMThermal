@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Field recording library)
+- List private LMTR sessions in the separate field APK. Verify a file on demand and distinguish a checked END, a verified prefix and an unverified file.
+- Export a separate copy through Android's Create Document picker. Stream and verify expected bytes, report destination readback availability, and clean up an unfinished destination where supported.
+
 ### Added (Field recorder interface)
 - Add a Compose recorder panel to the separate field APK. Expose fixed Analysis at experimental 5 Hz for the existing ten-second request, with live acquisition FPS, selected/accepted/acknowledged counts, scoped loss counters, storage guidance and checked-file details.
 - Add an explicitly labeled camera-free UI simulation and an opt-in x86_64 field build. Preserve recorder policies, the production APK boundary and the pending RSS-interruption `MEMORY_SAVE` defect.

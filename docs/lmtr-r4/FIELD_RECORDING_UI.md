@@ -26,7 +26,7 @@ finalization and the read-only recheck. The latest verified file metadata
 includes the private run ID, filename, bytes, END status/reason and SHA-256.
 An interruption can still have a valid END and retain data. A missing or
 unverified END does not appear as a successfully checked file. The UI keeps
-the original archive intact and does not publish it to external storage.
+the original archive intact. Its separate library exports a copy on request.
 The pending `MEMORY_SAVE` export issue following an RSS Stop remains tracked.
 A future correction must wait for released resources and keep Start blocked.
 
@@ -48,5 +48,32 @@ information and interruption/refusal examples. It constructs no live field
 model or recorder and writes no LMTR file. A launcher start opens the real
 field preview with Start disabled until a qualified source exists. Keep the
 demo and any physical test authorizations separate.
+
+## Find and export a recording
+
+1. Tap **Recordings** after recorder ownership has been released. This uses the
+   normal field lifecycle when leaving the preview. The library lists up to 200
+   recent private `r4-field/<session>/capture.lmtr` files and reports older
+   entries omitted from the list.
+2. Tap **Verify**. A full check distinguishes completed, interrupted and failed
+   ENDs. An incomplete or navigation-damaged file can have a verified prefix.
+   Unsupported files, errors and untouched rows remain unverified. Checks run
+   serially in the background with the existing LMTR reader's 48 MiB working
+   budget. Cancellation is cooperative between reads and copy blocks.
+3. Tap **Export copy…** and choose a new document in the Android chooser. The
+   copy uses bounded streaming and compares its exact length and SHA-256 with
+   the inspected source. If readback is available, it also checks the
+   destination. A provider that refuses readback can leave the copy written
+   with destination integrity unconfirmed. Failed or cancelled transfers
+   attempt to remove only the newly created destination.
+4. Open the resulting `.lmtr` in LMThermal Desktop. Use explicit recovery when
+   the source had only a verified prefix. The copy includes the full original
+   bytes and never repairs the recording.
+
+On an emulator launched with the demo action above, **Recordings** opens
+three labeled, synthetic examples in a separate private demo cache. The
+completed sample includes two observations and a gap. The other samples have
+a missing END or intentionally damaged logical data. Choose the completed
+sample for a normal Desktop open.
 
 Native-equivalent temperatures; absolute physical accuracy not yet independently validated.

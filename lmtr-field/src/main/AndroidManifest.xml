@@ -3,7 +3,9 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.CAMERA" />
     <application android:label="LMThermal R4 field test" android:theme="@style/AppTheme" android:allowBackup="false" android:dataExtractionRules="@xml/data_extraction_rules" android:supportsRtl="true">
-        <!-- No automatic USB attach launcher, service, export backend or pairing code. -->
+        <!-- The internal library grants access only through its explicit Create Document picker. -->
+        <activity android:name="org.lmthermal.field.FieldRecordingLibraryActivity" android:exported="false" android:launchMode="singleTop" />
+        <!-- No automatic USB attach launcher, service or pairing code. -->
         <activity android:name="org.lmthermal.field.FieldActivity" android:exported="true" android:launchMode="singleTask">
             <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
         </activity>

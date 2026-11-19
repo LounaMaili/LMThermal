@@ -19,14 +19,15 @@ internal data class FieldRecordingPanelState(
     val acquisitionFps: Double? = null,
     val canStart: Boolean = false,
     val canStop: Boolean = false,
-    val startLocked: Boolean = false
+    val startLocked: Boolean = false,
+    val canOpenRecordings: Boolean = false
 )
 
 /** Compact controls keep the thermal preview visible during the entire run. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FieldRecordingPanel(state: FieldRecordingPanelState, start: () -> Unit, stop: () -> Unit,
-    readSpace: suspend () -> FieldRecordingSpace, simulated: Boolean = false) {
+    readSpace: suspend () -> FieldRecordingSpace, simulated: Boolean = false, openRecordings: () -> Unit) {
     var detailsOpen by rememberSaveable { mutableStateOf(false) }
     val progress = state.progress
     val counts = progress.counts
@@ -34,7 +35,7 @@ internal fun FieldRecordingPanel(state: FieldRecordingPanelState, start: () -> U
         Column(Modifier.padding(horizontal = 14.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically) {
-                Text("Recording", style = MaterialTheme.typography.titleMedium)
+                Text("Recording", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
                 Text(progress.phase.label(), style = MaterialTheme.typography.labelLarge,
                     color = when (progress.phase) {
                         FieldRecordingPhase.ERROR, FieldRecordingPhase.INTERRUPTED -> MaterialTheme.colorScheme.error
@@ -57,6 +58,7 @@ internal fun FieldRecordingPanel(state: FieldRecordingPanelState, start: () -> U
                 OutlinedButton(onClick = { detailsOpen = true }, modifier = Modifier.testTag("field-recording-details")) {
                     Text(if (progress.file != null) "Recording details" else "Profile & storage")
                 }
+                TextButton(onClick = openRecordings, enabled = state.canOpenRecordings) { Text("Recordings") }
                 if (state.canStop) {
                     Button(onClick = stop, modifier = Modifier.testTag("field-recording-stop")) { Text(if (simulated) "Stop demo" else "Stop") }
                 } else {

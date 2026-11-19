@@ -22,7 +22,7 @@ internal const val RECORDING_UI_DEMO = "org.lmthermal.field.RECORDING_UI_DEMO"
 
 /** Camera-free scripted operator preview. This composition owns no recorder or file. */
 @Composable
-internal fun FieldRecordingDemo() {
+internal fun FieldRecordingDemo(openRecordings: () -> Unit) {
     var phase by rememberSaveable { mutableStateOf(FieldRecordingPhase.READY) }
     var seconds by rememberSaveable { mutableIntStateOf(0) }
     LaunchedEffect(phase) {
@@ -70,11 +70,12 @@ internal fun FieldRecordingDemo() {
             FieldRecordingPanelState(
                 FieldRecordingProgress(phase, counts, detail = detail), 24.8,
                 canStart = phase in listOf(FieldRecordingPhase.READY, FieldRecordingPhase.FINALIZED, FieldRecordingPhase.ERROR),
-                canStop = phase == FieldRecordingPhase.RECORDING, startLocked = phase == FieldRecordingPhase.INTERRUPTED),
+                canStop = phase == FieldRecordingPhase.RECORDING, startLocked = phase == FieldRecordingPhase.INTERRUPTED,
+                canOpenRecordings = !phase.isActive),
             start = { seconds = 0; phase = FieldRecordingPhase.CHECKING },
             stop = { phase = FieldRecordingPhase.STOP_REQUESTED },
             readSpace = { FieldRecordingSpace(2L * 1024 * 1024 * 1024) },
-            simulated = true)
+            simulated = true, openRecordings = openRecordings)
     }
 }
 

@@ -158,7 +158,8 @@ END and short observed preview usability do not qualify the requested minute.
 The production app excludes the recorder and adapter. The optional source channel
 and guarded lifetime notifications have host and test-only ART evidence. The
 [field APK](lmtr-r4/FIELD_RECORDING_UI.md) exposes only the bounded Analysis 5 Hz
-operator flow and read-only file information. Production recording UI/backend
+operator flow, a private LMTR library, verification and user-selected SAF copies.
+Production recording UI/backend
 export and physical module/lifecycle/resource acceptance remain pending. See
 [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
 Accepted LMTX v1 remain unchanged.
