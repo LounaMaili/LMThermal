@@ -4,6 +4,10 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Field recorder interface)
+- Add a Compose recorder panel to the separate field APK. Expose fixed Analysis at experimental 5 Hz for the existing ten-second request, with live acquisition FPS, selected/accepted/acknowledged counts, scoped loss counters, storage guidance and checked-file details.
+- Add an explicitly labeled camera-free UI simulation and an opt-in x86_64 field build. Preserve recorder policies, the production APK boundary and the pending RSS-interruption `MEMORY_SAVE` defect.
+
 ### Added (Offline tiered field-memory candidate — 2026-11-14)
 - Add a bounded host-only GC-interval analysis that retains actual probe brackets, unknowns and alias semantics without claiming retained-live plateaus, atomic samples or causal RSS attribution. Keep all original physical evidence private and unchanged.
 - Preserve the default reference diagnostic and add an explicit field-only five-row MemoryInfo schedule. Version only the experimental sidecar, mark skipped PSS/category reads without timestamps or carried values, and retain regular Java/GC/VmRSS/role/recorder probes, existing storage, leases and post-quiescence export.

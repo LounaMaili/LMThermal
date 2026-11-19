@@ -1,5 +1,6 @@
 // Explicitly separate, debuggable field APK. Production app never depends on this project.
 plugins { id("com.android.application"); kotlin("android"); id("org.jetbrains.kotlin.plugin.compose") }
+val fieldAbi = if (providers.gradleProperty("fieldX86").orNull == "true") "x86_64" else "arm64-v8a"
 android {
     namespace="org.lmthermal.app"
     compileSdk=35
@@ -7,7 +8,7 @@ android {
     defaultConfig {
         applicationId="org.lmthermal.field";minSdk=26;targetSdk=35;versionCode=1;versionName="r4-field-1"
         testInstrumentationRunner="androidx.test.runner.AndroidJUnitRunner"
-        ndk { abiFilters += "arm64-v8a" }
+        ndk { abiFilters += fieldAbi }
     }
     buildFeatures { compose=true;buildConfig=true }
     buildTypes { getByName("debug"){isDebuggable=true};getByName("release"){isDebuggable=true} }
