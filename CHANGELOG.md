@@ -4,6 +4,9 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (Field diagnostic export after a safety stop)
+- Allow `MEMORY_SAVE` after the recorder and field jobs are released and the collector returns its lease for the same window. Keep the existing RSS safety refusal that locks Start.
+
 ### Added (Field recording library)
 - List private LMTR sessions in the separate field APK. Verify a file on demand and distinguish a checked END, a verified prefix and an unverified file.
 - Export a separate copy through Android's Create Document picker. Stream and verify expected bytes, report destination readback availability, and clean up an unfinished destination where supported.

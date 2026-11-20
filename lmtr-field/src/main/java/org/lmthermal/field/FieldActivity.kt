@@ -51,12 +51,12 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     @Volatile private var metrics=FieldMetrics()
     @Volatile private var clock:FieldClock?=null
     @Volatile private var engine:RecorderEngine?=null
-    private var sampler:Job?=null
+    @Volatile private var sampler:Job?=null
     @Volatile private var stopDeadlineJob:Job?=null
     private var oracle:BufferedWriter?=null
     private var directory:File?=null
     private var header:Obj?=null
-    private var finishing=false
+    @Volatile private var finishing=false
     private var diagnosticFailure:String?=null
     @Volatile private var safetyFailure:String?=null
     @Volatile private var foreground=false
@@ -76,8 +76,8 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     val busy=MutableStateFlow(false)
     val running=MutableStateFlow(false)
     private val recordingProgress=MutableStateFlow(FieldRecordingProgress())
-    private var healthSampler:Job?=null
-    private var presentationSampler:Job?=null
+    @Volatile private var healthSampler:Job?=null
+    @Volatile private var presentationSampler:Job?=null
     private val suppressPresentation=java.util.concurrent.atomic.AtomicBoolean()
     @Volatile private var presentationCounters=PresentationCounters()
     internal val memoryProbes=FieldMemoryController(java.lang.ref.WeakReference(this))
@@ -142,8 +142,10 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     fun startMemoryProbes(plan:MemoryProbePlan=MemoryProbePlan.REFERENCE)=memoryProbes.arm(
         !busy.value && engine==null && healthSampler?.isActive!=true && presentationSampler?.isActive!=true,
         getApplication<Application>().filesDir,plan)
-    /** The operator saves only after the existing recorder/worker drain has completed. */
-    fun saveMemoryProbes()=memoryProbes.save(!busy.value && engine==null)
+    /** After an RSS Stop, busy remains a Start lock even when every recorder owner has exited. */
+    fun saveMemoryProbes()=memoryProbes.save(fieldRecorderReleasedForMemorySave(
+        engine, finishing || running.value || recordingProgress.value.phase.isActive,
+        sampler, stopDeadlineJob, healthSampler, presentationSampler))
 
     /** Published roles only, not roots. Alias equality is instantaneous and is never summed.
      * Source-generation brackets invalidate replacement/Close/reopen. No plane/bitmap copy or history.

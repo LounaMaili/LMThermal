@@ -111,7 +111,10 @@ class FieldProtocolTest {
             blocked.set(true);engine.admit(module.observation(1));assertTrue(entered.await(5,java.util.concurrent.TimeUnit.SECONDS))
             clock.set(6000000000);engine.wakeTimers();assertFalse(engine.awaitStop(10000)!!.finalized)
             assertFalse(engine.workersTerminated()) // Oracle/ownership reservation cannot be reused yet.
+            assertFalse(fieldRecorderReleasedForMemorySave(engine,false))
             release.countDown();waitFor{engine.workersTerminated()}
+            // The field may now clear its owner; failure alone never implied this transition.
+            assertTrue(fieldRecorderReleasedForMemorySave(null,false))
             val before=LmtrChunk.sha(file.readBytes());LmtrReader(file).use { assertTrue(it.check(full=true,recover=true)["unknown_tail"]==true) }
             assertEquals(before,LmtrChunk.sha(file.readBytes()))
         } finally {release.countDown();engine.stop();engine.awaitStop(10000);directory.deleteRecursively()}
