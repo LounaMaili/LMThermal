@@ -51,9 +51,9 @@ class NativeLookup internal constructor(private val entries: FloatArray, val tra
 /** Immutable native coordinate and lookup result. Trailer center need not be literal center. */
 data class TemperaturePoint(val index: Int, val celsius: Float, val x: Int? = null, val y: Int? = null)
 
-/** Owns measurement evidence, with copy-only array APIs and unchanged native row-major coordinates. */
+/** Retains the immutable transport and Celsius plane in native row-major order. */
 class RadiometricMeasurement internal constructor(val source: Ht301Frame,
-    private val indices: IntArray, private val temperatures: FloatArray,
+    private val temperatures: FloatArray,
     val parameters: FrameParameters, val lookupTrace: LookupTrace,
     val trailerCenter: TemperaturePoint, val literalCenter: TemperaturePoint,
     val high: TemperaturePoint, val low: TemperaturePoint,
@@ -63,7 +63,8 @@ class RadiometricMeasurement internal constructor(val source: Ht301Frame,
         // Geometry is immutable and identical for every HT evidence owner, not per-render scratch.
         val imageGeometry = NativeImageGeometry(Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT)
     }
-    fun raw14(): IntArray = indices.copyOf()
+    /** Decode an independent raw plane on request; the preserved transport owns the exact words. */
+    fun raw14(): IntArray = IntArray(Ht301Layout.IMAGE_WORDS) { source.word(it * Ht301Layout.BYTES_PER_WORD) }
     fun matrix(): FloatArray = temperatures.copyOf()
     /** Synchronous display-only computation; the private plane never escapes this owner.
      * The shared renderer still validates the full plane and sorts an independent Auto scratch.
@@ -163,15 +164,15 @@ object NativeEquivalentThermometry {
             require(value.isFinite()) { "Observed index selects undefined native lookup entry" }
             return value
         }
-        val indices = IntArray(Ht301Layout.IMAGE_WORDS) { frame.word(it * 2) }
-        val matrix = FloatArray(indices.size) { selected(indices[it]) }
+        // Resolve each exact source word directly to Celsius without retaining a second raw plane.
+        val matrix = FloatArray(Ht301Layout.IMAGE_WORDS) { selected(frame.word(it * Ht301Layout.BYTES_PER_WORD)) }
         val literalIndex = frame.pixel(192, 144)
         val trailerCenter = TemperaturePoint(frame.word(Ht301Layout.CENTER_INDEX), selected(frame.word(Ht301Layout.CENTER_INDEX)))
         val high = TemperaturePoint(frame.word(Ht301Layout.HIGH_INDEX), selected(frame.word(Ht301Layout.HIGH_INDEX)),
             frame.word(Ht301Layout.HIGH_XY), frame.word(Ht301Layout.HIGH_XY + 2))
         val low = TemperaturePoint(frame.word(Ht301Layout.LOW_INDEX), selected(frame.word(Ht301Layout.LOW_INDEX)),
             frame.word(Ht301Layout.LOW_XY), frame.word(Ht301Layout.LOW_XY + 2))
-        return RadiometricMeasurement(frame, indices, matrix, parameters, lookup.trace, trailerCenter,
+        return RadiometricMeasurement(frame, matrix, parameters, lookup.trace, trailerCenter,
             TemperaturePoint(literalIndex, selected(literalIndex), 192, 144), high, low,
             inspection.minimum!!, inspection.maximum!!, matrix.min(), matrix.max(), sequence, receivedMonotonicMs)
     }

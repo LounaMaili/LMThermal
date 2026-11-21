@@ -18,10 +18,12 @@ fitted conversion are introduced. JNI remains acquisition/control infrastructure
 
 `Ht301Frame` owns the exact transport → `FrameParameters.decode` validates inputs →
 `NativeEquivalentThermometry.buildLookup` builds a traced 16384-entry Float table →
-`measure` produces `RadiometricMeasurement` with owned raw14 and Celsius arrays.
-Returned arrays are copies; the source frame is immutable. Native matrix indexing
-is always `y*384+x`, without rotation/mirroring. Only the first 288 rows are image.
-Sequence and monotonic receipt metadata accompany the measurement.
+`measure` resolves each image word directly from the immutable frame into the
+owned Celsius plane. The transport already preserves the exact native words.
+`raw14()` decodes them into a fresh diagnostic array on request. `matrix()` still
+returns an independent copy. Native indexing is always `y*384+x`. Only the first
+288 rows are image. Sequence and monotonic receipt metadata accompany the
+measurement.
 
 `MeasurementGate` is stateless. `RADIOMETRIC_READY` remains the established structural/
 liveness session state. Only its **current frame**, with consistent trailer extrema

@@ -183,6 +183,8 @@ class NativeEquivalentThermometryTest {
         val m = NativeEquivalentThermometry.measure(f); val center = m.literalCenter.celsius
         raw.fill(0); m.raw14().fill(0); m.matrix().fill(0f); m.source.transportBytes().fill(0)
         assertEquals(center, m.temperature(192, 144), 0f); assertEquals(5128, m.source.inspect().minimum)
+        assertEquals(m.literalCenter.index, m.raw14()[144 * Ht301Layout.WIDTH + 192])
+        assertEquals(m.literalCenter.index, m.source.pixel(192, 144))
     }
     @Test fun structurallyReadyAndValidThermometryProducesCurrentMeasurement() {
         val result = MeasurementGate.evaluate(SessionState.RADIOMETRIC_READY, frame(), 8, 99)

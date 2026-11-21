@@ -23,6 +23,8 @@ class Ht301ProfilePreparationTest {
     }
     @Test fun analysisBuildsOnlyTemperatureWhileNativeAndFullRemainExplicitIndependentChoices() {
         val source=source()
+        assertEquals(Ht301Layout.FRAME_BYTES + Ht301Layout.IMAGE_WORDS * 4L, source.retainedBytes)
+        assertEquals(Ht301Layout.FRAME_BYTES.toLong(), source(ready = false).retainedBytes)
         for((profile,roles) in listOf(RecordingProfile.ANALYSIS to setOf("temperature"),
             RecordingProfile.NATIVE to setOf("temperature","native_samples"),
             RecordingProfile.FULL to setOf("temperature","native_samples","acquisition"))) {
@@ -47,12 +49,18 @@ class Ht301ProfilePreparationTest {
     }
     @Test fun callerMutationAndConcurrentFreezingCannotChangeTheImmutableMatrixOrInterpretation() {
         val source=source();val adapter=Ht301RecordingAdapter(source.identity,RecordingProfile.ANALYSIS)
-        val original=source.result.measurement!!.matrix()
+        val measurement=source.result.measurement!!
+        val original=measurement.matrix()
+        val originalRaw=measurement.raw14()
         val expected=ByteBuffer.allocate(original.size*4).order(ByteOrder.LITTLE_ENDIAN).apply {for(v in original)putInt(v.toRawBits())}.array()
         original.fill(Float.NaN)
         val pool=Executors.newFixedThreadPool(4)
         try {
             val futures=(0 until 4).map {pool.submit<Boolean> {
+                // Diagnostic raw reads and recorder work may share the same transport owner.
+                val raw=measurement.raw14()
+                assertArrayEquals(originalRaw,raw)
+                raw.fill(0)
                 repeat(8) {
                     val prepared=adapter.offer(source).materialize()
                     assertArrayEquals(expected,prepared.payloads.single().bytes())
@@ -65,6 +73,7 @@ class Ht301ProfilePreparationTest {
             for(f in futures)assertTrue(f.get(20,TimeUnit.SECONDS))
         } finally {pool.shutdownNow();assertTrue(pool.awaitTermination(10,TimeUnit.SECONDS))}
         assertArrayEquals(expected,adapter.offer(source).materialize().payloads.single().bytes())
+        assertArrayEquals(originalRaw,measurement.raw14())
     }
     @Test fun unavailableReasonAndDetailedGateReasonArePreservedWithCurrentContext() {
         val source=source(false)

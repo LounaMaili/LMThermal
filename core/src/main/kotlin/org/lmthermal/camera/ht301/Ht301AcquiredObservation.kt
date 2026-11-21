@@ -3,7 +3,7 @@ package org.lmthermal.camera.ht301
 import org.lmthermal.camera.*
 import org.lmthermal.core.*
 
-/** Source wrapper retains already-owned frame/matrix/index arrays; it never reruns thermometry.
+/** Source wrapper retains already-owned frame and Celsius storage without rerunning thermometry.
  * Complete frames are immutable Ht301Frame owners. Only malformed transport needs a new owned copy.
  * Pixel/grid/orientation semantics stay native. Source sequence here is a host UVC callback sequence. Optional session reason/gate wall duration
  * retain existing diagnostics for field accounting; neither changes the gate or marks readiness.
@@ -20,7 +20,7 @@ class Ht301AcquiredObservation(override val identity:CameraSourceIdentity,overri
         else -> "thermometry_rejected"
     }
     override val retainedBytes:Long=(frame?.size ?: incomplete?.size ?: 0).toLong()+
-        if(result.measurement!=null)Ht301Layout.IMAGE_WORDS*8L else 0L
+        if(result.measurement!=null)Ht301Layout.IMAGE_WORDS.toLong()*Float.SIZE_BYTES else 0L
     fun transportBytes():ByteArray?=frame?.transportBytes() ?: incomplete?.copyOf()
     init {
         require(frame==null || incomplete==null);require(receivedMonotonicNs>=0 && ordinal>=0)

@@ -109,6 +109,10 @@ graphics series, root census or post-natural-GC retained floor is available.
 
 ## Ownership and allocation audit
 
+This section describes the investigation checkpoint. The later field candidate
+removes the retained raw `IntArray` described below. See the
+[source memory comparison](FIELD_RECORDING_UI.md#ht-301-source-memory) for that change.
+
 ```mermaid
 flowchart LR
     U["UVC fixed transfer/frame storage"] --> J["JNI owned transport bytes"]

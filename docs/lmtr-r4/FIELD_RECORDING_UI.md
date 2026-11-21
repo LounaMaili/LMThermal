@@ -119,6 +119,53 @@ Desktop analysis of a recording interrupted by the RSS guard. Ten-second
 completion for that candidate remains unqualified. A new Start requires
 separate authorization.
 
+## HT-301 source memory
+
+In the November 21 demonstration, the RSS guard ended intake after 3.271 s.
+All 17 selected observations became durable, with no preparation or writer
+loss. That run supplies an RSS and integrity observation. It does not isolate
+memory use by the acquisition, presentation and recorder owners.
+
+A ready HT-301 measurement now resolves each unchanged 16-bit transport word
+directly through the validated LUT into the Celsius plane. The frame already
+owns the original native words, so dropping the retained raw `IntArray` saves
+442,368 array-data bytes per distinct ready measurement. Retained source
+array data falls from 1,108,992 to 666,624 bytes. The measurement, preview and
+recorder can alias that source owner. The saving applies once per source, even
+when several consumers hold it. `raw14()` still returns a fresh array for
+diagnostic callers. The recorder's maximum charge and resource policy remain
+fixed. Analysis still saves Float32 temperatures with timing and context,
+while Native and Full keep their existing native and transport evidence.
+
+The host-only `Ht301SourceMemoryProbe` uses the same bytecode with the
+`e146762` baseline core JAR and the candidate JAR. It alternates the existing
+room and hand fixtures through the actual parser, measurement gate and
+immutable source wrapper. Four fresh HotSpot 17.0.20.1+1 processes ran in
+baseline/candidate/candidate/baseline order with a fixed 256 MiB heap, 96
+warmup frames and six 16-frame batches per process. The caller-thread median
+fell from 1,177,904 to 735,520 allocated bytes per frame, a reduction of
+442,384 bytes including the array header. At 25 valid evaluations per second,
+that would remove roughly 10.55 MiB/s of Java allocation. The probe excludes
+JNI, Android rendering and the recorder's worker allocations. Its batch wall
+medians were 1.881 and 1.605 ms per frame. Neither metric establishes an Android
+RSS or recording-duration improvement.
+
+For a local comparison, generate the runtime classpath with
+`:lmtr-field-support:writeTestRuntimeClasspath`. Run
+`org.lmthermal.field.Ht301SourceMemoryProbe` with that classpath and
+`-Xms256m -Xmx256m`. Substitute the saved baseline `core.jar` entry for the
+baseline arms. Passing a fresh output path runs one synthetic Analysis / 5 Hz /
+DEFLATE-1 recording instead. A virtual 10-second source supplies 250 frames
+and waits for the worker stages between selected frames. Both builds selected
+and acknowledged the same 50 observations, without gaps. The independent
+Python reader verified every receipt and slot, valid END and all 50 Float32
+planes against the Desktop goldens. The complete files were 5,961,615 bytes
+with the same SHA-256
+`d8294a490ab7ed12f43b21be748a811bb9f6efbd90aebd85907c0adfbf6eb53e`.
+Worker pacing makes this an integrity check with deterministic inputs. Live
+preview latency, ART memory behavior and sustained recording remain physical
+qualification gates.
+
 ## Integration boundary
 
 Review the stacked field PR against `codex/r4-tiered-memory-diagnostic` at

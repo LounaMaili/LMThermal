@@ -4,6 +4,9 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (HT-301 source memory)
+- Decode exact transport words directly into the Celsius plane. Drop the redundant raw-index array from each ready measurement and reconstruct it only on explicit diagnostic reads. Keep original native and transport bytes available to Native and Full recordings.
+
 ### Fixed (Field recording closure)
 - Keep run ownership separate from the safety Start lock. After closure, opening Recordings, returning to the preview or clearing the field ViewModel leaves the original report and inventory intact, including after an RSS interruption.
 
