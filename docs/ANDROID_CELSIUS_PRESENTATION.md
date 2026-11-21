@@ -2,6 +2,16 @@
 
 **Native-equivalent temperatures; absolute physical accuracy not yet independently validated.**
 
+## Workspace V1
+
+The [current workspace](ANDROID_UX_V1.md) separates the fixed fitted image from
+scrolling commands and secondary Appearance/Capture/Settings panels. Point or ROI
+mean/min/max readings are prominent; raw samples and protocol details are secondary.
+The color legend reserves space through unavailable frames and uses endpoint/midpoint
+Celsius labels for small-screen legibility. The range algorithm and palette tables
+are unchanged. Earlier UI arrangement descriptions below record the original
+presentation/ROI milestones; the workspace guide describes the current layout.
+
 ## Data path and validity
 
 The shared renderer/presenter now consumes the optional generic `ThermalMeasurement`
@@ -53,7 +63,7 @@ Locked bounds are exact finite user values with minimum < maximum; default 25–
 Invalid text/NaN/infinity/reversed bounds leave current settings unchanged. Decimal
 comma is accepted. Both modes normalize in Double, clip levels to 0..255 and round
 ties to even, matching Desktop. Only display colors clip; raw14 and Celsius remain
-unchanged. The horizontal legend uses the same table with five Celsius ticks.
+unchanged. The horizontal legend uses the same table with endpoint/midpoint Celsius labels.
 
 Controls apply to the current ViewModel lifetime; no preference persistence or
 orientation setting is introduced.

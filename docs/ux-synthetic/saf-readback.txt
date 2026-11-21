@@ -1,0 +1,6 @@
+I/LMThermalExport( 5319): SAF readback matches finalized archive: true
+I/LMThermalExport( 5319): Published complete capture after destination close
+I/LMThermalExport( 5796): SAF readback matches finalized archive: true
+I/LMThermalExport( 5796): Published complete capture after destination close
+I/LMThermalExport( 6025): SAF readback matches finalized archive: true
+I/LMThermalExport( 6025): Published complete capture after destination close

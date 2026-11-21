@@ -138,15 +138,16 @@ def main() -> int:
     if options.self_test and not unittest.TextTestRunner().run(
             unittest.defaultTestLoader.loadTestsFromTestCase(AuditTest)).wasSuccessful():
         return 1
-    res = ROOT/'app/src/main/res'
-    default = entries(res/'values/strings.xml')
-    for locale in options.locale or ['fr']:
-        translation = entries(res/f'values-{locale}/strings.xml')
-        errors = audit(default, translation)
-        if errors:
-            print('\n'.join(errors), file=sys.stderr)
-            return 1
-        print(f'Localization parity passed: {len(default)} default / {len(translation)} {locale} keys; positional types and namespaces match.')
+    for source_set in ('main', 'debug'):
+        res = ROOT/f'app/src/{source_set}/res'
+        default = entries(res/'values/strings.xml')
+        for locale in options.locale or ['fr']:
+            translation = entries(res/f'values-{locale}/strings.xml')
+            errors = audit(default, translation)
+            if errors:
+                print('\n'.join(errors), file=sys.stderr)
+                return 1
+            print(f'Localization parity passed ({source_set}): {len(default)} default / {len(translation)} {locale} keys; positional types and namespaces match.')
     return 0
 
 

@@ -11,7 +11,11 @@ cross-platform interoperability. No Desktop importer or recording format is adde
 1. Open a source. Initialize HT-301 radiometry explicitly when temperatures are wanted.
 2. Choose Point/ROI, palette and Auto/Locked range as usual.
 3. **Save capture** freezes the current source and choices and privately prepares/checks
-   one complete `.lmtx`. The live viewer continues during preparation.
+   one complete `.lmtx`. The live viewer continues during preparation. In the
+   [V1 workspace](ANDROID_UX_V1.md), this opens a dedicated Capture panel;
+   destination, cancellation, result and sharing controls live there. Dismissing
+   the panel retains the prepared artifact; Cancel export discards it. Preview-only
+   content is labelled from the frozen artifact, independently of later live frames.
 4. **Choose destination** opens Android's create-document picker. Finish or cancel it.
    Success appears only after the destination stream closes successfully.
 5. **Share capture** is available only after successful publication. Android grants

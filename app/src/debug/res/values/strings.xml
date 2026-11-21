@@ -1,0 +1,12 @@
+<resources>
+    <string name="camera_demo_launcher">LMThermal · Demo</string>
+    <string name="camera_demo_model">Synthetic demo · debug</string>
+    <string name="camera_demo_warning">Synthetic temperatures. Demo controls: Settings → Diagnostics.</string>
+    <string name="camera_demo_title">Synthetic scene controls</string>
+    <string name="camera_demo_frame">Scene frame: %1$d · 4 frames/s when playing</string>
+    <string name="camera_demo_reference">Native image: 384 × 288. Fixed patches: left 10 °C, right 40 °C; background 22 °C. Lower target: 22–35 °C, moving horizontally. Reset pauses at frame 0. ROI x=128…255, y=48…95: mean 23.5 °C, min 10 °C, max 40 °C.</string>
+    <string name="camera_demo_play">Play scene</string>
+    <string name="camera_demo_pause">Pause scene</string>
+    <string name="camera_demo_step">Next frame and pause</string>
+    <string name="camera_demo_reset">Reset to frame 0 and pause</string>
+</resources>

@@ -1,0 +1,12 @@
+<resources>
+    <string name="camera_demo_launcher">LMThermal · Démo</string>
+    <string name="camera_demo_model">Démo synthétique · debug</string>
+    <string name="camera_demo_warning">Températures synthétiques. Commandes de démo : Réglages → Diagnostics.</string>
+    <string name="camera_demo_title">Commandes de la scène synthétique</string>
+    <string name="camera_demo_frame">Image de la scène : %1$d · 4 images/s en lecture</string>
+    <string name="camera_demo_reference">Image native : 384 × 288. Zones fixes : gauche 10 °C, droite 40 °C ; fond 22 °C. Cible inférieure : 22–35 °C, déplacement horizontal. Réinitialiser met en pause à l’image 0. ROI x=128…255, y=48…95 : moyenne 23,5 °C, min 10 °C, max 40 °C.</string>
+    <string name="camera_demo_play">Animer la scène</string>
+    <string name="camera_demo_pause">Mettre en pause</string>
+    <string name="camera_demo_step">Image suivante et pause</string>
+    <string name="camera_demo_reset">Revenir à l’image 0 et mettre en pause</string>
+</resources>

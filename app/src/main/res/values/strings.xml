@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">LMThermal</string>
-    <string name="app_title_status">LMThermal · %1$s</string>
     <string name="camera_connect">Connect / Open</string>
     <string name="camera_close">Close</string>
     <string name="camera_initialize_measurement">Initialize measurement</string>
@@ -25,22 +24,17 @@
     <string name="camera_error_module_data_invalid">Module data is invalid; measurements are unavailable</string>
     <string name="camera_error_action_unavailable">This action is unavailable</string>
     <string name="camera_native_image_description">Camera image in native sensor orientation</string>
-    <string name="camera_callback_fps">%1$.1f callback FPS</string>
     <string name="camera_diagnostics">Diagnostics</string>
-    <string name="camera_hide_diagnostics">Hide diagnostics</string>
     <string name="camera_module_metadata">Module %1$s · %2$s · %3$d × %4$d</string>
     <string name="camera_diagnostic_counts">Received %1$d · replaced %2$d · malformed %3$d</string>
     <string name="measurement_rendering">Rendering Celsius…</string>
     <string name="measurement_unavailable">Temperatures unavailable</string>
     <string name="measurement_inspect_hint">Tap or drag on the image to inspect</string>
-    <string name="measurement_cursor_unavailable">(%1$d, %2$d) · temperature unavailable</string>
     <string name="measurement_cursor_temperature">(%1$d, %2$d) · %3$.2f °C</string>
     <string name="measurement_cursor_sample_temperature">(%1$d, %2$d) · %3$s %4$d · %5$.2f °C</string>
     <string name="measurement_native_sample">Native sample</string>
-    <string name="measurement_extrema">High %1$.2f °C (%2$d,%3$d) · Low %4$.2f °C (%5$d,%6$d)</string>
     <string name="measurement_celsius_scale_description">Celsius color scale</string>
     <string name="measurement_range_label">%1$s · %2$.2f to %3$.2f °C</string>
-    <string name="measurement_palette">Palette: %1$s</string>
     <string name="measurement_auto">Auto</string>
     <string name="measurement_locked">Locked</string>
     <string name="measurement_set_range">Set range: %1$.1f–%2$.1f °C</string>
@@ -91,7 +85,6 @@
     <string name="measurement_mode_roi">ROI</string>
     <string name="measurement_roi_clear">Clear ROI</string>
     <string name="measurement_roi_size">ROI %1$d × %2$d</string>
-    <string name="measurement_roi_statistics">Min %1$.2f °C · Max %2$.2f °C · Mean %3$.2f °C</string>
     <string name="measurement_roi_unavailable">ROI temperatures unavailable</string>
     <string name="measurement_roi_hint">Drag on the image to select a rectangle.</string>
     <plurals name="measurement_roi_valid_pixels">
@@ -113,4 +106,20 @@
     <string name="export_write_error">Capture could not be saved. No incomplete file is shared.</string>
     <string name="export_partial_remaining">The provider could not delete the partial document. Remove it manually.</string>
     <string name="export_privacy">Capture includes scene imagery and available native/calibration evidence. No location, serial or network identity is added.</string>
+    <string name="app_settings">Settings</string>
+    <string name="app_done">Done</string>
+    <string name="camera_empty_title">Your thermal view</string>
+    <string name="camera_empty_hint">Connect a compatible USB camera, then tap Connect / Open. Measurement initialization is a separate action.</string>
+    <string name="camera_image_info">%1$d × %2$d · %3$.1f fps</string>
+    <string name="measurement_mean">ROI mean</string>
+    <string name="measurement_low">Minimum</string>
+    <string name="measurement_high">Maximum</string>
+    <string name="measurement_value_celsius">%1$.2f °C</string>
+    <string name="measurement_no_value">— °C</string>
+    <string name="measurement_point_position">Native point (%1$d, %2$d)</string>
+    <string name="measurement_appearance_summary">%1$s · %2$s · Edit</string>
+    <string name="measurement_appearance">Image appearance</string>
+    <string name="measurement_palette_title">Palette</string>
+    <string name="measurement_range_title">Color range</string>
+    <string name="measurement_color_only_hint">Palette and range change colors only. Temperatures and native coordinates stay the same.</string>
 </resources>

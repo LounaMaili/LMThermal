@@ -12,6 +12,14 @@ USB `1514:0001`. A generated 160×120 preview source proves the shared boundary;
 is a test module, not evidence of compatibility with another commercial camera.
 No FLIR or other real-model compatibility is claimed.
 
+For interactive UX acceptance, a separate `src/debug` composition root registers
+only `SyntheticDemoModule`, with an injected `SimulatedCameraIdentity`. This
+384×288 analytic Celsius fixture reuses `OwnedThermalMeasurement`, the normal
+coordinator and the real principal-app ViewModel/screen. It does not change the
+production registry or add a selectable production source. Its known values,
+debug-only controls and release isolation checks are documented in
+[ANDROID_SYNTHETIC_UX.md](ANDROID_SYNTHETIC_UX.md).
+
 ## Responsibilities and selection
 
 ```text

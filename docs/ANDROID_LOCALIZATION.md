@@ -6,8 +6,8 @@ The application follows the system language by default. Its in-app **Language**
 selector offers **System**, **French** and **English**. System clears the
 application-specific locale list; it does not install an English override.
 
-- `app/src/main/res/values/strings.xml`: complete English fallback, 110 keys (including ROI plurals, drag hint and 15 export resources).
-- `app/src/main/res/values-fr/strings.xml`: all 110 French translations.
+- `app/src/main/res/values/strings.xml`: complete English fallback, 119 keys (including ROI, export and workspace V1 resources).
+- `app/src/main/res/values-fr/strings.xml`: all 119 French translations.
 - No redundant `values-en` directory.
 - Unsupported locales resolve through Android's normal resource fallback. Machine
   identifiers are never a replacement for missing product prose.
@@ -185,3 +185,11 @@ The real export controls are exercised in English/French/expanded/RTL pseudoloca
 in portrait and landscape using a synthetic source, without USB writes. An immutable
 prepared capture survives app-language Activity recreation; the camera still releases
 and requires explicit reopen. See [ANDROID_LMTX_EXPORT.md](ANDROID_LMTX_EXPORT.md).
+
+## Workspace V1
+
+The Language selector is now in Settings. Appearance and Capture have separate
+localized panels; the image stays outside all command scrolling. The API 36
+workspace matrix repeats French, English and both pseudolocales in both
+orientations, including enlarged-font/small-window checks. See
+[ANDROID_UX_V1.md](ANDROID_UX_V1.md) for exact scope and evidence.

@@ -93,3 +93,22 @@ This does not open USB or initialize radiometry. Configuration recreation uses t
 ViewModel; locale changes and ordinary background stops release as defined in
 [ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md). `CameraEntryDeviceTest` verifies
 repeat entry on the Pixel without opening the camera.
+
+## Principal-app emulator UX checks
+
+Debug builds include arm64-v8a and x86_64; release retains arm64-v8a. Use explicit
+`adb -s <emulator-serial>` installation and a selected instrumentation class list
+when a phone is also connected. Never run broad connected tests for this UX task.
+See [ANDROID_UX_V1.md](ANDROID_UX_V1.md) for API 36 commands, the focused suite and
+the limits of camera-free evidence. No runtime dependency was added.
+
+For the interactive debug scene, build `:app:assembleDebug` and launch
+`org.lmthermal.app/.demo.SyntheticDemoActivity` on **emulator-5554**.
+`python3 tools/run_synthetic_ux.py` installs the debug/test APKs and runs the
+selected acceptance class in English and French, saving receipts and artifacts
+under `build/ux-synthetic`. It requires the existing ADB server and API 36 AVD,
+never starts/restarts them, never clears data and never targets another serial.
+Run `:app:assembleRelease` then `python3 tools/check_debug_demo_isolation.py` to
+check both APKs for debug-only activity/class/resource isolation. The unsigned
+release APK is inspected on the host only. Full instructions and manual controls:
+[ANDROID_SYNTHETIC_UX.md](ANDROID_SYNTHETIC_UX.md).

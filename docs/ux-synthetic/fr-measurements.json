@@ -1,0 +1,24 @@
+{
+  "geometry": [
+    384,
+    288
+  ],
+  "point_c": [
+    10,
+    40,
+    22,
+    35
+  ],
+  "roi_bounds_exclusive": [
+    128,
+    48,
+    256,
+    96
+  ],
+  "roi_mean_c": 23.5,
+  "roi_min_c": 10,
+  "roi_max_c": 40,
+  "roi_pixels": 6144,
+  "evolution_verified": true,
+  "rotation_same_view_model_and_measurement": true
+}

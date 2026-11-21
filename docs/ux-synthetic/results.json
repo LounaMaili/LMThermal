@@ -1,0 +1,371 @@
+{
+  "serial": "emulator-5554",
+  "api": 36,
+  "apk_sha256": "ef0675616ddf70c78a28b30f762cd9eef4068668a5155d36c53afcb7ea1e764b",
+  "wm_size": "Physical size: 1080x2400",
+  "wm_density": "Physical density: 420",
+  "font_scale": "1.0",
+  "runs": [
+    {
+      "locale": "en",
+      "passed": true,
+      "tests": 3,
+      "artifacts": [
+        {
+          "file": "en-capture-ready.png",
+          "bytes": 146750,
+          "sha256": "65e24ca9f56890cf2f7ea9ea22fa72870606c6d44d7360192b50f871bf5c3d82"
+        },
+        {
+          "file": "en-capture-saved.png",
+          "bytes": 137081,
+          "sha256": "d65f23d7e126782c72541eb6a716e574c7b5fb954759336b9ce23543398a1d7b"
+        },
+        {
+          "file": "en-capture.json",
+          "bytes": 379,
+          "sha256": "23696a89deb7b869af0416b64ced8616c9e6dda639bbb8b30bb47406b676454a"
+        },
+        {
+          "file": "en-explicit-reconnect.png",
+          "bytes": 67869,
+          "sha256": "96c0148c271beea6a0d0a8239ffb02ed2dc26823d2bb90e3a4bf39cc39bdc6d9"
+        },
+        {
+          "file": "en-manual-range.png",
+          "bytes": 206488,
+          "sha256": "b8ee097b237f5446b7f22c01490ecdbf87b74aada932e52451c99d804645d717"
+        },
+        {
+          "file": "en-measurements.json",
+          "bytes": 321,
+          "sha256": "fca3d589d3600b66ef09bf8418278e9539f3c18dc122e81f8d164b3d5039dd22"
+        },
+        {
+          "file": "en-palette-black_hot.png",
+          "bytes": 185284,
+          "sha256": "8caf40a071cf9a4ed9f46488b3fda48f140dd3a030783dccea5dec5fb7e1dcd7"
+        },
+        {
+          "file": "en-palette-inferno.png",
+          "bytes": 205635,
+          "sha256": "13c7c1285850d322f07f09bf932eb363018a93c240323f4c6b0f66bdcd4075ff"
+        },
+        {
+          "file": "en-palette-iron_like.png",
+          "bytes": 193589,
+          "sha256": "469f9eaefe53e925c53c53b8aad561076884aaeb68c91bbbc239272ad857e2ee"
+        },
+        {
+          "file": "en-palette-turbo.png",
+          "bytes": 206990,
+          "sha256": "6545922c5df383d7f4311a133909f01d84a26f5fa187fb7c92e4cd67c020ba74"
+        },
+        {
+          "file": "en-palette-white_hot.png",
+          "bytes": 189771,
+          "sha256": "4f2c3fd7453b7ecbdf9a1495e846814ccda1ef78db69753e0ed01554fdd1d9ce"
+        },
+        {
+          "file": "en-point-portrait.png",
+          "bytes": 147637,
+          "sha256": "da47bfdb6dc79fbb2fec009b91c168d9a6b937bf1ce2b345377471c64fbd50ea"
+        },
+        {
+          "file": "en-roi-landscape.png",
+          "bytes": 127928,
+          "sha256": "272bfd8a00ed090a0294cdacabc152181d7e371fa2672d33188d2765b6a1a24f"
+        },
+        {
+          "file": "en-roi-portrait.png",
+          "bytes": 140805,
+          "sha256": "04e1bbaf6ba5fa97447edbd63b67328c3db00ed1455e7922583ed5a76999b1a2"
+        },
+        {
+          "file": "en-synthetic-capture.lmtx",
+          "bytes": 26564,
+          "sha256": "b842987d9ff4b3ffce53e1bc5403f6ce7f649d151ed7549631160200202cd9ce"
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "tests": 3,
+      "artifacts": [
+        {
+          "file": "fr-capture-ready.png",
+          "bytes": 148896,
+          "sha256": "572a3e967efd682b2b85fa7af56ae93bedb41be54e5e17ccea4ce34f49989b55"
+        },
+        {
+          "file": "fr-capture-saved.png",
+          "bytes": 138630,
+          "sha256": "1f694964aa6b9344933fd6bbe64c06e258a9a6c3a4307c0c99ebbc68cf3019e3"
+        },
+        {
+          "file": "fr-capture.json",
+          "bytes": 379,
+          "sha256": "23696a89deb7b869af0416b64ced8616c9e6dda639bbb8b30bb47406b676454a"
+        },
+        {
+          "file": "fr-explicit-reconnect.png",
+          "bytes": 70117,
+          "sha256": "835d59c0dde5c71d5ccc6ae5a1e1a2bab7537bc24ee3e0b7bdf86ae65c448939"
+        },
+        {
+          "file": "fr-manual-range.png",
+          "bytes": 216024,
+          "sha256": "29277e4a88a6a750cc8537be2ce75c879adc7dde4c849f618c939a330869a2fa"
+        },
+        {
+          "file": "fr-measurements.json",
+          "bytes": 321,
+          "sha256": "fca3d589d3600b66ef09bf8418278e9539f3c18dc122e81f8d164b3d5039dd22"
+        },
+        {
+          "file": "fr-palette-black_hot.png",
+          "bytes": 201247,
+          "sha256": "42dab074d22506aa1bb02796485983efb650be898f17423089a39630291e0f6e"
+        },
+        {
+          "file": "fr-palette-inferno.png",
+          "bytes": 212651,
+          "sha256": "ff4cbbb00849ff46faa009a3da16302d7a1f94f8735682a50e0e0c139c32fc53"
+        },
+        {
+          "file": "fr-palette-iron_like.png",
+          "bytes": 198582,
+          "sha256": "f01f480f2327da33718a20b96828e24b68bdfeb88ec57721144c64e48a10d002"
+        },
+        {
+          "file": "fr-palette-turbo.png",
+          "bytes": 217190,
+          "sha256": "89e4fa46403c3f7618d61bc6cbcba6fb33d4c44dd17c306104ca9679e915ea43"
+        },
+        {
+          "file": "fr-palette-white_hot.png",
+          "bytes": 199052,
+          "sha256": "170344a517b7f4b08b3720e28fcb587bd094369c22a6574489379450d8900fd3"
+        },
+        {
+          "file": "fr-point-portrait.png",
+          "bytes": 143173,
+          "sha256": "947e113cf12f3f5c4cf0da07723d73adc8b1cbf47674089ae2469ed772cd29fd"
+        },
+        {
+          "file": "fr-roi-landscape.png",
+          "bytes": 131728,
+          "sha256": "6bffc9542b8d4c68f9e2aae6fdcf07a56e2c201fb9e8565ce260531133074fa9"
+        },
+        {
+          "file": "fr-roi-portrait.png",
+          "bytes": 142816,
+          "sha256": "f17d24bb72839c581a9e00ed19950c8f89ecd1599b456f1eceb729acc5a9f5ba"
+        },
+        {
+          "file": "fr-synthetic-capture.lmtx",
+          "bytes": 26563,
+          "sha256": "70fd4ba5d9309f5a6e8800a36670ce8e8101f4cc6748e8f10097dec2db2060e5"
+        }
+      ]
+    }
+  ],
+  "date": "2026-11-21",
+  "branch": "codex/android-ux-v1",
+  "base_ux_commit": "a7d9bfe56241456120c71e6759b185a779e3900d",
+  "candidate_apk": {
+    "path": "build/ux-synthetic/LMThermal-ux-v1-synthetic-debug.apk",
+    "sha256": "ef0675616ddf70c78a28b30f762cd9eef4068668a5155d36c53afcb7ea1e764b",
+    "bytes": 12018450
+  },
+  "large_font": {
+    "serial": "emulator-5554",
+    "api": 36,
+    "apk_sha256": "ef0675616ddf70c78a28b30f762cd9eef4068668a5155d36c53afcb7ea1e764b",
+    "wm_size": "Physical size: 1080x2400",
+    "wm_density": "Physical density: 420",
+    "font_scale": "2.0",
+    "runs": [
+      {
+        "locale": "fr",
+        "passed": true,
+        "tests": 3,
+        "artifacts": [
+          {
+            "file": "fr-capture-ready.png",
+            "bytes": 169028,
+            "sha256": "d35b4f5498b7e2c8f2bdd0a433d4cd1892fc8572714ae35bb0090b1ca6168e01"
+          },
+          {
+            "file": "fr-capture-saved.png",
+            "bytes": 170495,
+            "sha256": "868e218e49cf47593c306c4a7457c957244dd5fd107879293c59684fcc215d32"
+          },
+          {
+            "file": "fr-capture.json",
+            "bytes": 379,
+            "sha256": "23696a89deb7b869af0416b64ced8616c9e6dda639bbb8b30bb47406b676454a"
+          },
+          {
+            "file": "fr-explicit-reconnect.png",
+            "bytes": 123873,
+            "sha256": "83287795ebe7d9909c21b2852793f143ee2958df06ebfc308c3bcdeac1f0c01a"
+          },
+          {
+            "file": "fr-manual-range.png",
+            "bytes": 268711,
+            "sha256": "34cc63d4a825c364560d0768f7cb83bdf2688ddfd4fa1fde9223532926320a2b"
+          },
+          {
+            "file": "fr-measurements.json",
+            "bytes": 321,
+            "sha256": "fca3d589d3600b66ef09bf8418278e9539f3c18dc122e81f8d164b3d5039dd22"
+          },
+          {
+            "file": "fr-palette-black_hot.png",
+            "bytes": 263385,
+            "sha256": "7f98030c6ae7988f086ef387d9dd4d4b17ea117396aae57e65ed067edd2b712d"
+          },
+          {
+            "file": "fr-palette-inferno.png",
+            "bytes": 273831,
+            "sha256": "d22a335d328f0d8f3aa657adfa84103385133a42bea894b3a51df259ac78da93"
+          },
+          {
+            "file": "fr-palette-iron_like.png",
+            "bytes": 265450,
+            "sha256": "042217bc1b6a89a1e3beb3009f04829ff71ee15ead25fa2c9ccf47bc2ba7f5cd"
+          },
+          {
+            "file": "fr-palette-turbo.png",
+            "bytes": 276135,
+            "sha256": "06bfc57e3849a115b186df0eb022833899f70b83d59e53aaa1b828f6c791dff9"
+          },
+          {
+            "file": "fr-palette-white_hot.png",
+            "bytes": 256609,
+            "sha256": "68f24d710d0c7ab73abdcbdee382bf90b120e7ca86426ea0b10bdca54fb3a184"
+          },
+          {
+            "file": "fr-point-portrait.png",
+            "bytes": 139701,
+            "sha256": "7b22fd141e3b97f49818171206a7e620fc6bf40d4ac9fac7e5b72d6ed2d290ae"
+          },
+          {
+            "file": "fr-roi-landscape.png",
+            "bytes": 130952,
+            "sha256": "a4a845abce4788f48480e6eef5e6e528d851731c3a58c9c98bd1336d535c7701"
+          },
+          {
+            "file": "fr-roi-portrait.png",
+            "bytes": 142636,
+            "sha256": "ec75ccdb014fa85b3288d7aee5fe94bdb9251ec6dd5b9ce885c213b279fda184"
+          },
+          {
+            "file": "fr-synthetic-capture.lmtx",
+            "bytes": 26566,
+            "sha256": "201d2c1bd70932c92b1ecdaec76e93a2b988001981773d65399656110b5283c6"
+          }
+        ]
+      }
+    ]
+  },
+  "android_jvm_tests": {
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "product_ui_regressions": {
+    "tests": 4,
+    "passed": true,
+    "class": "ThermalWorkspaceDeviceTest"
+  },
+  "builds": {
+    "debug": "passed",
+    "android_test": "passed",
+    "release_unsigned": "passed"
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 12,
+    "new_warnings": 0
+  },
+  "static_checks": {
+    "debug_release_apk_isolation": "passed",
+    "localization_keys": {
+      "main": 119,
+      "debug": 10
+    },
+    "localization_self_tests": 10,
+    "camera_module_boundaries": "passed"
+  },
+  "constraints": {
+    "target": "emulator-5554",
+    "physical_device_used": false,
+    "ht301_used": false,
+    "adb_server_restarted": false,
+    "avd_data_cleared": false,
+    "r4_campaign_run": false,
+    "production_sources_changed": false
+  },
+  "settings_restored": {
+    "font_scale": "1.0",
+    "wm_size": "1080x2400",
+    "density": 420,
+    "application_locale": "fr"
+  },
+  "limitations": [
+    "Initial empty viewport retains generic product USB hint; Connect opens only synthetic scene",
+    "Large fonts require scrolling the controls/readouts while the image stays fixed",
+    "No real camera, physical accuracy, manual TalkBack or cloud/external SAF provider validation"
+  ],
+  "committed_screenshots": [
+    {
+      "file": "en-palette-turbo.png",
+      "bytes": 206990,
+      "sha256": "6545922c5df383d7f4311a133909f01d84a26f5fa187fb7c92e4cd67c020ba74"
+    },
+    {
+      "file": "en-palette-white_hot.png",
+      "bytes": 189771,
+      "sha256": "4f2c3fd7453b7ecbdf9a1495e846814ccda1ef78db69753e0ed01554fdd1d9ce"
+    },
+    {
+      "file": "fr-capture-saved.png",
+      "bytes": 138630,
+      "sha256": "1f694964aa6b9344933fd6bbe64c06e258a9a6c3a4307c0c99ebbc68cf3019e3"
+    },
+    {
+      "file": "fr-demo-controls.png",
+      "bytes": 244916,
+      "sha256": "cba2ab5d6a47e448f3dd2d94021816da47cae8412ba42e609c90047700370664"
+    },
+    {
+      "file": "fr-manual-range.png",
+      "bytes": 216024,
+      "sha256": "29277e4a88a6a750cc8537be2ce75c879adc7dde4c849f618c939a330869a2fa"
+    },
+    {
+      "file": "fr-point-portrait.png",
+      "bytes": 143173,
+      "sha256": "947e113cf12f3f5c4cf0da07723d73adc8b1cbf47674089ae2469ed772cd29fd"
+    },
+    {
+      "file": "fr-roi-landscape-font200.png",
+      "bytes": 130952,
+      "sha256": "a4a845abce4788f48480e6eef5e6e528d851731c3a58c9c98bd1336d535c7701"
+    },
+    {
+      "file": "fr-roi-landscape.png",
+      "bytes": 131728,
+      "sha256": "6bffc9542b8d4c68f9e2aae6fdcf07a56e2c201fb9e8565ce260531133074fa9"
+    },
+    {
+      "file": "fr-roi-portrait.png",
+      "bytes": 142816,
+      "sha256": "f17d24bb72839c581a9e00ed19950c8f89ecd1599b456f1eceb729acc5a9f5ba"
+    }
+  ]
+}

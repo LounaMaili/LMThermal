@@ -4,6 +4,21 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Interactive synthetic Android UX acceptance — 2026-11-21)
+
+- Added a debug-only Demo launcher that inherits the principal Activity and injects a synthetic-only camera registration through the existing test seam. Production code, USB, thermometry, source/lifetime policy and R4 are unchanged; release APKs contain no demo activity, classes, identity or resources.
+- Added an evolving native 384×288 analytic Celsius scene with fixed 10/40 °C patches, 22 °C background, moving 22–35 °C target, and localized pause/step/reset controls in Settings → Diagnostics. Captures preserve simulated provenance.
+- Added reproducible real-screen Point/ROI, held live-frame gesture, all five palettes, manual/automatic range, rotation/recreation, explicit reconnect and actual Android SAF tests. Exported Float32 matrices are compared bit-for-bit with the frozen frame after a newer scene frame arrives.
+- Added an emulator-5554-only runner, PNG integrity checks, release APK isolation checks and debug translation parity; documented manual launch commands, numerical references, screenshots and validation receipts in `docs/ANDROID_SYNTHETIC_UX.md`.
+
+### Changed (Android workspace UX V1 — 2026-11-21)
+
+- Replaced the principal app's long scrolling screen with a fixed fitted-image workspace, portrait/landscape command areas, prominent current Point/ROI temperatures and separate Appearance, Capture and Settings panels.
+- Kept explicit initialization and existing capability/action gates; exposed source status, readable touch targets, full EN/FR translations, a stable dark surround and saved panel/range edits through recreation.
+- Preserved native-coordinate image/touch/ROI geometry, current-frame validity, all camera/USB/thermometry/source/lifetime behavior and the LMTX exporter; no production LMTR recorder or R4 dependency was added.
+- Added debug-only x86_64 ABI packaging and camera-free API 36 UX/state regressions, adapted the existing locale/orientation/held-gesture checks, and documented before/after synthetic screenshots and candidate launch commands.
+- Passed 232 core JVM tests, 21 Android JVM tests and 26 focused API 36 instrumentation tests; repeated the eight-layout locale/orientation matrix at 200% text on a 320×640 dp display. Build, lint (zero errors), translation/boundary and diff checks pass. Physical HT-301/Pixel validation was intentionally excluded and remains a separately authorized follow-up.
+
 ### Added (R3 native Windows CI validation — 2026-10-13)
 
 - Added a branch-restricted, exact-SHA Windows GitHub Actions protocol with JDK17, Python3.13, bounded resources, read-only token permissions and persistent success/failure artifacts. It executes the existing independent suites and native NTFS sparse/full-integrity gate without camera or Android dependencies.

@@ -24,6 +24,29 @@ See [ANDROID_FOUNDATION.md](ANDROID_FOUNDATION.md) for ownership, lifecycle,
 interfaces and future session/thermometry boundaries, and
 [ANDROID_VALIDATION.md](ANDROID_VALIDATION.md) for real-device evidence.
 
+## Android workspace V1
+
+The principal Android app uses a fixed fitted-image workspace, prominent current
+Point/ROI temperatures and a separate command area below (portrait) or beside
+(landscape) the image. Palette/range and still capture each have a focused panel;
+language and technical diagnostics live in Settings. Actions follow the existing
+capability/action policy; radiometric initialization stays explicit and is not
+shown as a redundant ready-state action. No LMTR recorder is added.
+
+French/English, enlarged fonts and small windows use scrollable control/panel
+content without scrolling the thermal image. Native geometry and all camera,
+thermometry, ownership and permission rules are unchanged. Implementation,
+workflow and camera-free validation: [ANDROID_UX_V1.md](ANDROID_UX_V1.md).
+
+Debug builds expose a separate **LMThermal · Demo** launcher for manual synthetic
+acceptance. It injects an analytic 384×288 Celsius scene through the existing
+module/coordinator seam and inherits the principal Activity, ViewModel, presenters,
+SAF transaction and lifetime policy. Connect is explicit; pause, step and reset
+are available in Settings → Diagnostics. Capture provenance is `simulated`.
+No hardware module is registered by this entry. Demo code/resources/manifest
+exist only in `src/debug`, with an APK-level release isolation check.
+See [ANDROID_SYNTHETIC_UX.md](ANDROID_SYNTHETIC_UX.md) for scene oracles and tests.
+
 ## Current Linux measurement foundation
 
 The sibling desktop repository now has a PyQt-independent

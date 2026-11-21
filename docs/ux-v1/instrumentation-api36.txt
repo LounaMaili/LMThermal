@@ -1,0 +1,9 @@
+org.lmthermal.app.ThermalWorkspaceDeviceTest:....
+org.lmthermal.app.LocalizationLayoutDeviceTest:.
+org.lmthermal.app.LocalizationDeviceTest:............
+org.lmthermal.app.CaptureExporterDeviceTest:........
+org.lmthermal.app.CameraEntryDeviceTest:.
+
+Time: 45.768
+
+OK (26 tests)

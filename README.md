@@ -48,13 +48,13 @@ Connect the HT-301 through USB Host/OTG, launch LMThermal, tap **Connect / Open*
 and grant Android camera/USB permissions. Opening is read-only. From a display stream,
 tap **Initialize radiometric** to qualify the baseline and run the validated sequence.
 Readiness requires structural/liveness evidence. Measurement additionally requires valid current-frame thermometry.
-Tap/drag the image to inspect native pixel/raw14/Celsius. Choose **Palette**, **Auto** or
+Tap/drag the image to inspect native pixel/raw14/Celsius. Open **Image appearance** for **Palette**, **Auto** or
 **Locked**, and **Set range** (default 25–45 °C); these controls affect colors only.
 Choose **Point** for cursor inspection or **ROI** to drag a native rectangle containing
 both touched pixel cells. **Clear ROI** removes it. Min/Max/Mean and valid/total counts
 use the current authoritative Celsius matrix, independently of colors/range; unavailable
 frames clear readings. See [native ROI semantics](docs/ANDROID_CELSIUS_PRESENTATION.md#native-rectangular-roi).
-Display/unsettled previews expose no Celsius legend. Optional **Diagnostics** retains
+Display/unsettled previews expose no Celsius legend. **Settings → Diagnostics** retains
 separate trailer/literal center and debug controls. **Close** releases the stream. Rotation and
 an outstanding export destination picker retain the same session; ordinary backgrounding and
 screen lock release it. Reopening remains explicit. See the [lifecycle policy](docs/ANDROID_CAMERA_LIFETIME.md). **Language** offers System, French and
@@ -73,6 +73,21 @@ Android test-only parity uses AndroidX Test runner 1.6.2 / JUnit extension 1.2.1
 `./gradlew :app:connectedDebugAndroidTest` executes all golden tables/matrices on the phone
 without opening USB. No golden data or test dependencies ship in the product APK. Localization also uses
 test-only Robolectric 4.16.1 and Compose UI/Espresso 3.7.0 checks; see CONFIGURATION.md.
+
+## Android workspace V1
+
+The principal app now keeps the fitted thermal image separate from scrolling
+commands, with a portrait workspace and landscape side panel, prominent current
+Point/ROI readings, and dedicated Appearance, Capture and Settings panels.
+See the [UX guide and emulator validation](docs/ANDROID_UX_V1.md) and
+[before/after screenshots](docs/ux-v1/README.md). Camera opening/initialization,
+permissions, measurements and lifetime rules are unchanged. Debug APKs also include
+x86_64 for camera-free emulator checks; release remains arm64-v8a.
+Debug also offers **LMThermal · Demo**, an interactive 384×288 synthetic scene in
+the principal app, with known Celsius references, Point/ROI, all palettes, ranges
+and real SAF captures. See the [synthetic acceptance recipe](docs/ANDROID_SYNTHETIC_UX.md)
+for exact launch commands, automated receipts and screenshots. This entry and its
+fixture are absent from release builds.
 
 ## Supported camera contract
 
@@ -160,6 +175,8 @@ def get_temp_evn(a, env_term, b):
 - [x] Integrated module contract/registry, one-session ownership, geometry-driven shared
   presentation and 160×120 preview-only simulator (see camera architecture and validation).
 - [x] French/English localization, persisted System/app-language selection, fallback and locale regression (issue #2; see localization/validation documents).
+- [x] Image-first Android workspace V1, adaptive phone controls and secondary settings/capture panels (camera-free API 36 UX validation).
+- [x] Debug-only interactive synthetic thermal scene and reproducible Point/ROI, palette, range, rotation and SAF capture acceptance on API 36.
 - [ ] Additional real camera models, each requiring protocol research and hardware validation.
 - [x] Generic native rectangular ROI drawing and deterministic valid-only statistics compatible with LMTX v1.
 - [x] Coherent LMTX v1 still export with module-owned evidence, SAF publication and shared conformance fixtures; real Linux/Windows Desktop interoperability validated.
@@ -182,7 +199,7 @@ for the original full-payload Android camera test.
 ## Stack
 
 - Android Kotlin 2.1.20, Compose/AndroidX, AppCompat 1.7.1, Gradle wrapper 8.11.1, AGP 8.9.2, JDK 17.
-- compileSdk/targetSdk 35, minSdk 26; initial arm64-v8a APK supports the test Pixel 8.
+- compileSdk/targetSdk 35, minSdk 26; arm64-v8a release target; debug also includes x86_64 for emulator UI checks.
 - Native libusb 1.0.29 (LGPL-2.1-or-later), pinned libuvc 0.0.8 snapshot (BSD-3-Clause), NDK 28.
 - Plain JVM `core/` holds immutable frame/parser and preview logic; no Python embedded.
 - Standalone `lmtr-contract/` is an offline JVM conformance library/CLI with JUnit 4 tests; its branch-restricted native Windows CI protocol is documented in [Windows validation](docs/lmtr-r3/WINDOWS_VALIDATION.md); `tools/lmtr_v1/` is an independent standard-library Python reference. Neither is wired into the Android application.

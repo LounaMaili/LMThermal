@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">LMThermal</string>
-    <string name="app_title_status">LMThermal · %1$s</string>
     <string name="camera_connect">Connecter / Ouvrir</string>
     <string name="camera_close">Fermer</string>
     <string name="camera_initialize_measurement">Initialiser la mesure</string>
@@ -25,22 +24,17 @@
     <string name="camera_error_module_data_invalid">Données du module invalides : mesures indisponibles</string>
     <string name="camera_error_action_unavailable">Cette action est indisponible</string>
     <string name="camera_native_image_description">Image thermique dans l’orientation native du capteur</string>
-    <string name="camera_callback_fps">%1$.1f trames/s reçues</string>
     <string name="camera_diagnostics">Diagnostics</string>
-    <string name="camera_hide_diagnostics">Masquer les diagnostics</string>
     <string name="camera_module_metadata">Module %1$s · %2$s · %3$d × %4$d</string>
     <string name="camera_diagnostic_counts">Reçues %1$d · remplacées %2$d · malformées %3$d</string>
     <string name="measurement_rendering">Rendu en Celsius…</string>
     <string name="measurement_unavailable">Températures indisponibles</string>
     <string name="measurement_inspect_hint">Touchez ou faites glisser sur l’image pour inspecter</string>
-    <string name="measurement_cursor_unavailable">(%1$d, %2$d) · température indisponible</string>
     <string name="measurement_cursor_temperature">(%1$d, %2$d) · %3$.2f °C</string>
     <string name="measurement_cursor_sample_temperature">(%1$d, %2$d) · %3$s %4$d · %5$.2f °C</string>
     <string name="measurement_native_sample">Valeur native</string>
-    <string name="measurement_extrema">Max %1$.2f °C (%2$d,%3$d) · Min %4$.2f °C (%5$d,%6$d)</string>
     <string name="measurement_celsius_scale_description">Échelle de couleurs en degrés Celsius</string>
     <string name="measurement_range_label">%1$s · de %2$.2f à %3$.2f °C</string>
-    <string name="measurement_palette">Palette : %1$s</string>
     <string name="measurement_auto">Auto</string>
     <string name="measurement_locked">Verrouillée</string>
     <string name="measurement_set_range">Plage : %1$.1f–%2$.1f °C</string>
@@ -91,7 +85,6 @@
     <string name="measurement_mode_roi">Zone (ROI)</string>
     <string name="measurement_roi_clear">Effacer la zone</string>
     <string name="measurement_roi_size">Zone %1$d × %2$d</string>
-    <string name="measurement_roi_statistics">Min %1$.2f °C · Max %2$.2f °C · Moyenne %3$.2f °C</string>
     <string name="measurement_roi_unavailable">Températures de la zone indisponibles</string>
     <string name="measurement_roi_hint">Faites glisser sur l’image pour sélectionner un rectangle.</string>
     <plurals name="measurement_roi_valid_pixels">
@@ -114,4 +107,20 @@
     <string name="export_write_error">Échec de l’enregistrement. Aucun fichier incomplet n’est partagé.</string>
     <string name="export_partial_remaining">Le fournisseur ne peut pas supprimer le document partiel. Supprimez-le manuellement.</string>
     <string name="export_privacy">La capture contient la scène et les données natives/de calibration disponibles. Aucune localisation ni identité réseau ou numéro de série n’est ajouté.</string>
+    <string name="app_settings">Réglages</string>
+    <string name="app_done">Terminer</string>
+    <string name="camera_empty_title">Votre vue thermique</string>
+    <string name="camera_empty_hint">Branchez une caméra USB compatible, puis appuyez sur Connecter / Ouvrir. L’initialisation des mesures reste une action séparée.</string>
+    <string name="camera_image_info">%1$d × %2$d · %3$.1f i/s</string>
+    <string name="measurement_mean">Moy. ROI</string>
+    <string name="measurement_low">Minimum</string>
+    <string name="measurement_high">Maximum</string>
+    <string name="measurement_value_celsius">%1$.2f °C</string>
+    <string name="measurement_no_value">— °C</string>
+    <string name="measurement_point_position">Point natif (%1$d, %2$d)</string>
+    <string name="measurement_appearance_summary">%1$s · %2$s · Modifier</string>
+    <string name="measurement_appearance">Apparence de l’image</string>
+    <string name="measurement_palette_title">Palette</string>
+    <string name="measurement_range_title">Plage de couleurs</string>
+    <string name="measurement_color_only_hint">La palette et la plage modifient uniquement les couleurs. Les températures et les coordonnées natives restent identiques.</string>
 </resources>
