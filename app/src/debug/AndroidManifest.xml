@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Separate debug task; never handles USB attachment and is absent from release manifests. -->
+        <activity android:name=".demo.SyntheticDemoActivity" android:exported="true"
+            android:label="@string/camera_demo_launcher" android:launchMode="singleTask"
+            android:taskAffinity="org.lmthermal.app.synthetic">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

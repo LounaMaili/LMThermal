@@ -38,6 +38,15 @@ content without scrolling the thermal image. Native geometry and all camera,
 thermometry, ownership and permission rules are unchanged. Implementation,
 workflow and camera-free validation: [ANDROID_UX_V1.md](ANDROID_UX_V1.md).
 
+Debug builds expose a separate **LMThermal · Demo** launcher for manual synthetic
+acceptance. It injects an analytic 384×288 Celsius scene through the existing
+module/coordinator seam and inherits the principal Activity, ViewModel, presenters,
+SAF transaction and lifetime policy. Connect is explicit; pause, step and reset
+are available in Settings → Diagnostics. Capture provenance is `simulated`.
+No hardware module is registered by this entry. Demo code/resources/manifest
+exist only in `src/debug`, with an APK-level release isolation check.
+See [ANDROID_SYNTHETIC_UX.md](ANDROID_SYNTHETIC_UX.md) for scene oracles and tests.
+
 ## Current Linux measurement foundation
 
 The sibling desktop repository now has a PyQt-independent

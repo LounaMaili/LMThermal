@@ -1,0 +1,22 @@
+{
+  "saf_published": true,
+  "lmtx_conformance": true,
+  "native_float32_bits_equal_after_new_live_frame": true,
+  "prepared_capture_survives_recreation": true,
+  "source_origin": "simulated",
+  "palettes": [
+    "WHITE_HOT",
+    "BLACK_HOT",
+    "INFERNO",
+    "IRON_LIKE",
+    "TURBO"
+  ],
+  "manual_range": [
+    20.5,
+    40.5
+  ],
+  "automatic_range": [
+    10,
+    40
+  ]
+}

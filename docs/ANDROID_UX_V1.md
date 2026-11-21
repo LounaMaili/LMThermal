@@ -4,6 +4,11 @@ This is the principal application (`org.lmthermal.app`), based on `main` at
 `8eb4aceaf8bb36a8061c932b3121f898b81b4af3`. It does not introduce an LMTR recorder
 or depend on the experimental field application/R4 branches.
 
+The follow-up [interactive synthetic acceptance recipe](ANDROID_SYNTHETIC_UX.md)
+provides a debug-only launcher with an evolving 384×288 scene, known temperatures,
+real touch gestures and SAF capture, plus updated automated receipts/screenshots.
+The initial baseline campaign below remains historical evidence for UX V1.
+
 ## Daily workflow
 
 1. Attach a supported USB camera and use **Connect / Open**. Discovery and opening

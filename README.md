@@ -83,6 +83,11 @@ See the [UX guide and emulator validation](docs/ANDROID_UX_V1.md) and
 [before/after screenshots](docs/ux-v1/README.md). Camera opening/initialization,
 permissions, measurements and lifetime rules are unchanged. Debug APKs also include
 x86_64 for camera-free emulator checks; release remains arm64-v8a.
+Debug also offers **LMThermal · Demo**, an interactive 384×288 synthetic scene in
+the principal app, with known Celsius references, Point/ROI, all palettes, ranges
+and real SAF captures. See the [synthetic acceptance recipe](docs/ANDROID_SYNTHETIC_UX.md)
+for exact launch commands, automated receipts and screenshots. This entry and its
+fixture are absent from release builds.
 
 ## Supported camera contract
 
@@ -171,6 +176,7 @@ def get_temp_evn(a, env_term, b):
   presentation and 160×120 preview-only simulator (see camera architecture and validation).
 - [x] French/English localization, persisted System/app-language selection, fallback and locale regression (issue #2; see localization/validation documents).
 - [x] Image-first Android workspace V1, adaptive phone controls and secondary settings/capture panels (camera-free API 36 UX validation).
+- [x] Debug-only interactive synthetic thermal scene and reproducible Point/ROI, palette, range, rotation and SAF capture acceptance on API 36.
 - [ ] Additional real camera models, each requiring protocol research and hardware validation.
 - [x] Generic native rectangular ROI drawing and deterministic valid-only statistics compatible with LMTX v1.
 - [x] Coherent LMTX v1 still export with module-owned evidence, SAF publication and shared conformance fixtures; real Linux/Windows Desktop interoperability validated.
