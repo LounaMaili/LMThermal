@@ -93,3 +93,11 @@ This does not open USB or initialize radiometry. Configuration recreation uses t
 ViewModel; locale changes and ordinary background stops release as defined in
 [ANDROID_CAMERA_LIFETIME.md](ANDROID_CAMERA_LIFETIME.md). `CameraEntryDeviceTest` verifies
 repeat entry on the Pixel without opening the camera.
+
+## Principal-app emulator UX checks
+
+Debug builds include arm64-v8a and x86_64; release retains arm64-v8a. Use explicit
+`adb -s <emulator-serial>` installation and a selected instrumentation class list
+when a phone is also connected. Never run broad connected tests for this UX task.
+See [ANDROID_UX_V1.md](ANDROID_UX_V1.md) for API 36 commands, the focused suite and
+the limits of camera-free evidence. No runtime dependency was added.

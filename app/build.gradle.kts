@@ -16,6 +16,7 @@ android {
         versionName = "0.1.0-foundation"
         // Limit dependency translations too: generated OS language choices must match product support.
         resourceConfigurations += listOf("en", "fr")
+        // Debug also runs the principal app on the camera-free API 36 x86_64 emulator.
         ndk { abiFilters += "arm64-v8a" }
         externalNativeBuild { cmake { cppFlags += "-std=c++17" } }
     }
@@ -23,7 +24,10 @@ android {
     sourceSets.getByName("androidTest").assets.srcDir("../core/src/test/resources")
     buildFeatures { compose = true; buildConfig = true }
     androidResources { generateLocaleConfig = true }
-    buildTypes.getByName("debug") { isPseudoLocalesEnabled = true }
+    buildTypes.getByName("debug") {
+        isPseudoLocalesEnabled = true
+        ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
+    }
     // Test-only Android runtime checks cover AppCompat's pre-33 storage and resource configuration.
     testOptions { unitTests.isIncludeAndroidResources = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }

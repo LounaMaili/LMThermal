@@ -4,6 +4,14 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (Android workspace UX V1 — 2026-11-21)
+
+- Replaced the principal app's long scrolling screen with a fixed fitted-image workspace, portrait/landscape command areas, prominent current Point/ROI temperatures and separate Appearance, Capture and Settings panels.
+- Kept explicit initialization and existing capability/action gates; exposed source status, readable touch targets, full EN/FR translations, a stable dark surround and saved panel/range edits through recreation.
+- Preserved native-coordinate image/touch/ROI geometry, current-frame validity, all camera/USB/thermometry/source/lifetime behavior and the LMTX exporter; no production LMTR recorder or R4 dependency was added.
+- Added debug-only x86_64 ABI packaging and camera-free API 36 UX/state regressions, adapted the existing locale/orientation/held-gesture checks, and documented before/after synthetic screenshots and candidate launch commands.
+- Passed 232 core JVM tests, 21 Android JVM tests and 26 focused API 36 instrumentation tests; repeated the eight-layout locale/orientation matrix at 200% text on a 320×640 dp display. Build, lint (zero errors), translation/boundary and diff checks pass. Physical HT-301/Pixel validation was intentionally excluded and remains a separately authorized follow-up.
+
 ### Added (R3 native Windows CI validation — 2026-10-13)
 
 - Added a branch-restricted, exact-SHA Windows GitHub Actions protocol with JDK17, Python3.13, bounded resources, read-only token permissions and persistent success/failure artifacts. It executes the existing independent suites and native NTFS sparse/full-integrity gate without camera or Android dependencies.

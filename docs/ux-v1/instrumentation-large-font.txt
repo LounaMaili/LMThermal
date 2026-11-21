@@ -1,0 +1,14 @@
+Eight-layout matrix plus three initial UI state checks:
+org.lmthermal.app.ThermalWorkspaceDeviceTest:...
+org.lmthermal.app.LocalizationLayoutDeviceTest:.
+
+Time: 40.431
+
+OK (4 tests)
+
+Final four UI state checks at the same size/font:
+org.lmthermal.app.ThermalWorkspaceDeviceTest:....
+
+Time: 8.023
+
+OK (4 tests)

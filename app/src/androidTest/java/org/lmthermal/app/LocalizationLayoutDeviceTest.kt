@@ -31,12 +31,13 @@ class LocalizationLayoutDeviceTest {
     private val instrumentation get() = InstrumentationRegistry.getInstrumentation()
 
     /** Test data has native geometry/provenance and no protocol/control implementation. */
-    private class LayoutModule : CameraModule<Bitmap> {
+    internal class LayoutModule : CameraModule<Bitmap> {
         private val geometry = NativeImageGeometry(160, 120)
         lateinit var openedState: MutableStateFlow<CameraSessionState<Bitmap>>
         override val metadata = CameraModuleMetadata(CameraModuleId("layout-test"), "synthetic-layout",
             CameraCapabilities(true, true, true, true))
         override fun probe(device: CameraDeviceIdentity) = CameraProbeResult.SUPPORTED
+        var initializationCount = 0
         override suspend fun open(device: CameraDeviceIdentity): CameraSession<Bitmap> {
             val measurement = OwnedThermalMeasurement(geometry,
                 FloatArray(geometry.pixelCount) { if (it % geometry.width in 60..100) 36.5f else 24.25f },
@@ -48,7 +49,9 @@ class LocalizationLayoutDeviceTest {
                     actions = setOf(CameraAction.CLOSE, CameraAction.INITIALIZE_MEASUREMENT)))
             return object : CameraSession<Bitmap> {
                 override val state = openedState
-                override suspend fun perform(action: CameraAction) = Unit
+                override suspend fun perform(action: CameraAction) {
+                    if (action == CameraAction.INITIALIZE_MEASUREMENT) initializationCount++
+                }
                 override suspend fun close(reason: CameraCloseReason) { state.value = state.value.copy(preview = null, measurement = null) }
             }
         }
@@ -120,7 +123,7 @@ class LocalizationLayoutDeviceTest {
                         // The real ROI mode/gesture path uses native cells in every locale and viewport.
                         compose.onNode(hasText(labels.getValue(R.string.measurement_mode_roi)) and hasClickAction()).performScrollTo().performClick()
                         val image = compose.onNodeWithTag("thermal-image")
-                        if (orientationName == "portrait") image.performScrollTo()
+                        image.assertIsDisplayed()
                         val viewport = image.fetchSemanticsNode().boundsInRoot
                         val controlsBeforeDrag = compose.onNode(hasText(labels.getValue(R.string.measurement_mode_roi)) and hasClickAction())
                             .fetchSemanticsNode().boundsInRoot
@@ -169,15 +172,17 @@ class LocalizationLayoutDeviceTest {
                         compose.onNodeWithText(labels.getValue(R.string.export_save)).performScrollTo().assertIsEnabled().performClick()
                         withTimeout(10000) { while (exporter!!.state.value.phase != ExportPhase.READY) delay(10) }
                         compose.waitForIdle()
-                        compose.onNodeWithText(labels.getValue(R.string.export_destination)).performScrollTo().assertIsEnabled()
-                        compose.onNodeWithText(labels.getValue(R.string.export_share)).assertIsNotEnabled()
+                        compose.onNodeWithTag("capture-destination").performScrollTo().assertIsEnabled()
+                        compose.onNodeWithText(labels.getValue(R.string.export_share)).assertDoesNotExist()
                         compose.onNodeWithText(labels.getValue(R.string.export_cancel)).performClick()
-                        if (orientationName == "portrait") image.performScrollTo()
-                        // Localized controls can wrap/scroll; assert visibility after bringing each into view.
-                        for (id in listOf(R.string.camera_connect, R.string.camera_close,
-                            R.string.camera_ht301_initialize_radiometric, R.string.camera_diagnostics)) {
-                            compose.onNodeWithText(labels.getValue(id)).performScrollTo().assertIsDisplayed()
-                        }
+                        compose.onNodeWithTag("dismiss-panel").performScrollTo().performClick()
+                        image.assertIsDisplayed()
+                        // Ready sources offer Close, while initialization and diagnostics leave the live workspace.
+                        compose.onNodeWithText(labels.getValue(R.string.camera_close)).performScrollTo().assertIsDisplayed()
+                        compose.onNodeWithText(labels.getValue(R.string.camera_connect)).assertDoesNotExist()
+                        compose.onNodeWithText(labels.getValue(R.string.camera_ht301_initialize_radiometric)).assertDoesNotExist()
+                        compose.onNodeWithText(labels.getValue(R.string.camera_diagnostics)).assertDoesNotExist()
+                        compose.onNodeWithTag("appearance").performScrollTo().performClick()
                         compose.onNodeWithText(labels.getValue(R.string.measurement_locked)).performScrollTo().performClick()
                         lateinit var rangeLabel: String
                         scenario.onActivity { rangeLabel = it.getString(R.string.measurement_set_range, 25.0, 45.0) }
@@ -186,6 +191,7 @@ class LocalizationLayoutDeviceTest {
                         compose.onNodeWithText(labels.getValue(R.string.measurement_cancel)).performClick()
                         compose.onNodeWithText(labels.getValue(R.string.measurement_auto)).performScrollTo().performClick()
                         assertEquals(roiStatistics, presenter!!.roi.state.value.statistics)
+                        compose.onNodeWithTag("dismiss-panel").performScrollTo().performClick()
                         compose.onNodeWithText(labels.getValue(R.string.measurement_roi_clear)).performScrollTo().performClick()
                         withTimeout(5000) { while (presenter!!.roi.selection.value.rect != null ||
                             presenter!!.roi.state.value.statistics != null) delay(10) }
@@ -195,7 +201,10 @@ class LocalizationLayoutDeviceTest {
                         scenario.onActivity { activity -> languageLabel = activity.getString(R.string.language_label,
                             AppLanguage.selected(AppCompatDelegate.getApplicationLocales())?.let { activity.getString(it.label) }
                                 ?: activity.getString(R.string.language_other, tag)) }
+                        compose.onNodeWithTag("settings").performClick()
                         compose.onNodeWithText(languageLabel).performScrollTo().assertIsDisplayed()
+                        compose.onNodeWithText(labels.getValue(R.string.camera_diagnostics)).performScrollTo().assertIsDisplayed()
+                        compose.onNodeWithTag("dismiss-panel").performScrollTo().performClick()
                         // Numeric values and geometry are identical across locales/presentation controls.
                         assertEquals(36.5f, presenter!!.state.value.measurement!!.temperature(NativePixel(80, 60)), 0f)
                         assertEquals(160, presenter!!.state.value.measurement!!.geometry.width)

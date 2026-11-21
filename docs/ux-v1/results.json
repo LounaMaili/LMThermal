@@ -1,0 +1,92 @@
+{
+  "date": "2026-11-21",
+  "base": "8eb4aceaf8bb36a8061c932b3121f898b81b4af3",
+  "branch": "codex/android-ux-v1",
+  "application_id": "org.lmthermal.app",
+  "apk": {
+    "path": "build/ux-v1/LMThermal-ux-v1-debug.apk",
+    "sha256": "a2ccd62b28f0568954837b420b788aa930f7086921f42f1133e9b8bdf6edf5b0",
+    "bytes": 12013382,
+    "debug_abis": [
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "release_abis": [
+      "arm64-v8a"
+    ]
+  },
+  "jvm_tests": {
+    "core": {
+      "tests": 232,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "app": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 12
+  },
+  "emulator": {
+    "serial": "emulator-5554",
+    "api": 36,
+    "avd": "medium_phone",
+    "normal_display_px": [
+      1080,
+      2400
+    ],
+    "density_dpi": 420,
+    "large_font_display_px": [
+      840,
+      1680
+    ],
+    "large_font_scale": 2.0,
+    "settings_restored": true
+  },
+  "instrumentation": {
+    "normal_tests": 26,
+    "normal_passed": true,
+    "classes": [
+      "ThermalWorkspaceDeviceTest",
+      "LocalizationLayoutDeviceTest",
+      "LocalizationDeviceTest",
+      "CaptureExporterDeviceTest",
+      "CameraEntryDeviceTest"
+    ],
+    "large_font_layout_combinations": 8,
+    "locales": [
+      "en",
+      "fr",
+      "en-XA",
+      "ar-XB"
+    ],
+    "orientations": [
+      "portrait",
+      "landscape"
+    ],
+    "large_font_layout_passed": true,
+    "final_large_font_state_tests": 4,
+    "final_large_font_state_passed": true
+  },
+  "static_checks": {
+    "localization_keys_per_language": 119,
+    "localization_self_tests": 10,
+    "module_boundaries": "passed",
+    "diff_check": "passed"
+  },
+  "physical_device_used": false,
+  "ht301_used": false,
+  "r4_campaign_run": false,
+  "limitations": [
+    "No real-camera UX or physical accuracy validation",
+    "No real external SAF provider interaction in this UX campaign",
+    "TalkBack gesture navigation not manually qualified",
+    "Host emulator graphics SIGSEGVs observed outside successful test runs; software renderer also failed to boot"
+  ]
+}
