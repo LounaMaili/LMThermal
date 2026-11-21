@@ -228,11 +228,11 @@ class Ht301CameraController(private val context: Context, private val target: Us
                             }
                             transition.tick()
                             session.tick()
-                            val bytes = transport.read()
+                            val payload = transport.read()
                             ensureActive()
                             val receiptNs=SystemClock.elapsedRealtimeNanos()
                             val now = SystemClock.elapsedRealtime()
-                            if (bytes == null) {
+                            if (payload == null) {
                                 if (now - lastFrameAt > 5000) error("No UVC payload for 5 seconds; close/reconnect")
                                 continue
                             }
@@ -242,7 +242,8 @@ class Ht301CameraController(private val context: Context, private val target: Us
                                 fps = (counters[0] - previousCount) * 1000.0 / (now - cadenceStart)
                                 previousCount = counters[0]; cadenceStart = now
                             }
-                            val frame = if (bytes.size == Ht301Layout.FRAME_BYTES) Ht301Frame.parse(bytes) else null
+                            val frame = payload as? Ht301Frame
+                            val malformed = payload as? Ht301TransportPayload.WrongSize
                             val inspection = frame?.inspect() ?: FrameInspection(FrameMode.INVALID, "transport_size", null, null)
                             transition.observe(frame, inspection, counters[4], token)
                             session.observe(frame, inspection, counters[4], token)
@@ -258,7 +259,7 @@ class Ht301CameraController(private val context: Context, private val target: Us
                             previousReplaced=counters[1];previousMalformed=counters[2];previousReceiptNs=receiptNs
                             observations.publish { ordinal -> Ht301AcquiredObservation(observations.identity,ordinal,
                                 counters[4],receiptNs,frame,inspection,session.snapshot().state,measurement,
-                                if(frame==null)bytes else null,session.snapshot().reason,measurementNs) }
+                                malformed?.bytes,session.snapshot().reason,measurementNs) }
                             val available = measurement.measurement != null
                             if (available != previousMeasurementAvailable || now - lastMeasurementLog >= 2000) {
                                 thermometryEvidence.record(ThermometryDiagnostics.event(measurement, session.snapshot().state,
@@ -272,13 +273,13 @@ class Ht301CameraController(private val context: Context, private val target: Us
                                 PreviewRenderer.grayscale(frame, inspection), Ht301Layout.WIDTH, Ht301Layout.IMAGE_HEIGHT, Bitmap.Config.ARGB_8888) else null
                             mutableState.updateIf({ token == generation }) { previous -> previous.copy(
                                 usb = UsbState(UsbPhase.STREAMING, "Streaming · explicit radiometric session"),
-                                mode = inspection.mode, reason = inspection.reason, size = bytes.size,
+                                mode = inspection.mode, reason = inspection.reason, size = payload.size,
                                 range = "${inspection.minimum ?: "—"}..${inspection.maximum ?: "—"}",
                                 fps = fps, sequence = counters[4], receivedMonotonicMs = now, received = counters[0], invalid = invalid, replaced = counters[1], malformed = counters[2], bitmap = image, session = session.snapshot(), transition = transition.snapshot(),
                                 measurement = measurement.measurement, measurementReason = measurement.reason) }
                             if (now - lastLog >= 2000) {
                                 // Numeric diagnostics only: no camera serial or private scene is written to logs.
-                                Log.i("LMThermal", "frame size=${bytes.size} image=${frame?.imageBytes()?.size} trailer=${frame?.trailerBytes()?.size} mode=${inspection.mode} reason=${inspection.reason} summary=${inspection.summaryValid} words=${inspection.minimum}..${inspection.maximum} fps=$fps received=${counters[0]} replaced=${counters[1]} malformed=${counters[2]} session=${session.snapshot().state} live=${session.snapshot().live} held=${session.snapshot().held} rejected=${session.snapshot().rejected}")
+                                Log.i("LMThermal", "frame size=${payload.size} image=${frame?.imageBytes()?.size} trailer=${frame?.trailerBytes()?.size} mode=${inspection.mode} reason=${inspection.reason} summary=${inspection.summaryValid} words=${inspection.minimum}..${inspection.maximum} fps=$fps received=${counters[0]} replaced=${counters[1]} malformed=${counters[2]} session=${session.snapshot().state} live=${session.snapshot().live} held=${session.snapshot().held} rejected=${session.snapshot().rejected}")
                                 lastLog = now
                             }
                         }

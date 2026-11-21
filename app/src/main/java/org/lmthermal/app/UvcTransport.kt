@@ -2,6 +2,8 @@ package org.lmthermal.app
 
 import android.hardware.usb.UsbDeviceConnection
 import android.os.SystemClock
+import org.lmthermal.core.Ht301Frame
+import org.lmthermal.core.Ht301TransportPayload
 import org.lmthermal.core.Raw14TransitionControl
 import org.lmthermal.core.RadiometricCommand
 import org.lmthermal.core.RadiometricControl
@@ -14,15 +16,15 @@ import org.lmthermal.core.ZoomTransfer
  * Calls are serialized on one worker dispatcher. Android owns the connection through native close.
  */
 interface UvcTransport : AutoCloseable {
-    fun read(): ByteArray?
+    fun read(): Ht301TransportPayload?
     fun statistics(): LongArray
 }
 
 /** Restricted Zoom semantic operations and fixed GET inventory; no selector/value API. */
 internal object NativeUvc {
     init { System.loadLibrary("lmthermal") }
-    external fun open(descriptor: Int): Long
-    external fun read(handle: Long): ByteArray?
+    external fun open(descriptor: Int, frameType: Class<Ht301Frame>): Long
+    external fun read(handle: Long, frameType: Class<Ht301Frame>): Ht301TransportPayload?
     external fun stats(handle: Long): LongArray
     external fun close(handle: Long)
     external fun zoom(handle: Long, operation: Int): Int
@@ -33,10 +35,10 @@ internal object NativeUvc {
 /** Keep UsbManager's authorized descriptor alive until UVC transfers and callbacks have stopped. */
 class NativeUvcTransport(private val connection: UsbDeviceConnection,
     private val controlEvent: (Map<String, Any?>) -> Unit = {}) : UvcTransport, RadiometricControl, ReadOnlyZoomControl, Raw14TransitionControl {
-    private var handle: Long = try { NativeUvc.open(connection.fileDescriptor) }
+    private var handle: Long = try { NativeUvc.open(connection.fileDescriptor, Ht301Frame::class.java) }
         catch (error: Exception) { connection.close(); throw error }
-    /** JNI waits at most 250 ms so cancellation/normal backgrounding can release the camera. */
-    override fun read(): ByteArray? = NativeUvc.read(handle)
+    /** JNI creates the payload before returning and waits at most 250 ms for a frame. */
+    override fun read(): Ht301TransportPayload? = NativeUvc.read(handle, Ht301Frame::class.java)
     /** Counters are native acquisition counts, not Compose-rendered frame counts. */
     override fun statistics(): LongArray = NativeUvc.stats(handle)
     /** No arbitrary selector/value API. Called only by the worker-owned explicit session. */

@@ -47,8 +47,9 @@ permission mechanism. libuvc owns its event-handler context and asynchronous tra
 
 The raw `uvc_frame_t` callback exposes original frame data and `data_bytes`.
 No YUYV-to-RGB conversion, camera-format reinterpretation, 288-row cropping or
-trailer extraction occurs in native transport. JNI copies callback-owned memory
-before upstream reuse. Wrong dimensions/format are counted and dropped; partial
+trailer extraction occurs in native transport. The callback copies its payload
+into a single native slot before libuvc can reuse the buffer. JNI copies that slot
+into a fresh Java array while holding the slot mutex. Wrong dimensions/format are counted and dropped; partial
 or oversized payloads cannot be accepted as an exact frame. Kotlin then requires
 exactly 224256 bytes. UVC packet headers are reassembled by libuvc, not part of the
 transport-frame payload; the camera's four in-frame trailer rows remain intact.
@@ -70,9 +71,15 @@ Upstream references: [libusb Android integration](https://github.com/libusb/libu
 
 ## Frame parity and ownership
 
-`Ht301Frame` owns a private full-frame copy. Constructor input and returned byte
-arrays cannot mutate that storage. Native dimensions/coordinates stay 384×288,
-x 0..383/y 0..287, regardless of Activity orientation.
+The JNI reader passes its new array directly to the private
+`Ht301Frame.takeFreshNativePayload` factory and returns a typed payload.
+The factory resolves once per open stream. Exact-sized receipts become frames
+before any managed caller receives a reference. JNI retains no reference to
+the array. The wrong-size variant still supplies the original payload for the
+recorder's existing defensive capture and never becomes a frame.
+`Ht301Frame.parse()` continues to copy ordinary caller arrays, and all frame
+byte accessors return independent copies. Native dimensions/coordinates stay
+384×288, x 0..383/y 0..287, regardless of Activity orientation.
 
 - Transport: 384×292×2 = 224256 bytes.
 - Image: first 221184 bytes, 384×288 full little-endian words.
@@ -95,6 +102,10 @@ rejections are visible in diagnostics and cannot establish temperature readiness
 Native callback holds one bounded pending payload; a new frame replaces obsolete
 presentation work. JNI read waits at most 250 ms. Kotlin parsing/normalization/bitmap
 creation and native open/read/stats/close run on one serialized worker dispatcher.
+The receipt clocks are still sampled immediately after read and its cancellation
+check, before inspection. USB close and subsequent receipts affect native buffers
+only. A frame already held by a measurement, presentation or deferred recorder
+offer owns its independent Java storage for that lifetime.
 StateFlow is conflated, not an unbounded queue. Acquisition FPS uses native callback
 counts and elapsed monotonic time, independently of rendering rate. Replacement,
 malformed and parser rejection counts are shown/logged.

@@ -4,6 +4,9 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (HT-301 JNI transport ownership)
+- Adopt each exact-sized JNI receipt directly as an immutable frame through a private factory. Keep the libuvc callback copy, malformed transport evidence and defensive parsing of ordinary byte arrays.
+
 ### Changed (HT-301 source memory)
 - Decode exact transport words directly into the Celsius plane. Drop the redundant raw-index array from each ready measurement and reconstruct it only on explicit diagnostic reads. Keep original native and transport bytes available to Native and Full recordings.
 

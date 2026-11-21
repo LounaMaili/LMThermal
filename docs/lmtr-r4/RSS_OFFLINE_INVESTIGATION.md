@@ -109,9 +109,10 @@ graphics series, root census or post-natural-GC retained floor is available.
 
 ## Ownership and allocation audit
 
-This section describes the investigation checkpoint. The later field candidate
-removes the retained raw `IntArray` described below. See the
-[source memory comparison](FIELD_RECORDING_UI.md#ht-301-source-memory) for that change.
+This section describes the investigation checkpoint. The later field candidates
+remove the retained raw `IntArray` and the second Java transport array described
+below. See the [source memory comparison](FIELD_RECORDING_UI.md#ht-301-source-memory)
+and the [JNI handoff comparison](FIELD_RECORDING_UI.md#jni-transport-handoff).
 
 ```mermaid
 flowchart LR

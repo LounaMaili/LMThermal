@@ -65,11 +65,21 @@ data class FrameInspection(
     val summaryValid: Boolean = false,
 )
 
-/** Owns an exact transport copy. All byte-array access returns copies, never mutable storage.
+/** A native receipt is either an exact frame or a wrong-sized payload with no frame identity. */
+sealed interface Ht301TransportPayload {
+    val size: Int
+
+    /** Keep malformed transport available for the recorder's existing defensive copy. */
+    class WrongSize internal constructor(val bytes: ByteArray) : Ht301TransportPayload {
+        override val size: Int get() = bytes.size
+    }
+}
+
+/** Owns exact immutable transport storage. All byte-array access returns copies.
  * Native (x,y) coordinates always use 384×288; phone orientation cannot change these bytes.
  */
-class Ht301Frame private constructor(private val transport: ByteArray) {
-    val size: Int get() = transport.size
+class Ht301Frame private constructor(private val transport: ByteArray) : Ht301TransportPayload {
+    override val size: Int get() = transport.size
     /** Retain every trailer byte for the later session/thermometry port. */
     fun transportBytes(): ByteArray = transport.copyOf()
     /** Exclude all four trailer rows, not just the final parameter block. */
@@ -137,11 +147,17 @@ class Ht301Frame private constructor(private val transport: ByteArray) {
         return FrameInspection(FrameMode.RAW14, null, minimum, maximum, summary)
     }
     companion object {
-        /** Fail closed on partial or oversized UVC payloads; never pad or crop them. */
+        /** Copy ordinary caller input. Reject wrong-sized payloads without padding or cropping. */
         fun parse(bytes: ByteArray): Ht301Frame {
             require(bytes.size == Ht301Layout.FRAME_BYTES) { "transport_size: ${bytes.size}" }
             return Ht301Frame(bytes.copyOf())
         }
+
+        /** JNI calls this before a freshly allocated array has any managed caller. */
+        @JvmStatic
+        private fun takeFreshNativePayload(bytes: ByteArray): Ht301TransportPayload =
+            if (bytes.size == Ht301Layout.FRAME_BYTES) Ht301Frame(bytes)
+            else Ht301TransportPayload.WrongSize(bytes)
     }
 }
 

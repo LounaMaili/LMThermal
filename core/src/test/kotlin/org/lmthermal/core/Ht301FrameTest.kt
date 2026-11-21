@@ -2,6 +2,7 @@ package org.lmthermal.core
 
 import org.junit.Assert.*
 import org.junit.Test
+import java.lang.reflect.Modifier
 import java.security.MessageDigest
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -11,6 +12,44 @@ class Ht301FrameTest {
     private fun fixture(name: String) = javaClass.getResourceAsStream("/fixtures/$name")!!.use { it.readBytes() }
     private fun raw() = fixture("radiometric-room-settled.raw")
     private fun display() = fixture("display-room-baseline.raw")
+
+    // Host-side stand-in for the JNI call. The production factory is private.
+    private val nativeHandoff = Ht301Frame::class.java.getDeclaredMethod("takeFreshNativePayload", ByteArray::class.java)
+        .apply { isAccessible = true }
+
+    @Test fun jniFactoryAdoptsAnExactArrayAndExposesOnlyIndependentCopies() {
+        assertTrue(Modifier.isPrivate(nativeHandoff.modifiers))
+        assertTrue(Modifier.isStatic(nativeHandoff.modifiers))
+        assertEquals(Ht301TransportPayload::class.java, nativeHandoff.returnType)
+        val expected = raw()
+        // This reference is kept only for the host's backing identity assertion.
+        val fresh = expected.copyOf()
+        val frame = nativeHandoff.invoke(null, fresh) as Ht301Frame
+        val storage = Ht301Frame::class.java.getDeclaredField("transport").apply { isAccessible = true }
+        assertSame(fresh, storage.get(frame))
+        frame.transportBytes().fill(0)
+        frame.imageBytes().fill(0)
+        frame.trailerBytes().fill(0)
+
+        val measurement = NativeEquivalentThermometry.measure(frame)
+        val originalRaw = measurement.raw14()
+        val originalMatrix = measurement.matrix()
+        measurement.raw14().fill(0)
+        measurement.matrix().fill(Float.NaN)
+        assertArrayEquals(expected, frame.transportBytes())
+        assertArrayEquals(originalRaw, measurement.raw14())
+        assertArrayEquals(originalMatrix, measurement.matrix(), 0f)
+    }
+
+    @Test fun jniFactoryKeepsEveryWrongSizedByteWithoutCreatingAFrame() {
+        val bytes = raw()
+        for (fresh in listOf(bytes.copyOf(bytes.size - 1), bytes + byteArrayOf(31))) {
+            val payload = nativeHandoff.invoke(null, fresh) as Ht301TransportPayload.WrongSize
+            assertEquals(fresh.size, payload.size)
+            assertSame(fresh, payload.bytes)
+        }
+    }
+
     @Test fun borrowedDigestMatchesOriginalImageAndExcludesTrailerWithoutExposingStorage() {
         for (bytes in listOf(raw(), display())) {
             val frame = Ht301Frame.parse(bytes)

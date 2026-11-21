@@ -166,6 +166,28 @@ Worker pacing makes this an integrity check with deterministic inputs. Live
 preview latency, ART memory behavior and sustained recording remain physical
 qualification gates.
 
+### JNI transport handoff
+
+The follow-up adopts each exact-sized JNI array before managed code gets a
+reference to the payload. It removes one 224,256-byte array copy per full
+receipt, including display and unsettled frames. The callback-to-native-slot
+and native-slot-to-Java copies still protect against libuvc buffer reuse.
+Malformed receipt evidence and the defensive `Ht301Frame.parse()` API keep
+their separate paths. See [Android transport ownership](../ANDROID_FOUNDATION.md#frame-parity-and-ownership).
+
+The same HotSpot probe also supports `--jni-copy` for the `71577e3` baseline
+JAR and `--jni-handoff` for the candidate. These modes both allocate and
+fill a fresh array from the same fixtures. The latter calls the same private
+factory JNI binds. With the same four-process ABBA setup, the median
+allocation went from 959,792 to 735,520 bytes per valid frame. The 224,272-byte
+difference includes the HotSpot array header, and both builds retain 666,624
+array-data bytes per measurement. An optional fresh output path runs the
+same periodic Analysis replay described above. Kotlin and Python confirmed
+valid END, 50 Float32 observations with exact slot and receipt times, and
+byte-for-byte equality with the baseline archive. The host comparison does
+not run the USB callback or Android JNI. Physical acquisition, preview, RSS
+and duration still require device measurements.
+
 ## Integration boundary
 
 Review the stacked field PR against `codex/r4-tiered-memory-diagnostic` at

@@ -16,6 +16,8 @@ import org.lmthermal.recorder.RecordingProfile
 import org.lmthermal.recorder.RecordingStopDeadline
 import org.lmthermal.recording.Ht301RecordingAdapter
 import java.io.File
+import java.lang.invoke.MethodHandles
+import java.lang.invoke.MethodType
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
@@ -26,11 +28,12 @@ object Ht301SourceMemoryProbe {
         .map { javaClass.getResourceAsStream(it)!!.use { input -> input.readBytes() } }
     private val identity = CameraSourceIdentity(Ht301ModuleProfile.metadata.copy(sourceOrigin = "simulated"),
         "11111111-1111-4111-8111-111111111111", "22222222-2222-4222-8222-222222222222")
+    private var readFrame: (ByteArray) -> Ht301Frame = Ht301Frame.Companion::parse
     @Volatile private var latest: Ht301AcquiredObservation? = null
 
     /** Use the real parser, current-frame measurement gate and immutable source wrapper. */
     private fun source(sequence: Long, receipt: Long): Ht301AcquiredObservation {
-        val frame = Ht301Frame.parse(fixtures[(sequence % 2).toInt()])
+        val frame = readFrame(fixtures[(sequence % 2).toInt()])
         val state = SessionState.RADIOMETRIC_READY
         val inspection = frame.inspect()
         val result = MeasurementGate.evaluate(state, frame, sequence, receipt / 1_000_000)
@@ -110,9 +113,31 @@ object Ht301SourceMemoryProbe {
         }
     }
 
+    /** Simulate one fresh JNI allocation on both arms. Bind the factory outside the measured path. */
+    private fun simulateJni(handoff: Boolean): (ByteArray) -> Ht301Frame {
+        val frameClass = Ht301Frame::class.java
+        val signature = MethodType.methodType(frameClass, ByteArray::class.java)
+        val lookup = MethodHandles.lookup()
+        val factory = if (handoff) {
+            val method = frameClass.getDeclaredMethod("takeFreshNativePayload", ByteArray::class.java)
+            MethodHandles.privateLookupIn(frameClass, lookup).unreflect(method).asType(signature)
+        } else {
+            lookup.findVirtual(Ht301Frame.Companion::class.java, "parse", signature).bindTo(Ht301Frame.Companion)
+        }
+        return { fixture -> factory.invokeExact(fixture.copyOf()) as Ht301Frame }
+    }
+
     /** Measure by default, or write a new synthetic recording on explicit request. */
     @JvmStatic fun main(args: Array<String>) {
-        require(args.size <= 1)
-        if (args.isEmpty()) allocations() else replay(File(args.single()))
+        val mode = args.firstOrNull()
+        val replayArgs = when (mode) {
+            "--jni-copy", "--jni-handoff" -> {
+                readFrame = simulateJni(mode == "--jni-handoff")
+                args.drop(1)
+            }
+            else -> args.toList()
+        }
+        require(replayArgs.size <= 1)
+        if (replayArgs.isEmpty()) allocations() else replay(File(replayArgs.single()))
     }
 }

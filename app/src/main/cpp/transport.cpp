@@ -34,6 +34,7 @@ constexpr uint16_t kProductId = 0x0001;
 struct Stream {
     uvc_context_t* context = nullptr;
     uvc_device_handle_t* device = nullptr;
+    jmethodID takeFreshPayload = nullptr;
     std::mutex mutex;
     std::condition_variable available;
     std::vector<uint8_t> latest;
@@ -88,8 +89,17 @@ void fail(JNIEnv* env, Stream* stream, const char* stage, int code) {
 
 /** Only UVC streaming negotiation occurs here. No camera terminal/vendor setting writes. */
 extern "C" JNIEXPORT jlong JNICALL
-Java_org_lmthermal_app_NativeUvc_open(JNIEnv* env, jobject, jint descriptor) {
+Java_org_lmthermal_app_NativeUvc_open(JNIEnv* env, jobject, jint descriptor, jclass frameType) {
+    // Resolve the private handoff before opening USB. The same class is passed to each read.
+    const auto takeFreshPayload = env->GetStaticMethodID(frameType, "takeFreshNativePayload",
+                                                        "([B)Lorg/lmthermal/core/Ht301TransportPayload;");
+    if (!takeFreshPayload) {
+        env->ExceptionClear();
+        env->ThrowNew(env->FindClass("java/io/IOException"), "HT301 payload factory unavailable");
+        return 0;
+    }
     auto* stream = new Stream();
+    stream->takeFreshPayload = takeFreshPayload;
     // Android forbids global usbfs enumeration; UsbManager supplied the authorized descriptor.
     libusb_set_option(nullptr, LIBUSB_OPTION_NO_DEVICE_DISCOVERY);
     int result = uvc_init(&stream->context, nullptr);
@@ -113,8 +123,8 @@ Java_org_lmthermal_app_NativeUvc_open(JNIEnv* env, jobject, jint descriptor) {
 }
 
 /** Sole Kotlin I/O consumer polls a bounded slot, never from the Android UI thread. */
-extern "C" JNIEXPORT jbyteArray JNICALL
-Java_org_lmthermal_app_NativeUvc_read(JNIEnv* env, jobject, jlong handle) {
+extern "C" JNIEXPORT jobject JNICALL
+Java_org_lmthermal_app_NativeUvc_read(JNIEnv* env, jobject, jlong handle, jclass frameType) {
     auto* stream = reinterpret_cast<Stream*>(handle);
     std::unique_lock<std::mutex> guard(stream->mutex);
     if (!stream->available.wait_for(guard, std::chrono::milliseconds(kPollMilliseconds),
@@ -124,7 +134,11 @@ Java_org_lmthermal_app_NativeUvc_read(JNIEnv* env, jobject, jlong handle) {
                                        reinterpret_cast<const jbyte*>(stream->latest.data()));
     stream->consumedSequence = stream->sequence;
     stream->latest.clear();
-    return result;
+    guard.unlock();
+    if (!result || env->ExceptionCheck()) return nullptr;
+    // The native slot and libuvc may recycle their storage. Only this new Java array is adopted,
+    // and no producer stores a reference to it or exposes it to a managed caller as a full frame.
+    return env->CallStaticObjectMethod(frameType, stream->takeFreshPayload, result);
 }
 
 /** Snapshot acquisition counts independently of presentation cadence. */

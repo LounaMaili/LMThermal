@@ -9,6 +9,7 @@ import org.lmthermal.lmtr.*
 import org.lmthermal.recorder.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -16,7 +17,16 @@ import java.util.concurrent.TimeUnit
 class Ht301ProfilePreparationTest {
     private fun source(ready:Boolean=true,bytes:ByteArray?=null):Ht301AcquiredObservation {
         val input=bytes ?:javaClass.getResourceAsStream("/fixtures/radiometric-room-settled.raw")!!.use {it.readBytes()}
-        val frame=Ht301Frame.parse(input)
+        return source(Ht301Frame.parse(input),ready)
+    }
+    /** The reflection here stands in for JNI while keeping the raw array local to the handoff. */
+    private fun freshFrame(resource:String):Ht301Frame {
+        val handoff=Ht301Frame::class.java.getDeclaredMethod("takeFreshNativePayload",ByteArray::class.java)
+            .apply { isAccessible=true }
+        return javaClass.getResourceAsStream(resource)!!.use { handoff.invoke(null,it.readBytes()) as Ht301Frame }
+    }
+    /** Build the same observation wrapper the transport passes to recording. */
+    private fun source(frame:Ht301Frame,ready:Boolean=true):Ht301AcquiredObservation {
         val state=if(ready)SessionState.RADIOMETRIC_READY else SessionState.RAW14_UNSETTLED
         return Ht301AcquiredObservation(CameraSourceIdentity(Ht301ModuleProfile.metadata.copy(sourceOrigin="simulated")),
             7,11,42000000,frame,frame.inspect(),state,MeasurementGate.evaluate(state,frame,11,42))
@@ -47,22 +57,29 @@ class Ht301ProfilePreparationTest {
             for((a,b) in eager.payloads.zip(aware.payloads))assertArrayEquals(a.bytes(),b.bytes())
         }
     }
-    @Test fun callerMutationAndConcurrentFreezingCannotChangeTheImmutableMatrixOrInterpretation() {
-        val source=source();val adapter=Ht301RecordingAdapter(source.identity,RecordingProfile.ANALYSIS)
-        val measurement=source.result.measurement!!
+    @Test fun deferredConcurrentFreezingKeepsOldNativeStorageAcrossReplacementAndClose() {
+        val first=source(freshFrame("/fixtures/radiometric-room-settled.raw"))
+        val latest=LatestFrameState<Ht301AcquiredObservation?>(first)
+        val adapter=Ht301RecordingAdapter(first.identity,RecordingProfile.ANALYSIS)
+        val analysisOffer=adapter.offer(checkNotNull(latest.value))
+        val fullOffer=Ht301RecordingAdapter(first.identity,RecordingProfile.FULL).offer(first)
+        val transport=first.transportBytes()!!
+        val measurement=first.result.measurement!!
         val original=measurement.matrix()
         val originalRaw=measurement.raw14()
         val expected=ByteBuffer.allocate(original.size*4).order(ByteOrder.LITTLE_ENDIAN).apply {for(v in original)putInt(v.toRawBits())}.array()
         original.fill(Float.NaN)
+        val mayRead=CountDownLatch(1)
         val pool=Executors.newFixedThreadPool(4)
         try {
             val futures=(0 until 4).map {pool.submit<Boolean> {
+                assertTrue(mayRead.await(10,TimeUnit.SECONDS))
                 // Diagnostic raw reads and recorder work may share the same transport owner.
                 val raw=measurement.raw14()
                 assertArrayEquals(originalRaw,raw)
                 raw.fill(0)
                 repeat(8) {
-                    val prepared=adapter.offer(source).materialize()
+                    val prepared=analysisOffer.materialize()
                     assertArrayEquals(expected,prepared.payloads.single().bytes())
                     val copy=prepared.payloads.single().bytes();copy.fill(0)
                     val facts=prepared.facts.value().toMutableMap();facts["measurement"]=null
@@ -70,9 +87,19 @@ class Ht301ProfilePreparationTest {
                     assertArrayEquals(expected,prepared.payloads.single().bytes())
                 };true
             }}
+            val replacement=source(freshFrame("/thermometry/warm-hand-settled.raw"))
+            assertNotEquals(first.identity,replacement.identity)
+            assertFalse(transport.contentEquals(replacement.transportBytes()))
+            latest.value=replacement
+            latest.value=null
+            first.transportBytes()!!.fill(0)
+            mayRead.countDown()
             for(f in futures)assertTrue(f.get(20,TimeUnit.SECONDS))
         } finally {pool.shutdownNow();assertTrue(pool.awaitTermination(10,TimeUnit.SECONDS))}
-        assertArrayEquals(expected,adapter.offer(source).materialize().payloads.single().bytes())
+        val originalPayloads=fullOffer.materialize().payloads.associateBy {it.role}
+        assertArrayEquals(expected,originalPayloads.getValue("temperature").bytes())
+        assertArrayEquals(transport,originalPayloads.getValue("acquisition").bytes())
+        assertArrayEquals(transport.copyOfRange(0,Ht301Layout.IMAGE_BYTES),originalPayloads.getValue("native_samples").bytes())
         assertArrayEquals(originalRaw,measurement.raw14())
     }
     @Test fun unavailableReasonAndDetailedGateReasonArePreservedWithCurrentContext() {
