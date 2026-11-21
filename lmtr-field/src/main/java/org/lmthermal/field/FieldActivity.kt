@@ -33,14 +33,6 @@ import org.lmthermal.core.NativeEquivalentThermometry
 import java.io.File
 import java.io.BufferedWriter
 import java.util.UUID
-import java.security.MessageDigest
-
-/** Streaming private inventory; never allocate a whole recording to hash it. */
-internal fun fileHash(file:File):String {
-    val digest=MessageDigest.getInstance("SHA-256")
-    file.inputStream().use { input -> val buffer=ByteArray(65536);while(true){val size=input.read(buffer);if(size<0)break;digest.update(buffer,0,size)} }
-    return digest.digest().joinToString(""){"%02x".format(it.toInt() and 255)}
-}
 
 /** Sole test composition root. Existing owner/acquisition/UI are reused; no automatic Connect/init/Start.
  * ViewModel keeps rotation; CameraUiLifetime enforces ordinary background/screen-off cutoff.
@@ -48,6 +40,7 @@ internal fun fileHash(file:File):String {
  */
 class FieldModel(application:Application):AndroidViewModel(application) {
     private val scope=CoroutineScope(SupervisorJob()+Dispatchers.IO)
+    private val finalization=FieldRunFinalization(scope)
     @Volatile private var metrics=FieldMetrics()
     @Volatile private var clock:FieldClock?=null
     @Volatile private var engine:RecorderEngine?=null
@@ -56,7 +49,6 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     private var oracle:BufferedWriter?=null
     private var directory:File?=null
     private var header:Obj?=null
-    @Volatile private var finishing=false
     private var diagnosticFailure:String?=null
     @Volatile private var safetyFailure:String?=null
     @Volatile private var foreground=false
@@ -113,7 +105,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
     }
 
     /** Browsing waits for released ownership, independently of the RSS Start lock. */
-    internal fun canBrowseRecordingLibrary()=engine==null && !running.value && !recordingProgress.value.phase.isActive &&
+    internal fun canBrowseRecordingLibrary()=finalization.active==null && engine==null && !running.value && !recordingProgress.value.phase.isActive &&
         healthSampler?.isActive!=true && presentationSampler?.isActive!=true
 
     /** Reading storage for a label never substitutes for the existing authoritative preflight. */
@@ -131,7 +123,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
 
     /** Diagnostic ownership and prior safety failures keep Start unavailable. */
     private fun permitsStartRequest()=!busy.value && healthSampler?.isActive!=true && presentationSampler?.isActive!=true &&
-        !recordingProgress.value.phase.isActive
+        finalization.active==null && !recordingProgress.value.phase.isActive
 
     /** A stale UI tap cannot Stop a test while setup still owns admission. */
     internal fun stopAnalysisRecording() {
@@ -140,11 +132,11 @@ class FieldModel(application:Application):AndroidViewModel(application) {
 
     /** Explicit pre-Start arming: no recorder/camera operation or safety-policy change. */
     fun startMemoryProbes(plan:MemoryProbePlan=MemoryProbePlan.REFERENCE)=memoryProbes.arm(
-        !busy.value && engine==null && healthSampler?.isActive!=true && presentationSampler?.isActive!=true,
+        !busy.value && finalization.active==null && engine==null && healthSampler?.isActive!=true && presentationSampler?.isActive!=true,
         getApplication<Application>().filesDir,plan)
     /** After an RSS Stop, busy remains a Start lock even when every recorder owner has exited. */
     fun saveMemoryProbes()=memoryProbes.save(fieldRecorderReleasedForMemorySave(
-        engine, finishing || running.value || recordingProgress.value.phase.isActive,
+        engine, finalization.active!=null || running.value || recordingProgress.value.phase.isActive,
         sampler, stopDeadlineJob, healthSampler, presentationSampler))
 
     /** Published roles only, not roots. Alias equality is instantaneous and is never summed.
@@ -351,13 +343,15 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         }
     }
     /** UI actions launch only admission/recorder work. Unsupported/absent source cannot create a file. */
-    private fun start(profile:RecordingProfile?,seconds:Int,periodicFiveHz:Boolean=false) {
+    private fun start(profile:RecordingProfile?,seconds:Int,periodicFiveHz:Boolean=false) = synchronized(finalization) {
         // Diagnostic sampling declares no recorder and must not overlap a later admission window.
-        if(!permitsStartRequest())return
+        if(!permitsStartRequest())return@synchronized
         busy.value=true
         running.value=true
+        sampler=null
+        safetyFailure=null
         recordingProgress.value=FieldRecordingProgress(FieldRecordingPhase.CHECKING)
-        scope.launch {
+        finalization.start work@{ run ->
             try {
                 require(!periodicFiveHz || (profile==RecordingProfile.ANALYSIS && seconds in setOf(
                     FieldPeriodicDuration.REGRESSION_SECONDS,FieldPeriodicDuration.QUALIFICATION_SECONDS))) {
@@ -382,11 +376,12 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                     "recording_created" to false,"scope" to "admission_witness_not_run_completion")))
                 check(safetyRefusal==null){"Safety preflight refused: $safetyRefusal"}
                 check(camera.state.value.status.code==CameraStatusCode.MEASUREMENT_READY && camera.state.value.measurement!=null){"Explicit initialization and current valid measurement required before field Start"}
+                synchronized(finalization) { check(!run.stopRequested){"Stop requested during admission"} }
                 val safety=FieldSafety(preflight,checkNotNull(health.rssBytes),SystemClock.elapsedRealtimeNanos(),camera.state.value.statistics.received)
                 val id=UUID.randomUUID().toString()
                 val root=File(getApplication<Application>().filesDir,"r4-field/$id");check(root.mkdirs())
                 stopDeadlineJob?.cancel();stopDeadlineJob=null
-                directory=root;diagnosticFailure=null;safetyFailure=null;storageCap=preflight.storageCapBytes;oracleBytes=java.util.concurrent.atomic.AtomicLong();traceBytes=java.util.concurrent.atomic.AtomicLong();stopTiming=FieldStopTiming();deadlineNotificationFailure=java.util.concurrent.atomic.AtomicReference(null);closeWallNs=null;metrics=FieldMetrics();runStart=SystemClock.elapsedRealtimeNanos();initialStatistics=camera.state.value.statistics;latestStatistics=initialStatistics;measured=periodicFiveHz || seconds<=20
+                directory=root;diagnosticFailure=null;storageCap=preflight.storageCapBytes;oracleBytes=java.util.concurrent.atomic.AtomicLong();traceBytes=java.util.concurrent.atomic.AtomicLong();stopTiming=FieldStopTiming();deadlineNotificationFailure=java.util.concurrent.atomic.AtomicReference(null);closeWallNs=null;metrics=FieldMetrics();runStart=SystemClock.elapsedRealtimeNanos();initialStatistics=camera.state.value.statistics;latestStatistics=initialStatistics;measured=periodicFiveHz || seconds<=20
                 // Both intake and timeline origin use the exact API used by HT receipt, including suspend.
                 // Controller receipt and this field clock both use elapsedRealtimeNanos; the shared
                 // UUID is explicit only for the periodic candidate, never inferred from two UUIDs.
@@ -421,9 +416,16 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                     val current=RecorderEngine(header!!,listOf(adapter.stream.value()),profile,preflight.limits,backend,preflight.codec,
                         now=selectedClock::now,sealMetric={a,b,c,d -> metrics.sealed(a,b,c,d)},codecMetric={a,b,c -> metrics.codec(a,b,c)},
                         sampling=if(periodicFiveHz)FiveHertzSampling(selectedClock.origin) else null,stopDeadline=deadline)
-                    engine=current
-                    check(route.start(current,adapter.identity)){"Source replaced or recorder still draining; explicit Start refused"}
-                    recordingProgress.value=FieldRecordingProgress(FieldRecordingPhase.RECORDING)
+                    synchronized(finalization) {
+                        engine=current
+                        if(run.stopRequested) {
+                            val reason=safetyFailure
+                            if(reason==null) current.stop() else current.stop("field_safety_$reason",true)
+                        } else {
+                            check(route.start(current,adapter.identity)){"Source replaced or recorder still draining; explicit Start refused"}
+                            recordingProgress.value=FieldRecordingProgress(FieldRecordingPhase.RECORDING)
+                        }
+                    }
                 }
                 val boundEngine=engine;val boundMetrics=metrics;val boundTiming=stopTiming
                 val boundDeadlineFailure=deadlineNotificationFailure
@@ -469,9 +471,7 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                             diagnosticFailure=it.javaClass.simpleName;engine?.stop("field_metrics_failed",true);requestStop()
                         }
                     }
-                    finishSafely()
                 }
-                sampler=sampleJob
                 val notification=if(deadline!=null && boundEngine!=null)scope.launch(start=CoroutineStart.LAZY) {
                     try {
                         FieldRunDeadline(deadline,selectedClock::now).awaitExpiry {
@@ -492,8 +492,18 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                         boundMetrics.closeSourceWindow();boundEngine.sourceAllocationFailure();route.stopIfCurrent(boundEngine)
                     }
                 } else null
-                stopDeadlineJob=notification
-                notification?.start();sampleJob.start()
+                synchronized(finalization) {
+                    sampler=sampleJob
+                    stopDeadlineJob=notification
+                    if(run.stopRequested) {
+                        requestStop()
+                        sampleJob.cancel();notification?.cancel()
+                    } else {
+                        notification?.start();sampleJob.start()
+                    }
+                }
+                // Stop may cancel sampling. Closure belongs to this separate job and waits for the trace to close.
+                sampleJob.join()
             } catch(error:Exception) {
                 stopDeadlineJob?.cancel()
                 running.value=false
@@ -502,28 +512,53 @@ class FieldModel(application:Application):AndroidViewModel(application) {
                 val stopped=engine?.awaitStop(10000)
                 val released=engine?.let { waitWorkers(it) } ?: true
                 if(engine==null || (stopped!=null && released)) {
-                    synchronized(writeLock){oracle?.close();oracle=null};engine=null;clock=null;busy.value=false
-                } else {status.value="Setup/Stop timeout; originals and worker ownership retained; no next run"}
-                recordingProgress.value=FieldRecordingProgress(FieldRecordingPhase.ERROR,
-                    detail=status.value.take(240))
+                    synchronized(writeLock){oracle?.close();oracle=null}
+                    finalization.release(run) {
+                        engine=null;clock=null;directory=null
+                        recordingProgress.value=FieldRecordingProgress(FieldRecordingPhase.ERROR,detail=status.value.take(240))
+                        busy.value=safetyFailure!=null
+                    }
+                } else {
+                    status.value="Setup/Stop timeout; originals and worker ownership retained; no next run"
+                    recordingProgress.value=FieldRecordingProgress(FieldRecordingPhase.ERROR,detail=status.value.take(240))
+                }
+                return@work
             }
+            finishSafely(run)
         }
     }
     /** Stop cuts source intake synchronously; drain/reopen/hash/inventory remain off UI. */
-    fun stop() { if(presentationSampler?.isActive==true){presentationSampler?.cancel();return};if(!busy.value)return;requestStop();sampler?.cancel();scope.launch { sampler?.join();finishSafely() } }
+    private fun stop(safetyReason:String?=null):Job? {
+        val presentation=presentationSampler
+        if(presentation?.isActive==true) {
+            presentation.cancel()
+            return presentation
+        }
+        return finalization.stop(cutoff={ firstRequest ->
+            // During admission, remember Stop before setup publishes the engine or sampling jobs.
+            if(safetyReason!=null) {
+                if(safetyFailure==null)safetyFailure=safetyReason
+                engine?.stop("field_safety_$safetyReason",true)
+            }
+            if(firstRequest && (sampler!=null || engine!=null)) {
+                requestStop()
+                sampler?.cancel()
+            }
+        },retry=::finishSafely)
+    }
     /** Unhealthy runs cannot enable a later run; retain honest interrupted termination and originals. */
-    private fun stopForSafety(reason:String) {
+    private fun stopForSafety(reason:String) = synchronized(finalization) {
         if(safetyFailure==null)safetyFailure=reason
         engine?.stop("field_safety_$reason",true);requestStop()
     }
     /** Foreground activity only: lifecycle loss stops intake, even during a recorder-free baseline. */
     fun foreground(value:Boolean) {
         foreground=value
-        if(!value)memoryProbes.stop()
-        if(!value && busy.value){stopForSafety("foreground_lost");stop()}
+        if(!value) {
+            memoryProbes.stop()
+            stop("foreground_lost")
+        }
     }
-    /** Reserve final diagnostics until all worker/file ownership is resolved; no overlapping Start. */
-    @Synchronized private fun claimFinish():Boolean { if(!busy.value || finishing)return false;finishing=true;return true }
     /** Bounds the actual nonblocking Stop request; it is not a fabricated source-failure cutoff. */
     private fun requestStop() {
         running.value=false
@@ -548,19 +583,20 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         while(!current.workersTerminated() && SystemClock.elapsedRealtimeNanos()<deadline)delay(10)
         return current.workersTerminated()
     }
-    private suspend fun finishSafely() {
+    /** Only the run's job can enter closure. Failure leaves ownership intact for cleanup. */
+    private suspend fun finishSafely(run:FieldRunFinalization.Run) {
         running.value=false
-        try { finish() } catch(error:Exception) {
+        try { finish(run) } catch(error:Exception) {
             engine?.failSource("field_diagnostic_failure")
             status.value="Stop/readback diagnostic failed: ${error.javaClass.simpleName}; all files retained; inspect locally"
             // Refuse another run when the prior worker/diagnostic ownership is uncertain.
-            finishing=false;busy.value=true
+            busy.value=true
             recordingProgress.update { if(it.phase.isActive)it.copy(phase=FieldRecordingPhase.ERROR,detail=status.value) else it }
         }
     }
-    private suspend fun finish() {
-        if(!claimFinish())return
-        val root=directory ?: return
+    /** Close only after the sampler and recorder workers have released their files. */
+    private suspend fun finish(run:FieldRunFinalization.Run) {
+        val root=checkNotNull(directory)
         val showInPanel=recordingProgress.value.phase.isActive
         val stopStart=SystemClock.elapsedRealtimeNanos()
         requestStop()
@@ -569,18 +605,20 @@ class FieldModel(application:Application):AndroidViewModel(application) {
         val result=current?.awaitStop(30000)
         if(current!=null && (result==null || !waitWorkers(current))) {
             // Do not close an oracle still used by admitted work or certify a hung footer.
-            finishing=false;busy.value=true;status.value="Stop timed out; keep app open, no success claimed; originals retained"
+            busy.value=true;status.value="Stop timed out; keep app open, no success claimed; originals retained"
             if(showInPanel)recordingProgress.update { it.copy(phase=FieldRecordingPhase.ERROR,detail=status.value) }
             return
         }
+        stopDeadlineJob?.join()
         synchronized(writeLock){oracle?.flush();oracle?.close();oracle=null}
+        finalization.writingEvidence(run)
         val capture=File(root,"capture.lmtr")
-        val before=if(capture.exists())fileHash(capture) else null
+        val before=if(capture.exists())fieldFileHash(capture) else null
         val reopenStart=SystemClock.elapsedRealtimeNanos()
         val reopened=if(capture.exists())runCatching { LmtrReader(capture).use { it.check(full=true,recover=result?.finalized!=true).filterKeys { key -> key!="logical_hashes" } } }
             .fold({it},{mapOf("classification" to "readback_failed","reason" to it.javaClass.simpleName)}) else null
         val reopenNs=SystemClock.elapsedRealtimeNanos()-reopenStart
-        val after=if(capture.exists())fileHash(capture) else null
+        val after=if(capture.exists())fieldFileHash(capture) else null
         check(before==after){"Source changed during read-only check"}
         val stats=stopTiming.afterCounters()
         val report=metrics.report()+mapOf("status" to "executed_not_automatically_accepted","physical" to true,
@@ -600,25 +638,31 @@ class FieldModel(application:Application):AndroidViewModel(application) {
             "utc_sensor_resolution" to "unknown","warning" to NativeEquivalentThermometry.WARNING)+
             (current?.periodicSnapshot()?.let {mapOf("periodic_sampling" to it.report())} ?: emptyMap())+
             (current?.deadlineSnapshot()?.let {mapOf("stop_deadline" to it.report())} ?: emptyMap())
-        File(root,"private-report.json").writeBytes(LmtrJson.encode(report))
-        val inventory=root.listFiles().orEmpty().filter { it.isFile }.sortedBy { it.name }.map {
-            mapOf("file" to it.name,"bytes" to it.length().toString(),"sha256" to fileHash(it)) }
-        File(root,"inventory.json").writeBytes(LmtrJson.encode(mapOf("files" to inventory)))
         val refused=safetyFailure!=null || diagnosticFailure!=null || fieldReopenFailed(reopened,capture.exists())
-        engine=null;clock=null;finishing=false
-        busy.value=refused
-        status.value=if(refused)"Diagnostic/read-only check failed: ${root.name}; originals retained; no longer run before inspection"
+        val terminalStatus=if(refused)"Diagnostic/read-only check failed: ${root.name}; originals retained; no longer run before inspection"
             else "Stopped and read-only checked: ${root.name}; private files retained; inspect before longer run"
-        if(showInPanel) {
+        val terminalProgress=if(showInPanel) {
             val file=if(result?.finalized==true && after!=null)FieldRecordingFile(root.name,capture.name,capture.length(),after,
                 result.status,result.reason) else null
-            recordingProgress.value=fieldRecordingTerminal(result,
+            fieldRecordingTerminal(result,
                 fieldRecordingCounts(current?.snapshot(),current?.periodicSnapshot(),runStart,null),file,
                 !fieldReopenFailed(reopened,true),safetyFailure ?: diagnosticFailure)
+        } else null
+        writeFieldClosingEvidence(root,report)
+        finalization.release(run) {
+            engine=null;clock=null;directory=null
+            terminalProgress?.let { recordingProgress.value=it }
+            busy.value=refused
+            status.value=terminalStatus
         }
     }
-    fun memoryPressure() { memoryProbes.stop();if(busy.value){stopForSafety("android_memory_pressure");stop()} }
-    override fun onCleared() { memoryProbes.dispose();stopDeadlineJob?.cancel();route.stop();lifetime.dispose();presenter.dispose();camera.dispose();scope.launch { sampler?.cancelAndJoin();finishSafely();scope.cancel() } }
+    fun memoryPressure() { memoryProbes.stop();stop("android_memory_pressure") }
+    override fun onCleared() {
+        memoryProbes.dispose()
+        val closing=stop()
+        route.stop();lifetime.dispose();presenter.dispose();camera.dispose()
+        scope.launch { closing?.join();scope.cancel() }
+    }
 }
 
 /** Separate field recorder controls reuse the existing camera presentation. */

@@ -4,6 +4,9 @@ All notable changes to LMThermal will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed (Field recording closure)
+- Keep run ownership separate from the safety Start lock. After closure, opening Recordings, returning to the preview or clearing the field ViewModel leaves the original report and inventory intact, including after an RSS interruption.
+
 ### Fixed (Field diagnostic export after a safety stop)
 - Allow `MEMORY_SAVE` after the recorder and field jobs are released and the collector returns its lease for the same window. Keep the existing RSS safety refusal that locks Start.
 

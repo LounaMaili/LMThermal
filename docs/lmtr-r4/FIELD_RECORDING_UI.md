@@ -32,6 +32,14 @@ jobs finish and the stopped collector releases its lease. The Start lock still
 applies. A Stop timeout, cancelling worker or collector that still holds its
 lease defers the export.
 
+Each field run owns its closure until sampling and recorder workers exit and
+the read-only check, `private-report.json` and `inventory.json` are complete.
+Background events during closure share the same task. Opening **Recordings**,
+returning to the preview or destroying the ViewModel after closure leaves both
+sidecars intact, including when the RSS Start lock remains set. A timed-out
+close retains ownership for cleanup and keeps **Recordings** and `MEMORY_SAVE`
+unavailable.
+
 ## Build and emulator demo
 
 Use the repository JDK and Android SDK/NDK/CMake settings. The normal field
@@ -106,8 +114,10 @@ sample for a normal Desktop open.
    bytes. Close the camera normally and confirm release.
 
 Use admission, duration, responsiveness, integrity and retained cadence as
-separate outcomes. This procedure has not been executed for the consolidated
-candidate and authorizes neither a Start nor a longer run.
+separate outcomes. The consolidated demonstration verified the copy and
+Desktop analysis of a recording interrupted by the RSS guard. Ten-second
+completion for that candidate remains unqualified. A new Start requires
+separate authorization.
 
 ## Integration boundary
 
