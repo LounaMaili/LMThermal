@@ -22,6 +22,7 @@ internal class FieldMemoryController(private val model:WeakReference<FieldModel>
     @Volatile private var window:BracketedMemoryWindow?=null
     private var root:File?=null
     @Volatile private var job:Job?=null
+    @Volatile private var releasedGeneration=0L
     @Volatile private var saved=true
     private val exporting=AtomicBoolean()
 
@@ -50,8 +51,11 @@ internal class FieldMemoryController(private val model:WeakReference<FieldModel>
             job=collector
             collector.invokeOnCompletion {
                 // A cancelled lazy job also releases; a blocked native read has not completed yet.
-                next.requestStop();MemoryProbeProcessLease.lease.release(lease);active.value=false
+                next.requestStop()
+                val released=MemoryProbeProcessLease.lease.release(lease)
+                active.value=false
                 status.value="Memory probes stopped: ${next.rowCount()} rows; save after recorder drain (${directory.name})"
+                if(released)releasedGeneration=lease
             }
             completionOwnsLease=true
             status.value="Memory probes active (${plan.name}): max 60 rows, no faster than 1 Hz; normal preview unchanged"
@@ -76,7 +80,8 @@ internal class FieldMemoryController(private val model:WeakReference<FieldModel>
      */
     fun save(allowed:Boolean) {
         val current=window;val directory=root
-        if(!allowed || current==null || directory==null || !current.quiescent() || saved || !exporting.compareAndSet(false,true)) {
+        if(!allowed || current==null || directory==null || !fieldCollectorReleasedForMemorySave(current,job,releasedGeneration) ||
+            saved || !exporting.compareAndSet(false,true)) {
             status.value="Memory export deferred: collector/recorder still owned or already saved";return
         }
         scope.launch {

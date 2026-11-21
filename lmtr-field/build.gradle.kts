@@ -1,5 +1,28 @@
+import javax.inject.Inject
+
 // Explicitly separate, debuggable field APK. Production app never depends on this project.
 plugins { id("com.android.application"); kotlin("android"); id("org.jetbrains.kotlin.plugin.compose") }
+val fieldAbi = if (providers.gradleProperty("fieldX86").orNull == "true") "x86_64" else "arm64-v8a"
+// Package only three known synthetic examples in the debug field variant.
+abstract class CopyRecordingDemoAssets @Inject constructor(private val files: FileSystemOperations) : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
+    abstract val examples: ConfigurableFileCollection
+
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction fun copy() = files.sync {
+        into(outputDirectory)
+        into("recording-demo") { from(examples) }
+    }
+}
+val copyRecordingDemoAssets = tasks.register<CopyRecordingDemoAssets>("copyRecordingDemoAssets") {
+    examples.from(fileTree("../lmtr-contract/src/test/resources/lmtr/files") {
+        include("illustration-06-stored.lmtr", "missing-end.lmtr", "committed-logical-hash-corrupt.lmtr")
+    })
+    outputDirectory.set(layout.buildDirectory.dir("generated/recording-demo-assets"))
+}
 android {
     namespace="org.lmthermal.app"
     compileSdk=35
@@ -7,7 +30,7 @@ android {
     defaultConfig {
         applicationId="org.lmthermal.field";minSdk=26;targetSdk=35;versionCode=1;versionName="r4-field-1"
         testInstrumentationRunner="androidx.test.runner.AndroidJUnitRunner"
-        ndk { abiFilters += "arm64-v8a" }
+        ndk { abiFilters += fieldAbi }
     }
     buildFeatures { compose=true;buildConfig=true }
     buildTypes { getByName("debug"){isDebuggable=true};getByName("release"){isDebuggable=true} }
@@ -18,6 +41,9 @@ android {
     compileOptions { sourceCompatibility=JavaVersion.VERSION_17;targetCompatibility=JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget="17" }
     externalNativeBuild { cmake { path=file("../app/src/main/cpp/CMakeLists.txt");version="3.22.1" } }
+}
+androidComponents.onVariants(androidComponents.selector().withBuildType("debug")) { variant ->
+    variant.sources.assets?.addGeneratedSourceDirectory(copyRecordingDemoAssets, CopyRecordingDemoAssets::outputDirectory)
 }
 dependencies {
     implementation(project(":core"));implementation(project(":lmtr-contract"));implementation(project(":lmtr-recorder"))

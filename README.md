@@ -24,6 +24,10 @@ Python/PyQt reference, diagnostic tool and fixture generator, not the final prod
 
 ## Android milestone
 
+The separate experimental field APK has a bounded Analysis recorder panel,
+a private recording library and a labeled camera-free Compose demo. See the
+[field UI build and controls](docs/lmtr-r4/FIELD_RECORDING_UI.md).
+
 The first mobile foundation is a small Kotlin/Compose application in this repository:
 USB Host authorization → native unconverted UVC acquisition → exact frame inspection
 → latest-frame grayscale aiming preview. The explicit radiometric session is implemented;

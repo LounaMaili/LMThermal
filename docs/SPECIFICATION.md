@@ -155,7 +155,13 @@ evidence and mandatory operator gates. It is not production recording or physica
 Its [single physical request](lmtr-r4/ANALYSIS_FIVE_HZ_60S_PHYSICAL.md) stops on the
 unchanged RSS guard at 3.280 s with 17 intact acknowledged observations. Valid interrupted
 END and short observed preview usability do not qualify the requested minute.
-The recorder/adapter are not linked into the app; the optional source channel and guarded lifetime notifications are implemented, with host and test-only ART evidence. Physical module/lifecycle/resource acceptance remains pending in open #9. Recording product UI/backend export and R5/R6 remain outside this scope. See [R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
+The production app excludes the recorder and adapter. The optional source channel
+and guarded lifetime notifications have host and test-only ART evidence. The
+[field APK](lmtr-r4/FIELD_RECORDING_UI.md) exposes only the bounded Analysis 5 Hz
+operator flow, a private LMTR library, verification and user-selected SAF copies.
+Production recording UI/backend
+export and physical module/lifecycle/resource acceptance remain pending. See
+[R1–R7](RECORDING_IMPLEMENTATION_PLAN.md). Camera/thermometry behavior and
 Accepted LMTX v1 remain unchanged.
 
 ### RJPEG (Radiometric JPEG)
